@@ -1,10 +1,34 @@
 # Introduction to Zig
 
+> **《Zig 语言入门：基于项目的实操指南》中英双语开源电子书**  
+> 📖 **在线阅读中文版 / Read in Chinese**: [https://izrino.github.io/zig-book/zh-CN/](https://izrino.github.io/zig-book/zh-CN/)  
+> 🌐 **在线阅读英文版 / Read in English**: [https://izrino.github.io/zig-book/](https://izrino.github.io/zig-book/)  
+> 🇨🇳 [中文说明文档 (README.zh-CN.md)](README.zh-CN.md)
+
+[![Zig](https://img.shields.io/badge/Zig-0.13%2B%20%7C%200.14-F7A41D?style=flat&logo=zig&logoColor=black)](https://ziglang.org/)
+[![Quarto](https://img.shields.io/badge/Built%20with-Quarto-4D5891?style=flat&logo=quarto&logoColor=white)](https://quarto.org/)
+[![Online Book](https://img.shields.io/badge/Online%20Book-Read%20Now-success?style=flat&logo=githubpages&logoColor=white)](https://izrino.github.io/zig-book/zh-CN/)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)
+
 <a href=""><img src="Cover/cover-artv3.png" width="250" height="366" class="cover" align="right"/></a>
 
 Hey! This is the official repository for the book "Introduction to Zig: a project-based book", written by Pedro Duarte Faria.
 To know more about the book, checkout the [About this book](#about-this-book) section below.
 You can read the current version of the book in your web browser: <https://pedropark99.github.io/zig-book/>.
+
+### 🌟 Key Highlights / 项目亮点
+
+- **双语同步与无缝互切 (Bilingual & Seamless Switching)**: 支持全站中英文双向 1:1 章节精准跳转与阅读位置保持。
+- **计算机开发者专业口语 (Developer-Friendly Chinese Translation)**: 遵循现代计算机开发日常口语，告别生硬机器翻译，术语规范精准（Comptime、Allocator、Optionals、Slice 等）。
+- **4 大硬核实战项目 (4 Real-World Hands-on Projects)**:
+  1. 从零手写 Base64 编解码器（位运算与码表寻址）
+  2. 从零搭建原生 HTTP 服务器（Socket 与多请求处理）
+  3. 手写通用泛型栈数据结构（Comptime 泛型元编程）
+  4. 图像灰度滤镜开发（指针操作与 SIMD 向量化加速）
+- **轻量极致构建 (Zero-Dependency Pure Quarto Build)**: 中文版已彻底剥离 knitr/R 外部运行依赖，纯净 Quarto 一秒极速编译。
+
+## 🔍 Keywords / 关键词
+`Zig` · `Zig 编程语言` · `Zig 语言入门` · `Zig 教程` · `Zig 中文教程` · `Zig 实战教程` · `Zig 电子书` · `系统级编程` · `C 语言替代` · `Introduction to Zig` · `Zig Tutorial` · `Systems Programming` · `Comptime` · `Manual Memory Management` · `SIMD`
 
 This book is crafted using a modern, reproducible publishing stack, leveraging the power of:
 

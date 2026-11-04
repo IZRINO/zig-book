@@ -1,0 +1,376 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# 实战项目 2：从零手写 HTTP 服务器 {#sec-http-server-project}
+
+在这章里，咱们开启全书的第二个硬核实战项目：**从零手写一个极简 HTTP 服务器**。
+
+虽然 Zig 标准库本身在 `std.http.Server` 里提供了一套高层 HTTP 服务实现，但咱们这次的目标是**从零手搓（From scratch）**，顺着网线摸到底层 TCP 套接字和流读写，把 HTTP 协议和网络 I/O 的底层骨架彻底扒开来看个透彻！
+
+
+## 到底什么是 HTTP 服务器？
+
+剥开所有花哨的框架包装，任何服务器本质上都是一个**常驻后台的死循环程序**：它静静监听着某个端口，等待客户端（比如浏览器、手机 App、命令行 curl）发起连接。
+一旦有连接握手成功，服务器接纳（Accept）该连接，双方就通过这个双向字节流通道互发消息。
+
+而双方在通道里往来的文本报文，必须严格遵从一套约定俗成的通用格式规范——这就是统治现代万维网的 **HTTP 协议（超文本传输协议）**。没有它，我们今天熟悉的 Web 世界根本无从谈起。
+
+简单总结：所谓的 Web 服务器，就是守着端口、用 HTTP 协议规范跟客户端互通有无的 TCP 守护进程。
+如果想重温 HTTP 协议的官方规范概览，非常推荐阅读 [Mozilla MDN 上的 HTTP 概述文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview)[^mdn-http]。
+
+[^mdn-http]: <https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview>。
+
+
+## HTTP 服务器是怎样工作的？ {#sec-how-http-works}
+
+你可以把 HTTP 服务器想象成一家大型酒店前台的接待员：
+接待员整天坐在前台大堂，随时等待客人进门。
+
+当客人推门进来（客户端发起连接），前台接待员走上前跟他沟通：“先生您住几天？”（接收客户端的 **HTTP Request / 请求报文**）。
+随后前台查询空房、核对房型、刷卡结账，最后把房卡和账单递到客人手上：“为您办妥了，请拿好房卡”（给客户端回传 **HTTP Response / 响应报文**）。
+客人拿着房卡上楼休息后，本次交互告一段落（关闭连接），前台接待员转身回到前台，继续静静等待下一位客人光临。
+
+这就是 HTTP 服务器的核心运作循环：
+1. **等待客户端敲门**；
+2. **接纳连接**；
+3. **读取 HTTP Request**：弄清楚客户端到底想要啥（是拿网页、查 API、还是提交表单）；
+4. **业务处理**；
+5. **发送 HTTP Response**：把状态码（200、404 等）和数据吐回给客户端；
+6. **关闭连接**，重回等待状态。
+
+
+## 工业级底层服务是怎么实现的？ {#sec-http-how-impl}
+
+在底层（比如 C 语言世界），实现一个基础 HTTP 服务必须走完标准的 BSD/POSIX 套接字流程：
+
+1. **创建 Socket**：申请一个 TCP 套接字描述符（代表通讯管道）；
+2. **Bind（绑定）**：给套接字绑定一个具体的网络门牌号（IP 地址 + 端口号）；
+3. **Listen（监听）**：将套接字置于监听状态，开启操作系统的连接排队队列；
+4. **Accept（接纳）**：阻塞等待客户端连接到来，一旦到来就切出一个新的专属通信通道；
+5. **收发报文**：读取 Request 并写回 Response；
+6. **Close（关闭）**：挥手断开连接。
+
+
+## 动手实现服务器：第一阶段
+
+### 创建服务端网络对象 {#sec-create-socket}
+
+咱们先单独建一个 Zig 模块 `server.zig`，专门用来负责端口绑定和监听。
+
+随着 Zig 0.16 引入全新的统一网络 I/O 体系，我们直接基于现代化的 `std.Io.net` API 展开：通过 `std.Io.net.IpAddress` 解析 IP 端口并调用 `.listen()` 开启 TCP 监听。
+
+网络通信需要 IP 和端口：
+- **IP**：这里选用本机的回环地址（Loopback / Localhost）`127.0.0.1`；
+- **端口（Port）**：在 TCP 中是一个 16 位无符号整数（Zig 中的 `u16`），范围是 0 ~ 65535。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 `3490`。
+
+看下面封装的 `Server` 结构体：
+
+```zig
+const std = @import("std");
+const Socket = std.Io.net.Socket;
+const Protocol = std.Io.net.Protocol;
+
+pub const Server = struct {
+    host: []const u8,
+    port: u16,
+    addr: std.Io.net.IpAddress,
+    io: std.Io,
+
+    pub fn init(io: std.Io) !Server {
+        const host: []const u8 = "127.0.0.1";
+        const port: u16 = 3490;
+        const addr = try std.Io.net.IpAddress.parseIp4(
+            host, port
+        );
+
+        return .{.host=host, .port=port, .addr=addr, .io=io};
+    }
+
+    pub fn listen(self: Server) !std.Io.net.Server {
+        std.debug.print("Server Addr: {s}:{any}\n", .{self.host, self.port});
+        return try self.addr.listen(
+            self.io,
+            .{.mode=Socket.Mode.stream, .protocol=Protocol.tcp}
+        );
+    }
+};
+```
+
+
+### 监听并接收客户端连接
+
+在主程序 `main.zig` 中，我们引入刚才的 `server.zig`，开启监听并调用 `accept()` 等待连接：
+
+```zig
+const std = @import("std");
+const Server = @import("server.zig").Server;
+
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const server = try Server.init(io);
+    var listening = try server.listen();
+    const connection = try listening.accept(io);
+    defer connection.close(io);
+}
+```
+
+如果此时跑这个程序，终端会挂起（阻塞）——因为它正在死等客户端向 `127.0.0.1:3490` 发起 TCP 握手。
+
+*注意：在生产级 HTTP 服务中，通常会在一个无限 `while` 循环里不断 `accept`，并把每个新连接抛给一个独立的协程或线程处理，实现高并发并行吞吐。目前为了循序渐进，咱们先聚焦在处理单个连接上。*
+
+
+### 读取来自客户端的 HTTP 请求报文 {#sec-read-http-message}
+
+连接建立后，拿到的是一个双向的 `connection` 流对象：
+- 向流中**写入（Write）**数据 = 给客户端回送报文；
+- 从流中**读取（Read）**数据 = 接收客户端发送的报文。
+
+我们新建一个 `request.zig` 模块，编写 `read_request()` 函数，从 Socket 流里提取客户端发过来的请求内容：
+
+```zig
+const std = @import("std");
+const Stream = std.Io.net.Stream;
+
+pub fn read_request(io: std.Io, conn: Stream, buffer: []u8) !void {
+    var recv_buffer: [1024]u8 = undefined;
+    var reader = conn.reader(io, &recv_buffer);
+    const reader_interface = &reader.interface;
+    var start_index: usize = 0;
+    for (0..5) |_| {
+        const len = try read_next_line(reader_interface, buffer, start_index);
+        start_index += len;
+    }
+}
+
+fn read_next_line(reader: *std.Io.Reader, buffer: []u8, start_index: usize) !usize {
+    const next_line = try reader.takeDelimiterInclusive('\n');
+    @memcpy(
+        buffer[start_index..(start_index + next_line.len)],
+        next_line[0..],
+    );
+    return next_line.len;
+}
+```
+
+
+## 检验阶段性成果：捕捉真实浏览器请求
+
+把 `read_request` 接入 `main.zig`，并把收到的原始请求打印到终端：
+
+```zig
+const std = @import("std");
+const Request = @import("request.zig");
+const Server = @import("server.zig").Server;
+
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const server = try Server.init(io);
+    var listening = try server.listen();
+    const connection = try listening.accept(io);
+    defer connection.close(io);
+
+    var request_buffer: [1000]u8 = undefined;
+    @memset(request_buffer[0..], 0);
+    try Request.read_request(
+        io,
+        connection,
+        request_buffer[0..]
+    );
+
+    std.debug.print("{s}\n", .{request_buffer});
+}
+```
+
+敲下 `zig run src/main.zig`，控制台打印出监听地址并就绪：
+
+![终端执行并进入监听状态](../../Figures/print-zigrun1.png){#fig-print-zigrun1}
+
+打开浏览器访问 `http://localhost:3490`（或者跑一段简单的 Python 请求脚本）。此时浏览器会转圈，因为咱们还没写回传 Response 的逻辑；
+但回头看终端控制台，**浏览器亲手发送的真实 HTTP 请求报文已经被咱们抓个正着**！
+
+![终端成功抓包并打印出浏览器发来的真实 HTTP Request 报文](../../Figures/print-zigrun2.png){#fig-print-zigrun2}
+
+
+## 知识点加餐：Zig 枚举（Enums） {#sec-enum}
+
+在解析报文之前，我们先插播一个必不可少的语言特性：**枚举（Enums）**。
+
+当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE...），用枚举是类型安全的最优解：
+
+```zig
+const PrimaryColorRGB = enum {
+    RED, GREEN, BLUE
+};
+const acolor = PrimaryColorRGB.RED;
+_ = acolor;
+```
+
+如果手滑传错了不存在的枚举项，编译器在编译期就会立刻拦截报错：
+
+```zig
+const acolor = PrimaryColorRGB.MAGENTA;
+```
+
+```
+e1.zig:5:36: error: enum 'PrimaryColorRGB' has
+        no member named 'MAGENTA':
+    const acolor = PrimaryColorRGB.MAGENTA;
+                                   ^~~~~~~
+```
+
+而且在 Zig 里，**枚举跟结构体一样，内部可以挂载自定义方法**！
+
+
+## 动手实现服务器：第二阶段（请求解析与响应回传）
+
+HTTP 请求报文通常包含三部分：
+1. **起始行（Request Line）**：包含方法（Method）、请求路径（URI）和协议版本（HTTP Version），例如 `GET /users/list HTTP/1.1`；
+2. **请求头（Headers）**：由冒号分隔的键值对组成（如 `Host: localhost`、`Accept: text/html`）；
+3. **请求体（Body）**：POST/PUT 时携带的载荷数据（GET 请求通常没有 Body）。
+
+在当前项目中，我们聚焦于解析最重要的**起始行**，并完整支持 `GET` 方法。
+
+
+### 优雅的请求方法映射：`StaticStringMap`
+
+怎么把报文里的 `"GET"` 字符串快速转换成枚举呢？
+Zig 标准库提供了一个极度强悍的工具：`std.static_string_map.StaticStringMap`！
+它能在**编译期**根据一组固定字符串键值构建高效的静态字典，查找极快且不需要任何堆内存分配：
+
+```zig
+const std = @import("std");
+pub const Method = enum {
+    GET,
+    pub fn init(text: []const u8) !Method {
+        return MethodMap.get(text).?;
+    }
+    pub fn is_supported(m: []const u8) bool {
+        const method = MethodMap.get(m);
+        if (method) |_| {
+            return true;
+        }
+        return false;
+    }
+};
+const Map = std.static_string_map.StaticStringMap;
+const MethodMap = Map(Method).initComptime(.{
+    .{ "GET", Method.GET },
+});
+```
+
+
+### 解析起始行：`parse_request()`
+
+我们定义一个 `Request` 结构体，并通过标准库切分函数拆解首行：
+
+```zig
+const Request = struct {
+    method: Method,
+    version: []const u8,
+    uri: []const u8,
+    pub fn init(method: Method,
+                uri: []const u8,
+                version: []const u8) Request {
+        return Request{
+            .method = method,
+            .uri = uri,
+            .version = version,
+        };
+    }
+};
+
+pub fn parse_request(text: []u8) Request {
+    const line_index = std.mem.indexOfScalar(
+        u8, text, '\n'
+    ) orelse text.len;
+    var iterator = std.mem.splitScalar(
+        u8, text[0..line_index], ' '
+    );
+    const method = try Method.init(iterator.next().?);
+    const uri = iterator.next().?;
+    const version = iterator.next().?;
+    const request = Request.init(method, uri, version);
+    return request;
+}
+```
+
+
+### 编写 HTTP Response 响应回传
+
+最后一步，给客户端回传 HTTP 报文。
+新建 `response.zig`，分别实现 200 成功和 404 未找到两套标准响应：
+
+```zig
+const std = @import("std");
+const Stream = std.Io.net.Stream;
+
+pub fn send_200(conn: Stream, io: std.Io) !void {
+    const message = (
+        "HTTP/1.1 200 OK\nContent-Length: 48"
+        ++ "\nContent-Type: text/html\n"
+        ++ "Connection: Closed\n\n<html><body>"
+        ++ "<h1>Hello, World!</h1></body></html>"
+    );
+    var stream_writer = conn.writer(io, &.{});
+    _ = try stream_writer.interface.write(message);
+}
+
+pub fn send_404(conn: Stream, io: std.Io) !void {
+    const message = (
+        "HTTP/1.1 404 Not Found\nContent-Length: 50"
+        ++ "\nContent-Type: text/html\n"
+        ++ "Connection: Closed\n\n<html><body>"
+        ++ "<h1>File not found!</h1></body></html>"
+    );
+    var stream_writer = conn.writer(io, &.{});
+    _ = try stream_writer.interface.write(message);
+}
+```
+
+
+## 完整串联：真正的“Hello, World!”网页现身
+
+把全部模块在 `main.zig` 里大一统串联起来：
+
+```zig
+const std = @import("std");
+const Method = @import("request.zig").Method;
+const Request = @import("request.zig");
+const Response = @import("response.zig");
+const Server = @import("server.zig").Server;
+
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const server = try Server.init(io);
+    var listening = try server.listen();
+    const connection = try listening.accept(io);
+    defer connection.close(io);
+
+    var request_buffer: [1000]u8 = undefined;
+    @memset(request_buffer[0..], 0);
+    try Request.read_request(
+        io,
+        connection,
+        request_buffer[0..]
+    );
+    const request = Request.parse_request(request_buffer[0..]);
+    if (request.method == Method.GET) {
+        if (std.mem.eql(u8, request.uri, "/")) {
+            try Response.send_200(connection, io);
+        } else {
+            try Response.send_404(connection, io);
+        }
+    }
+}
+```
+
+再次敲下 `zig run` 并用浏览器刷新 `http://localhost:3490`！
+这一次，浏览器窗口里瞬间赫然弹出了大号加粗的 **"Hello, World!"** 网页！
+
+![浏览器成功收到我们亲手写的 HTTP 服务器响应并渲染出 HTML 网页](../../Figures/print-zigrun3.png){#fig-print-zigrun3}
+
+从原始 TCP 监听，到逐行拆解 HTTP 请求，再到亲手拼接标准的 HTTP 状态行与 HTML 报文——不依赖任何现成 Web 框架，你亲手造出了一个货真价实跑在本地的 HTTP 服务！

@@ -331,6 +331,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Introduction to Zig</a> 
         <div class="sidebar-tools-main">
+  <a href="../zh-CN/Chapters/01-memory.html" title="切换到中文版" class="quarto-navigation-tool px-1" aria-label="中文版"><i class="bi bi-globe"></i> <span style="font-size: 0.82rem; font-weight: 500;">中文</span></a>
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
@@ -1341,5 +1342,30 @@ Zig Software Foundation. 2024. <em>Language Reference</em>. Zig Software Foundat
 
 
 
+
+<script id="quarto-lang-switch-sync">
+document.addEventListener('DOMContentLoaded', function() {
+  var isZh = window.location.pathname.indexOf('/zh-CN/') !== -1;
+  var path = window.location.pathname;
+  var hash = window.location.hash || '';
+  
+  var links = document.querySelectorAll('a[aria-label="中文版"], a[aria-label="English"]');
+  links.forEach(function(link) {
+    var target = '';
+    if (isZh) {
+      target = path.replace('/zh-CN/', '/');
+    } else {
+      if (path.endsWith('/') || path.endsWith('/index.html')) {
+        target = path.replace(/\/index\.html$/, '').replace(/\/$/, '') + '/zh-CN/index.html';
+      } else {
+        target = path.replace('/Chapters/', '/zh-CN/Chapters/');
+      }
+    }
+    if (target) {
+      link.setAttribute('href', target + hash);
+    }
+  });
+});
+</script>
 
 </body></html>

@@ -1,0 +1,374 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+
+``
+
+
+# 内存与分配器（Allocators） {#sec-memory-chap}
+
+在这一章中，咱们来死磕底层开发最核心的话题——**内存**。
+Zig 究竟是如何管理与调度内存的？日常开发中有哪些顺手的工具？又有哪些独特设计让 Zig 的内存模型与众不同？看完本章，你心中就会有清晰的答案。
+
+计算机的一切运算都建立在内存基础之上。内存就像一张临时工作台，用来安放计算过程中产生的所有临时数据。没有内存，编程语言里的“变量”与“对象”就成了无源之水。
+
+
+## 计算机的三大内存空间
+
+在 Zig 源码中定义的每一个对象，在底层硬件中都必须有一块安身立命的物理内存。
+根据定义位置和方式的不同，Zig 会把对象分配到不同的“内存区域”中。
+
+在 Zig 里，我们最关心的内存区域主要有 3 个：
+
+1. **全局数据段（Global Data Section）**；
+2. **栈（Stack）**；
+3. **堆（Heap）**。
+
+
+### 编译期已知 vs 运行时已知 {#sec-compile-time}
+
+Zig 在决定把一个对象塞到哪个内存空间时，核心评判标准之一就是：**这个值到底是在“编译期”就已知，还是必须等“运行时”才能算出来？**
+
+如果一个对象的值在编译阶段就已经白纸黑字写死在源码里，编译器在编译时就能把它的具体数值和字节大小算得一清二楚，这就是**编译期已知（Compile-time known）**。
+
+对 `zig` 编译器来说，它其实最在乎的是**对象的长度/占用空间大小（Size）**，其次才是具体的数值。当然，如果值已知，那大小自然水落石出。
+
+因此，编译器的首要任务是摸清每个对象到底占多少字节：
+- 如果值在编译期已知，那大小自动敲定；
+- 如果值要在运行时才能算出，那么只有当**该对象的类型具备固定的物理尺寸**时，其大小才算编译期已知。
+
+什么叫“具有固定的物理尺寸”？比如 `u32` 占 4 字节、`[10]u8` 占 10 字节。
+反过来，如果类型里包含一个长度不定的切片 `[]const u8`，那它在编译期就属于“尺寸不固定”。因为在运行时这个切片可能装 2 个元素，也可能装 1000 个元素，编译器根本没法未卜先知。
+
+举个日常开发的场景：一个接受用户名字符串的函数，可能收到 3 个字符的短名字，也可能收到 100 个字符的长名字。这种入参切片的实际长度，显然只能留到程序跑起来（运行时）由外部输入决定。
+
+看下面这个例子：
+
+```zig
+fn input_length(input: []const u8) usize {
+    const n = input.len;
+    return n;
+}
+
+pub fn main() !void {
+    const name = "Pedro";
+    const array = [_]u8{1, 2, 3, 4};
+    _ = name; _ = array;
+}
+```
+
+在 `main()` 函数里，常量 `name` 和 `array` 的内容直接硬编码在源码中，编译器一眼就能把它们算出来，这就是典型的编译期已知。
+
+而在 `input_length()` 函数里，形参 `input` 是一个动态切片 `[]const u8`。在编译时，编译器根本猜不到谁会调它、会传多长的串进来。所以 `input` 的内容和长度都属于“运行时已知”。
+
+不过请注意：虽然 `input.len` 的具体数值是运行时才能拿到的，但承接结果的变量 `n` 的类型是 `usize`，而 `usize` 本身的内存占用在当前平台上是完全固定的（64 位系统上就是 8 字节）。所以 `n` 所需的内存空间在编译期依然是确定的。
+
+
+### 全局数据段（Global Data Register / Section）
+
+全局数据段是最终编译出来的二进制可执行文件中的一个静态区域，专门存放所有在编译期就彻底确定下来的数据。
+
+你在源码里写的所有字面量（比如字符串字面量 `"this is a string"`、整数 `10`、布尔值 `true`），以及所有在编译期已知且不可变的常量，统统被烘焙到了二进制文件的全局数据段里。
+
+日常写代码时大家基本不需要特意操心这个区域，它是只读且随程序载入自动存在的，开发者既不用手动申请，也不用手动释放。
+
+
+### 栈内存 vs 堆内存
+
+在系统级开发圈子里，“栈（Stack）还是堆（Heap）”永远是绕不开的经典话题。
+初学者经常容易被“Stack vs Heap”这种字眼误导，以为它俩是非此即彼的对立关系。其实不然！在真实项目中，**栈和堆是紧密互补的搭档**，几乎每一个像样的 Zig 程序都在同时结合使用两者。
+
+先一句话概括它俩的核心分工：
+- **栈（Stack）**：速度极快，用于存放**生命周期跟随代码块、且尺寸在编译期固定已知**的局部数据；
+- **堆（Heap）**：容量极大、灵活多变，专门用于存放**尺寸动态变化、或者生命周期需要跨越作用域**的动态数据 [@jenny2022]。
+
+
+### 深入剖析栈内存（Stack） {#sec-stack}
+
+栈内存之所以叫“栈”，是因为它在底层的管理方式完全遵循数据结构里的**后进先出（LIFO - Last In, First Out）**机制。
+
+在 Zig 中，每次发生函数调用，操作系统就会在栈顶为该函数切出一块专属的**栈帧（Stack Frame）** [@jenny2022; @zigdocs]。
+函数的所有形参、以及在函数体大括号内声明的局部变量，通通存放在这个专属栈帧里。
+
+看下面这个例子：
+
+```zig
+fn add(x: u8, y: u8) u8 {
+    const result = x + y;
+    return result;
+}
+
+pub fn main() !void {
+    const r = add(5, 27);
+    _ = r;
+}
+```
+
+在上面的代码里，`result` 是 `add()` 内部的局部变量，存放在 `add` 的栈帧里；而 `main()` 里的 `r` 则存放在 `main` 的栈帧里。
+
+**栈内存最大的杀手级特性是：全自动释放！**
+只要函数执行完毕 return 返回，它对应的整个栈帧会被瞬间弹出并销毁，里面的所有局部变量灰飞烟灭。开发者完全不需要写一行代码去释放栈上的局部变量。
+
+::: {.callout-important}
+**核心认知**：分配在栈上的局部对象，在离开其所属的花括号作用域时，会被系统全自动销毁，不需要也不应该手动清理。
+:::
+
+不仅是函数，`for` 循环、`if` 分支等任何用花括号 `{}` 圈出来的作用域也是同样的道理。出了大括号，里面的局部变量就彻底失效了：
+
+```zig
+// 这段代码根本编译不过！
+const a = [_]u8{0, 1, 2, 3, 4};
+for (0..a.len) |i| {
+    const index = i;
+    _ = index;
+}
+// 试图在循环体外面访问 index，直接报错，因为栈变量早随着作用域销毁了
+std.debug.print("{d}\n", .{index});
+```
+
+#### 绝对不要返回指向栈上局部变量的指针！
+
+正因为栈内存在函数退出时会自动销毁，所以衍生出一条系统编程里的保命铁律：**千！万！不！要！在函数里返回指向自身栈局部变量的指针！**
+
+想想看：函数一返回，栈帧瞬间被覆写回收，你手里拿到的那个指针指向的就是一块已经作废的内存废墟。如果你拿着这个悬垂指针去解引用读写，就会引发灾难级的未定义行为（Undefined Behavior, UB）！
+
+看下面这段毒代码：
+
+```zig
+fn add(x: u8, y: u8) *const u8 {
+    const result = x + y;
+    return &result; // 极其危险！返回了局部栈变量的指针！
+}
+
+pub fn main() !void {
+    // 编译虽然勉强能过，但跑起来就是纯纯的未定义行为（UB），绝对严禁这么写！
+    const r = add(5, 27); _ = r;
+}
+```
+
+在 C/C++ 社区，这个天坑让无数人交过血泪学费。在 Zig 里也一样：如果函数只是返回**计算结果的值拷贝**（比如直接返回 `u8`），那一点毛病没有；但如果想把一个对象持久化并把指针交出去，唯一的正道就是——**把数据分配到堆上**！
+
+
+### 深入剖析堆内存（Heap） {#sec-heap}
+
+栈虽然快如闪电，但有两个致命硬伤：
+1. 尺寸必须在编译期定死；
+2. 离开作用域立即自毁。
+
+这时候就需要堆内存来挑大梁了！
+堆是极其开阔且灵活的动态内存空间，专为“运行时动态扩容”和“持久跨作用域生命周期”而生。
+
+典型的例子是网络服务器（HTTP 服务、RPC 网关等）：服务器在启动前根本无法预估今天会涌进来 1 个请求还是 10 万个请求，每个请求上传的报文到底有多大。这种动态伸缩的业务场景，只能由堆内存来承载。
+
+但世界上没有免费的午餐：**堆内存带来了极致的自由度，代价是所有权与生命周期的管控责任完全落在了程序员的肩上！**
+
+> 与全自动回收的栈不同，堆上的每一寸内存，都必须由开发者显式申请，且在用完后显式释放 [@jenny2022]。
+
+在 Zig 里，你想动用堆内存，唯一合法的手段就是通过**分配器（Allocator）**去 `alloc()` 或 `create()`。
+
+::: {.callout-important}
+**底层铁律**：在堆上申请的每一片内存，都必须在用完后由你亲手释放！绝不能有头无尾。
+:::
+
+
+### 内存空间决策速查表
+
+总结一下 `zig` 编译器分配存储位置的内在逻辑：
+
+1. **字面量**（如 `"abc"`、`123`）：存放于全局只读数据段；
+2. **编译期已知常量的 `const` 对象**：存放于全局数据段；
+3. **长度在编译期固定的局部变量/常量**：存放于当前栈帧；
+4. **通过分配器的 `alloc()` 或 `create()` 申请的对象**：存放于该分配器管辖的内存池中（除固定栈缓冲区等特殊类型外，通常为堆内存）；
+5. **堆内存唯一的合法访问入口是 Allocator**。如果不经 Allocator，你绝不可能凭空拿到堆内存。
+
+
+## 栈溢出（Stack Overflow） {#sec-stack-overflow}
+
+栈分配快归快，但容量非常有限（通常只有几兆字节）。
+如果你试图在栈上申请一个巨大无比的数组，或者写了个死递归把调用栈堆穿，就会瞬间触发**栈溢出（Stack Overflow）**，操作系统会立刻强行掐死程序（抛出经典的 Segmentation Fault / 段错误）：
+
+```zig
+var very_big_alloc: [1000 * 1000 * 24]u64 = undefined;
+@memset(very_big_alloc[0..], 0);
+```
+
+```
+Segmentation fault (core dumped)
+```
+
+所以，大号数据和超长缓冲区千万别硬塞在栈上，老老实实用堆！
+
+
+## 分配器（Allocators）：Zig 的灵魂基石 {#sec-allocators}
+
+在 Zig 的设计哲学里，有一条震撼整个系统开发圈的原则：**“在 Zig 里，标准库绝不存在任何暗中瞒着你的隐藏内存分配！”** [@zigguide]。
+
+写过 C++ 的朋友对此肯定深恶痛绝：很多 STL 容器和操作符会在背后偷偷调用全局 `malloc` 分配堆内存，表面看人畜无害，底层却频频引发内存碎片和偶发卡顿，不深扒源码根本抓不出是谁干的。
+
+**而在 Zig 里，规则透明到了极致：如果一个标准库函数或第三方库在执行过程中需要开辟内存，它就必须显式要求调用者在入参里传一个 `Allocator` 进来！**
+
+这就形成了一条一目了然的判别法则：
+**看一个函数的入参列表，只要里面没有带 Allocator，你就敢 100% 拍胸脯保证：它绝不会私自在堆上偷偷申请任何内存！**
+
+以标准库的 `std.fmt.allocPrint()` 为例（它类似 C 的 `sprintf`，用于动态拼装格式化字符串）：因为需要根据格式化结果动态申请内存，它的第一个形参就是 `allocator`：
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
+const name = "Pedro";
+const output = try std.fmt.allocPrint(
+    allocator,
+    "Hello {s}!!!",
+    .{name}
+);
+try stdout.print("{s}\n", .{output});
+try stdout.flush();
+```
+
+由调用者来掌控“用哪种分配器、分配到哪里”，这才是真正的“内存全权掌控”。
+
+
+### 什么是 Allocator？
+
+在 Zig 中，Allocator 是所有动态内存分配策略的通用抽象接口（类似于 C 里的 `malloc`/`free` 套件，但更加模块化）。
+Zig 标准库在 `std.heap` 模块下预置了多种专精于不同场景的现成分配器。
+
+无论底层是哪种具体分配器，它们对外都实现了统一的 `Allocator` 接口，标配提供以下核心方法：
+- `alloc()` / `free()`：用于申请和释放一组连续元素的切片（动态数组）；
+- `create()` / `destroy()`：用于申请和释放单个独立对象。
+
+这就意味着你的业务代码可以无缝切换不同的底层分配器，而上层业务调用的 API 签名完全不需要变动。
+
+
+### 常用分配器家族大盘点
+
+目前 Zig 标准库最常用的几种分配器包括：
+
+1. **`DebugAllocator()`（通用调试分配器 / GPA）**：
+   日常开发和单测的首选！它不仅能分配内存，更重要的是**自带内存泄漏检测与非法指针检测**！只要代码跑完忘了释放，它会把泄漏发生的行号清清楚楚打印出来。
+2. **`page_allocator`（页分配器）**：
+   直接向操作系统请求整页内存（通常一页是 4KB）。速度飞快，但如果只存几个字节会造成极大的内存浪费。一般用来做底层大块内存的初始背书。
+3. **`FixedBufferAllocator()`（固定缓冲区分配器 / FBA）**：
+   由你预先提供一段固定大小的 buffer（可以放在栈上也可以放在堆上），它在这个限定的圈子里划分内存。绝无动态扩容开销，嵌入式和极致高性能场景神器。
+4. **`ArenaAllocator()`（竞技场分配器 / 区域分配器）**：
+   开发效率天花板！它包裹另一个底层分配器，允许你在业务里放肆 `alloc()` 几十上百次，用完之后只需调用一次 `arena.deinit()`，整块内存**一键打包全部销毁**！彻底告别写满屏幕 `defer free()` 的繁琐。
+5. **`c_allocator`（C 标库分配器）**：
+   底层直接桥接 C 标准库的 `malloc()` 和 `free()`。需要编译时开启 `-lc` 链接 C 运行时。
+
+
+### 实战：DebugAllocator（通用分配器）
+
+先看最经典的用法：
+
+```zig
+const std = @import("std");
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    const some_number = try allocator.create(u32);
+    defer allocator.destroy(some_number);
+
+    some_number.* = @as(u32, 45);
+}
+```
+
+
+### 实战：FixedBufferAllocator（定长缓冲区分配）
+
+看下面这段代码：我们预先在栈上准备了一个仅有 10 字节的 `buffer` 数组，然后用它初始化一个 `FixedBufferAllocator`。后续所有的 `alloc` 都在这 10 个字节里瓜分。如果超额申请，会直接干净利落地返回 `OutOfMemory` 错误：
+
+```zig
+var buffer: [10]u8 = undefined;
+for (0..buffer.len) |i| {
+    buffer[i] = 0; // 初始化清零
+}
+
+var fba = std.heap.FixedBufferAllocator.init(&buffer);
+const allocator = fba.allocator();
+const input = try allocator.alloc(u8, 5);
+defer allocator.free(input);
+```
+
+
+### 神器：ArenaAllocator（一键批量释放） {#sec-arena-allocator}
+
+写底层代码最怕的就是申请了十几个复杂结构体，每个都得小心翼翼写 `defer free`，万一漏一个就发生内存泄漏。
+这时候 `ArenaAllocator` 就是救星！
+
+它采用类似“包工头”的思路：底层对接一个真实分配器（比如 GPA），在上层只管疯狂申请；当这批业务搞定后，只要调用一次 `aa.deinit()`，前面申请的所有小内存块被瞬间一锅端回收：
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+var aa = std.heap.ArenaAllocator.init(gpa.allocator());
+defer aa.deinit(); // 离开作用域时，aa 内部申请的所有内存一键全部释放！
+const allocator = aa.allocator();
+
+const in1 = try allocator.alloc(u8, 5);
+const in2 = try allocator.alloc(u8, 10);
+const in3 = try allocator.alloc(u8, 15);
+_ = in1; _ = in2; _ = in3;
+```
+
+在写编译器、解释器、CLI 脚本、或者单次 HTTP 请求处理流程中，Arena 模式是极其推崇的工业级最佳实践。
+
+
+### 动态切片分配：`alloc()` 与 `free()`
+
+当需要开辟一块能装多个元素的连续缓冲区时，用 `alloc(Type, count)`：
+
+```zig
+const std = @import("std");
+
+pub fn main(init: std.process.Init) !void {
+    var stdin_buffer: [1024]u8 = undefined;
+    var stdin_reader = std.Io.File.stdin().reader(init.io, &stdin_buffer);
+    const stdin = &stdin_reader.interface;
+
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+
+    // 在堆上开辟能放 50 个 u8 的缓冲区
+    var input = try allocator.alloc(u8, 50);
+    defer allocator.free(input);
+    @memset(input[0..], 0);
+
+    // 读取用户输入直到遇到换行符
+    const stream = try stdin.takeDelimiterExclusive('\n');
+    @memcpy(input[0..stream.len], stream[0..]);
+    std.debug.print("{s}\n", .{input});
+}
+```
+
+配合 `defer allocator.free(input)` 贴身释放，代码整洁且绝无泄漏可能。
+
+
+### 单对象专属分配：`create()` 与 `destroy()`
+
+如果只需要存**单个独立对象**（比如一个单独的结构体实例），不要滥用 `alloc` 去搞个长度为 1 的数组切片，正规军是用 `create()` 和 `destroy()`：
+
+```zig
+const std = @import("std");
+const User = struct {
+    id: usize,
+    name: []const u8,
+
+    pub fn init(id: usize, name: []const u8) User {
+        return .{ .id = id, .name = name };
+    }
+};
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    const user = try allocator.create(User);
+    defer allocator.destroy(user);
+
+    user.* = User.init(0, "Pedro");
+}
+```
+
+记住这组搭档关系：
+- 数组切片批量存：`alloc` 对应 `free`；
+- 单个实体单独存：`create` 对应 `destroy`。

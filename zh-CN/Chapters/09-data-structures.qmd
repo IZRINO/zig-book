@@ -1,0 +1,331 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+
+# 常用数据结构（Data Structures） {#sec-data-structures}
+
+在这章中，咱们来系统盘点 Zig 标准库中日常出镜率最高的核心通用数据结构：动态数组 `ArrayList`、各种专精场景的哈希表 `HashMap`、链表 `LinkedList`，以及在高性能和游戏开发圈大放异彩的 `MultiArrayList`。
+
+
+## 动态数组：`std.ArrayList` {#sec-dynamic-array}
+
+在 Python 或 JavaScript 等高级语言里，列表天生就是动态伸缩的。
+但在 C、C++、Rust 和 Zig 等底层语言中，原生数组默认都是尺寸固定的静态数组（@sec-arrays）。
+对应到 C++ 的 `std::vector` 和 Rust 的 `Vec`，Zig 官方给出的工业级动态数组解决方案就是 **`std.ArrayList`**。
+
+`std.ArrayList` 底层维护了一块连续的内存空间。当元素塞满时，它会自动在堆上开辟一块更大的连续新内存，把旧数据整体搬迁（Copy）过去，并把先前的老内存释放掉。
+
+
+### 容量（Capacity）与长度（Length）的区别
+
+聊动态数组，必须分清两个概念：
+- **容量（Capacity）**：底层这块内存当前最多能装多少个元素（超出必须扩容）；
+- **长度（Length / Size）**：当前容器里实际已经装进去了多少个元素（即 `items.len`）。
+
+在日常运行中，动态数组通常会预留一部分空闲缓冲槽位，这就是容量与长度的差值。
+
+![动态数组的容量（Capacity）与长度（Length）示意图](../../Figures/dynamic-array.png){#fig-capacity-length}
+
+如图 @fig-capacity-length 所示：当 `length == capacity` 撞线时，就代表池子满了。下一次追加元素就会触发**重分配扩容（Reallocation）**。
+因为扩容涉及“申请新大内存 -> 批量数据拷贝 -> 释放旧内存”，开销非常昂贵。
+
+::: {.callout-tip}
+**开发避坑诀窍**：如果你在初始化时大致能预估数据规模，**强烈建议优先使用 `initCapacity()` 预先分配好容量**，直接将昂贵的动态扩容次数降到最低！
+:::
+
+```zig
+// 读取当前容量
+buffer.capacity;
+// 读取当前已存长度
+buffer.items.len;
+```
+
+
+### 创建与初始化 `ArrayList`
+
+因为要在堆上申请内存，初始化必须显式喂给它一个 Allocator。
+同时需要传入元素类型，比如 `std.ArrayList(u8)` 或自定义的结构体 `std.ArrayList(User)`：
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
+var buffer = try std.ArrayList(u8)
+    .initCapacity(allocator, 100);
+defer buffer.deinit(allocator);
+```
+
+
+### 追加元素：`append()` 与 `appendSlice()`
+
+```zig
+try buffer.append(allocator, 'H');
+try buffer.appendSlice(allocator, "ello World!");
+```
+
+
+### 删除元素：`orderedRemove` vs `swapRemove` {#sec-dynamic-array-remove}
+
+- **`pop()`**：弹掉并返回尾部最后一个元素；
+- **`orderedRemove(index)`**：删除指定下标元素，**保持原有相对顺序**（底层会把 index 之后的所有元素往前平移一位，时间复杂度 $O(n)$）；
+- **`swapRemove(index)`（性能神器）**：如果你不在意顺序，用它！它直接把数组**末尾的最后一个元素瞬移过来填坑**，然后尾部指针自减，时间复杂度直接打到常数级 **$O(1)$**！
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
+var buffer = try std.ArrayList(u8)
+    .initCapacity(allocator, 100);
+defer buffer.deinit(allocator);
+
+for (0..10) |i| {
+    const index: u8 = @intCast(i);
+    try buffer.append(allocator, index);
+}
+
+std.debug.print(
+    "{any}\n", .{buffer.items}
+);
+_ = buffer.orderedRemove(3);
+_ = buffer.orderedRemove(3);
+
+std.debug.print("{any}\n", .{buffer.items});
+std.debug.print("{any}\n", .{buffer.items.len});
+```
+
+```
+{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+{ 0, 1, 2, 5, 6, 7, 8, 9 }
+8
+```
+
+
+### 指定位置插入：`insert()` 与 `insertSlice()`
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
+var buffer = try std.ArrayList(u8)
+    .initCapacity(allocator, 10);
+defer buffer.deinit(allocator);
+
+try buffer.appendSlice(allocator, "My Pedro");
+try buffer.insert(allocator, 4, '3');
+try buffer.insertSlice(allocator, 2, " name");
+for (buffer.items) |char| {
+    try stdout.print("{c}", .{char});
+}
+try stdout.flush();
+```
+
+```
+My name P3edro
+```
+
+
+## 哈希表家族（Maps / HashTables） {#sec-maps-hashtables}
+
+哈希表通过哈希函数将键（Key）映射到底层数组的桶位（Buckets），提供近乎 $O(1)$ 的高速增删查改。
+
+![哈希表底层桶位映射示意图](../../Figures/hashtable.svg){#fig-hashtable}
+
+在 Zig 标准库中，官方针对不同场景量身定制了多种哈希表变体：
+
+### 1. 通用哈希表：`AutoHashMap(K, V)` {#sec-hashmap}
+
+最通用的哈希表，底层自动挑选最优哈希算法：
+
+```zig
+const std = @import("std");
+const AutoHashMap = std.hash_map.AutoHashMap;
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    var hash_table = AutoHashMap(u32, u16).init(allocator);
+    defer hash_table.deinit();
+
+    try hash_table.put(54321, 89);
+    try hash_table.put(50050, 55);
+    try hash_table.put(57709, 41);
+    std.debug.print(
+        "N of values stored: {d}\n",
+        .{hash_table.count()}
+    );
+    std.debug.print(
+        "Value at key 50050: {d}\n",
+        .{hash_table.get(50050).?}
+    );
+
+    if (hash_table.remove(57709)) {
+        std.debug.print(
+            "Value at key 57709 successfully removed!\n",
+            .{}
+        );
+    }
+    std.debug.print(
+        "N of values stored: {d}\n",
+        .{hash_table.count()}
+    );
+}
+```
+
+#### 遍历哈希表
+
+使用 `iterator()` 拿到迭代器，在 `while` 中通过 `kv.key_ptr.*` 和 `kv.value_ptr.*` 读取键值：
+
+```zig
+const std = @import("std");
+const AutoHashMap = std.hash_map.AutoHashMap;
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    var hash_table = AutoHashMap(u32, u16).init(allocator);
+    defer hash_table.deinit();
+
+    try hash_table.put(54321, 89);
+    try hash_table.put(50050, 55);
+    try hash_table.put(57709, 41);
+
+    var it = hash_table.iterator();
+    while (it.next()) |kv| {
+        std.debug.print("Key: {d} | ", .{kv.key_ptr.*});
+        std.debug.print("Value: {d}\n", .{kv.value_ptr.*});
+    }
+}
+```
+
+### 2. 高速有序哈希表：`ArrayHashMap` / `AutoArrayHashMap` {#sec-array-map}
+
+如果你在业务中需要**频繁遍历全表**，或者**必须严格保证插入顺序（Insertion Order）**，请使用 `AutoArrayHashMap`！
+它将键值对保存在连续数组中，遍历性能极快，Cache 局部性极高。
+
+### 3. 字符串键专属哈希表：`StringHashMap` 与 `StringArrayHashMap` {#sec-string-hash-map}
+
+注意：普通的 `AutoHashMap` 不能直接拿字符串切片 `[]const u8` 当 Key（因为切片是胖指针，直接比较会对比指针地址而非字符串内容）。
+
+要用字符串做 Key，请使用官方专门打造的 **`std.StringHashMap(V)`**（以及保序的 `std.StringArrayHashMap(V)`）：
+
+```zig
+const std = @import("std");
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    var ages = std.StringHashMap(u8).init(allocator);
+    defer ages.deinit();
+
+    try ages.put("Pedro", 25);
+    try ages.put("Matheus", 21);
+    try ages.put("Abgail", 42);
+
+    var it = ages.iterator();
+    while (it.next()) |kv| {
+        std.debug.print("Key: {s} | ", .{kv.key_ptr.*});
+        std.debug.print("Age: {d}\n", .{kv.value_ptr.*});
+    }
+}
+```
+
+
+## 链表（Linked Lists）
+
+Zig 标准库在 `std.SinglyLinkedList` 和 `std.DoublyLinkedList` 中提供了原生单双向链表。
+
+![单向链表结构示意图](../../Figures/linked-list.png){#fig-linked-list}
+
+![双向链表结构示意图](../../Figures/doubly-linked-list.png){#fig-linked-list2}
+
+### 侵入式设计与 `@fieldParentPtr`
+
+Zig 的链表采用了类似 Linux 内核的经典**侵入式链表设计**：节点结构 `node: std.SinglyLinkedList.Node` 作为一个字段直接嵌入到你的业务结构体中。
+在遍历时，通过 Zig 内置的 `@fieldParentPtr` 函数，从 `node` 指针反向计算并获得外部宿主结构体的真实指针：
+
+```zig
+const NodeU32 = struct {
+    data: u32,
+    node: std.SinglyLinkedList.Node = .{},
+};
+
+var list: std.SinglyLinkedList = .{};
+var one: NodeU32 = .{ .data = 1 };
+var two: NodeU32 = .{ .data = 2 };
+var three: NodeU32 = .{ .data = 3 };
+var five: NodeU32 = .{ .data = 5 };
+
+list.prepend(&two.node); // {2}
+list.prepend(&five.node); // {5, 2}
+list.prepend(&three.node); // {3, 5, 2}
+list.prepend(&one.node); // {1, 3, 5, 2}
+
+var it = list.first;
+while (it) |node| : (it = node.next) {
+    const l: *NodeU32 = @fieldParentPtr(
+        "node", node
+    );
+    try stdout.print(
+        "Current value: {}", .{l.data}
+    );
+}
+try stdout.flush();
+```
+
+
+## 降维打击：面向数据设计的 `MultiArrayList`（SoA 架构）
+
+在游戏引擎、渲染器和大数据批处理领域，面向对象传统的“结构体数组（AoS, Array of Structs）”往往会导致灾难性的 CPU 缓存未命中（Cache Miss）。
+
+假设有 `Person` 结构体：
+
+```zig
+const Person = struct {
+    name: []const u8,
+    age: u8,
+    height: f32,
+};
+```
+
+如果用传统的 `ArrayList(Person)`，内存中的布局是：
+`[Person0, Person1, Person2...]`。当你的逻辑仅仅想统计全员的 `age` 时，CPU 每次把数据载入缓存行，都不得不把无关的 `name` 和 `height` 也一起搬上总线，内存带宽浪费高达 70%！
+
+而 Zig 官方内置了 **`std.MultiArrayList`**——它在底层直接将数据重构成**数组的结构体（SoA, Struct of Arrays）**！
+
+![MultiArrayList（SoA）内部物理内存拆分示意图](../../Figures/multi-array.png){#fig-multi-array}
+
+它在底层将每个字段拆解为各自独立的平行动态数组：
+- 一个连续数组只放所有人的 `name`；
+- 一个连续数组只放所有人的 `age`；
+- 一个连续数组只放所有人的 `height`。
+
+当你只需要遍历年龄时，调 `people.items(.age)`，CPU 能以满格的缓存行利用率做连续向量化吞吐，速度直接拉升一个数量级：
+
+```zig
+const std = @import("std");
+const Person = struct {
+    name: []const u8,
+    age: u8,
+    height: f32,
+};
+const PersonArray = std.MultiArrayList(Person);
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+    var people = PersonArray{};
+    defer people.deinit(allocator);
+
+    try people.append(allocator, .{
+        .name = "Auguste", .age = 15, .height = 1.54
+    });
+    try people.append(allocator, .{
+        .name = "Elena", .age = 26, .height = 1.65
+    });
+    try people.append(allocator, .{
+        .name = "Michael", .age = 64, .height = 1.87
+    });
+}
+```
+
+在性能极其敏感的场景下，`MultiArrayList` 绝对是 Zig 献给开发者的极致工程礼物！

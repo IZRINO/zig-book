@@ -1,0 +1,297 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+
+# 错误处理与联合体（Unions） {#sec-error-handling}
+
+在这章中，咱们来把 Zig 的**错误处理（Error Handling）体系**以及**联合体（Unions）**彻底聊透。
+在前面的 @sec-main-file 里，大家已经见识过 `try` 关键字的威力。但 Zig 的错误处理工具箱远不止这些，`catch`、错误集（Error sets）、`errdefer` 以及带标签联合体（Tagged Unions），才是构建坚不可摧的大型底层系统的核心利刃。
+
+
+## 核心认知：错误是一等公民的值（Errors as Values）
+
+在搞懂具体语法前，首先必须建立起对 Zig 错误哲学的认知：**在 Zig 里，错误本质上是一个实在的具体数值（Value）！** [@zigoverview]
+它既不是隐秘抛出、不知在何处被接住的运行时异常（Exception），也不是深不见底的黑盒。
+错误值可以像普通整数一样在函数间传递、可以存入变量、可以进行集合转换。
+
+写惯了 Python 或 C++ 的同学可能习惯了抛异常（`throw`）。但在那些语言里，调用方很容易因遗漏 `try-catch` 而导致未捕获异常一路击穿整个调用栈。
+**而在 Zig 里，所有可能发生的错误都必须显式处理，编译器绝不允许你视而不见！**
+你甚至不能像对待普通变量那样，用下划线 `_` 随手把一个错误联合结果丢弃掉：
+
+```zig
+const cwd = std.Io.Dir.cwd();
+// 试图对可能报错的操作用下划线蒙混过关
+_ = cwd.openFile(
+    init.io, "doesnt_exist.txt", .{ .mode = .write_only }
+);
+```
+
+编译器一眼识破并当场报错：
+
+```
+t.zig:8:17: error: error set is discarded
+t.zig:8:17: note: consider using 'try', 'catch', or 'if'
+```
+
+编译器会直接提醒你：“这里返回的是错误集，麻烦老老实实用 `try`、`catch` 或者 `if` 处理干净！”
+
+
+### 从函数中返回错误：感叹号 `!` 与错误联合
+
+如果一个函数在执行过程中可能会报错，那它的返回值类型签名里就必须带上感叹号 `!`（表示错误联合 Error Union）：
+
+```zig
+fn print_name(stdout: *std.Io.Writer) !void {
+    try stdout.print("My name is Pedro!", .{});
+    try stdout.flush();
+}
+```
+
+在上面的 `!void` 中，感叹号左侧没有显式指定错误类型，这叫**推导错误联合（Inferred Error Set）**，由编译器自动分析函数体推导可能抛出的错误集合。
+
+而在正规库开发中，为了保证严谨性和自解释文档能力，我们通常会在感叹号左边显式列出具体的错误集类型：
+
+```
+<错误类型>!<成功时的返回值类型>
+```
+
+例如 Zig 标准库 HTTP 客户端模块里的 `fill()` 函数：
+
+```zig
+pub fn fill(conn: *Connection) ReadError!void {
+    // 函数体...
+}
+```
+
+这清楚地告诉所有调用者：该函数要么成功返回 `void`，要么只会返回属于 `ReadError` 范围内的具体错误！
+
+
+### 错误集（Error Sets）
+
+当一个函数可能抛出多种不同原因的错误时，我们可以用 `error{ ... }` 定义一个**错误集（Error Set）**：
+
+```zig
+pub fn resolvePath(
+    ally: mem.Allocator,
+    p: []const u8,
+) error{
+    OutOfMemory,
+    CurrentWorkingDirectoryUnlinked,
+    Unexpected,
+}![]u8 {
+    // 函数体...
+}
+```
+
+在真实工程里，通常会给这组错误起一个清晰的大写类型名复用：
+
+```zig
+pub const ReadError = error{
+    TlsFailure,
+    TlsAlert,
+    ConnectionTimedOut,
+    ConnectionResetByPeer,
+    UnexpectedReadFailure,
+    EndOfStream,
+};
+
+pub fn readvDirect(
+        conn: *Connection,
+        buffers: []std.posix.iovec
+    ) ReadError!usize {
+    // ...
+}
+```
+
+
+### 错误值的自动类型收敛（子集到超集）
+
+如果错误集 `A` 包含了错误集 `B` 里的所有成员（即 $A \supset B$），那么在 Zig 中，`B` 集合里的错误值可以隐式自动转换为 `A` 集合类型：
+
+```zig
+const std = @import("std");
+const A = error{
+    ConnectionTimeoutError,
+    DatabaseNotFound,
+    OutOfMemory,
+    InvalidToken,
+};
+const B = error {
+    OutOfMemory,
+};
+
+fn cast(err: B) A {
+    return err; // 隐式自动向上收敛
+}
+
+test "coerce error value" {
+    const error_value = cast(B.OutOfMemory);
+    try std.testing.expect(
+        error_value == A.OutOfMemory
+    );
+}
+```
+
+
+## 优雅处理错误的四大姿势
+
+在 Zig 中，处理错误主要有以下四种地道姿势：
+
+### 姿势一：`try` 快速向上传播（甩锅给上游）
+
+`try expr` 的语义是：
+如果表达式顺利执行成功，把成功值拆包放行；
+如果表达式返回了错误，**立刻提前 return 该错误，交由上一级调用者去头疼！**
+
+当你身处底层辅助函数、本身无法决定怎么处理这个错误时，直接 `try` 是最干脆利落的甩锅姿势。
+
+
+### 姿势二：`catch` 就地兜底与消费
+
+请敲黑板重点注意：**在 Zig 里，`try` 和 `catch` 是两套完全互斥独立的机制，绝不能像传统语言那样连在一起写成 `try ... catch`！**
+
+`catch` 放在可能报错的表达式后面，负责拦截错误并就地解决：
+
+#### 1. 提供默认兜底值（最地道！）
+
+如果报错，就自动回落到默认值，极具表现力：
+
+```zig
+// 解析失败时自动兜底为数字 13
+const number = parseU64(str, 10) catch 13;
+```
+
+#### 2. 接错误处理逻辑块
+
+通过 `catch |err| { ... }` 捕获具体错误对象并写日志或做后置处理：
+
+```zig
+pub fn main(init: std.process.Init) !void {
+    const cwd = std.Io.Dir.cwd();
+    const file = cwd.openFile(
+        init.io, "doesnt_exist.txt", .{}
+    ) catch |err| {
+        logger.record_context();
+        logger.log_error(err);
+        return err; // 记录完日志后再次抛出
+    };
+}
+```
+
+
+### 姿势三：`if` 分支模式匹配解包
+
+```zig
+if (parseU64(str, 10)) |number| {
+    // 成功分支，拿到纯净的 number
+} else |err| {
+    // 失败分支，拿到具体的 err
+}
+```
+
+若要针对不同类型的具体错误做差异化响应，配合 `switch` 堪称绝配：
+
+```zig
+if (add_tasks_to_queue(&queue, tasks)) |_| {
+    distribute_tasks(&queue);
+} else |err| switch (err) {
+    error.InvalidTaskName => {
+        // 处理无效任务名
+    },
+    error.TimeoutTooBig => {
+        // 处理超时超限
+    },
+    error.QueueNotFound => {
+        // 处理队列未找到
+    },
+}
+```
+
+
+### 姿势四：`errdefer` 异常回滚清理 {#sec-errdefer2}
+
+还记得前文讲过的 `errdefer` 吗？
+**`errdefer` 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！**
+
+思考一个典型场景：函数在堆上申请了一个新对象并要插入数据库，最后把这个对象作为返回值交出去：
+
+```zig
+fn create_user(db: Database, allocator: Allocator) !User {
+    const user = try allocator.create(User);
+    errdefer allocator.destroy(user); // 挂上防漏油阀门！
+
+    // 如果向数据库插入时报错提前退出了：
+    _ = try db.register_user(user);
+    
+    // 如果一切顺利，user 成功交出，errdefer 不会触发，调用方负责接管其生命周期
+    return user;
+}
+```
+
+如果在入库那一行（`db.register_user`）报错了，函数中断退出，普通的 `defer` 此时帮不上忙（因为正常返回时不能销毁它）；而 `errdefer` 则精准介入，在带着错误闪崩退出的前一刻，把刚刚申请的 `user` 干净释放，彻底杜绝内存泄漏！
+
+
+## 联合体（Unions）与带标签联合体（Tagged Unions） {#sec-unions}
+
+联合体（Union）定义了一个变量**在某一瞬间只能是多种可能类型中的某一种**。
+它类似于 Python 的 `typing.Union` 或 C 语言里的 `union`。
+
+举个跨多云存储的实际例子：数据既可能传往 AWS S3、也可能发给 Azure Blob 或 Google Cloud：
+
+```zig
+const LakeTarget = union {
+    azure: AzureBlob,
+    amazon: AmazonS3,
+    google: GoogleGCP,
+};
+```
+
+在普通 union 中，**同一时间只有一个字段能够处于激活状态**。如果你尝试访问没有激活的字段，运行时直接触发 panic：
+
+```zig
+var target = LakeTarget {
+    .azure = AzureBlob.init()
+};
+// 此时 target 内部激活的是 azure 字段，直接写 google 字段会直接 panic
+target.google = GoogleGCP.init();
+```
+
+想要切换字段，必须整体重新赋值：
+
+```zig
+target = LakeTarget {
+    .google = GoogleGCP.init()
+};
+```
+
+
+### 现代模式匹配天花板：带标签联合体（Tagged Unions）
+
+普通 union 最大的痛点是无法直接用 `switch` 匹配分支。
+而只要给它加上 `(enum)` 标签——**`union(enum)`**，它就升级为了现代编程语言里大名鼎鼎的**带标签联合体（Tagged Union / 代数数据类型 ADT）**！
+
+看 Zig 官方编译器源码 [`grammar.zig`](https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig)[^grammar] 里的写法：
+
+[^grammar]: <https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig>。
+
+```zig
+pub const Registry = union(enum) {
+    core: CoreRegistry,
+    extension: ExtensionRegistry,
+};
+```
+
+一旦变成 `union(enum)`，在 `switch` 里做模式匹配解构就跟呼吸一样顺畅自然：
+
+```zig
+switch (reg) {
+    .core => |c| c.doSomething(),
+    .extension => |e| e.doSomethingElse(),
+}
+```
+
+错误处理清晰透明，联合体类型严丝合缝，这正是 Zig 能写出顶级高可靠软件的底气所在！

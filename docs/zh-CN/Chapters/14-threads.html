@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; Zig 多线程与并发并行计算 – Zig 语言入门</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Chapters/15-vectors.html" rel="next">
+<link href="../Chapters/13-image-filter.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-5de16f5e46225c21e2daa90d340bf64f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-3218d7d29a29f08bc4fdf3802c3e3ca5.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-5de16f5e46225c21e2daa90d340bf64f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-f0ec3cdcb2135e02ab8a6b3c461c3b20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e638886a13cc8c7aea73962d26d2f25b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-f0ec3cdcb2135e02ab8a6b3c461c3b20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6CHJXK4CEV"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          toggle.setAttribute("aria-checked", alternate ? "true" : "false");
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455).
+    // Not run on load: stylesheets are set before first paint there, and
+    // scrolling would undo the scroll to a URL fragment (#14973).
+    // The one pixel nudge keeps the reader where they were.
+    const refreshSafariScrollbar = () => {
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        const scrollY = window.scrollY;
+        window.scrollTo(0, scrollY > 0 ? scrollY - 1 : 1);
+        setTimeout(() => {
+          window.scrollTo(0, scrollY);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      refreshSafariScrollbar();
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zig 语言入门</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-language" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-globe" role="img">
+</i> 
+ <span class="menu-text">语言 / Language</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-language">    
+        <li>
+    <a class="dropdown-item" href="../index.html">
+ <span class="dropdown-text">简体中文</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Chapters/14-threads.html">
+ <span class="dropdown-text">English</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <button type="button" role="switch" aria-checked="false" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode" aria-label="Toggle dark mode"><i class="bi"></i></button>
+</div>
+            <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/14-threads.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
+        <div class="sidebar-tools-main">
+    <a href="../../Chapters/14-threads.html" title="English" class="quarto-navigation-tool px-1" aria-label="English"><i class="bi bi-globe"></i> <span style="font-size: 0.85rem; font-weight: 500;">English</span></a>
+</div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎阅读</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-zig-weird.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">初识 Zig</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/03-structs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">控制流、结构体、模块与类型系统</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">内存与分配器（Allocators）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-base64.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">实战项目 1：手写 Base64 编解码器</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/02-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">调试 Zig 应用程序</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/05-pointers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">指针与可选类型（Pointers and Optionals）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/04-http-server.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">实战项目 2：从零手写 HTTP 服务器</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/03-unittests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">单元测试（Unit Tests）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/07-build-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">构建系统（Build System）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/09-error-handling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/09-data-structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/10-stack-project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">实战项目 3：手写泛型栈数据结构</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/14-zig-c-interop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Zig 与 C 语言的无缝互操作（C Interoperability）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/13-image-filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/15-vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考文献</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-what-thread" id="toc-sec-what-thread" class="nav-link active" data-scroll-target="#sec-what-thread"><span class="header-section-number">16.1</span> 到底什么是线程？为什么需要它？</a></li>
+  <li><a href="#进程process与线程thread的区别" id="toc-进程process与线程thread的区别" class="nav-link" data-scroll-target="#进程process与线程thread的区别"><span class="header-section-number">16.2</span> 进程（Process）与线程（Thread）的区别</a></li>
+  <li><a href="#创建并启动一个线程thread.spawn" id="toc-创建并启动一个线程thread.spawn" class="nav-link" data-scroll-target="#创建并启动一个线程thread.spawn"><span class="header-section-number">16.3</span> 创建并启动一个线程：<code>Thread.spawn</code></a></li>
+  <li><a href="#线程的归宿join-与-detach-二选一不可漏调" id="toc-线程的归宿join-与-detach-二选一不可漏调" class="nav-link" data-scroll-target="#线程的归宿join-与-detach-二选一不可漏调"><span class="header-section-number">16.4</span> 线程的归宿：<code>join()</code> 与 <code>detach()</code> 二选一（不可漏调！）</a>
+  <ul class="collapse">
+  <li><a href="#姿势一thread.join等待收工" id="toc-姿势一thread.join等待收工" class="nav-link" data-scroll-target="#姿势一thread.join等待收工"><span class="header-section-number">16.4.1</span> 姿势一：<code>thread.join()</code>（等待收工）</a></li>
+  <li><a href="#姿势二thread.detach放飞自流" id="toc-姿势二thread.detach放飞自流" class="nav-link" data-scroll-target="#姿势二thread.detach放飞自流"><span class="header-section-number">16.4.2</span> 姿势二：<code>thread.detach()</code>（放飞自流）</a></li>
+  </ul></li>
+  <li><a href="#经典翻车现场数据竞争data-race" id="toc-经典翻车现场数据竞争data-race" class="nav-link" data-scroll-target="#经典翻车现场数据竞争data-race"><span class="header-section-number">16.5</span> 经典翻车现场：数据竞争（Data Race）</a></li>
+  <li><a href="#互斥锁mutex排队保平安" id="toc-互斥锁mutex排队保平安" class="nav-link" data-scroll-target="#互斥锁mutex排队保平安"><span class="header-section-number">16.6</span> 互斥锁（Mutex）：排队保平安</a></li>
+  <li><a href="#读写锁rwlock读共享写独占" id="toc-读写锁rwlock读共享写独占" class="nav-link" data-scroll-target="#读写锁rwlock读共享写独占"><span class="header-section-number">16.7</span> 读写锁（RwLock）：读共享、写独占</a></li>
+  <li><a href="#并发排坑与优雅退出graceful-shutdown" id="toc-并发排坑与优雅退出graceful-shutdown" class="nav-link" data-scroll-target="#并发排坑与优雅退出graceful-shutdown"><span class="header-section-number">16.8</span> 并发排坑与优雅退出（Graceful Shutdown）</a>
+  <ul class="collapse">
+  <li><a href="#死锁deadlock" id="toc-死锁deadlock" class="nav-link" data-scroll-target="#死锁deadlock"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlock）</a></li>
+  <li><a href="#优雅停机原子标志位控制" id="toc-优雅停机原子标志位控制" class="nav-link" data-scroll-target="#优雅停机原子标志位控制"><span class="header-section-number">16.8.2</span> 2. 优雅停机：原子标志位控制</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-thread" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>``</p>
+<p>在这一章中，咱们来聊聊现代高性能系统级开发的重头戏——<strong>多线程与并发并行计算（Concurrency &amp; Parallelism）</strong>。 Zig 标准库在 <code>std.Thread</code> 模块中提供了开箱即用的原生内核级线程抽象，其底层规范严格遵循 POSIX 线程（<code>pthread</code>）模式，跨平台性能极佳。</p>
+<section id="sec-what-thread" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="sec-what-thread"><span class="header-section-number">16.1</span> 到底什么是线程？为什么需要它？</h2>
+<p>简单来说，线程就是一段独立的执行上下文。 默认情况下，普通程序都是<strong>单线程（Single-threaded）</strong>的：指令只能按先后顺序一条一条排队执行。 如果遇上耗时操作（比如读大文件、等网络响应、算复杂图形），整个程序就会被彻底卡死，无法同时响应其他任务。</p>
+<p>最直观的生活例子就像餐厅服务员： 如果是个单线程服务员：他给一号桌点完单送到后厨，然后就傻傻站在出餐口前等厨师把菜炒好，期间既不给二号桌点单，也不给三号桌结账。这餐厅非倒闭不可！ 而多线程的做法是：服务员把订单往后厨一塞（派发一个异步线程去炒菜），自己立刻转身去接待其他桌的客人；后厨菜好了直接端走上桌。</p>
+<p>现代 Web 浏览器（Chrome、Edge 等）的多标签页、修图软件（Photoshop）以及大型 3D 游戏，底层全靠多线程把多核 CPU 算力拉满。</p>
+</section>
+<section id="进程process与线程thread的区别" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="进程process与线程thread的区别"><span class="header-section-number">16.2</span> 进程（Process）与线程（Thread）的区别</h2>
+<p>经常有初学者搞混这两个概念，记住以下核心分工：</p>
+<ul>
+<li><strong>进程（Process）</strong>：操作系统分配资源的独立基本单位（你在任务管理器里看到的每个软件实例都是一个进程）。每个进程有自己完全隔离的虚拟内存空间；</li>
+<li><strong>线程（Thread）</strong>：CPU 调度的基本单位，依附于进程而存在（一个进程可以孵化出多个线程）。</li>
+</ul>
+<p><strong>关键共享机制</strong>： - <strong>独立部分</strong>：每个线程拥有自己专属独立的<strong>栈帧（Stack Frame）</strong>，栈上的局部变量互不打扰； - <strong>共享部分</strong>：同一个进程下的所有线程，<strong>共享同一片堆内存（Heap）、全局静态数据段，以及标准 I/O 文件描述符（<code>stdout</code>/<code>stdin</code>/<code>stderr</code>）</strong>！</p>
+<p>正因为堆内存完全共享，多线程之间传递数据速度极快（传个指针即可），但随之而来的也是最凶险的技术深水区——<strong>数据竞争（Data Race）</strong>。</p>
+</section>
+<section id="创建并启动一个线程thread.spawn" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="创建并启动一个线程thread.spawn"><span class="header-section-number">16.3</span> 创建并启动一个线程：<code>Thread.spawn</code></h2>
+<p>在 Zig 中创建新线程，直接调用 <code>std.Thread.spawn()</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> spawn(config<span class="op">:</span> SpawnConfig<span class="op">,</span> <span class="at">comptime</span> function<span class="op">:</span> <span class="kw">anytype</span><span class="op">,</span> args<span class="op">:</span> <span class="kw">anytype</span>) <span class="op">!</span>Thread</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>它接收三个核心参数： 1. <strong><code>SpawnConfig</code></strong>：配置项（可指定专属栈大小 <code>stack_size</code>，默认给足 16MB；传 <code>.{}</code> 走默认配置）； 2. <strong><code>function</code></strong>：要在新线程里执行的入口函数； 3. <strong><code>args</code></strong>：传给该函数的参数元组（如 <code>.{init.io}</code>）。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">1</span>);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_some_work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Starting the work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Finishing the work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> do_some_work<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io});</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join();</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="线程的归宿join-与-detach-二选一不可漏调" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="线程的归宿join-与-detach-二选一不可漏调"><span class="header-section-number">16.4</span> 线程的归宿：<code>join()</code> 与 <code>detach()</code> 二选一（不可漏调！）</h2>
+<p>新线程创建后，主线程对它必须给出明确的态度，<strong>必须在 <code>join()</code> 与 <code>detach()</code> 中严格二选一</strong>：</p>
+<section id="姿势一thread.join等待收工" class="level3" data-number="16.4.1">
+<h3 data-number="16.4.1" class="anchored" data-anchor-id="姿势一thread.join等待收工"><span class="header-section-number">16.4.1</span> 姿势一：<code>thread.join()</code>（等待收工）</h3>
+<p>调用 <code>join()</code> 会让当前主线程陷入阻塞等待，直到该子线程把活全干完退出为止，顺带安全回收线程分配的底层系统资源。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> do_some_work<span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join(); <span class="co">// 主线程在此等子线程完事</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="姿势二thread.detach放飞自流" class="level3" data-number="16.4.2">
+<h3 data-number="16.4.2" class="anchored" data-anchor-id="姿势二thread.detach放飞自流"><span class="header-section-number">16.4.2</span> 姿势二：<code>thread.detach()</code>（放飞自流）</h3>
+<p>如果你压根不在乎子线程啥时候完工，也不需要拿它的返回值，调用 <code>detach()</code> 把线程分离出去。分离后的线程成了“自由人”，跑完会自动向操作系统销毁释放，主线程扭头就走：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_id(id<span class="op">:</span> <span class="op">*</span><span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Thread ID: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{id<span class="op">.*</span>});</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> id1<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">1</span>;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> print_id<span class="op">,</span> <span class="op">.</span>{<span class="op">&amp;</span>id1});</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    thread1<span class="op">.</span>detach(); <span class="co">// 放飞它，主线程直接退出</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Finish main</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout-danger">
+<p><strong>避坑保命铁律</strong>：创建出来的线程，<strong>绝对不能既不 join 也不 detach</strong>！否则该线程会沦为游离在系统内核里的“僵尸句柄”，引发严重的操作系统句柄泄漏！</p>
+</div>
+</section>
+</section>
+<section id="经典翻车现场数据竞争data-race" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="经典翻车现场数据竞争data-race"><span class="header-section-number">16.5</span> 经典翻车现场：数据竞争（Data Race）</h2>
+<p>来看一段典型的多线程翻车代码：两个线程同时对全局共享变量 <code>counter</code> 各自累加 10 万次，理论上最终结果应该是 200,000：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment() <span class="dt">void</span> {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">100000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        counter <span class="op">+=</span> <span class="dv">1</span>; <span class="co">// 两个线程无保护并发写同一个变量！</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr2 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    thr1<span class="op">.</span>join();</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    thr2<span class="op">.</span>join();</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Couter value: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{counter});</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>跑出来的结果让人大跌眼镜：</p>
+<pre><code>Couter value: 117254</code></pre>
+<p>为什么严重缩水？ 因为在硬件 CPU 层面，<code>counter += 1</code> 根本不是一步到位的，而是拆解成了三个步骤： 1. 从内存把值读进 CPU 寄存器； 2. 寄存器做加 1 计算； 3. 把新值写回内存。</p>
+<p>当两个线程并发跑时，线程 B 经常在线程 A 还没写回内存之前就把老值读走了，导致两个线程的自增互相覆盖（撕裂），大量计数白白丢失！这片争抢写共享变量的代码区，在计算机理论中就叫<strong>临界区（Critical Section）</strong>。</p>
+</section>
+<section id="互斥锁mutex排队保平安" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="互斥锁mutex排队保平安"><span class="header-section-number">16.6</span> 互斥锁（Mutex）：排队保平安</h2>
+<p>解决数据竞争的标配武器就是<strong>互斥锁（Mutex - Mutually Exclusive）</strong>。 它就像洗手间的门锁：同一时刻只允许一个人拿钥匙进门（<code>lock</code>）；其他人必须在门外老实排队；里面的人办完事开锁出来（<code>unlock</code>），排在队首的下一位才能进去。</p>
+<p>在 Zig 中使用 <code>std.Io.Mutex</code>（或 <code>std.Thread.Mutex</code>）保护临界区：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Mutex <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Mutex;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> State <span class="op">=</span> Mutex<span class="op">.</span>State;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> mutex<span class="op">:</span> <span class="op">*</span>Mutex) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">100000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> mutex<span class="op">.</span>lock(io);   <span class="co">// 上锁</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        counter <span class="op">+=</span> <span class="dv">1</span>;         <span class="co">// 安全独占临界区</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        mutex<span class="op">.</span>unlock(io);     <span class="co">// 释放锁</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> mutex<span class="op">:</span> Mutex <span class="op">=</span> <span class="op">.</span>{</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>state<span class="op">=</span>std<span class="op">.</span>atomic<span class="op">.</span>Value(State)<span class="op">.</span>init(<span class="op">.</span>unlocked)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    };</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>mutex});</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr2 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>mutex});</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    thr1<span class="op">.</span>join();</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    thr2<span class="op">.</span>join();</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Couter value: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{counter});</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>加上锁之后，跑出来稳如泰山的 <code>200000</code>！</p>
+</section>
+<section id="读写锁rwlock读共享写独占" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="读写锁rwlock读共享写独占"><span class="header-section-number">16.7</span> 读写锁（RwLock）：读共享、写独占</h2>
+<p>如果一个资源大部分时间都在被几百个线程并发读取、极少被修改（比如在线配置缓存），互斥锁会把所有读请求也强制排成单线，性能大打折扣。</p>
+<p>这时候<strong>读写锁（<code>std.Io.RwLock</code> / <code>std.Thread.RwLock</code>）</strong>便派上用场： - <strong>读锁（<code>lockShared</code>）</strong>：共享锁，允许多个读者同时并发读取； - <strong>写锁（<code>lock</code>）</strong>：排他独占锁，一旦有人要写，所有读者和写者全部停步等待。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> RwLock <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>RwLock;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">2</span>);</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">0</span>;</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> reader(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> id<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> lock<span class="op">:</span> <span class="op">*</span>RwLock) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="cn">true</span>) {</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (lock<span class="op">.</span>tryLockShared(io)) {</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Thread {d}: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{id<span class="op">,</span> counter});</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=</span> lock<span class="op">.</span>unlockShared(io);</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> writer(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> lock<span class="op">:</span> <span class="op">*</span>RwLock) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="cn">true</span>) {</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (lock<span class="op">.</span>tryLock(io)) {</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            counter <span class="op">+=</span> <span class="dv">1</span>;</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=</span> lock<span class="op">.</span>unlock(io);</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="并发排坑与优雅退出graceful-shutdown" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="并发排坑与优雅退出graceful-shutdown"><span class="header-section-number">16.8</span> 并发排坑与优雅退出（Graceful Shutdown）</h2>
+<section id="死锁deadlock" class="level3" data-number="16.8.1">
+<h3 data-number="16.8.1" class="anchored" data-anchor-id="死锁deadlock"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlock）</h3>
+<p>当线程 1 拿着锁 A 等锁 B，而线程 2 拿着锁 B 等锁 A 时，双方都在死等对方松手，程序永久僵死。 <strong>避坑原则</strong>：在所有线程中，<strong>加锁顺序必须严格保持全局一致</strong>（永远先拿 A、再拿 B，绝不逆序）。</p>
+</section>
+<section id="优雅停机原子标志位控制" class="level3" data-number="16.8.2">
+<h3 data-number="16.8.2" class="anchored" data-anchor-id="优雅停机原子标志位控制"><span class="header-section-number">16.8.2</span> 2. 优雅停机：原子标志位控制</h3>
+<p>在 C 语言里经常有人动用 <code>pthread_kill</code> 暴力强杀线程，这是极其危险的违规操作（会导致资源悬挂在半空）。 <strong>Zig 崇尚纯粹的优雅退出</strong>：用 <code>std.atomic.Value(bool)</code> 原子布尔变量充当停机旗标，工作线程每次循环自行检查状态，安全从容退出：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">2</span>);</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> running <span class="op">=</span> std<span class="op">.</span>atomic<span class="op">.</span>Value(<span class="dt">bool</span>)<span class="op">.</span>init(<span class="cn">true</span>);</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_more_work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (running<span class="op">.</span>load(<span class="op">.</span>monotonic)) {</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">10000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            counter <span class="op">+=</span> <span class="dv">1</span>;</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (counter <span class="op">&gt;</span> <span class="dv">15000</span>) {</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Time to cancel the thread.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            running<span class="op">.</span>store(<span class="cn">false</span><span class="op">,</span> <span class="op">.</span>monotonic); <span class="co">// 触发通知优雅退出</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Time to do more work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> do_more_work(io);</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> work<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io});</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join();</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>理清了内核线程模型、临界区保护与原子调度，你在多核硬件上写并发服务器或高吞吐引擎时就能稳操胜券！</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-lang-switch-sync">
+document.addEventListener('DOMContentLoaded', function() {
+  var isZh = window.location.pathname.indexOf('/zh-CN/') !== -1;
+  var path = window.location.pathname;
+  var hash = window.location.hash || '';
+  
+  var links = document.querySelectorAll('a[aria-label="中文版"], a[aria-label="English"]');
+  links.forEach(function(link) {
+    var target = '';
+    if (isZh) {
+      target = path.replace('/zh-CN/', '/');
+    } else {
+      if (path.endsWith('/') || path.endsWith('/index.html')) {
+        target = path.replace(/\/index\.html$/, '').replace(/\/$/, '') + '/zh-CN/index.html';
+      } else {
+        target = path.replace('/Chapters/', '/zh-CN/Chapters/');
+      }
+    }
+    if (target) {
+      link.setAttribute('href', target + hash);
+    }
+  });
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const toggle = window.document.createElement('button');
+      toggle.type = "button";
+      toggle.setAttribute("role", "switch");
+      toggle.setAttribute("aria-checked", "false");
+      toggle.classList.add('top-right');
+      toggle.classList.add('quarto-color-scheme-toggle');
+      toggle.setAttribute("aria-label", "Toggle dark mode");
+      toggle.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      toggle.appendChild(i);
+      // Put the toggle in a landmark of its own, so that landmark navigation
+      // can reach it.
+      //
+      // The container is always a fresh direct child of body, and the toggle is
+      // never moved into page furniture that the theme or the author controls.
+      // The toggle is positioned against the page, so any ancestor that
+      // establishes a containing block captures it: a positioned element or a
+      // grid for position: absolute, and transform, filter, will-change or
+      // contain for position: fixed. A direct child of body has none of these
+      // to inherit, and the shift when one appears is silent and visual.
+      //
+      // ARIA says a document should have at most one banner, and axe reports a
+      // duplicate whether or not the banners carry distinct labels. So use a
+      // header when the page has no banner yet, and a named region otherwise.
+      //
+      // A header is a banner wherever it sits, unless it is inside sectioning
+      // content, so this cannot just look at the children of body: a custom
+      // page layout wraps the title block header in a plain div. An explicit
+      // role="banner" always counts.
+      const sectioning = 'article, aside, main, nav, section, [role="article"], [role="complementary"], [role="main"], [role="navigation"], [role="region"]';
+      const hasBanner = Array.from(
+        window.document.querySelectorAll('header:not([role]), [role="banner"]')
+      ).some(function(el) {
+        return el.hasAttribute("role") || el.closest(sectioning) === null;
+      });
+      const container = window.document.createElement(hasBanner ? "div" : "header");
+      if (hasBanner) {
+        container.setAttribute("role", "region");
+        container.setAttribute("aria-label", "Toggle dark mode");
+      }
+      container.classList.add('quarto-color-scheme-toggle-container');
+      container.appendChild(toggle);
+      window.document.body.appendChild(container);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
+  <div class="nav-page nav-page-previous">
+      <a href="../Chapters/13-image-filter.html" class="pagination-link" aria-label="实战项目 4：开发图像灰度滤镜">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Chapters/15-vectors.html" class="pagination-link" aria-label="向量类型与 SIMD 硬件级并行加速">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

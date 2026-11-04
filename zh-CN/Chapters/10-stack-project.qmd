@@ -1,0 +1,273 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# 实战项目 3：手写泛型栈数据结构 {#sec-stack-project}
+
+在这章中，咱们来开启全书的第三个实战小项目：**亲手实现一个工业级通用栈（Stack）数据结构**。
+在计算机科班体系里，手写栈、队列往往是刚入门时的大作业；
+但千万别小瞧它！正因为栈本身的业务逻辑极度纯粹清晰，它成了我们彻底搞懂 Zig 最具杀伤力的核心特性——**编译期计算（`comptime`）与泛型（Generics）**的最佳实战训练场！
+
+
+## 深入理解 Zig 的杀手锏：`comptime` {#sec-comptime}
+
+如果说 Zig 有什么特性让 Rust 和 C++ 开发者都为之惊艳，那绝对是 **`comptime`（编译期执行）**！
+在 @sec-compile-time 中我们聊过编译期已知与运行时已知的界限。而 `comptime` 关键字直接赋予了开发者在编译阶段执行任意 Zig 代码的无上权力！
+
+在日常编码中，`comptime` 主要有三大使用姿势：
+
+1. **修饰函数形参**（要求调用方传进来的实参必须在编译期板上钉钉）；
+2. **修饰单条表达式**（强制该表达式在编译时计算出常量结果）；
+3. **修饰代码块**（让整段逻辑在编译期求值跑通）。
+
+
+### 姿势一：修饰函数形参（编译期参数）
+
+当给形参加上 `comptime` 时，编译器会死死卡住校验：传入的值必须在编译阶段就能算出来。如果传入运行时才能决定的动态变量（比如控制台用户输入），编译器当场拒绝编译：
+
+```zig
+fn twice(comptime num: u32) u32 {
+    return num * 2;
+}
+test "test comptime" {
+    _ = twice(5678); // 合法！5678 是编译期常数
+}
+```
+
+如果传了来自 `stdin` 的运行时数据，编译器会直接甩出报错：`unable to resolve comptime value`。
+
+
+### 姿势二：修饰表达式与代码块（编译期算力）
+
+很多复杂的数学计算、常量查表甚至阶乘递归，根本不需要留到运行时白白消耗用户的 CPU！
+直接在前面加上 `comptime`，编译器在编译你的代码时就会把结果算好并烘焙进二进制：
+
+```zig
+const expect = @import("std").testing.expect;
+fn fibonacci(index: u32) u32 {
+    if (index < 2) return index;
+    return fibonacci(index - 1) + fibonacci(index - 2);
+}
+
+test "fibonacci" {
+    // 运行时计算
+    try expect(fibonacci(7) == 13);
+    // 编译期直接算完，二进制里直接拿着 13 跑！
+    try comptime expect(fibonacci(7) == 13);
+}
+```
+
+
+## Zig 的极简泛型哲学：类型即普通参数 {#sec-generics}
+
+写过 C++ 的同学一定被复杂的模板元编程（Template Metaprogramming）和几百行的编译报错折磨过；
+Java 和 Rust 则引入了专门的尖括号语法 `<T>`。
+
+**而 Zig 的泛型设计极具大师级的极简美感：在 Zig 里，根本没有引入任何晦涩的专门泛型 DSL，泛型本质上就是一个接收“类型（`type`）”作为编译期入参的普通函数！**
+
+在 Zig 中，`type` 本身是一等公民。
+看下面这个极简的泛型最大值比较函数：
+
+```zig
+fn max(comptime T: type, a: T, b: T) T {
+    return if (a > b) a else b;
+}
+```
+
+入参 `T` 的类型就是 `type`！调用时传 `u8`，它就为你特化生成 `u8` 版本；传 `f64`，就自动生成 `f64` 版本：
+
+```zig
+const std = @import("std");
+fn max(comptime T: type, a: T, b: T) T {
+    return if (a > b) a else b;
+}
+test "test max" {
+    const n1 = max(u8, 4, 10);
+    std.debug.print("Max n1: {d}\n", .{n1});
+    const n2 = max(f64, 89.24, 64.001);
+    std.debug.print("Max n2: {d}\n", .{n2});
+}
+```
+
+```
+Max n1: 10
+Max n2: 89.24
+```
+
+同理，**泛型数据结构本质上就是一个以 `comptime T: type` 为形参、返回值类型为 `type` 的“结构体工厂函数”**！
+接下来咱们就用这个原理亲手造一个泛型栈！
+
+
+## 栈的核心机制回顾 {#sec-what-stack}
+
+栈是典型的后进先出（LIFO - Last In, First Out）结构，就像一叠盘子：
+- **`push`**：把新盘子压在最顶上；
+- **`pop`**：把最顶上的盘子拿走。
+
+![栈的压栈（Push）与出栈（Pop）示意图](../../Figures/lifo-stack.svg){#fig-stack}
+
+
+## 编写栈结构：先从具体类型开始
+
+为了不一下子引入过多复杂度，咱们先写一个专门存 `u32` 的版本：
+
+```zig
+const std = @import("std");
+const Allocator = std.mem.Allocator;
+const Stack = struct {
+    items: []u32,
+    capacity: usize,
+    length: usize,
+    allocator: Allocator,
+
+    pub fn init(allocator: Allocator, capacity: usize) !Stack {
+        var buf = try allocator.alloc(u32, capacity);
+        return .{
+            .items = buf[0..],
+            .capacity = capacity,
+            .length = 0,
+            .allocator = allocator,
+        };
+    }
+};
+```
+
+### 实现压栈：`push()` 与动态扩容
+
+当 `length + 1 > capacity` 时，池子满了。我们申请原容量 2 倍的新内存，用 `@memcpy` 将老数据整体平移，再释放老内存：
+
+```zig
+pub fn push(self: *Stack, val: u32) !void {
+    if ((self.length + 1) > self.capacity) {
+        var new_buf = try self.allocator.alloc(
+            u32, self.capacity * 2
+        );
+        @memcpy(
+            new_buf[0..self.capacity], self.items
+        );
+        self.allocator.free(self.items);
+        self.items = new_buf;
+        self.capacity = self.capacity * 2;
+    }
+    self.items[self.length] = val;
+    self.length += 1;
+}
+```
+
+### 实现出栈与析构：`pop()` 和 `deinit()`
+
+```zig
+pub fn pop(self: *Stack) void {
+    if (self.length == 0) return;
+
+    self.items[self.length - 1] = undefined;
+    self.length -= 1;
+}
+
+pub fn deinit(self: *Stack) void {
+    self.allocator.free(self.items);
+}
+```
+
+
+## 终极升维：将栈改造为工业级通用泛型！
+
+现在，见证奇迹的时刻到了！
+怎么把上面只支持 `u32` 的栈，改造成能装任意类型（`u8`、`f64`、甚至自定义的 `User` 结构体）的泛型栈？
+
+只需要给外层包一个函数 `fn Stack(comptime T: type) type`，并将内部所有的 `u32` 换成泛型参数 `T`！
+
+```zig
+fn Stack(comptime T: type) type {
+    return struct {
+        items: []T,
+        capacity: usize,
+        length: usize,
+        allocator: Allocator,
+        const Self = @This();
+
+        pub fn init(allocator: Allocator,
+                    capacity: usize) !Stack(T) {
+            var buf = try allocator.alloc(T, capacity);
+            return .{
+                .items = buf[0..],
+                .capacity = capacity,
+                .length = 0,
+                .allocator = allocator,
+            };
+        }
+
+        pub fn push(self: *Self, val: T) !void {
+            if ((self.length + 1) > self.capacity) {
+                var new_buf = try self.allocator.alloc(
+                    T, self.capacity * 2
+                );
+                @memcpy(
+                    new_buf[0..self.capacity], self.items
+                );
+                self.allocator.free(self.items);
+                self.items = new_buf;
+                self.capacity = self.capacity * 2;
+            }
+
+            self.items[self.length] = val;
+            self.length += 1;
+        }
+
+        pub fn pop(self: *Self) void {
+            if (self.length == 0) return;
+            self.items[self.length - 1] = undefined;
+            self.length -= 1;
+        }
+
+        pub fn deinit(self: *Self) void {
+            self.allocator.free(self.items);
+        }
+    };
+}
+```
+
+
+## 跑通泛型栈测试！
+
+想要一个装 `u8` 的栈？直接 `Stack(u8)`；想要存字符串？直接 `Stack([]const u8)`！
+
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
+const Stacku8 = Stack(u8);
+var stack = try Stacku8.init(allocator, 10);
+defer stack.deinit();
+
+try stack.push(1);
+try stack.push(2);
+try stack.push(3);
+try stack.push(4);
+try stack.push(5);
+try stack.push(6);
+
+std.debug.print("Stack len: {d}\n", .{stack.length});
+std.debug.print("Stack capacity: {d}\n", .{stack.capacity});
+
+stack.pop();
+std.debug.print("Stack len: {d}\n", .{stack.length});
+stack.pop();
+std.debug.print("Stack len: {d}\n", .{stack.length});
+std.debug.print(
+    "Stack state: {any}\n",
+    .{stack.items[0..stack.length]}
+);
+```
+
+```
+Stack len: 6
+Stack capacity: 10
+Stack len: 5
+Stack len: 4
+Stack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }
+```
+
+弄懂了这套模式，你就彻底参透了 Zig 标准库里 `std.ArrayList(T)`、`std.AutoHashMap(K, V)` 等所有容器的核心源码实现！

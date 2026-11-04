@@ -10,6 +10,11 @@ book:
   date: "today"
   google-analytics: "G-6CHJXK4CEV"
   cover-image: "Cover/cover-artv3.png"
+  sidebar:
+    tools:
+      - icon: globe
+        text: "中文"
+        href: "zh-CN/index.html"
   chapters:
     - index.qmd
     - Chapters/01-zig-weird.qmd

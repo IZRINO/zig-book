@@ -1,0 +1,979 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+
+``
+
+
+
+# 初识 Zig
+
+在这第一章里，我想带你正式走进 Zig 的世界。
+Zig 是一门非常年轻、并且还在高速演进中的语言。
+因此，它的整个生态和世界还充满着荒原般的生机，等待我们去探索。
+写这本书，就是想陪你一起开启这段旅程，搞懂并玩转这门令人兴奋的新语言。
+
+阅读本书前，我默认你至少掌握过一门编程语言，倒不一定非得是底层语言。
+所以，哪怕你平时主要写 Python 或 JavaScript，也完全能跟得上。
+当然，如果你本身就有 C、C++ 或 Rust 这类系统级语言的开发底子，学起来肯定会更快、更有共鸣。
+
+## 到底什么是 Zig？
+
+简单来说，Zig 是一门现代化、底层且通用的系统级编程语言。不少开发者喜欢把它当成“更现代、更好用的 C 语言”。
+
+在我看来，Zig 的核心设计哲学就是“少即是多（Less is more）”。
+很多现代语言喜欢靠不断堆砌语法糖和新特性来标榜自己“现代化”，但 Zig 反其道而行之：它给底层开发带来的诸多核心升级，实际上是在做**减法**——大刀阔斧地砍掉了 C 和 C++ 里那些反人类、容易让人踩坑的隐式行为与晦涩特性。
+换句话说，Zig 追求的是语言层面的极致简洁，以及在各种极端边界情况下的确定性与健壮性。
+这样一来，比起在 C 或 C++ 里痛苦挣扎，在 Zig 里阅读代码、写业务逻辑和排查调试 Bug 都会变得轻松很多。
+
+Zig 官网上的这句名言把这个哲学展现得淋漓尽致：
+
+> “Focus on debugging your application rather than debugging your programming language knowledge.”
+> （把精力聚焦在调试你的应用程序上，而不是把时间耗费在死磕编程语言本身的刁钻语法上。）
+
+这句话简直戳中了无数 C++ 程序员的痛点。C++ 体量太庞大了，特性堆叠如山，各种“C++ 方言”和编码流派层出不穷，把整门语言变得异常复杂、学习曲线陡峭得让人头秃。而 Zig 恰恰走向了相反的方向：它非常克制简洁，更贴近 C 和 Go 这类追求极简的语言。
+
+对 C 语言老手来说，上面那句话同样受用。别看 C 语法简单，但有时候读别人的 C 代码也是折磨。举个最典型的例子：C 语言的预处理器宏（Macros）向来是“混乱制造机”，经常给排障带来巨大困扰。宏本质上就像寄生在 C 里的第二门语言，把真实的 C 代码遮得严严实实。一旦满天飞宏，你根本无法一眼确定送到编译器的到底是些啥代码。
+
+而在 Zig 里，**根本没有宏**。在 Zig 里，你眼睛看到的代码，就是编译器实际编译的代码。
+这里没有在背后暗度陈仓的隐藏控制流（比如操作符重载、隐式类型转换、隐藏的抛异常），更没有标准库函数在背地里瞒着你偷偷做内存分配。
+
+正因为语言足够克制清爽，Zig 代码不仅直观好懂、读写体验极佳，而且在面对各种极端边界情况时表现得异常稳健。再次强调：少即是多。
+
+
+## Zig 版 Hello World
+
+学习任何语言，咱都从经典的 "Hello World" 起步。
+在本地初始化一个 Zig 项目极其简单，直接调用 `zig` 编译器的 `init` 命令即可。
+找个空目录，敲下这几行命令：
+
+```bash
+mkdir hello_world
+cd hello_world
+zig init
+```
+
+终端会输出类似这样的信息：
+
+```
+info: created build.zig
+info: created build.zig.zon
+info: created src/main.zig
+info: created src/root.zig
+info: see `zig build --help` for a menu of options
+```
+
+### 搞懂项目结构与文件 {#sec-project-files}
+
+敲完 `zig init` 后，当前目录下会生成几个骨架文件。
+首先是一个源码目录 `src`，里面有两个文件：`main.zig` 和 `root.zig`。在 Zig 里，每个 `.zig` 文件都是一个独立的 Zig 模块（Module），说白了就是一个写了 Zig 代码的源码文件。
+
+按照惯例，`main.zig` 是你存放主函数的地方。如果你是要开发一个独立的可执行程序，就得在里面声明 `main()` 函数，它代表程序的唯一入口点，代码就从这里开始跑。
+
+相反，如果你是要开发一个供他人引用的代码库（Library），通常的做法是删掉 `main.zig`，直接以 `root.zig` 为核心。在 Zig 规范里，`root.zig` 是一个包（Package/Library）的根源码模块。
+
+```bash
+tree .
+```
+
+```
+.
+├── build.zig
+├── build.zig.zon
+└── src
+    ├── main.zig
+    └── root.zig
+
+1 directory, 4 files
+```
+
+除了源码，`zig init` 还在根目录生成了另外两个关键文件：`build.zig` 和 `build.zig.zon`。
+第一个文件 `build.zig` 是用 Zig 语言自己写的一个构建脚本（Build Script）。当你执行 `zig build` 时，跑的就是这个文件。也就是说，整个项目怎么编译、怎么链接、怎么打包，全写在这个 Zig 脚本里。
+
+对于底层语言来说，把源码编译成二进制程序或动态库是常规操作。然而，随着项目规模越来越大，这一连串编译链接命令会变得奇长无比、难以维护。于是编程界发明了“构建系统（Build Systems）”来自动化这一流程。
+
+在 C/C++ 领域，大家最熟的构建系统是 GNU Make、GNU Autoconf 和 Ninja[^cmake1]。开发者会在 Makefile 或构建脚本里定义各种编译规则。
+
+[^cmake1]: C++ 开发者也很喜欢用 CMake，但 CMake 本格上并不是构建系统（这也是没把 CMake 直接放在这个名单里的原因）。严格来说，CMake 是构建系统生成器（Generator），它负责为 Ninja 或 Make 生成底层构建脚本。
+
+然而这些构建工具都是外挂的第三方工具，并不属于 `gcc` 或 `clang` 编译器本身。这就导致在搞 C/C++ 项目时，你不仅得操心安装配置编译器，还得单独伺候各种各样的构建工具链。
+
+但 Zig 完全不一样！Zig **在语言内部直接原生内置了构建系统**。我们可以直接用 Zig 语法编写小巧优雅的构建脚本，清清楚楚地交代项目的编译步骤[^zig-build-system]。也就是说，哪怕是一个复杂的 Zig 工程，只要有一套 `zig` 编译器，你就拥有了全部构建工具链，彻底告别环境地狱。
+
+[^zig-build-system]: <https://ziglang.org/learn/overview/#zig-build-system>。
+
+第二个文件 `build.zig.zon` 则是一个类似 JSON 的声明式配置文件（Zig Object Notation），用来描述当前项目的基本元信息，以及声明需要从网上拉取的外部依赖包。
+
+以往在项目里引入第三方库，往往要手动下载、编译安装到系统里，然后在构建脚本里做头文件和库路径链接。
+而现在，如果某个第三方 Zig 库挂在 GitHub 上，且其根目录配有合规的 `build.zig.zon`，你只需要把它的信息登记在你本地的 `build.zig.zon` 里，Zig 就会自动搞定依赖拉取和校验。
+
+简单对照一下大家熟悉的技术栈：这个 `build.zig.zon` 的角色就像 JavaScript 生态的 `package.json`、Python 的 `Pipfile`，或者 Rust 的 `Cargo.toml`。想深入了解它的同学，推荐阅读这两篇社区热文[^zig-zon][^zig-zon2]，或者去翻阅 Zig 官方仓库里的架构说明文档[^zig-zon-schema]。
+
+[^zig-zon]: <https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e>
+[^zig-zon2]: <https://medium.com/@edlyuu/zig-package-manager-2-wtf-is-build-zig-zon-and-build-zig-0-11-0-update-5bc46e830fc1>
+[^zig-zon-schema]: <https://codeberg.org/ziglang/zig/src/branch/master/doc/build.zig.zon.md>
+
+### 探究 `root.zig` {#sec-root-file}
+
+咱先打开 `root.zig` 瞧瞧。
+第一眼你就会注意到：每条带表达式的代码结尾都以分号（`;`）收尾，这是典型的 C 家族语言传统风格[^c-family]。
+
+[^c-family]: <https://en.wikipedia.org/wiki/List_of_C-family_programming_languages>
+
+接着看开头前几行的 `@import()` 调用。在 Zig 里，带 `@` 前缀的都是内置函数（Builtin Functions）。我们用 `@import()` 把外部或其他模块的功能引入当前模块。它就像 C/C++ 的 `#include`，或者 Python / JS 里的 `import`。这里我们 `@import("std")` 拿到了 Zig 标准库的访问入口。
+
+在 `root.zig` 里，我们还能看到 Zig 是怎么做变量/常量赋值的（也就是创建新对象）。基本语法是 `(const|var) name = value;`。下面代码里的 `std` 就是声明成常量的对象。在 @sec-assignments 节中我们会更系统地聊聊对象声明。
+
+```zig
+//! 按照惯例，root.zig 是制作一个包（Package）时的根源码文件。
+const std = @import("std");
+const Io = std.Io;
+
+/// 这是文档注释，用来解释下方的 `printAnotherMessage` 函数。
+///
+/// 接收一个 `Io.Writer` 实例是编写高复用代码的常用姿势。
+pub fn printAnotherMessage(writer: *Io.Writer) Io.Writer.Error!void {
+    try writer.print("Run `zig build test` to run the tests.\n", .{});
+}
+
+pub fn add(a: i32, b: i32) i32 {
+    return a + b;
+}
+
+test "basic add functionality" {
+    try std.testing.expect(add(3, 7) == 10);
+}
+```
+
+从上面的 `root.zig` 还可以看到 Zig 的注释规范。在 Zig 里，主要有三类注释：
+
+- **普通单行注释**：以 `//` 开头，编译器会完全忽略它们。
+- **文档注释**：以 `///` 开头，专门用来为紧随其后的变量、类型、函数等生成 API 说明文档。
+- **模块级顶级文档注释**：以 `//!` 开头，必须放在 Zig 模块的最顶上几行，用来给整个模块本身撰写概括性文档。
+
+另外，Zig 声明函数用的是 `fn` 关键字。
+在 `root.zig` 里，我们声明了一个叫 `add()` 的函数，入参是 `a` 和 `b`，返回值是一个 `i32` 类型的 32 位有符号整数。
+
+Zig 是一门强类型语言。尽管在某些特定场景下，如果 `zig` 编译器能推断出类型，你可以省略显式类型声明（后文 @sec-type-inference 会细讲类型推断）；但在绝大多数严谨的地方，Zig 要求你必须明确无误地标注出来。比如：函数的每个形参类型、函数的返回值类型，都必须显式写明，没有任何含糊的余地。
+
+标注类型的语法是在对象或参数名后面加一个冒号（`:`），紧接着写类型名称。例如 `a: i32` 和 `b: i32`，这表示 `a` 和 `b` 都是 `i32`（有符号 32 位整数）。这套冒号标注类型的语法和 Rust、TypeScript 是一模一样的。
+
+最后，在函数参数括号之后、函数体大括号（`{`）之前，标明的是函数的返回值类型。上面例子里返回的也是 `i32`。
+
+细心的同学一定发现了函数前面的 `pub` 关键字。`pub` 是 public（公开）的缩写，用来把 `add()` 函数暴露为“该模块的公开函数”。在 Zig 里，**默认情况下所有函数都是私有的（Private）**，只能在当前模块内部调用。如果你想让别的模块也能调用它，就必须显式给它贴上 `pub` 标签。
+
+换个角度看，Zig 里的 `pub` 作用恰好跟 C/C++ 里用来限制内部链接的 `static` 关键字反着来。通过把函数声明为 public，其他 Zig 模块在用 `@import()` 引入当前模块后，就能直接调到这些公开函数。关于这个关键字，我们会在 @sec-pub-keyword 里更深入地拆解。
+
+最后，在 `root.zig` 底下还有一个 `test` 代码块。这是 Zig 原生内置的单元测试块，后面在 @sec-unittests 会专门讲怎么优雅地写单测。
+
+
+### 探究 `main.zig` {#sec-main-file}
+
+在 `root.zig` 了解了 Zig 的基本面孔后，咱们转头看 `main.zig`。
+虽然很多语法元素跟 `root.zig` 很像，但这里出现了几个非常关键的新特性，咱们逐一拆解。
+
+首先看 `main()` 函数的返回值类型，有点不一样：`void` 前面多了一个感叹号（`!`）。
+这个感叹号在 Zig 里代表**错误联合（Error Union）**——它明确告诉编译器和调用者：这个 `main()` 函数在执行过程中有可能会返回错误（Error）！
+
+顺带提一句，Zig 的 `main()` 函数不仅可以返回 `void`（不返回任何有效值），还可以返回一个 `u8`（无符号 8 位整数）[^u8-example]，或者返回一个错误。也就是说，你可以像写常规程序一样返回 `void`；也可以像写传统 C 程序那样返回一个整型退出码（Status Code），用退出码向操作系统汇报进程状态。
+
+[^u8-example]: 你可以在本书示例的 `return-integer.zig` 文件中看到返回 `u8` 退出码的 `main()` 写法：<https://github.com/pedropark99/zig-book/blob/main/ZigExamples/zig-basics/return-integer.zig>。
+
+在当前代码里，`!void` 意味着：要么顺利执行完毕啥也不返回（`void`），要么在中途抛出一个错误。这个类型签名上的感叹号是 Zig 非常犀利的核心机制：如果你的函数内部调用的某个操作可能会报错，那编译器就逼着你做二选一：
+
+1. 要么在返回值类型上加上感叹号 `!`，坦白交代“我可能会抛出错误，谁调我谁操心”；
+2. 要么在函数体内部就地把这个错误给捕获并处理干净。
+
+在很多主流高级语言里，我们习惯用 *try-catch* 块来捕获异常。Zig 里虽然也有 `try` 和 `catch` 两个关键字，但它们的工作机制跟传统语言大不相同。
+
+看看下面的 `main()` 函数，第 5 行有一个 `try`，但整段代码压根没有 `catch`。
+在 Zig 里，`try` 关键字是专门用来执行可能返回错误的操作的（这里是 `stdout.print()`）。
+
+简单来说，`try stdout.print(...)` 的执行逻辑是：
+如果被调用的表达式顺利返回了正常结果，`try` 啥事也不干，就像根本不存在一样，把正常值原样放行；
+但一旦这个表达式返回了错误，`try` 会立刻把这个错误从函数中直接 return 出去（即向上一层调用栈抛出），并在控制台打印出当前的堆栈轨迹（Stack Trace）。
+
+如果你平时写惯了 Python 等动态语言，可能会觉得这个语法有点特别。在 Python 里，任何地方抛异常如果没被捕获，解释器就会直接中断崩溃。而在 Zig 里，所有错误都是显式的值（Errors are values），要么层层往上抛，要么当场捕获，绝不允许视而不见。
+
+```zig
+const std = @import("std");
+const Writer = std.Io.File.Writer;
+
+pub fn main(init: std.process.Init) !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = Writer.init(
+        std.Io.File.stdout(),
+        init.io,
+        &stdout_buffer
+    );
+    const stdout = &stdout_writer.interface;
+    try stdout.print("Hello, {s}!\n", .{"world"});
+    try stdout.flush();
+}
+```
+
+另外请注意，`main()` 函数同样必须打上 `pub` 标记。这在 Zig 项目里是硬性规定：程序的 `main()` 必须是公开函数，否则操作系统找不到入口，程序根本没法跑起来。
+
+
+### 编译整个工程 {#sec-compile-project}
+
+看完了项目骨架，咱们接着聊聊怎么把这些 Zig 代码真正编译成二进制可执行文件或库。
+先从一次性编译整个工程讲起。
+
+正如在 @sec-project-files 提到的，一旦项目规模和代码量上去，谁也不想每次都在终端敲一长串复杂的底层编译命令（比如 `build-exe`、`build-lib`、`build-obj`）。敲得人烦不说，参数还极容易写错。
+
+在 C/C++ 里，大家一般会写 CMakeLists.txt、Makefile 或 configure 脚本；而在 Zig 里，直接用内置构建系统写个 `build.zig` 就齐活了。想要编译构建整个项目，在终端敲一行命令即可：
+
+```bash
+zig build
+```
+
+当你敲下 `zig build` 时，`zig` 编译器会在当前目录下寻找 `build.zig` 脚本，然后直接运行它。该脚本内部会按你定义的规则，一步步完成整个工程的编译、链接与打包。
+
+构建完成后，工程根目录下会自动生成一个 `zig-out` 目录。在 `zig-out/bin` 路径下，你就能看到生成好的二进制可执行文件了。在后面的章节中，我们会更深入地剖析 Zig 构建系统的玩法。
+
+我们直接跑一下刚构建好的 `hello_world` 可执行程序：
+
+```bash
+./zig-out/bin/hello_world
+```
+
+终端顺利打出：
+
+```
+Hello, world!
+```
+
+
+### 单文件编译为可执行文件 {#sec-compile-code}
+
+除了整套工程构建，如果你平时只是想快速跑个单文件脚本，可以使用 `zig build-exe` 命令。直接在命令后面跟上你想要编译的 Zig 源码文件即可（多个文件用空格隔开）。下面我们编译一个假想的 `foo.zig` 模块：
+
+```bash
+zig build-exe src/foo.zig
+```
+
+既然是编译可执行程序，`zig` 编译器就会在这些文件里寻找 `pub fn main()` 入口函数。要是找不到，编译器会毫不客气地甩出一条编译报错。
+
+除了 `build-exe`，`zig` 还提供了 `build-lib` 和 `build-obj`，分别用来把 Zig 模块编译成通用的 C ABI 动态/静态库或者目标文件（.o）。
+
+执行完 `build-exe` 之后，编译器会在当前目录下直接生成一个同名二进制文件 `foo`。用 `ls` 扫一眼目录：
+
+```bash
+ls
+```
+
+```
+build.zig  build.zig.zon  foo  src
+```
+
+直接执行这个二进制文件，终端立刻输出了预期的结果：
+
+```bash
+./foo
+```
+
+```
+Hello, world!
+```
+
+
+### 一步搞定编译与运行 {#sec-compile-run-code}
+
+日常本地开发调试时，每次先 `build-exe` 再手动跑二进制，稍微有点繁琐。有没有更快捷的办法？
+有！直接用 `zig run`：
+
+```bash
+zig run src/foo.zig
+```
+
+```
+Hello, world!
+```
+
+它会一口气完成“编译并在内存中直接运行”，输出结果直接打印在终端上，写小 Demo 或者刷题时用起来相当丝滑。
+
+
+## 怎样高效学好 Zig？
+
+怎么才能把 Zig 这门语言彻底学透？
+首先，手头这本书绝对能带你打牢基础、少走弯路。但想成为真正的 Zig 高手，你还需要善用周边的丰富资源。
+
+遇到难题卡壳时，不妨到 Zig 的开发者社区里找大佬交流问答：
+
+- Ziggit 论坛（官方核心讨论区）：<https://ziggit.dev/>；
+- Discord、Slack、Telegram 等社群通道：<https://ziglang.org/community/>；
+
+另外，学 Zig 最管用、最立竿见影的技巧就是：**死磕源码，多读优秀代码**。只要你平时有意识地多翻翻 Zig 开源库，很多之前看不懂的设计会瞬间恍然大悟。老牌 C/C++ 开发者肯定深有体会，这招百试不爽！
+
+那去哪找高质量的 Zig 代码来读呢？
+我个人最推荐的，其实是 **Zig 的标准库源码**。在官方 GitHub 仓库的 [`lib/std` 目录](https://codeberg.org/ziglang/zig/src/branch/master/lib/std)[^zig-lib-std] 下，所有官方标准库代码全开源在里面。进去随便点几个模块读读，代码写得极其地道优雅，是绝佳的学习教材。
+
+此外，社区里也有大量硬核且成熟的大型 Zig 开源项目，非常值得深入研读：
+
+1. [Mach 游戏引擎](https://github.com/hexops/mach)[^mach]；
+2. [纯 Zig 实现的 LLaMA 2 推理引擎](https://github.com/cgbur/llama2.zig/tree/main)[^ll2]；
+3. [主打金融级强一致性的分布式事务数据库 `tigerbeetle`](https://github.com/tigerbeetle/tigerbeetle)[^tiger]；
+4. [命令行参数解析库 `zig-clap`](https://github.com/Hejsil/zig-clap)[^clap]；
+5. [跨平台原生 UI 框架 `capy`](https://github.com/capy-ui/capy)[^capy]；
+6. [Zig 官方语言服务器 `zls`](https://github.com/zigtools/zls)[^zls]；
+7. [高性能跨平台事件循环库 `libxev`](https://github.com/mitchellh/libxev)[^xev]。
+
+[^xev]: <https://github.com/mitchellh/libxev>
+[^zls]: <https://github.com/zigtools/zls>
+[^capy]: <https://github.com/capy-ui/capy>
+[^clap]: <https://github.com/Hejsil/zig-clap>
+[^tiger]: <https://github.com/tigerbeetle/tigerbeetle>
+[^ll2]: <https://github.com/cgbur/llama2.zig/tree/main>
+[^mach]: <https://github.com/hexops/mach>
+
+平时在 GitHub 搜代码时，可以巧用 `lang:Zig` 语法过滤搜索结果，瞬间就能挖出一堆宝藏仓库。
+
+[^zig-lib-std]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std>
+
+在线文档和博客也是日常必查的资料库，推荐加到书签夹：
+
+- Zig 语言参考手册（Language Reference）：<https://ziglang.org/documentation/master/>；
+- Zig 标准库在线 API 文档：<https://ziglang.org/documentation/master/std/>；
+- Zig Guide 入门指南：<https://zig.guide/>；
+- Karl Seguin 的个人技术博客：<https://www.openmymind.net/>；
+- Zig News 社区动态：<https://zig.news/>；
+- Zig 核心团队成员的 GitHub（推荐关注）：<https://github.com/kubkon>；
+- YouTube 上的 Zig Showtime 直播录播频道：<https://www.youtube.com/@ZigSHOWTIME/videos>。
+
+另外，“边练边踩坑”也是掌握语言的神器。社区里极具人气的刷题项目是 [Ziglings](https://ziglings.org)[^ziglings]，里面准备了 100 多道循序渐进的小练习。它的玩法很有意思：仓库里准备了一堆故意写错的 Zig 代码，你的任务就是把这些程序修好、让单测全部通过。
+
+[^ziglings]: <https://ziglings.org>。
+
+油管知名技术博主 *The Primeagen* 专门录过通关 Ziglings 的实况视频，入门阶段很推荐看一看：["Trying Zig Part 1"](https://www.youtube.com/watch?v=OPuztQfM3Fg&t=2524s&ab_channel=TheVimeagen)[^prime1]。
+
+[^prime1]: <https://www.youtube.com/watch?v=OPuztQfM3Fg&t=2524s&ab_channel=TheVimeagen>。
+
+如果你喜欢算法挑战，还可以去刷 [Advent of Code (AoC)](https://adventofcode.com/)[^advent-code]。社区有现成的模板和解答参考：
+
+- <https://github.com/SpexGuy/Zig-AoC-Template>；
+- <https://github.com/fjebaker/advent-of-code-2022>。
+
+[^advent-code]: <https://adventofcode.com/>
+
+
+
+## 在 Zig 里创建对象（标识符与变量） {#sec-assignments}
+
+接下来咱们深入聊聊 Zig 的对象创建与赋值。
+对于有其他语言经验的开发者，这个概念一般被称为“变量”或“标识符”。在本书里，我们统一用“对象（Object）”来称呼它们。
+
+在 Zig 里定义一个新对象，使用的是 `const` 或 `var` 关键字。
+这俩关键字决定了这个对象到底**可变不可变**：
+- 如果用 `const`，你定义的就是一个**常量（不可变对象）**。一旦完成赋值初始化，后续代码严禁修改它的值；
+- 如果用 `var`，你定义的就是一个**变量（可变对象）**，后续想怎么改就怎么改。这个 `var` 对应到 Rust 里就相当于 `let mut`。
+
+### 常量对象与变量对象
+
+看下面这段代码：我们定义了一个叫 `age` 的常量对象，存了个数字。但第二行代码试图给 `age` 重新赋值为 25。这段代码在编译期会直接翻车。
+
+因为 `zig` 编译器一眼看出你正在给一个用 `const` 声明的常量赋值，立刻中断编译并抛出错误提示：
+
+```zig
+const age = 24;
+// 下面这行会直接报错！
+age = 25;
+```
+
+```
+t.zig:10:5: error: cannot assign to constant
+    age = 25;
+      ~~^~~
+```
+
+所以，如果你后续确实需要改动对象的值，就必须改用 `var` 关键字，明确告诉编译器：“这个对象在后面的生命周期里是可能发生变化的”。
+
+把上面例子的 `const` 改成 `var`，代码就能顺利编译了。
+但请仔细看下面的正确写法：我们不仅把 `const` 换成了 `var`，还在 `age` 后面显式补上了 `: u8` 类型注解。
+Zig 的设计理念是：一旦一个对象具有可变性，编译器就要求开发者写得更加严谨、意图更清晰，必须明确标注它的具体数据类型。
+
+所以请记住这条开发口诀：**一旦把对象声明为 `var`，记得老老实实把类型标注写完整**。否则编译器大概率会提示你要么把它改回 `const`，要么补全显式类型。
+
+```zig
+var age: u8 = 24;
+age = 25;
+```
+
+
+### 声明时不给初值？看情况！
+
+在 Zig 里，声明对象默认必须同步给它赋初始值。换句话说，声明与初始化通常是一气呵成的。
+
+那如果我们真遇到某些特殊场景，确实想先声明、回头再赋值呢？
+Zig 专门提供了一个关键字：`undefined`。
+
+但这里必须敲黑板重点提醒：**在日常业务代码里，能不用 `undefined` 就千万别用！**
+因为一旦用了 `undefined`，这个对象在底层内存里就是纯粹的未初始化垃圾数据。如果后面的代码因为逻辑漏洞，在还没给它赋有效值之前就误读了它，就会立刻引发极其危险的未定义行为（Undefined Behavior, UB），排查起来简直要命。
+
+看下面的例子：虽然可以这么写，但在第二行之前，`age` 都是处于未初始化状态的：
+
+```zig
+var age: u8 = undefined;
+age = 25;
+```
+
+为了代码的绝对安全与健壮，平时尽可能随手完成初始化。只有在极少数确实需要延迟填充的高性能缓冲区等底层场景，才去考虑 `undefined`。
+
+
+### 在 Zig 里，绝对不允许出现“闲置对象”！
+
+这是一条刚性铁律：在 Zig 里，**你声明的每一个对象（不管是常量还是变量），都必须在后续代码中被真正用上！**
+无论是把它当参数传给函数、参与数学计算、还是调用它的某个方法，只要用到了就行。
+
+如果你胆敢声明了一个对象却把它撂在一旁不用，`zig` 编译器会无情拒绝编译，直接喷你脸上一句“unused local constant/variable”。
+
+看个实际例子：我们声明了一个 `age` 常量，但后续代码压根没碰它。
+
+```zig
+const age = 15;
+```
+
+编译器当场翻脸报错：
+
+```
+t.zig:4:11: error: unused local constant
+    const age = 15;
+          ^~~
+```
+
+在 Zig 里遇到这种情况，你有两种选择：
+1. 老老实实把它用起来；
+2. 显式把它丢弃掉。
+
+怎样显式丢弃一个不需要的值呢？把赋值给下划线 `_` 即可！
+在 Zig 里，下划线是一个特殊的丢弃占位符。只要你写了 `_ = name;`，编译器就会心领神会，认为你已经主动接纳并丢弃了它，不会再哔哔报错。
+
+```zig
+// 这下顺利通过编译了！
+const age = 15;
+_ = age;
+```
+
+但要注意：一旦你把一个对象丢给了下划线 `_`，在编译器的眼里这个对象就已经被彻底销毁了，后续绝对不能再尝试读取它！
+如果刚丢给 `_` 后面又试图去用，编译器同样会抓狂，喷你一句“pointless discard”（毫无意义的丢弃）：
+
+```zig
+// 这段代码无法编译通过！
+const age = 15;
+_ = age;
+// 试图使用已经被丢弃的值！
+std.debug.print("{d}\n", .{age + 2});
+```
+
+```
+t.zig:7:5: error: pointless discard
+    of local constant
+```
+
+对于 `var` 变量也是同样的道理，声明了就得用；如果确实要废弃，同样赋给 `_`。
+
+
+### 变量声明了却不修改？编译器也会教做人！
+
+Zig 的编译器严谨到了极致：**只要你把一个对象用 `var` 声明为变量，那你在后面就必须真的去修改（mutate）它的值！**
+如果你写了 `var`，但自始至终它的值从来没变过，编译器就会立刻跳出来警告你：“这个变量压根没被修改过，麻烦你改成 `const`”。
+
+背后的逻辑很清晰：在系统级编程中，不可变状态（`const`）天然具有更高的安全性与优化空间。Zig 倡导所有对象默认都走 `const`，除非业务逻辑非变不可，才用 `var`。
+
+看看下面这个反例：
+
+```zig
+var where_i_live = "Belo Horizonte";
+_ = where_i_live;
+```
+
+```
+t.zig:7:5: error: local variable is never mutated
+t.zig:7:5: note: consider using 'const'
+```
+
+
+## 原生基础数据类型 {#sec-primitive-data-types}
+
+Zig 提供了极其丰富且严谨的原生基础数据类型。完整类型清单可以查阅官方的[语言参考手册](https://ziglang.org/documentation/master/#Primitive-Types)[^lang-data-types]。
+
+[^lang-data-types]: <https://ziglang.org/documentation/master/#Primitive-Types>。
+
+日常最常用的大体分为这几类：
+
+- **无符号整型**：`u8`（8 位）、`u16`（16 位）、`u32`（32 位）、`u64`（64 位）、`u128`（128 位）。（甚至还支持任意位宽如 `u7`、`u24`！）
+- **有符号整型**：`i8`、`i16`、`i32`、`i64`、`i128`。
+- **浮点型**：`f16`（半精度）、`f32`（单精度 float）、`f64`（双精度 double）、`f128`。
+- **布尔型**：`bool`，取值为 `true` 或 `false`。
+- **C ABI 兼容类型**：`c_long`、`c_char`、`c_short`、`c_ushort`、`c_int`、`c_uint` 等等，用于跟 C 代码库零成本打通。
+- **指针尺寸整型**：`usize`（与平台指针等宽的无符号整型，内存寻址、数组长度标配）、`isize`。
+
+
+## 数组（Arrays） {#sec-arrays}
+
+在 Zig 里定义数组的语法跟 C 很像，但更安全。
+首先在一对方括号 `[]` 里填上数组的长度（容量），接着跟上元素的数据类型；最后在大括号 `{}` 里罗列各个元素的值。
+
+注意：Zig 数组里所有元素的类型必须绝对一致，不允许把 `f32` 和 `i32` 杂糅在同一个数组里。
+
+看下面这个例子：我们创建了两个数组常量，第一个是包含 4 个 `u8` 的整型数组，第二个是包含 3 个 `f64` 的浮点数组。
+
+请注意看 `ls` 对象的方括号里写的是 `[_]`：这里的下划线是给编译器开后门。你不用自己手动数有多少个元素，写上 `[_]`，编译器会在编译期自动帮你统计大括号里元素的个数并填入。这绝对是偷懒省心又不容易出错的绝佳写法。
+
+```zig
+const ns = [4]u8{48, 24, 12, 6};
+const ls = [_]f64{432.1, 87.2, 900.05};
+_ = ns; _ = ls;
+```
+
+需要划重点的是：上面这些都是**静态数组**，一旦声明完毕，它的尺寸就是固定的，无法动态扩容。这在底层语言里再正常不过了——底层系统编程讲究对内存的绝对掌控，动态扩容必然伴随内存重分配（Reallocation），必须交给专有的数据结构去显式管理。
+
+
+### 索引访问与切片选择 {#sec-select-array-elem}
+
+日常写代码免不了要访问数组里的元素。
+在 Zig 里，访问单个元素非常直观，直接在变量名后加 `[index]`。Zig 遵循主流编程语言的习惯，下标是从 `0` 开始算的（Zero-indexed）。
+
+下面我们用 `stdout.print()` 把数组里的第 3 个元素（索引为 2）打印到控制台。
+顺便提一句：后续示例中为了节省篇幅，我们可能会省略 `stdout` 的样板声明代码，如果忘了怎么初始化的，可以随时翻回 @sec-main-file 温习。
+
+```zig
+const ns = [4]u8{48, 24, 12, 6};
+try stdout.print("{d}\n", .{ ns[2] });
+try stdout.flush();
+```
+
+除了按单一下标取值，我们还可以通过**范围选择器（Range Selector）**截取数组的一部分，生成一个**切片（Slice）**。在 Rust 里也有完全一样的语法机制，语法形式为 `start..end`。
+
+在下面的代码里，第二行的 `sl` 对象截取了 `ns` 数组从索引 1 到 3 的局部片段（即下标 1 和 2 的元素）：
+
+```zig
+const ns = [4]u8{48, 24, 12, 6};
+const sl = ns[1..3];
+_ = sl;
+```
+
+注意：`start..end` 是**左闭右开**区间，也就是说 `end` 处的索引是不包含在内的，实际截取的是从 `start` 到 `end - 1`。
+
+如果你想截取从头到尾的全部数据，可以直接用 `ar[0..ar.len]`：
+
+```zig
+const ar = [4]u8{48, 24, 12, 6};
+const sl = ar[0..ar.len];
+_ = sl;
+```
+
+或者用更精简的 `start..` 语法，代表从指定下标一路截取到数组末尾：
+
+```zig
+const ns = [4]u8{48, 24, 12, 6};
+const sl = ns[1..];
+_ = sl;
+```
+
+
+### 深入搞懂切片（Slices）
+
+前面提到，截取数组的操作在 Zig 里被称为 *Slicing*（切片截取）[@zigguide]。
+那么在底层，切片对象到底是个什么玩意儿？
+
+本质上，**切片就是一个携带了长度信息的胖指针（Fat Pointer）**：它由一个指向底层数据起始位置的指针，外加一个记录元素个数的 `usize` 长度数值组成。
+
+> 切片可以理解为一个二元组：`[*]T`（指向底层连续数据的指针）加上 `usize`（元素数量计数器）[@zigguide]。
+
+通过切片内部的指针，你可以高效访问那截被选中的原数据；而切片自带的 `len` 长度属性（比如 `sl.len`），则是 Zig 相比 C 语言原生数组带来的降维打击式升级！
+
+有了显式的长度记录，`zig` 编译器和运行时就能够在调试构建下轻而易举地检测出所有越界访问和缓冲区溢出（Buffer Overflow）漏洞。
+
+```zig
+const ns = [4]u8{48, 24, 12, 6};
+const sl = ns[1..3];
+try stdout.print("{d}\n", .{sl.len});
+try stdout.flush();
+```
+
+
+### 数组拼接操作符
+
+Zig 提供了一个非常实用的数组拼接操作符：`++`。
+
+需要特别强调的是：**`++` 操作符只能在参与拼接的两个数组长度均在编译期已知（Compile-time known）的情况下使用！**
+关于“编译期已知”和“运行时已知”的区别，我们在 @sec-compile-time 会深入讲透。
+
+简单来说，`a ++ b` 会在编译期拼出一个全新的数组，把 `b` 的所有元素无缝接在 `a` 后面：
+
+```zig
+const a = [_]u8{1,2,3};
+const b = [_]u8{4,5};
+const c = a ++ b;
+try stdout.print("{any}\n", .{c});
+try stdout.flush();
+```
+
+这个 `++` 操作符在编译期拼字符串时尤为顺手。因为在 Zig 里，字符串本质上就是字节数组。
+
+
+### 切片长度：运行时已知 vs 编译期已知
+
+全书我们会反复遇到“编译期已知”和“运行时已知”这两个概念。
+简单粗暴地区分一下：如果在代码编译的时候，编译器就已经能把这个值算得清清楚楚、明明白白，那它就是**编译期已知**；如果在编译时根本猜不准，只有等程序跑起来、根据输入动态计算出来的，那就是**运行时已知**。
+
+在 @sec-select-array-elem 中我们聊过用范围选择器做切片。如果切片的起始点和结束点在编译阶段都是板上钉钉的常数，那生成的切片在底层其实会退化成一个非常轻量的“指向单项数组的指针”。
+
+在切片范围编译期已知的场景下，你可以像对待常规指针一样直接对它做解引用操作（使用 `.*` 语法）：
+
+```zig
+const arr1 = [10]u64 {
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10
+};
+// 这个切片的范围在编译期完全已知（起点是 1，终点是 4）
+const slice = arr1[1..4];
+_ = slice;
+```
+
+反过来，如果切片的范围无法在编译期敲定（比如结束位置由外部输入决定），那它就是一个真正的动态切片，就不能再随便当纯指针用了。
+
+典型的例子就是读磁盘文件：在程序运行前，你根本无法预判文件今天会有多大。可能今天还是 4.5KB，明天改了改就变成了 4.8KB。由于文件是独立于源码的外部数据，它的实际尺寸只有在运行时把文件打开后才知道。
+
+看下面这个读取文件的示例代码：我们预先开辟了一个 1024 字节的缓冲区 `file_buffer`，这个缓冲区的最大容量在编译期是已知的（1024）；但真正从文件里读到了多少个字节（变量 `nbytes` 的值），只有在运行时执行了文件读取后才能得知。因此，最后打印的切片 `file_buffer[0..nbytes]` 的实际边界就是一个纯粹的运行时状态。
+
+```zig
+const std = @import("std");
+
+fn read_file(path: []const u8, buffer: []u8, io: std.Io) !usize {
+    const file = try std.Io.Dir.cwd().openFile(
+        io, path, .{}
+    );
+    defer file.close(io);
+
+    const nbytes = try file.readPositionalAll(
+        io, buffer[0..], 0
+    );
+    return nbytes;
+}
+
+pub fn main(init: std.process.Init) !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    var file_buffer = try allocator.alloc(u8, 1024);
+    defer allocator.free(file_buffer);
+    @memset(file_buffer[0..], 0);
+
+    const path = "../ZigExamples/file-io/shop-list.txt";
+    const nbytes = try read_file(
+        path, file_buffer[0..], init.io
+    );
+
+    std.debug.print("{s}", .{file_buffer[0..nbytes]});
+}
+```
+
+
+## 代码块与作用域 {#sec-blocks}
+
+在 Zig 里，用一对花括号 `{}` 括起来的区域就是一个**代码块（Block）**。
+代码块定义了变量的作用域（Scope）：在大括号里声明的所有对象，只在该花括号内部可见，一旦出了大括号就彻底失效，外部根本无法访问。
+
+函数的函数体、`if` 分支、`for` / `while` 循环体，本质上都是标准的代码块。它们各自拥有相互隔离的局部作用域。
+
+不仅如此，Zig 的代码块还支持多层嵌套，并且可以**带标签（Labeled Blocks）**！
+在花括号前面写上 `label:`，就可以给这个代码块打上标签。在块内部，你可以使用 `break :label value;` 的语法直接把一个计算结果从代码块里“返回”出来，就像执行了一个内联的小函数一样！
+
+看看下面这段代码：代码块 `add_one:` 在内部执行完自增后，直接 `break :add_one y;` 把结果甩出来赋给了 `x`。在需要做复杂就地初始化的场景下，这种写法非常优雅：
+
+```zig
+var y: i32 = 123;
+const x = add_one: {
+    y += 1;
+    break :add_one y;
+};
+if (x == 124 and y == 124) {
+    try stdout.print("Hey!", .{});
+    try stdout.flush();
+}
+```
+
+
+
+## 搞懂 Zig 里的字符串到底怎么玩 {#sec-zig-strings}
+
+在本书的第一个实战项目里，咱们要亲手造一个 Base64 编解码器（@sec-base64）。
+而在动手写编解码器之前，必须把 Zig 里的字符串机制彻底摸透。
+
+Zig 的字符串底层理念跟 C 很像，但在设计上补齐了现代化的安全防护与性能考量。
+
+**在 Zig 里，字符串本质上就是一串任意字节构成的数组，具体来说就是 `u8` 数组。**
+这跟 C 很像（C 里是 `char` 数组）。但最大的质变在于：**Zig 的字符串天然携带着长度信息！**
+编译器能随时掌握这串字节的确切长度，这下子所有的越界访问、缓冲区溢出等老毛病直接在萌芽阶段被掐死。
+
+换作传统 C 语言，想知道一个字符串到底有多长，你必须从头到尾遍历字符，一直找到末尾的空字符（`'\0'`）为止。代码写起来又臭又长：
+
+```c
+#include <stdio.h>
+int main() {
+    char* array = "An example of string in C";
+    int index = 0;
+    while (1) {
+        if (array[index] == '\0') {
+            break;
+        }
+        index++;
+    }
+    printf("Number of elements in the array: %d\n", index);
+}
+```
+
+```
+Number of elements in the array: 25
+```
+
+而在 Zig 里根本用不着干这种苦力活，直接读 `.len` 属性即可：
+
+```zig
+const string_object = "This is an example of string literal in Zig";
+try stdout.print("{d}\n", .{string_object.len});
+try stdout.flush();
+```
+
+另外需要说明的是，Zig 默认假设源码中的字符串字面量都是 UTF-8 编码的。现代互联网和操作系统的文本几乎全面普及了 UTF-8。如果遇到非 UTF-8 的古早编码，通常需要用专用转码库（如 `iconv`[^libiconv]）先清洗一遍。
+
+[^libiconv]: <https://www.gnu.org/software/libiconv/>。
+
+举个直观的例子："Hello" 这五个字符在 UTF-8 编码下对应十进制数值 `72, 101, 108, 108, 111`，十六进制为 `0x48, 0x65, 0x6C, 0x6C, 0x6F`。如果把这一组十六进制字节丢给 Zig 按字符串格式（`{s}`）打印，控制台就会如实输出 "Hello"：
+
+```zig
+const bytes = [_]u8{0x48, 0x65, 0x6C, 0x6C, 0x6F};
+try stdout.print("{s}\n", .{bytes});
+try stdout.flush();
+```
+
+
+### 字符串的两种打开方式：切片 vs 哨兵终止数组 {#sec-string-slice-versus-array}
+
+在内存层面，所有字符串都是一串纯粹的字节。但在实际编写 Zig 代码时，你通常会遇到两种使用形态：
+
+1. **哨兵终止数组（Sentinel-terminated array）**（一般是 `[n:0]u8`）；
+2. **切片（Slice）**（通常写为 `[]const u8` 或 `[]u8`）。
+
+在日常业务和标准库 API 调用中，绝大多数情况下我们用的都是第 2 种——**切片形式**。
+
+#### 哨兵终止数组
+
+所谓的“哨兵终止数组”[^sentinel]，说白了就是一个在末尾带上了特定“哨兵值（Sentinel）”的数组。这个哨兵值通常是数字 `0`。
+
+[^sentinel]: <https://ziglang.org/documentation/master/#Sentinel-Terminated-Arrays>。
+
+如果你在代码里写了一个字符串字面量并用 `@TypeOf()` 打印它的类型，通常会看到类似 `*const [n:0]u8` 这种类型签名：这里的 `n` 是字符串的长度，而 `:0` 就代表末尾附带了一个数值为 0 的哨兵字符。
+
+```zig
+// 打印字符串字面量的底层类型：
+try stdout.print("{any}\n", .{@TypeOf("A literal value")});
+try stdout.flush();
+```
+
+聪明的同学已经发现了：这不就是 C 语言里的 `\0` 结尾字符串嘛！没错，Zig 用类型系统的形式把“末尾带 0”以及“数组长度”全部编码进了类型本身，既完美兼容了传给 C 接口（以 null 结尾）的需求，又保证了现代语言的长度安全。
+
+#### 切片形式（Slice）
+
+但在纯 Zig 世界里，最地道、最常用的形式是 `[]const u8`（不可变字符串切片）。
+Zig 标准库绝大多数接受字符串入参的函数，类型全都是 `[]const u8`。因为切片自带长度属性，压根不需要在末尾强制塞一个 `0` 哨兵，切起来更加灵活自由。
+
+```zig
+// 把字面量转为切片类型使用
+const str: []const u8 = "A string value";
+try stdout.print("{any}\n", .{@TypeOf(str)});
+try stdout.flush();
+```
+
+
+### 遍历字符串的每个字节
+
+想瞅瞅字符串在底层到底是哪些十六进制字节，直接用一个 `for` 循环遍历它，配合格式化占位符 `{X}` 打印即可：
+
+```zig
+const string_object = "This is an example";
+try stdout.print("Bytes that represents the string object: ", .{});
+for (string_object) |byte| {
+    try stdout.print("{X} ", .{byte});
+}
+try stdout.flush();
+```
+
+
+### 深入剖析对象类型
+
+在 Zig 里，你可以随时用 `@TypeOf()` 这个内置函数来透视任何对象的底层真实类型。
+看下面这个综合例子：
+
+```zig
+const std = @import("std");
+pub fn main() !void {
+    const simple_array = [_]i32{1, 2, 3, 4};
+    const string_obj: []const u8 = "A string object";
+    std.debug.print(
+        "Type 1: {}\n", .{@TypeOf(simple_array)}
+    );
+    std.debug.print(
+        "Type 2: {}\n", .{@TypeOf("A string literal")}
+    );
+    std.debug.print(
+        "Type 3: {}\n", .{@TypeOf(&simple_array)}
+    );
+    std.debug.print(
+        "Type 4: {}\n", .{@TypeOf(string_obj)}
+    );
+}
+```
+
+```
+Type 1: [4]i32
+Type 2: *const [16:0]u8
+Type 3: *const [4]i32
+Type 4: []const u8
+```
+
+从打印结果能看得很清楚：
+- `simple_array` 是 `[4]i32`（4 个 32 位整型的固定数组）；
+- 字符串字面量是 `*const [16:0]u8`（指向一个 16 字节长、带 0 哨兵的数组的常量指针）；
+- 给普通数组取地址 `&simple_array` 得到的是 `*const [4]i32`；
+- 而显式声明的 `string_obj` 则是 `[]const u8`（不可变字节切片）。
+
+
+### 单个字节 vs Unicode 码点（避坑指南！）
+
+这里有一个无数开发者容易踩的坑：**在 UTF-8 编码下，一个字节绝不等于一个字符！**
+
+UTF-8 是一种可变长字符编码。英文字母比较省，占 1 个字节；但像中文、日文、特殊西欧字符等，往往需要 2 个、3 个甚至 4 个字节来表示一个 Unicode 码点（Codepoint）。
+
+比如西欧字符 “Ⱥ”，它的 Unicode 码点是 570。而单字节最多只能存到 255，所以底层不得不耗费 `C8 BA` 两个字节来存储它：
+
+```zig
+const string_object = "Ⱥ";
+_ = try stdout.write(
+    "Bytes that represents the string object: "
+);
+for (string_object) |char| {
+    try stdout.print("{X} ", .{char});
+}
+try stdout.flush();
+```
+
+如果你直接用普通的 `for (str) |b|` 去遍历字符串，你遍历到的仅仅是一个个底层**原始字节**，而不是一个个文字符号！
+如果处理中文或多语言文本，想要按真实文字（码点）一个个迭代，就必须使用 Zig 标准库提供的 `std.unicode.Utf8View` 视图迭代器：
+
+```zig
+var utf8 = try std.unicode.Utf8View.init("アメリカ");
+var iterator = utf8.iterator();
+while (iterator.nextCodepointSlice()) |codepoint| {
+    try stdout.print(
+        "got codepoint {x}\n",
+        .{codepoint},
+    );
+}
+
+try stdout.flush();
+```
+
+```
+got codepoint e382a2
+got codepoint e383a1
+got codepoint e383aa
+got codepoint e382ab
+```
+
+
+### 字符串常用神仙工具函数 {#sec-strings-useful-funs}
+
+Zig 标准库的 `std.mem` 模块里藏着大量处理切片与字符串的瑞士军刀级函数：
+
+- `std.mem.eql()`：对比两个字符串是否完全一致（返回布尔值）；
+- `std.mem.splitScalar()`：按单字符作为分隔符拆分字符串；
+- `std.mem.splitSequence()`：按子字符串序列拆分字符串；
+- `std.mem.startsWith()`：判断是否以某子串开头；
+- `std.mem.endsWith()`：判断是否以某子串结尾；
+- `std.mem.trim()`：裁剪字符串首尾的指定字符（如去除空白符）；
+- `std.mem.concat()`：把多个字符串拼成一个新串（由于要重新开辟内存，需传入 Allocator）；
+- `std.mem.count()`：统计子串在原串中出现的次数；
+- `std.mem.replace()`：将子串替换为目标内容并写入指定缓冲区。
+
+简单过几个日常开发频率最高的：
+
+判断相等：
+```zig
+const name: []const u8 = "Pedro";
+try stdout.print(
+    "{any}\n", .{std.mem.eql(u8, name, "Pedro")}
+);
+try stdout.flush();
+```
+
+判断前缀：
+```zig
+const name: []const u8 = "Pedro";
+try stdout.print(
+    "{any}\n", .{std.mem.startsWith(u8, name, "Pe")}
+);
+try stdout.flush();
+```
+
+替换内容（替换完成后还会返回实际发生替换的次数）：
+```zig
+const str1 = "Hello";
+var buffer: [5]u8 = undefined;
+const nrep = std.mem.replace(
+    u8, str1, "el", "34", buffer[0..]
+);
+try stdout.print("New string: {s}\n", .{buffer});
+try stdout.print("N of replacements: {d}\n", .{nrep});
+try stdout.flush();
+```
+
+```
+New string: H34lo
+N of replacements: 1
+```
+
+
+## Zig 的安全性设计哲学
+
+在当今现代底层编程语言领域，“安全性”是绝对绕不开的主旋律。随着软硬件对现实世界的渗透越来越深，内存破坏相关的漏洞依然是黑客利用率最高的软肋。
+
+正如知名技术专家 Richard Feldman 在 GOTO 大会演讲中所指出的[^gotop]：计算机世界目前根本不存在所谓的“绝对安全”。即便你的语言写得再滴水不漏，黑客依然可能去攻击操作系统的后门，甚至是利用 CPU 硬件架构本身的旁路漏洞（例如 ARM 芯片上的内存标记漏洞 [@exploit1]）。
+
+[^gotop]: <https://www.youtube.com/watch?v=jIZpKpLCOiU&ab_channel=GOTOConferences>。
+
+面对安全问题，各门语言走出了不同的道路。以 Rust 为代表，它通过极其严苛的编译期借用检查器（Borrow Checker）强制开发者按特定范式写代码；而一旦接入 C 语言三方库或启用 `unsafe`，这层保护网就会被撕开。
+
+**而 Zig 采取的哲学则务实得多：它不追求在全场景下把开发者死死捆在借用检查器里，而是通过一套组合拳来帮开发者极度优雅地消灭常见 Bug：**
+
+- **`defer` 语法糖**：让你能把“释放资源（Free）”的代码紧紧贴在“申请资源（Alloc）”的下一行。配合作用域绑定，极大减轻了开发者对对象生命周期的心智负担，从源头消灭了大量的内存泄漏、悬垂指针（Use-After-Free）和双重释放（Double Free）。
+- **`errdefer` 容错回收**：只在遇到运行时错误提前退出时才触发执行，完美解决半路报错导致先前半成品资源泄露的问题。
+- **默认非空（Non-nullable）设计**：Zig 里的普通指针和对象默认绝不允许为 null！从根本上干掉了臭名昭著的空指针异常（Null Pointer Dereference）。
+- **自带内存泄漏检测分配器（Testing Allocator）**：标准库提供了内置的内存检测机制，只要跑单元测试，就能自动帮你抓出哪里忘了释放内存、哪里重复释放，把单测变成排查内存 Bug 的杀手锏。
+- **切片自带长度**：运行时自带越界检查，直接堵死缓冲区溢出通道。
+- **控制流必须完备**：`switch` 语句必须穷尽所有枚举分支，强制开发者处理每一个可能发生的错误值。
+
+
+## 小结与后行预告
+
+到这里，咱们已经把 Zig 的最核心骨架盘了一遍：
+- 如何定义函数、管理主入口（@sec-root-file、@sec-main-file）；
+- 如何用 `const` 和 `var` 创建对象，以及为什么不能闲置变量（@sec-assignments）；
+- 掌握了字符串在底层的真实运行机制（@sec-zig-strings）；
+- 掌握了数组、切片以及为什么切片是更好的选择（@sec-arrays）；
+- 掌握了模块导入和基本工程结构。
+
+掌握了这些，你已经完全具备继续深入更精彩章节的底子了！在接下来的章节中，我们将一步步解锁更多硬核技术点：
+
+- 结构体与面向对象编程（@sec-structs-and-oop）；
+- 控制流的高阶玩法（@sec-zig-control-flow）；
+- 枚举类型（@sec-enum）；
+- 指针与可选类型 Optionals（@sec-pointer）；
+- `try` 与 `catch` 的错误处理实战（@sec-error-handling）；
+- 编写地道的单元测试（@sec-unittests）；
+- 向量类型与 SIMD 性能极限优化（@sec-vectors-simd）；
+- 深入玩转 Zig 构建系统（@sec-build-system）。

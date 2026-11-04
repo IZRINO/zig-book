@@ -1,0 +1,1282 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Zig 语言入门",
+    "section": "",
+    "text": "欢迎阅读\n欢迎！这里是《Zig 语言入门：基于项目的实操指南》（Introduction to Zig: a project-based book）开源网页版的起始页。本书原作者为 Pedro Duarte Faria。 这是一本开源的技术入门书，带你探索 Zig 编程语言——一门现代化、通用且专注于构建高性能、健壮底层软件的新一代系统级编程语言。",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#支持原项目",
+    "href": "index.html#支持原项目",
+    "title": "Zig 语言入门",
+    "section": "支持原项目！",
+    "text": "支持原项目！\n如果你喜欢这个项目并希望支持原作者，可以在 Amazon 或 Leanpub 上购买本书的 PDF、电子书或纸质实体版：\n\n  Buy the book on Amazon!  \n\n  Buy the book on Leanpub!  \n\n直接赞助原作者\n你也可以通过以下途径直接给原作者赞助：\n\nPayPal 捐赠\nRevolut 转账\n\n这些支持能直接激励原作者继续创作此类优质内容，让作者能够持续为开源社区编写更多好用的工具和高质量学习资料。\n\n\nPayPal\n\n  Donate via PayPal 💵  \n\n\nRevolut\n你可以通过以下银行与 Swift 汇款信息进行 Swift 支付：\n收款人 (Recipient): Pedro Duarte Faria\nBIC/SWIFT Code: REVOSGS2\n账号 (Account number): 6124512226\n开户行名称及地址: Revolut Technologies Singapore Pte. Ltd, 6 Battery Road, Floor 6-01, 049909, Singapore, Singapore\n对应 BIC: CHASGB2L\n如果你使用的是 Revolut 账户，可以直接扫码转账：\n\n  Revolut QR Code 💵",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#关于本书",
+    "href": "index.html#关于本书",
+    "title": "Zig 语言入门",
+    "section": "关于本书",
+    "text": "关于本书\n这是一本面向 Zig 编程语言 的开源、偏实战的技术入门读物。作为一门现代化通用底层语言，Zig 的设计初衷就是为了写出运行极致优化、运行状态稳定可靠的高质量软件。\n本书英文原版官方仓库：https://github.com/pedropark99/zig-book。\n无论是新手小白还是资深老手，读这本书都会有所收获。本书最大的特点是拒绝枯燥的语法死记硬背，而是像经典的《Python 编程：从入门到实践》（Eric Matthes 著）一样，手把手通过写真实小项目带大家玩转 Zig。 书中实战涵盖了：从零实现 Base64 编解码器、手写轻量 HTTP 服务器、开发图像滤镜等一系列趣味与硬核兼备的项目。\n跟着整本书敲下来，你会掌握：\n\nZig 语法全貌，以及它与 C、C++、Rust 的设计哲学对比。\n常用数据结构、底层内存分配器（Allocator）、文件系统与 I/O 操作。\n可选类型（Optionals）——告别空指针异常的现代化空值处理新范式。\n如何编写测试用例与在实际开发中高效调试 Zig 程序。\n作为一等公民的值类型错误体系（Errors as values）及其优雅处理姿势。\n使用 Zig 语言内置的原生构建系统（Build System）编译 C 与 Zig 项目。\nZig 与 C 语言的丝滑互操作（C Interop）。\n线程并发与 SIMD 向量化并行加速。\n以及更多底层系统开发的实战技巧。",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#关于作者",
+    "href": "index.html#关于作者",
+    "title": "Zig 语言入门",
+    "section": "关于作者",
+    "text": "关于作者\nPedro Duarte Faria 拥有巴西欧鲁普雷图联邦大学经济学学士学位。目前在 DSM-Firmenich1 担任资深数据工程师，同时也是 Databricks 认证的 Apache Spark 3.0 助理开发者。\n作者在数据行业深耕超过 4 年，曾为多家研究机构以及巴西金融界巨头（如 BMG 银行、Sodexo 和 Pan 银行）构建数据产品、数据管道、报表体系与分析引擎。\n除了数据工程师的身份，Pedro 也是一名对编程充满狂热的软件开发者，热衷于学习和传授编程技术。尽管日常工作中会使用多种语言，但他尤其精通 R 语言，并曾在研究生院（如 PPEA-UFOP2）以及多所联邦和州级机构（如 FJP-MG3）举办过多场讲座和培训课程。\n个人主页：https://pedro-faria.netlify.app/\nLinkedIn：https://www.linkedin.com/in/pedro-faria-a68140209/\nMastodon：@pedropark99@fosstodon.org\nTwitter (X)：@PedroPark9",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#开源许可",
+    "href": "index.html#开源许可",
+    "title": "Zig 语言入门",
+    "section": "开源许可",
+    "text": "开源许可\n版权所有 © 2025 Pedro Duarte Faria。本书遵循 CC-BY 4.0 知识共享署名 4.0 国际许可协议4 开源发布。",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#书籍编译元数据",
+    "href": "index.html#书籍编译元数据",
+    "title": "Zig 语言入门",
+    "section": "书籍编译元数据",
+    "text": "书籍编译元数据\n本书英文原版使用以下版本的 Zig 和 Quarto 编译构建：\nZig 0.17.0 与 Quarto 1.11.9",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#引用本书",
+    "href": "index.html#引用本书",
+    "title": "Zig 语言入门",
+    "section": "引用本书",
+    "text": "引用本书\n如果你在学术研究或项目中引用本书，可使用如下 BibTeX 条目：\n@book{pedro2024,\n    author = {Pedro Duarte Faria},\n    title = {Introduction to Zig},\n    subtitle = {a project-based book},\n    month = {October},\n    edition = {1},\n    year = {2024},\n    address = {Belo Horizonte},\n    url = {https://github.com/pedropark99/zig-book}\n}",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#通讯作者与维护者",
+    "href": "index.html#通讯作者与维护者",
+    "title": "Zig 语言入门",
+    "section": "通讯作者与维护者",
+    "text": "通讯作者与维护者\nPedro Duarte Faria\n联系邮箱：pedropark99@gmail.com\n个人网站：https://pedro-faria.netlify.app/",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#致谢",
+    "href": "index.html#致谢",
+    "title": "Zig 语言入门",
+    "section": "致谢",
+    "text": "致谢\n本书凝聚了与 Zig 社区众多开发者深入探讨和交流的智慧结晶。我（Pedro Duarte Faria）在此向每一位参与探讨的伙伴致以最真诚的谢意，同时也由衷感谢给予直接贡献的朋友们。以下是参与者的致谢名单（姓名及 GitHub 用户名）：\nCalin Martinconi (@martinconic), Steffen Roller (@sroller), Chris Boesch (@chrboesch), Lv Sihan (@Pokryton), saurabh sharma. (@esskayesss), slackline (@slackline), Markus Kurz (@kurz-m), Rubin Simons (@rubin55), Bruno (@PoorlyDefinedBehaviour), Ilia Choly (@icholy), Korri Katti (@KorryKatti), Vedang Manerikar (@vedang), Tommaso Ricci (@Zorgatone), Primo Sabatini (@primos63), Santiago Fernandez (@santif), Hamza Wahed (@HamzaWahed), mwilbur (@mwilbur), Dima Budaragin (@dbud), Jorge Jímenez (@jorge-j1m), Alexander (@alexwheezy), Maarten Coopens (@maarteNNNN), Niklas Johansson (@Raphexion), glystik (@glystik), Michael Lynch (@mtlynch), Yashank (@stickyburn), blf (@bengtfrost), Karl Gaissmaier (@gaissmai), Ben Scheirman (@subdigital), Ariel Otilibili (@ariel-anieli), kitajusSus (@kitajusSus), Luciogi (@Luciogi), Anish Gowda (@anishgowda21), Vlad Sirenko (@sirenkovladd), brendan fattig (@brendanny), Fristender (@Fristender), Christian C. Berclaz (@ChrisGVE), Vitaly Kogogin (@obergodmar), Nod Erik (@noderik), David Stelter (@David-Stelter)",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Zig 语言入门",
+    "section": "",
+    "text": "https://www.dsm-firmenich.com↩︎\nhttps://ppea.ufop.br/↩︎\nhttp://fjp.mg.gov.br/↩︎\nhttps://creativecommons.org/licenses/by/4.0/↩︎",
+    "crumbs": [
+      "欢迎阅读"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html",
+    "href": "Chapters/01-zig-weird.html",
+    "title": "1  初识 Zig",
+    "section": "",
+    "text": "1.1 到底什么是 Zig？\n``\n在这第一章里，我想带你正式走进 Zig 的世界。 Zig 是一门非常年轻、并且还在高速演进中的语言。 因此，它的整个生态和世界还充满着荒原般的生机，等待我们去探索。 写这本书，就是想陪你一起开启这段旅程，搞懂并玩转这门令人兴奋的新语言。\n阅读本书前，我默认你至少掌握过一门编程语言，倒不一定非得是底层语言。 所以，哪怕你平时主要写 Python 或 JavaScript，也完全能跟得上。 当然，如果你本身就有 C、C++ 或 Rust 这类系统级语言的开发底子，学起来肯定会更快、更有共鸣。\n简单来说，Zig 是一门现代化、底层且通用的系统级编程语言。不少开发者喜欢把它当成“更现代、更好用的 C 语言”。\n在我看来，Zig 的核心设计哲学就是“少即是多（Less is more）”。 很多现代语言喜欢靠不断堆砌语法糖和新特性来标榜自己“现代化”，但 Zig 反其道而行之：它给底层开发带来的诸多核心升级，实际上是在做减法——大刀阔斧地砍掉了 C 和 C++ 里那些反人类、容易让人踩坑的隐式行为与晦涩特性。 换句话说，Zig 追求的是语言层面的极致简洁，以及在各种极端边界情况下的确定性与健壮性。 这样一来，比起在 C 或 C++ 里痛苦挣扎，在 Zig 里阅读代码、写业务逻辑和排查调试 Bug 都会变得轻松很多。\nZig 官网上的这句名言把这个哲学展现得淋漓尽致：\n这句话简直戳中了无数 C++ 程序员的痛点。C++ 体量太庞大了，特性堆叠如山，各种“C++ 方言”和编码流派层出不穷，把整门语言变得异常复杂、学习曲线陡峭得让人头秃。而 Zig 恰恰走向了相反的方向：它非常克制简洁，更贴近 C 和 Go 这类追求极简的语言。\n对 C 语言老手来说，上面那句话同样受用。别看 C 语法简单，但有时候读别人的 C 代码也是折磨。举个最典型的例子：C 语言的预处理器宏（Macros）向来是“混乱制造机”，经常给排障带来巨大困扰。宏本质上就像寄生在 C 里的第二门语言，把真实的 C 代码遮得严严实实。一旦满天飞宏，你根本无法一眼确定送到编译器的到底是些啥代码。\n而在 Zig 里，根本没有宏。在 Zig 里，你眼睛看到的代码，就是编译器实际编译的代码。 这里没有在背后暗度陈仓的隐藏控制流（比如操作符重载、隐式类型转换、隐藏的抛异常），更没有标准库函数在背地里瞒着你偷偷做内存分配。\n正因为语言足够克制清爽，Zig 代码不仅直观好懂、读写体验极佳，而且在面对各种极端边界情况时表现得异常稳健。再次强调：少即是多。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#到底什么是-zig",
+    "href": "Chapters/01-zig-weird.html#到底什么是-zig",
+    "title": "1  初识 Zig",
+    "section": "",
+    "text": "“Focus on debugging your application rather than debugging your programming language knowledge.” （把精力聚焦在调试你的应用程序上，而不是把时间耗费在死磕编程语言本身的刁钻语法上。）",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#zig-版-hello-world",
+    "href": "Chapters/01-zig-weird.html#zig-版-hello-world",
+    "title": "1  初识 Zig",
+    "section": "1.2 Zig 版 Hello World",
+    "text": "1.2 Zig 版 Hello World\n学习任何语言，咱都从经典的 “Hello World” 起步。 在本地初始化一个 Zig 项目极其简单，直接调用 zig 编译器的 init 命令即可。 找个空目录，敲下这几行命令：\nmkdir hello_world\ncd hello_world\nzig init\n终端会输出类似这样的信息：\ninfo: created build.zig\ninfo: created build.zig.zon\ninfo: created src/main.zig\ninfo: created src/root.zig\ninfo: see `zig build --help` for a menu of options\n\n1.2.1 搞懂项目结构与文件\n敲完 zig init 后，当前目录下会生成几个骨架文件。 首先是一个源码目录 src，里面有两个文件：main.zig 和 root.zig。在 Zig 里，每个 .zig 文件都是一个独立的 Zig 模块（Module），说白了就是一个写了 Zig 代码的源码文件。\n按照惯例，main.zig 是你存放主函数的地方。如果你是要开发一个独立的可执行程序，就得在里面声明 main() 函数，它代表程序的唯一入口点，代码就从这里开始跑。\n相反，如果你是要开发一个供他人引用的代码库（Library），通常的做法是删掉 main.zig，直接以 root.zig 为核心。在 Zig 规范里，root.zig 是一个包（Package/Library）的根源码模块。\ntree .\n.\n├── build.zig\n├── build.zig.zon\n└── src\n    ├── main.zig\n    └── root.zig\n\n1 directory, 4 files\n除了源码，zig init 还在根目录生成了另外两个关键文件：build.zig 和 build.zig.zon。 第一个文件 build.zig 是用 Zig 语言自己写的一个构建脚本（Build Script）。当你执行 zig build 时，跑的就是这个文件。也就是说，整个项目怎么编译、怎么链接、怎么打包，全写在这个 Zig 脚本里。\n对于底层语言来说，把源码编译成二进制程序或动态库是常规操作。然而，随着项目规模越来越大，这一连串编译链接命令会变得奇长无比、难以维护。于是编程界发明了“构建系统（Build Systems）”来自动化这一流程。\n在 C/C++ 领域，大家最熟的构建系统是 GNU Make、GNU Autoconf 和 Ninja1。开发者会在 Makefile 或构建脚本里定义各种编译规则。\n然而这些构建工具都是外挂的第三方工具，并不属于 gcc 或 clang 编译器本身。这就导致在搞 C/C++ 项目时，你不仅得操心安装配置编译器，还得单独伺候各种各样的构建工具链。\n但 Zig 完全不一样！Zig 在语言内部直接原生内置了构建系统。我们可以直接用 Zig 语法编写小巧优雅的构建脚本，清清楚楚地交代项目的编译步骤2。也就是说，哪怕是一个复杂的 Zig 工程，只要有一套 zig 编译器，你就拥有了全部构建工具链，彻底告别环境地狱。\n第二个文件 build.zig.zon 则是一个类似 JSON 的声明式配置文件（Zig Object Notation），用来描述当前项目的基本元信息，以及声明需要从网上拉取的外部依赖包。\n以往在项目里引入第三方库，往往要手动下载、编译安装到系统里，然后在构建脚本里做头文件和库路径链接。 而现在，如果某个第三方 Zig 库挂在 GitHub 上，且其根目录配有合规的 build.zig.zon，你只需要把它的信息登记在你本地的 build.zig.zon 里，Zig 就会自动搞定依赖拉取和校验。\n简单对照一下大家熟悉的技术栈：这个 build.zig.zon 的角色就像 JavaScript 生态的 package.json、Python 的 Pipfile，或者 Rust 的 Cargo.toml。想深入了解它的同学，推荐阅读这两篇社区热文34，或者去翻阅 Zig 官方仓库里的架构说明文档5。\n\n\n1.2.2 探究 root.zig\n咱先打开 root.zig 瞧瞧。 第一眼你就会注意到：每条带表达式的代码结尾都以分号（;）收尾，这是典型的 C 家族语言传统风格6。\n接着看开头前几行的 @import() 调用。在 Zig 里，带 @ 前缀的都是内置函数（Builtin Functions）。我们用 @import() 把外部或其他模块的功能引入当前模块。它就像 C/C++ 的 #include，或者 Python / JS 里的 import。这里我们 @import(\"std\") 拿到了 Zig 标准库的访问入口。\n在 root.zig 里，我们还能看到 Zig 是怎么做变量/常量赋值的（也就是创建新对象）。基本语法是 (const|var) name = value;。下面代码里的 std 就是声明成常量的对象。在 Section 1.4 节中我们会更系统地聊聊对象声明。\n//! 按照惯例，root.zig 是制作一个包（Package）时的根源码文件。\nconst std = @import(\"std\");\nconst Io = std.Io;\n\n/// 这是文档注释，用来解释下方的 `printAnotherMessage` 函数。\n///\n/// 接收一个 `Io.Writer` 实例是编写高复用代码的常用姿势。\npub fn printAnotherMessage(writer: *Io.Writer) Io.Writer.Error!void {\n    try writer.print(\"Run `zig build test` to run the tests.\\n\", .{});\n}\n\npub fn add(a: i32, b: i32) i32 {\n    return a + b;\n}\n\ntest \"basic add functionality\" {\n    try std.testing.expect(add(3, 7) == 10);\n}\n从上面的 root.zig 还可以看到 Zig 的注释规范。在 Zig 里，主要有三类注释：\n\n普通单行注释：以 // 开头，编译器会完全忽略它们。\n文档注释：以 /// 开头，专门用来为紧随其后的变量、类型、函数等生成 API 说明文档。\n模块级顶级文档注释：以 //! 开头，必须放在 Zig 模块的最顶上几行，用来给整个模块本身撰写概括性文档。\n\n另外，Zig 声明函数用的是 fn 关键字。 在 root.zig 里，我们声明了一个叫 add() 的函数，入参是 a 和 b，返回值是一个 i32 类型的 32 位有符号整数。\nZig 是一门强类型语言。尽管在某些特定场景下，如果 zig 编译器能推断出类型，你可以省略显式类型声明（后文 Section 2.4 会细讲类型推断）；但在绝大多数严谨的地方，Zig 要求你必须明确无误地标注出来。比如：函数的每个形参类型、函数的返回值类型，都必须显式写明，没有任何含糊的余地。\n标注类型的语法是在对象或参数名后面加一个冒号（:），紧接着写类型名称。例如 a: i32 和 b: i32，这表示 a 和 b 都是 i32（有符号 32 位整数）。这套冒号标注类型的语法和 Rust、TypeScript 是一模一样的。\n最后，在函数参数括号之后、函数体大括号（{）之前，标明的是函数的返回值类型。上面例子里返回的也是 i32。\n细心的同学一定发现了函数前面的 pub 关键字。pub 是 public（公开）的缩写，用来把 add() 函数暴露为“该模块的公开函数”。在 Zig 里，默认情况下所有函数都是私有的（Private），只能在当前模块内部调用。如果你想让别的模块也能调用它，就必须显式给它贴上 pub 标签。\n换个角度看，Zig 里的 pub 作用恰好跟 C/C++ 里用来限制内部链接的 static 关键字反着来。通过把函数声明为 public，其他 Zig 模块在用 @import() 引入当前模块后，就能直接调到这些公开函数。关于这个关键字，我们会在 Section 2.3.1 里更深入地拆解。\n最后，在 root.zig 底下还有一个 test 代码块。这是 Zig 原生内置的单元测试块，后面在 Chapter 8 会专门讲怎么优雅地写单测。\n\n\n1.2.3 探究 main.zig\n在 root.zig 了解了 Zig 的基本面孔后，咱们转头看 main.zig。 虽然很多语法元素跟 root.zig 很像，但这里出现了几个非常关键的新特性，咱们逐一拆解。\n首先看 main() 函数的返回值类型，有点不一样：void 前面多了一个感叹号（!）。 这个感叹号在 Zig 里代表错误联合（Error Union）——它明确告诉编译器和调用者：这个 main() 函数在执行过程中有可能会返回错误（Error）！\n顺带提一句，Zig 的 main() 函数不仅可以返回 void（不返回任何有效值），还可以返回一个 u8（无符号 8 位整数）7，或者返回一个错误。也就是说，你可以像写常规程序一样返回 void；也可以像写传统 C 程序那样返回一个整型退出码（Status Code），用退出码向操作系统汇报进程状态。\n在当前代码里，!void 意味着：要么顺利执行完毕啥也不返回（void），要么在中途抛出一个错误。这个类型签名上的感叹号是 Zig 非常犀利的核心机制：如果你的函数内部调用的某个操作可能会报错，那编译器就逼着你做二选一：\n\n要么在返回值类型上加上感叹号 !，坦白交代“我可能会抛出错误，谁调我谁操心”；\n要么在函数体内部就地把这个错误给捕获并处理干净。\n\n在很多主流高级语言里，我们习惯用 try-catch 块来捕获异常。Zig 里虽然也有 try 和 catch 两个关键字，但它们的工作机制跟传统语言大不相同。\n看看下面的 main() 函数，第 5 行有一个 try，但整段代码压根没有 catch。 在 Zig 里，try 关键字是专门用来执行可能返回错误的操作的（这里是 stdout.print()）。\n简单来说，try stdout.print(...) 的执行逻辑是： 如果被调用的表达式顺利返回了正常结果，try 啥事也不干，就像根本不存在一样，把正常值原样放行； 但一旦这个表达式返回了错误，try 会立刻把这个错误从函数中直接 return 出去（即向上一层调用栈抛出），并在控制台打印出当前的堆栈轨迹（Stack Trace）。\n如果你平时写惯了 Python 等动态语言，可能会觉得这个语法有点特别。在 Python 里，任何地方抛异常如果没被捕获，解释器就会直接中断崩溃。而在 Zig 里，所有错误都是显式的值（Errors are values），要么层层往上抛，要么当场捕获，绝不允许视而不见。\nconst std = @import(\"std\");\nconst Writer = std.Io.File.Writer;\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = Writer.init(\n        std.Io.File.stdout(),\n        init.io,\n        &stdout_buffer\n    );\n    const stdout = &stdout_writer.interface;\n    try stdout.print(\"Hello, {s}!\\n\", .{\"world\"});\n    try stdout.flush();\n}\n另外请注意，main() 函数同样必须打上 pub 标记。这在 Zig 项目里是硬性规定：程序的 main() 必须是公开函数，否则操作系统找不到入口，程序根本没法跑起来。\n\n\n1.2.4 编译整个工程\n看完了项目骨架，咱们接着聊聊怎么把这些 Zig 代码真正编译成二进制可执行文件或库。 先从一次性编译整个工程讲起。\n正如在 Section 1.2.1 提到的，一旦项目规模和代码量上去，谁也不想每次都在终端敲一长串复杂的底层编译命令（比如 build-exe、build-lib、build-obj）。敲得人烦不说，参数还极容易写错。\n在 C/C++ 里，大家一般会写 CMakeLists.txt、Makefile 或 configure 脚本；而在 Zig 里，直接用内置构建系统写个 build.zig 就齐活了。想要编译构建整个项目，在终端敲一行命令即可：\nzig build\n当你敲下 zig build 时，zig 编译器会在当前目录下寻找 build.zig 脚本，然后直接运行它。该脚本内部会按你定义的规则，一步步完成整个工程的编译、链接与打包。\n构建完成后，工程根目录下会自动生成一个 zig-out 目录。在 zig-out/bin 路径下，你就能看到生成好的二进制可执行文件了。在后面的章节中，我们会更深入地剖析 Zig 构建系统的玩法。\n我们直接跑一下刚构建好的 hello_world 可执行程序：\n./zig-out/bin/hello_world\n终端顺利打出：\nHello, world!\n\n\n1.2.5 单文件编译为可执行文件\n除了整套工程构建，如果你平时只是想快速跑个单文件脚本，可以使用 zig build-exe 命令。直接在命令后面跟上你想要编译的 Zig 源码文件即可（多个文件用空格隔开）。下面我们编译一个假想的 foo.zig 模块：\nzig build-exe src/foo.zig\n既然是编译可执行程序，zig 编译器就会在这些文件里寻找 pub fn main() 入口函数。要是找不到，编译器会毫不客气地甩出一条编译报错。\n除了 build-exe，zig 还提供了 build-lib 和 build-obj，分别用来把 Zig 模块编译成通用的 C ABI 动态/静态库或者目标文件（.o）。\n执行完 build-exe 之后，编译器会在当前目录下直接生成一个同名二进制文件 foo。用 ls 扫一眼目录：\nls\nbuild.zig  build.zig.zon  foo  src\n直接执行这个二进制文件，终端立刻输出了预期的结果：\n./foo\nHello, world!\n\n\n1.2.6 一步搞定编译与运行\n日常本地开发调试时，每次先 build-exe 再手动跑二进制，稍微有点繁琐。有没有更快捷的办法？ 有！直接用 zig run：\nzig run src/foo.zig\nHello, world!\n它会一口气完成“编译并在内存中直接运行”，输出结果直接打印在终端上，写小 Demo 或者刷题时用起来相当丝滑。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#怎样高效学好-zig",
+    "href": "Chapters/01-zig-weird.html#怎样高效学好-zig",
+    "title": "1  初识 Zig",
+    "section": "1.3 怎样高效学好 Zig？",
+    "text": "1.3 怎样高效学好 Zig？\n怎么才能把 Zig 这门语言彻底学透？ 首先，手头这本书绝对能带你打牢基础、少走弯路。但想成为真正的 Zig 高手，你还需要善用周边的丰富资源。\n遇到难题卡壳时，不妨到 Zig 的开发者社区里找大佬交流问答：\n\nZiggit 论坛（官方核心讨论区）：https://ziggit.dev/；\nDiscord、Slack、Telegram 等社群通道：https://ziglang.org/community/；\n\n另外，学 Zig 最管用、最立竿见影的技巧就是：死磕源码，多读优秀代码。只要你平时有意识地多翻翻 Zig 开源库，很多之前看不懂的设计会瞬间恍然大悟。老牌 C/C++ 开发者肯定深有体会，这招百试不爽！\n那去哪找高质量的 Zig 代码来读呢？ 我个人最推荐的，其实是 Zig 的标准库源码。在官方 GitHub 仓库的 lib/std 目录8 下，所有官方标准库代码全开源在里面。进去随便点几个模块读读，代码写得极其地道优雅，是绝佳的学习教材。\n此外，社区里也有大量硬核且成熟的大型 Zig 开源项目，非常值得深入研读：\n\nMach 游戏引擎9；\n纯 Zig 实现的 LLaMA 2 推理引擎10；\n主打金融级强一致性的分布式事务数据库 tigerbeetle11；\n命令行参数解析库 zig-clap12；\n跨平台原生 UI 框架 capy13；\nZig 官方语言服务器 zls14；\n高性能跨平台事件循环库 libxev15。\n\n平时在 GitHub 搜代码时，可以巧用 lang:Zig 语法过滤搜索结果，瞬间就能挖出一堆宝藏仓库。\n在线文档和博客也是日常必查的资料库，推荐加到书签夹：\n\nZig 语言参考手册（Language Reference）：https://ziglang.org/documentation/master/；\nZig 标准库在线 API 文档：https://ziglang.org/documentation/master/std/；\nZig Guide 入门指南：https://zig.guide/；\nKarl Seguin 的个人技术博客：https://www.openmymind.net/；\nZig News 社区动态：https://zig.news/；\nZig 核心团队成员的 GitHub（推荐关注）：https://github.com/kubkon；\nYouTube 上的 Zig Showtime 直播录播频道：https://www.youtube.com/@ZigSHOWTIME/videos。\n\n另外，“边练边踩坑”也是掌握语言的神器。社区里极具人气的刷题项目是 Ziglings16，里面准备了 100 多道循序渐进的小练习。它的玩法很有意思：仓库里准备了一堆故意写错的 Zig 代码，你的任务就是把这些程序修好、让单测全部通过。\n油管知名技术博主 The Primeagen 专门录过通关 Ziglings 的实况视频，入门阶段很推荐看一看：“Trying Zig Part 1”17。\n如果你喜欢算法挑战，还可以去刷 Advent of Code (AoC)18。社区有现成的模板和解答参考：\n\nhttps://github.com/SpexGuy/Zig-AoC-Template；\nhttps://github.com/fjebaker/advent-of-code-2022。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#sec-assignments",
+    "href": "Chapters/01-zig-weird.html#sec-assignments",
+    "title": "1  初识 Zig",
+    "section": "1.4 在 Zig 里创建对象（标识符与变量）",
+    "text": "1.4 在 Zig 里创建对象（标识符与变量）\n接下来咱们深入聊聊 Zig 的对象创建与赋值。 对于有其他语言经验的开发者，这个概念一般被称为“变量”或“标识符”。在本书里，我们统一用“对象（Object）”来称呼它们。\n在 Zig 里定义一个新对象，使用的是 const 或 var 关键字。 这俩关键字决定了这个对象到底可变不可变： - 如果用 const，你定义的就是一个常量（不可变对象）。一旦完成赋值初始化，后续代码严禁修改它的值； - 如果用 var，你定义的就是一个变量（可变对象），后续想怎么改就怎么改。这个 var 对应到 Rust 里就相当于 let mut。\n\n1.4.1 常量对象与变量对象\n看下面这段代码：我们定义了一个叫 age 的常量对象，存了个数字。但第二行代码试图给 age 重新赋值为 25。这段代码在编译期会直接翻车。\n因为 zig 编译器一眼看出你正在给一个用 const 声明的常量赋值，立刻中断编译并抛出错误提示：\nconst age = 24;\n// 下面这行会直接报错！\nage = 25;\nt.zig:10:5: error: cannot assign to constant\n    age = 25;\n      ~~^~~\n所以，如果你后续确实需要改动对象的值，就必须改用 var 关键字，明确告诉编译器：“这个对象在后面的生命周期里是可能发生变化的”。\n把上面例子的 const 改成 var，代码就能顺利编译了。 但请仔细看下面的正确写法：我们不仅把 const 换成了 var，还在 age 后面显式补上了 : u8 类型注解。 Zig 的设计理念是：一旦一个对象具有可变性，编译器就要求开发者写得更加严谨、意图更清晰，必须明确标注它的具体数据类型。\n所以请记住这条开发口诀：一旦把对象声明为 var，记得老老实实把类型标注写完整。否则编译器大概率会提示你要么把它改回 const，要么补全显式类型。\nvar age: u8 = 24;\nage = 25;\n\n\n1.4.2 声明时不给初值？看情况！\n在 Zig 里，声明对象默认必须同步给它赋初始值。换句话说，声明与初始化通常是一气呵成的。\n那如果我们真遇到某些特殊场景，确实想先声明、回头再赋值呢？ Zig 专门提供了一个关键字：undefined。\n但这里必须敲黑板重点提醒：在日常业务代码里，能不用 undefined 就千万别用！ 因为一旦用了 undefined，这个对象在底层内存里就是纯粹的未初始化垃圾数据。如果后面的代码因为逻辑漏洞，在还没给它赋有效值之前就误读了它，就会立刻引发极其危险的未定义行为（Undefined Behavior, UB），排查起来简直要命。\n看下面的例子：虽然可以这么写，但在第二行之前，age 都是处于未初始化状态的：\nvar age: u8 = undefined;\nage = 25;\n为了代码的绝对安全与健壮，平时尽可能随手完成初始化。只有在极少数确实需要延迟填充的高性能缓冲区等底层场景，才去考虑 undefined。\n\n\n1.4.3 在 Zig 里，绝对不允许出现“闲置对象”！\n这是一条刚性铁律：在 Zig 里，你声明的每一个对象（不管是常量还是变量），都必须在后续代码中被真正用上！ 无论是把它当参数传给函数、参与数学计算、还是调用它的某个方法，只要用到了就行。\n如果你胆敢声明了一个对象却把它撂在一旁不用，zig 编译器会无情拒绝编译，直接喷你脸上一句“unused local constant/variable”。\n看个实际例子：我们声明了一个 age 常量，但后续代码压根没碰它。\nconst age = 15;\n编译器当场翻脸报错：\nt.zig:4:11: error: unused local constant\n    const age = 15;\n          ^~~\n在 Zig 里遇到这种情况，你有两种选择： 1. 老老实实把它用起来； 2. 显式把它丢弃掉。\n怎样显式丢弃一个不需要的值呢？把赋值给下划线 _ 即可！ 在 Zig 里，下划线是一个特殊的丢弃占位符。只要你写了 _ = name;，编译器就会心领神会，认为你已经主动接纳并丢弃了它，不会再哔哔报错。\n// 这下顺利通过编译了！\nconst age = 15;\n_ = age;\n但要注意：一旦你把一个对象丢给了下划线 _，在编译器的眼里这个对象就已经被彻底销毁了，后续绝对不能再尝试读取它！ 如果刚丢给 _ 后面又试图去用，编译器同样会抓狂，喷你一句“pointless discard”（毫无意义的丢弃）：\n// 这段代码无法编译通过！\nconst age = 15;\n_ = age;\n// 试图使用已经被丢弃的值！\nstd.debug.print(\"{d}\\n\", .{age + 2});\nt.zig:7:5: error: pointless discard\n    of local constant\n对于 var 变量也是同样的道理，声明了就得用；如果确实要废弃，同样赋给 _。\n\n\n1.4.4 变量声明了却不修改？编译器也会教做人！\nZig 的编译器严谨到了极致：只要你把一个对象用 var 声明为变量，那你在后面就必须真的去修改（mutate）它的值！ 如果你写了 var，但自始至终它的值从来没变过，编译器就会立刻跳出来警告你：“这个变量压根没被修改过，麻烦你改成 const”。\n背后的逻辑很清晰：在系统级编程中，不可变状态（const）天然具有更高的安全性与优化空间。Zig 倡导所有对象默认都走 const，除非业务逻辑非变不可，才用 var。\n看看下面这个反例：\nvar where_i_live = \"Belo Horizonte\";\n_ = where_i_live;\nt.zig:7:5: error: local variable is never mutated\nt.zig:7:5: note: consider using 'const'",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#sec-primitive-data-types",
+    "href": "Chapters/01-zig-weird.html#sec-primitive-data-types",
+    "title": "1  初识 Zig",
+    "section": "1.5 原生基础数据类型",
+    "text": "1.5 原生基础数据类型\nZig 提供了极其丰富且严谨的原生基础数据类型。完整类型清单可以查阅官方的语言参考手册19。\n日常最常用的大体分为这几类：\n\n无符号整型：u8（8 位）、u16（16 位）、u32（32 位）、u64（64 位）、u128（128 位）。（甚至还支持任意位宽如 u7、u24！）\n有符号整型：i8、i16、i32、i64、i128。\n浮点型：f16（半精度）、f32（单精度 float）、f64（双精度 double）、f128。\n布尔型：bool，取值为 true 或 false。\nC ABI 兼容类型：c_long、c_char、c_short、c_ushort、c_int、c_uint 等等，用于跟 C 代码库零成本打通。\n指针尺寸整型：usize（与平台指针等宽的无符号整型，内存寻址、数组长度标配）、isize。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#sec-arrays",
+    "href": "Chapters/01-zig-weird.html#sec-arrays",
+    "title": "1  初识 Zig",
+    "section": "1.6 数组（Arrays）",
+    "text": "1.6 数组（Arrays）\n在 Zig 里定义数组的语法跟 C 很像，但更安全。 首先在一对方括号 [] 里填上数组的长度（容量），接着跟上元素的数据类型；最后在大括号 {} 里罗列各个元素的值。\n注意：Zig 数组里所有元素的类型必须绝对一致，不允许把 f32 和 i32 杂糅在同一个数组里。\n看下面这个例子：我们创建了两个数组常量，第一个是包含 4 个 u8 的整型数组，第二个是包含 3 个 f64 的浮点数组。\n请注意看 ls 对象的方括号里写的是 [_]：这里的下划线是给编译器开后门。你不用自己手动数有多少个元素，写上 [_]，编译器会在编译期自动帮你统计大括号里元素的个数并填入。这绝对是偷懒省心又不容易出错的绝佳写法。\nconst ns = [4]u8{48, 24, 12, 6};\nconst ls = [_]f64{432.1, 87.2, 900.05};\n_ = ns; _ = ls;\n需要划重点的是：上面这些都是静态数组，一旦声明完毕，它的尺寸就是固定的，无法动态扩容。这在底层语言里再正常不过了——底层系统编程讲究对内存的绝对掌控，动态扩容必然伴随内存重分配（Reallocation），必须交给专有的数据结构去显式管理。\n\n1.6.1 索引访问与切片选择\n日常写代码免不了要访问数组里的元素。 在 Zig 里，访问单个元素非常直观，直接在变量名后加 [index]。Zig 遵循主流编程语言的习惯，下标是从 0 开始算的（Zero-indexed）。\n下面我们用 stdout.print() 把数组里的第 3 个元素（索引为 2）打印到控制台。 顺便提一句：后续示例中为了节省篇幅，我们可能会省略 stdout 的样板声明代码，如果忘了怎么初始化的，可以随时翻回 Section 1.2.3 温习。\nconst ns = [4]u8{48, 24, 12, 6};\ntry stdout.print(\"{d}\\n\", .{ ns[2] });\ntry stdout.flush();\n除了按单一下标取值，我们还可以通过范围选择器（Range Selector）截取数组的一部分，生成一个切片（Slice）。在 Rust 里也有完全一样的语法机制，语法形式为 start..end。\n在下面的代码里，第二行的 sl 对象截取了 ns 数组从索引 1 到 3 的局部片段（即下标 1 和 2 的元素）：\nconst ns = [4]u8{48, 24, 12, 6};\nconst sl = ns[1..3];\n_ = sl;\n注意：start..end 是左闭右开区间，也就是说 end 处的索引是不包含在内的，实际截取的是从 start 到 end - 1。\n如果你想截取从头到尾的全部数据，可以直接用 ar[0..ar.len]：\nconst ar = [4]u8{48, 24, 12, 6};\nconst sl = ar[0..ar.len];\n_ = sl;\n或者用更精简的 start.. 语法，代表从指定下标一路截取到数组末尾：\nconst ns = [4]u8{48, 24, 12, 6};\nconst sl = ns[1..];\n_ = sl;\n\n\n1.6.2 深入搞懂切片（Slices）\n前面提到，截取数组的操作在 Zig 里被称为 Slicing（切片截取）(Sobeston 2024)。 那么在底层，切片对象到底是个什么玩意儿？\n本质上，切片就是一个携带了长度信息的胖指针（Fat Pointer）：它由一个指向底层数据起始位置的指针，外加一个记录元素个数的 usize 长度数值组成。\n\n切片可以理解为一个二元组：[*]T（指向底层连续数据的指针）加上 usize（元素数量计数器）(Sobeston 2024)。\n\n通过切片内部的指针，你可以高效访问那截被选中的原数据；而切片自带的 len 长度属性（比如 sl.len），则是 Zig 相比 C 语言原生数组带来的降维打击式升级！\n有了显式的长度记录，zig 编译器和运行时就能够在调试构建下轻而易举地检测出所有越界访问和缓冲区溢出（Buffer Overflow）漏洞。\nconst ns = [4]u8{48, 24, 12, 6};\nconst sl = ns[1..3];\ntry stdout.print(\"{d}\\n\", .{sl.len});\ntry stdout.flush();\n\n\n1.6.3 数组拼接操作符\nZig 提供了一个非常实用的数组拼接操作符：++。\n需要特别强调的是：++ 操作符只能在参与拼接的两个数组长度均在编译期已知（Compile-time known）的情况下使用！ 关于“编译期已知”和“运行时已知”的区别，我们在 Section 3.1.1 会深入讲透。\n简单来说，a ++ b 会在编译期拼出一个全新的数组，把 b 的所有元素无缝接在 a 后面：\nconst a = [_]u8{1,2,3};\nconst b = [_]u8{4,5};\nconst c = a ++ b;\ntry stdout.print(\"{any}\\n\", .{c});\ntry stdout.flush();\n这个 ++ 操作符在编译期拼字符串时尤为顺手。因为在 Zig 里，字符串本质上就是字节数组。\n\n\n1.6.4 切片长度：运行时已知 vs 编译期已知\n全书我们会反复遇到“编译期已知”和“运行时已知”这两个概念。 简单粗暴地区分一下：如果在代码编译的时候，编译器就已经能把这个值算得清清楚楚、明明白白，那它就是编译期已知；如果在编译时根本猜不准，只有等程序跑起来、根据输入动态计算出来的，那就是运行时已知。\n在 Section 1.6.1 中我们聊过用范围选择器做切片。如果切片的起始点和结束点在编译阶段都是板上钉钉的常数，那生成的切片在底层其实会退化成一个非常轻量的“指向单项数组的指针”。\n在切片范围编译期已知的场景下，你可以像对待常规指针一样直接对它做解引用操作（使用 .* 语法）：\nconst arr1 = [10]u64 {\n    1, 2, 3, 4, 5,\n    6, 7, 8, 9, 10\n};\n// 这个切片的范围在编译期完全已知（起点是 1，终点是 4）\nconst slice = arr1[1..4];\n_ = slice;\n反过来，如果切片的范围无法在编译期敲定（比如结束位置由外部输入决定），那它就是一个真正的动态切片，就不能再随便当纯指针用了。\n典型的例子就是读磁盘文件：在程序运行前，你根本无法预判文件今天会有多大。可能今天还是 4.5KB，明天改了改就变成了 4.8KB。由于文件是独立于源码的外部数据，它的实际尺寸只有在运行时把文件打开后才知道。\n看下面这个读取文件的示例代码：我们预先开辟了一个 1024 字节的缓冲区 file_buffer，这个缓冲区的最大容量在编译期是已知的（1024）；但真正从文件里读到了多少个字节（变量 nbytes 的值），只有在运行时执行了文件读取后才能得知。因此，最后打印的切片 file_buffer[0..nbytes] 的实际边界就是一个纯粹的运行时状态。\nconst std = @import(\"std\");\n\nfn read_file(path: []const u8, buffer: []u8, io: std.Io) !usize {\n    const file = try std.Io.Dir.cwd().openFile(\n        io, path, .{}\n    );\n    defer file.close(io);\n\n    const nbytes = try file.readPositionalAll(\n        io, buffer[0..], 0\n    );\n    return nbytes;\n}\n\npub fn main(init: std.process.Init) !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    defer _ = gpa.deinit();\n    const allocator = gpa.allocator();\n\n    var file_buffer = try allocator.alloc(u8, 1024);\n    defer allocator.free(file_buffer);\n    @memset(file_buffer[0..], 0);\n\n    const path = \"../ZigExamples/file-io/shop-list.txt\";\n    const nbytes = try read_file(\n        path, file_buffer[0..], init.io\n    );\n\n    std.debug.print(\"{s}\", .{file_buffer[0..nbytes]});\n}",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#sec-blocks",
+    "href": "Chapters/01-zig-weird.html#sec-blocks",
+    "title": "1  初识 Zig",
+    "section": "1.7 代码块与作用域",
+    "text": "1.7 代码块与作用域\n在 Zig 里，用一对花括号 {} 括起来的区域就是一个代码块（Block）。 代码块定义了变量的作用域（Scope）：在大括号里声明的所有对象，只在该花括号内部可见，一旦出了大括号就彻底失效，外部根本无法访问。\n函数的函数体、if 分支、for / while 循环体，本质上都是标准的代码块。它们各自拥有相互隔离的局部作用域。\n不仅如此，Zig 的代码块还支持多层嵌套，并且可以带标签（Labeled Blocks）！ 在花括号前面写上 label:，就可以给这个代码块打上标签。在块内部，你可以使用 break :label value; 的语法直接把一个计算结果从代码块里“返回”出来，就像执行了一个内联的小函数一样！\n看看下面这段代码：代码块 add_one: 在内部执行完自增后，直接 break :add_one y; 把结果甩出来赋给了 x。在需要做复杂就地初始化的场景下，这种写法非常优雅：\nvar y: i32 = 123;\nconst x = add_one: {\n    y += 1;\n    break :add_one y;\n};\nif (x == 124 and y == 124) {\n    try stdout.print(\"Hey!\", .{});\n    try stdout.flush();\n}",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#sec-zig-strings",
+    "href": "Chapters/01-zig-weird.html#sec-zig-strings",
+    "title": "1  初识 Zig",
+    "section": "1.8 搞懂 Zig 里的字符串到底怎么玩",
+    "text": "1.8 搞懂 Zig 里的字符串到底怎么玩\n在本书的第一个实战项目里，咱们要亲手造一个 Base64 编解码器（Chapter 4）。 而在动手写编解码器之前，必须把 Zig 里的字符串机制彻底摸透。\nZig 的字符串底层理念跟 C 很像，但在设计上补齐了现代化的安全防护与性能考量。\n在 Zig 里，字符串本质上就是一串任意字节构成的数组，具体来说就是 u8 数组。 这跟 C 很像（C 里是 char 数组）。但最大的质变在于：Zig 的字符串天然携带着长度信息！ 编译器能随时掌握这串字节的确切长度，这下子所有的越界访问、缓冲区溢出等老毛病直接在萌芽阶段被掐死。\n换作传统 C 语言，想知道一个字符串到底有多长，你必须从头到尾遍历字符，一直找到末尾的空字符（'\\0'）为止。代码写起来又臭又长：\n#include &lt;stdio.h&gt;\nint main() {\n    char* array = \"An example of string in C\";\n    int index = 0;\n    while (1) {\n        if (array[index] == '\\0') {\n            break;\n        }\n        index++;\n    }\n    printf(\"Number of elements in the array: %d\\n\", index);\n}\nNumber of elements in the array: 25\n而在 Zig 里根本用不着干这种苦力活，直接读 .len 属性即可：\nconst string_object = \"This is an example of string literal in Zig\";\ntry stdout.print(\"{d}\\n\", .{string_object.len});\ntry stdout.flush();\n另外需要说明的是，Zig 默认假设源码中的字符串字面量都是 UTF-8 编码的。现代互联网和操作系统的文本几乎全面普及了 UTF-8。如果遇到非 UTF-8 的古早编码，通常需要用专用转码库（如 iconv20）先清洗一遍。\n举个直观的例子：“Hello” 这五个字符在 UTF-8 编码下对应十进制数值 72, 101, 108, 108, 111，十六进制为 0x48, 0x65, 0x6C, 0x6C, 0x6F。如果把这一组十六进制字节丢给 Zig 按字符串格式（{s}）打印，控制台就会如实输出 “Hello”：\nconst bytes = [_]u8{0x48, 0x65, 0x6C, 0x6C, 0x6F};\ntry stdout.print(\"{s}\\n\", .{bytes});\ntry stdout.flush();\n\n1.8.1 字符串的两种打开方式：切片 vs 哨兵终止数组\n在内存层面，所有字符串都是一串纯粹的字节。但在实际编写 Zig 代码时，你通常会遇到两种使用形态：\n\n哨兵终止数组（Sentinel-terminated array）（一般是 [n:0]u8）；\n切片（Slice）（通常写为 []const u8 或 []u8）。\n\n在日常业务和标准库 API 调用中，绝大多数情况下我们用的都是第 2 种——切片形式。\n\n1.8.1.1 哨兵终止数组\n所谓的“哨兵终止数组”21，说白了就是一个在末尾带上了特定“哨兵值（Sentinel）”的数组。这个哨兵值通常是数字 0。\n如果你在代码里写了一个字符串字面量并用 @TypeOf() 打印它的类型，通常会看到类似 *const [n:0]u8 这种类型签名：这里的 n 是字符串的长度，而 :0 就代表末尾附带了一个数值为 0 的哨兵字符。\n// 打印字符串字面量的底层类型：\ntry stdout.print(\"{any}\\n\", .{@TypeOf(\"A literal value\")});\ntry stdout.flush();\n聪明的同学已经发现了：这不就是 C 语言里的 \\0 结尾字符串嘛！没错，Zig 用类型系统的形式把“末尾带 0”以及“数组长度”全部编码进了类型本身，既完美兼容了传给 C 接口（以 null 结尾）的需求，又保证了现代语言的长度安全。\n\n\n1.8.1.2 切片形式（Slice）\n但在纯 Zig 世界里，最地道、最常用的形式是 []const u8（不可变字符串切片）。 Zig 标准库绝大多数接受字符串入参的函数，类型全都是 []const u8。因为切片自带长度属性，压根不需要在末尾强制塞一个 0 哨兵，切起来更加灵活自由。\n// 把字面量转为切片类型使用\nconst str: []const u8 = \"A string value\";\ntry stdout.print(\"{any}\\n\", .{@TypeOf(str)});\ntry stdout.flush();\n\n\n\n1.8.2 遍历字符串的每个字节\n想瞅瞅字符串在底层到底是哪些十六进制字节，直接用一个 for 循环遍历它，配合格式化占位符 {X} 打印即可：\nconst string_object = \"This is an example\";\ntry stdout.print(\"Bytes that represents the string object: \", .{});\nfor (string_object) |byte| {\n    try stdout.print(\"{X} \", .{byte});\n}\ntry stdout.flush();\n\n\n1.8.3 深入剖析对象类型\n在 Zig 里，你可以随时用 @TypeOf() 这个内置函数来透视任何对象的底层真实类型。 看下面这个综合例子：\nconst std = @import(\"std\");\npub fn main() !void {\n    const simple_array = [_]i32{1, 2, 3, 4};\n    const string_obj: []const u8 = \"A string object\";\n    std.debug.print(\n        \"Type 1: {}\\n\", .{@TypeOf(simple_array)}\n    );\n    std.debug.print(\n        \"Type 2: {}\\n\", .{@TypeOf(\"A string literal\")}\n    );\n    std.debug.print(\n        \"Type 3: {}\\n\", .{@TypeOf(&simple_array)}\n    );\n    std.debug.print(\n        \"Type 4: {}\\n\", .{@TypeOf(string_obj)}\n    );\n}\nType 1: [4]i32\nType 2: *const [16:0]u8\nType 3: *const [4]i32\nType 4: []const u8\n从打印结果能看得很清楚： - simple_array 是 [4]i32（4 个 32 位整型的固定数组）； - 字符串字面量是 *const [16:0]u8（指向一个 16 字节长、带 0 哨兵的数组的常量指针）； - 给普通数组取地址 &simple_array 得到的是 *const [4]i32； - 而显式声明的 string_obj 则是 []const u8（不可变字节切片）。\n\n\n1.8.4 单个字节 vs Unicode 码点（避坑指南！）\n这里有一个无数开发者容易踩的坑：在 UTF-8 编码下，一个字节绝不等于一个字符！\nUTF-8 是一种可变长字符编码。英文字母比较省，占 1 个字节；但像中文、日文、特殊西欧字符等，往往需要 2 个、3 个甚至 4 个字节来表示一个 Unicode 码点（Codepoint）。\n比如西欧字符 “Ⱥ”，它的 Unicode 码点是 570。而单字节最多只能存到 255，所以底层不得不耗费 C8 BA 两个字节来存储它：\nconst string_object = \"Ⱥ\";\n_ = try stdout.write(\n    \"Bytes that represents the string object: \"\n);\nfor (string_object) |char| {\n    try stdout.print(\"{X} \", .{char});\n}\ntry stdout.flush();\n如果你直接用普通的 for (str) |b| 去遍历字符串，你遍历到的仅仅是一个个底层原始字节，而不是一个个文字符号！ 如果处理中文或多语言文本，想要按真实文字（码点）一个个迭代，就必须使用 Zig 标准库提供的 std.unicode.Utf8View 视图迭代器：\nvar utf8 = try std.unicode.Utf8View.init(\"アメリカ\");\nvar iterator = utf8.iterator();\nwhile (iterator.nextCodepointSlice()) |codepoint| {\n    try stdout.print(\n        \"got codepoint {x}\\n\",\n        .{codepoint},\n    );\n}\n\ntry stdout.flush();\ngot codepoint e382a2\ngot codepoint e383a1\ngot codepoint e383aa\ngot codepoint e382ab\n\n\n1.8.5 字符串常用神仙工具函数\nZig 标准库的 std.mem 模块里藏着大量处理切片与字符串的瑞士军刀级函数：\n\nstd.mem.eql()：对比两个字符串是否完全一致（返回布尔值）；\nstd.mem.splitScalar()：按单字符作为分隔符拆分字符串；\nstd.mem.splitSequence()：按子字符串序列拆分字符串；\nstd.mem.startsWith()：判断是否以某子串开头；\nstd.mem.endsWith()：判断是否以某子串结尾；\nstd.mem.trim()：裁剪字符串首尾的指定字符（如去除空白符）；\nstd.mem.concat()：把多个字符串拼成一个新串（由于要重新开辟内存，需传入 Allocator）；\nstd.mem.count()：统计子串在原串中出现的次数；\nstd.mem.replace()：将子串替换为目标内容并写入指定缓冲区。\n\n简单过几个日常开发频率最高的：\n判断相等：\nconst name: []const u8 = \"Pedro\";\ntry stdout.print(\n    \"{any}\\n\", .{std.mem.eql(u8, name, \"Pedro\")}\n);\ntry stdout.flush();\n判断前缀：\nconst name: []const u8 = \"Pedro\";\ntry stdout.print(\n    \"{any}\\n\", .{std.mem.startsWith(u8, name, \"Pe\")}\n);\ntry stdout.flush();\n替换内容（替换完成后还会返回实际发生替换的次数）：\nconst str1 = \"Hello\";\nvar buffer: [5]u8 = undefined;\nconst nrep = std.mem.replace(\n    u8, str1, \"el\", \"34\", buffer[0..]\n);\ntry stdout.print(\"New string: {s}\\n\", .{buffer});\ntry stdout.print(\"N of replacements: {d}\\n\", .{nrep});\ntry stdout.flush();\nNew string: H34lo\nN of replacements: 1",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#zig-的安全性设计哲学",
+    "href": "Chapters/01-zig-weird.html#zig-的安全性设计哲学",
+    "title": "1  初识 Zig",
+    "section": "1.9 Zig 的安全性设计哲学",
+    "text": "1.9 Zig 的安全性设计哲学\n在当今现代底层编程语言领域，“安全性”是绝对绕不开的主旋律。随着软硬件对现实世界的渗透越来越深，内存破坏相关的漏洞依然是黑客利用率最高的软肋。\n正如知名技术专家 Richard Feldman 在 GOTO 大会演讲中所指出的22：计算机世界目前根本不存在所谓的“绝对安全”。即便你的语言写得再滴水不漏，黑客依然可能去攻击操作系统的后门，甚至是利用 CPU 硬件架构本身的旁路漏洞（例如 ARM 芯片上的内存标记漏洞 (Kim et al. 2024)）。\n面对安全问题，各门语言走出了不同的道路。以 Rust 为代表，它通过极其严苛的编译期借用检查器（Borrow Checker）强制开发者按特定范式写代码；而一旦接入 C 语言三方库或启用 unsafe，这层保护网就会被撕开。\n而 Zig 采取的哲学则务实得多：它不追求在全场景下把开发者死死捆在借用检查器里，而是通过一套组合拳来帮开发者极度优雅地消灭常见 Bug：\n\ndefer 语法糖：让你能把“释放资源（Free）”的代码紧紧贴在“申请资源（Alloc）”的下一行。配合作用域绑定，极大减轻了开发者对对象生命周期的心智负担，从源头消灭了大量的内存泄漏、悬垂指针（Use-After-Free）和双重释放（Double Free）。\nerrdefer 容错回收：只在遇到运行时错误提前退出时才触发执行，完美解决半路报错导致先前半成品资源泄露的问题。\n默认非空（Non-nullable）设计：Zig 里的普通指针和对象默认绝不允许为 null！从根本上干掉了臭名昭著的空指针异常（Null Pointer Dereference）。\n自带内存泄漏检测分配器（Testing Allocator）：标准库提供了内置的内存检测机制，只要跑单元测试，就能自动帮你抓出哪里忘了释放内存、哪里重复释放，把单测变成排查内存 Bug 的杀手锏。\n切片自带长度：运行时自带越界检查，直接堵死缓冲区溢出通道。\n控制流必须完备：switch 语句必须穷尽所有枚举分支，强制开发者处理每一个可能发生的错误值。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#小结与后行预告",
+    "href": "Chapters/01-zig-weird.html#小结与后行预告",
+    "title": "1  初识 Zig",
+    "section": "1.10 小结与后行预告",
+    "text": "1.10 小结与后行预告\n到这里，咱们已经把 Zig 的最核心骨架盘了一遍： - 如何定义函数、管理主入口（Section 1.2.2、Section 1.2.3）； - 如何用 const 和 var 创建对象，以及为什么不能闲置变量（Section 1.4）； - 掌握了字符串在底层的真实运行机制（Section 1.8）； - 掌握了数组、切片以及为什么切片是更好的选择（Section 1.6）； - 掌握了模块导入和基本工程结构。\n掌握了这些，你已经完全具备继续深入更精彩章节的底子了！在接下来的章节中，我们将一步步解锁更多硬核技术点：\n\n结构体与面向对象编程（Section 2.3）；\n控制流的高阶玩法（Section 2.1）；\n枚举类型（Section 7.6）；\n指针与可选类型 Optionals（Chapter 6）；\ntry 与 catch 的错误处理实战（Chapter 10）；\n编写地道的单元测试（Chapter 8）；\n向量类型与 SIMD 性能极限优化（Chapter 17）；\n深入玩转 Zig 构建系统（Chapter 9）。\n\n\n\n\n\nKim, Juhee, Jinbum Park, Sihyeon Roh, et al. 2024. TikTag: Breaking ARM’s Memory Tagging Extension with Speculative Execution. https://arxiv.org/abs/2406.08719.\n\n\nSobeston. 2024. Zig Guide. https://zig.guide/.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-zig-weird.html#footnotes",
+    "href": "Chapters/01-zig-weird.html#footnotes",
+    "title": "1  初识 Zig",
+    "section": "",
+    "text": "C++ 开发者也很喜欢用 CMake，但 CMake 本格上并不是构建系统（这也是没把 CMake 直接放在这个名单里的原因）。严格来说，CMake 是构建系统生成器（Generator），它负责为 Ninja 或 Make 生成底层构建脚本。↩︎\nhttps://ziglang.org/learn/overview/#zig-build-system。↩︎\nhttps://zig.news/edyu/zig-package-manager-wtf-is-zon-558e↩︎\nhttps://medium.com/@edlyuu/zig-package-manager-2-wtf-is-build-zig-zon-and-build-zig-0-11-0-update-5bc46e830fc1↩︎\nhttps://codeberg.org/ziglang/zig/src/branch/master/doc/build.zig.zon.md↩︎\nhttps://en.wikipedia.org/wiki/List_of_C-family_programming_languages↩︎\n你可以在本书示例的 return-integer.zig 文件中看到返回 u8 退出码的 main() 写法：https://github.com/pedropark99/zig-book/blob/main/ZigExamples/zig-basics/return-integer.zig。↩︎\nhttps://codeberg.org/ziglang/zig/src/branch/master/lib/std↩︎\nhttps://github.com/hexops/mach↩︎\nhttps://github.com/cgbur/llama2.zig/tree/main↩︎\nhttps://github.com/tigerbeetle/tigerbeetle↩︎\nhttps://github.com/Hejsil/zig-clap↩︎\nhttps://github.com/capy-ui/capy↩︎\nhttps://github.com/zigtools/zls↩︎\nhttps://github.com/mitchellh/libxev↩︎\nhttps://ziglings.org。↩︎\nhttps://www.youtube.com/watch?v=OPuztQfM3Fg&t=2524s&ab_channel=TheVimeagen。↩︎\nhttps://adventofcode.com/↩︎\nhttps://ziglang.org/documentation/master/#Primitive-Types。↩︎\nhttps://www.gnu.org/software/libiconv/。↩︎\nhttps://ziglang.org/documentation/master/#Sentinel-Terminated-Arrays。↩︎\nhttps://www.youtube.com/watch?v=jIZpKpLCOiU&ab_channel=GOTOConferences。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>初识 Zig</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html",
+    "href": "Chapters/03-structs.html",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "",
+    "text": "2.1 控制流（Control Flow）\n``\n在上一章里，我们盘点了 Zig 的很多语法特性，尤其是在 Section 1.2.2 和 Section 1.2.3 中解析了项目的基础骨架。 但要应付日常开发，我们还有几个重量级的核心机制必须吃透。\n在本章中，我们将从日常写业务最常用的控制流语句（如各种循环、条件分支等）讲起； 接着聊聊 Zig 里的结构体（Struct），以及如何在 Zig 里用结构体优雅实现面向对象（OOP）模式； 随后我们会深入类型系统的类型推断与类型转换（Type Casting）； 最后，我们会揭开 Zig 模块（Module）的神秘面纱——看看为什么在 Zig 里“模块本质上就是一个大结构体”。\n写程序本质上就是做逻辑决断：要么满足某种条件就走这段逻辑，要么对一批数据做循环迭代。 在计算机科学中，“控制流”指的就是程序指令的执行顺序。而能够改变执行顺序的语法骨架，我们就叫它控制流语句。\n大家最熟悉的控制流包括 if/else、switch、各种 loop 循环，以及随时用来跳出或继续的 break 和 continue。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#sec-zig-control-flow",
+    "href": "Chapters/03-structs.html#sec-zig-control-flow",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "",
+    "text": "2.1.1 if / else 条件分支\n条件分支允许我们根据布尔表达式的真假，决定执行哪一段代码块。 在 Zig 里写 if/else 非常直观，跟大多数 C 族语言一脉相承：if 后面跟带括号的布尔表达式，大括号内是命中 true 时执行的逻辑；可选的 else 块则在表达式为 false 时兜底。\n来看个简单的例子：\nconst x = 5;\nif (x &gt; 10) {\n    try stdout.print(\"x &gt; 10!\\n\", .{});\n} else {\n    try stdout.print(\"x &lt;= 10!\\n\", .{});\n}\ntry stdout.flush();\n\n\n2.1.2 switch 分支匹配\nZig 也提供了非常强大的 switch 语句，整体风格和 Rust 的模式匹配颇为神似。 用法是用 switch (value) { ... } 包住需要做分支判断的值，在大括号里罗列各个匹配分支。\n看下面这个例子：我们定义了一个叫 Role 的枚举（关于枚举的细节详见 Section 7.6），列举了一家假想公司里的各路技术与业务岗位（如软件工程师 SE、数据工程师 DE、产品经理 PM 等）。\n在 switch 中，我们用到了 Zig 的类型推断（分支名前面的小圆点 .，详见 Section 2.4），这样编译器就能自动推导出来自 Role 的具体分支。 同时，多个匹配项可以用逗号合并到同一个分支中（比如 .DE, .DA =&gt; ...）：\nconst std = @import(\"std\");\nconst Role = enum {\n    SE, DPE, DE, DA, PM, PO, KS\n};\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    var area: []const u8 = undefined;\n    const role = Role.SE;\n    switch (role) {\n        .PM, .SE, .DPE, .PO =&gt; {\n            area = \"Platform\";\n        },\n        .DE, .DA =&gt; {\n            area = \"Data & Analytics\";\n        },\n        .KS =&gt; {\n            area = \"Sales\";\n        },\n    }\n    try stdout.print(\"{s}\\n\", .{area});\n    try stdout.flush();\n}\n\n2.1.2.1 switch 必须穷尽所有可能（Exhaustive）\n这里有一个非常硬核的设计约束：在 Zig 里，switch 语句必须穷尽（Exhaust）目标类型的所有可能取值！\n在上面的例子中，role 变量属于 Role 枚举类型，它一共只有 7 种可能取值。你在 switch 里就必须保证这 7 种情况都被明确覆盖，一个都不能漏。 如果你少写了一个分支，编译器会立刻撂挑子报错，绝不允许留下任何未被显式处理的漏网之鱼。这和 Rust 的 match 机制如出一辙，最大程度规避了逻辑死角。\n\n\n2.1.2.2 兜底分支 else\n如果取值范围太大（比如整数或字符），不可能手动把每一个值都列出来，这时候就可以祭出 else 兜底分支。\n看看 Zig 标准库 debug.zig 模块1 中的这个真实切片：\npub fn dump_hex_fallible(bytes: []const u8) !void {\n    // 省略部分代码...\n    switch (byte) {\n        '\\n' =&gt; try writer.writeAll(\"␊\"),\n        '\\r' =&gt; try writer.writeAll(\"␍\"),\n        '\\t' =&gt; try writer.writeAll(\"␉\"),\n        else =&gt; try writer.writeByte('.'),\n    }\n}\n在实际业务中，else 分支也常被用来处理“不支持的非法状态”，直接抛错或者触发 @panic() 熔断：\n另外请注意：Zig 的 switch 是一个表达式（Expression）！这意味着分支执行的结果可以直接赋给一个新对象：\nconst level: u8 = 4;\nconst category = switch (level) {\n    1, 2 =&gt; \"beginner\",\n    3 =&gt; \"professional\",\n    else =&gt; {\n        @panic(\"Not supported level!\");\n    },\n};\ntry stdout.print(\"{s}\\n\", .{category});\ntry stdout.flush();\nthread 13103 panic: Not supported level!\nt.zig:9:13: 0x1033c58 in main (switch2)\n            @panic(\"Not supported level!\");\n            ^\n\n\n2.1.2.3 在 switch 中支持范围表达式\nZig 的 switch 还支持用 ... 操作符定义闭区间范围（两端均包含）：\nconst level: u8 = 4;\nconst category = switch (level) {\n    0...25 =&gt; \"beginner\",\n    26...75 =&gt; \"intermediary\",\n    76...100 =&gt; \"professional\",\n    else =&gt; {\n        @panic(\"Not supported level!\");\n    },\n};\ntry stdout.print(\"{s}\\n\", .{category});\ntry stdout.flush();\n字符匹配也同样好使，比如 'a'...'z' 就能瞬间匹配所有小写英文字母。\n\n\n2.1.2.4 带标签的 switch（类似 C 语言 goto）\n从 Zig 0.14.0 开始，switch 语句也支持打标签了！结合 continue :label value;，你可以实现类似状态机或高级跳转的流转逻辑：\nxsw: switch (@as(u8, 1)) {\n    1 =&gt; {\n        try stdout.print(\"First branch\\n\", .{});\n        continue :xsw 2;\n    },\n    2 =&gt; continue :xsw 3,\n    3 =&gt; return,\n    4 =&gt; {},\n    else =&gt; {\n        try stdout.print(\n            \"Unmatched case, value: {d}\\n\", .{@as(u8, 1)}\n        );\n        try stdout.flush();\n    },\n}\n\n\n\n2.1.3 资源清理神器：defer\n在 Zig 的控制流与内存管理中，defer 拥有举足轻重的地位。 简单一句话概括：defer 允许你登记一条表达式，让它在退出当前作用域时自动执行。\nGo 语言开发者可能马上会想到 Go 里的 defer。 但请务必注意区别：Go 的 defer 是在当前“函数退出”时执行，而 Zig 的 defer 是在当前“作用域退出”时执行！ 一个函数内部可以有循环、if 块等很多子作用域，一旦跳出该大括号，挂在里面的 defer 就会立刻触发，心智模型更紧凑、资源回收也更及时。\n看个最直观的例子：\nconst std = @import(\"std\");\npub fn main() !void {\n    defer std.debug.print(\n        \"Exiting function ...\\n\", .{}\n    );\n    std.debug.print(\"Adding some numbers ...\\n\", .{});\n    const x = 2 + 2; _ = x;\n    std.debug.print(\"Multiplying ...\\n\", .{});\n    const y = 2 * 8; _ = y;\n}\nAdding some numbers ...\nMultiplying ...\nExiting function ...\n需要指出的是：defer 属于无条件延迟（Unconditional defer）。 不管你是正常 return 退出、遇到报错提前甩锅退出、还是被 break 跳出，只要出了这个花括号作用域，defer 登记的动作就必定执行，雷打不动。\n\n\n2.1.4 报错才触发的容错清理：errdefer\n有了无条件的 defer，Zig 还贴心准备了它的同胞兄弟——errdefer。 errdefer 是有条件的延迟执行（Conditional defer）：它登记的表达式，只有在当前作用域因发生错误而提前退出时才会执行！ 如果整个流程顺顺当当跑完退出，errdefer 里的内容就像空气一样，完全不会被调用。\n这在系统底层开发中简直是神技！比如你向系统连续申请了 3 块内存或打开了 3 个资源句柄，当第 3 个操作报错失败时，你必须把前面已经申请成功的 2 个半成品资源及时释放掉。用 errdefer 就能写出极其清爽的异常回滚逻辑（我们会在 Section 10.2.4 做更多实战演示）。\n另外还要记住一个关键执行顺序规则：多个 defer / errdefer 是按后进先出（LIFO）的倒序执行的！（即写在后面的先执行，写在前面的后执行）。\n看下面这段代码验证：\nconst std = @import(\"std\");\nfn foo() !void { return error.FooError; }\npub fn main() !void {\n    var i: usize = 1;\n    errdefer std.debug.print(\"Value of i: {d}\\n\", .{i});\n    defer i = 2;\n    try foo();\n}\nValue of i: 2\nerror: FooError\n/t.zig:6:5: 0x1037e48 in foo (defer)\n    return error.FooError;\n    ^\n因为 defer i = 2; 写在后面，所以在报错退出时它先执行，把 i 改成了 2；随后前面的 errdefer 打印出的就是 2。 如果调换两行顺序：\nconst std = @import(\"std\");\nfn foo() !void { return error.FooError; }\npub fn main() !void {\n    var i: usize = 1;\n    defer i = 2;\n    errdefer std.debug.print(\"Value of i: {d}\\n\", .{i});\n    try foo();\n}\nValue of i: 1\nerror: FooError\n/t.zig:6:5: 0x1037e48 in foo (defer)\n    return error.FooError;\n    ^\n\n\n2.1.5 for 循环迭代\n日常处理数组或切片，for 循环是绝对的主力。 Zig 的 for 语法有自己的独特审美：用括号包住要迭代的集合，后面用一对竖线 |val| 声明接收每个元素的迭代器变量：\nfor (items) |value| {\n    // 循环体代码\n}\n看个遍历数组打印 ASCII 码的例子：\nconst name = [_]u8{'P','e','d','r','o'};\nfor (name) |char| {\n    try stdout.print(\"{d} | \", .{char});\n}\ntry stdout.flush();\n如果遍历时既想要元素值，又想要当前下标索引怎么办？ 非常优雅！Zig 允许在 for 括号里传入第二个范围序列 0..，并在竖线里同时捕获值与下标：\nconst name = \"Pedro\";\nfor (name, 0..) |_, i| {\n    try stdout.print(\"{d} | \", .{i});\n}\ntry stdout.flush();\n0 | 1 | 2 | 3 | 4 |\n注意上面我们用 _ 显式丢弃了字符值，只留下了自增索引 i，避免触发闲置变量编译报错。\n\n\n2.1.6 while 循环与自增表达式\nwhile 负责按条件循环，只要括号里的布尔表达式为 true 就一直跑：\nvar i: u8 = 1;\nwhile (i &lt; 5) {\n    try stdout.print(\"{d} | \", .{i});\n    i += 1;\n}\ntry stdout.flush();\nZig 还支持在 while 头部通过冒号 : (expr) 绑定自增步进逻辑，写起来非常紧凑：\nvar i: u8 = 1;\nwhile (i &lt; 5) : (i += 1) {\n    try stdout.print(\"{d} | \", .{i});\n}\ntry stdout.flush();\n\n\n2.1.7 掌控节奏：break 与 continue\n想中途跳出循环用 break，想跳过当前轮次直奔下一轮用 continue。\n看这个用 break 终止无限循环的例子：\nvar i: usize = 0;\nwhile (true) {\n    if (i == 10) {\n        break;\n    }\n    i += 1;\n}\ntry std.testing.expect(i == 10);\ntry stdout.print(\"Everything worked!\", .{});\ntry stdout.flush();\n以及用 continue 过滤偶数、只打印奇数的经典用法：\nconst ns = [_]u8{1,2,3,4,5,6};\nfor (ns) |i| {\n    if ((i % 2) == 0) {\n        continue;\n    }\n    try stdout.print(\"{d} | \", .{i});\n}\ntry stdout.flush();",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#sec-fun-pars",
+    "href": "Chapters/03-structs.html#sec-fun-pars",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "2.2 函数入参是不可变的！",
+    "text": "2.2 函数入参是不可变的！\n这里必须郑重强调 Zig 的另一条铁律：在 Zig 里，函数的所有形参默认全都是不可变常量（Immutable）！\n看看下面这桩反面教材：在 add2 函数里试图对传进来的参数 x 做直接修改，编译器当场教做人：\nconst std = @import(\"std\");\nfn add2(x: u32) u32 {\n    x = x + 2;\n    return x;\n}\n\npub fn main() !void {\n    const y = add2(4);\n    std.debug.print(\"{d}\\n\", .{y});\n}\nt.zig:3:5: error: cannot assign to constant\n    x = x + 2;\n    ^\n\n2.2.1 白嫖的编译器极致优化\nZig 为什么要对函数参数做如此苛刻的不可变约束？ 因为这样给编译器开辟了巨大的性能优化空间！\n如果是传基础小数据（如 u32、bool），编译器直接按值传递（拷贝到栈帧）； 但如果传入的是结构体、大数组等重型复合数据，由于函数内部绝对承诺不会擅自篡改入参，编译器就会智能决定到底是用按值传递还是按引用指针传递，怎么快怎么来！ 这项零成本性能福利全靠参数不可变保证。\n\n\n2.2.2 确实想改入参？传指针！\n如果在业务场景下确实需要由函数修改外部状态（比如调用 C 接口或更新复杂结构体），正规解法是传指针（例如用 *u32 代替 u32），然后在函数体里通过 .* 做解引用修改：\nconst std = @import(\"std\");\nfn add2(x: *u32) void {\n    const d: u32 = 2;\n    x.* = x.* + d;\n}\n\npub fn main() !void {\n    var x: u32 = 4;\n    add2(&x);\n    std.debug.print(\"Result: {d}\\n\", .{x});\n}\nResult: 6",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#sec-structs-and-oop",
+    "href": "Chapters/03-structs.html#sec-structs-and-oop",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "2.3 结构体与面向对象（Structs and OOP）",
+    "text": "2.3 结构体与面向对象（Structs and OOP）\nZig 更偏向于 C 风格的过程式语言，而不是 C++ 或 Java 那套重型面向对象。所以 Zig 里面没有复杂的 class 类、继承树和多态虚表。 但别慌！在 Zig 里，我们完全可以通过结构体（Struct）写出非常纯粹地道的面向对象代码。\n你可以用 struct 定义新类型，不仅可以包含字段成员（Data members），还可以在里面挂载函数（Methods）。这样属于该类型的所有实例就能直接调用这些方法。\n在命名规范上，Zig 社区统一约定： - init()：充当构造函数，用于创建和初始化实例； - deinit()：充当析构函数，负责释放该实例占用的底层资源。\n看下面这个经典的 User 结构体：\nconst std = @import(\"std\");\nconst User = struct {\n    id: u64,\n    name: []const u8,\n    email: []const u8,\n\n    fn init(id: u64,\n            name: []const u8,\n            email: []const u8) User {\n\n        return User {\n            .id = id,\n            .name = name,\n            .email = email\n        };\n    }\n\n    fn print_name(self: User, stdout: *std.Io.Writer) !void {\n        try stdout.print(\"{s}\\n\", .{self.name});\n        try stdout.flush();\n    }\n};\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    const u = User.init(1, \"pedro\", \"email@gmail.com\");\n    try u.print_name(stdout);\n}\n注意细节：结构体内部每个字段定义末尾必须以逗号（,）结尾，而不是分号。\n\n2.3.1 跨模块可见性：pub 关键字\n正如之前强调的，Zig 所有成员默认都是私有的。 如果你的 User 结构体写在 user.zig 模块里，想要在另一个 register.zig 里使用它，就必须给结构体本身以及它的方法显式打上 pub 标记：\n// user.zig\npub const User = struct {\n    id: u64,\n    name: []const u8,\n    email: []const u8,\n\n    pub fn init(id: u64, name: []const u8, email: []const u8) User {\n        return User{ .id = id, .name = name, .email = email };\n    }\n\n    pub fn print_name(self: User) !void {\n        // ...\n    }\n};\n// register.zig\nconst user = @import(\"user.zig\");\npub fn main() !void {\n    const u: user.User = user.User.init(\n        1, \"pedro\", \"email@gmail.com\"\n    );\n    _ = u;\n}\n\n\n2.3.2 匿名结构体字面量（Anonymous Struct Literals）\n正常声明结构体字面量时，一般会在大括号前带上类型名 User { ... }。 但在 Zig 中，你可以直接省掉类型名，用 .{} 这种匿名结构体字面量语法！\n前面的小圆点 . 会告诉编译器：“这里有个结构体，麻烦结合上下文帮我自动推导它的类型！”\n我们在 stdout.print() 里传参数时见到的 .{ \"world\" }，就是典型的匿名结构体字面量。编译器会根据格式化字符串的需求自动构建这个包裹类型，用起来极其清爽：\nconst std = @import(\"std\");\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    try stdout.print(\"Hello, {s}!\\n\", .{\"world\"});\n    try stdout.flush();\n}\n\n\n2.3.3 结构体类型必须是常量（const）\n在 Zig 里，所有的类型（Types）在编译期都是一等公民，它们必须是 const 或 comptime。 你绝不能用 var 去声明一个结构体类型，必须一律使用 const：\nconst Vec3 = struct {\n    x: f64,\n    y: f64,\n    z: f64,\n};\n\n\n2.3.4 结构体方法的 self 参数\n在方法定义中，我们通常用 self 作为第一个形参，它代表当前调用该方法的对象实例本身。\n看下面这个三维向量 Vec3 计算欧氏距离的示例：\nconst std = @import(\"std\");\nconst m = std.math;\nconst Vec3 = struct {\n    x: f64,\n    y: f64,\n    z: f64,\n\n    pub fn distance(self: Vec3, other: Vec3) f64 {\n        const xd = m.pow(f64, self.x - other.x, 2.0);\n        const yd = m.pow(f64, self.y - other.y, 2.0);\n        const zd = m.pow(f64, self.z - other.z, 2.0);\n        return m.sqrt(xd + yd + zd);\n    }\n};\n调用时直接 v1.distance(v2)，Zig 会自动把 v1 作为 self 传进去：\nconst v1 = Vec3 {\n    .x = 4.2, .y = 2.4, .z = 0.9\n};\nconst v2 = Vec3 {\n    .x = 5.1, .y = 5.6, .z = 1.6\n};\n\nstd.debug.print(\n    \"Distance: {d}\\n\",\n    .{v1.distance(v2)}\n);\nDistance: 3.3970575502926055\n\n\n2.3.5 结构体内部状态变更：*Self vs Self\n如果一个方法只读取数据、不改动任何字段（如上面的 distance），形参写 self: Vec3 就够了。\n但如果你的方法需要修改结构体自身的字段（例如给坐标翻倍），该怎么写？\n还记得前文讲过的“函数入参是不可变常量”吗？如果你写 self: Vec3 然后去执行 self.x *= 2.0;，编译器马上会怒喷 cannot assign to constant！\n因此，只要方法内部需要修改自身状态，self 参数必须声明为指针类型 *Vec3！\nconst std = @import(\"std\");\nconst m = std.math;\nconst Vec3 = struct {\n    x: f64,\n    y: f64,\n    z: f64,\n\n    pub fn distance(self: Vec3, other: Vec3) f64 {\n        const xd = m.pow(f64, self.x - other.x, 2.0);\n        const yd = m.pow(f64, self.y - other.y, 2.0);\n        const zd = m.pow(f64, self.z - other.z, 2.0);\n        return m.sqrt(xd + yd + zd);\n    }\n\n    pub fn twice(self: *Vec3) void {\n        self.x = self.x * 2.0;\n        self.y = self.y * 2.0;\n        self.z = self.z * 2.0;\n    }\n};\n调用也非常省心：哪怕调用方写的是 v3.twice()，Zig 也会自动为我们取指针传递，直接原地更新：\nvar v3 = Vec3 {\n    .x = 4.2, .y = 2.4, .z = 0.9\n};\nv3.twice();\nstd.debug.print(\"Doubled: {d}\\n\", .{v3.x});\nDoubled: 8.4\n\n\n\n\n\n\nNote\n\n\n\n开发避坑诀窍：只要结构体的方法需要修改自身任何一个字段的值，函数签名里的 self 务必写成指针类型 *T，而不是普通值 T。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#sec-type-inference",
+    "href": "Chapters/03-structs.html#sec-type-inference",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "2.4 类型推断（Type Inference）",
+    "text": "2.4 类型推断（Type Inference）\n虽然 Zig 是严格的强类型语言，但它并不死板。很多时候我们不需要把冗长的类型名反反复复手敲一遍。 在 Zig 中，触发类型推断的魔术符号就是小圆点（.）。\n每当你看到以 . 开头的字面量或枚举项时，就代表我们在对编译器说：“请结合上下文，自动推断出这里应该是什么类型吧！”这有点类似于 C++ 的 auto，但用在字面量上更加灵巧。\n看 Zig 标准库原子操作模块 atomic.zig2 里的真实代码：\npub inline fn fence(self: *Self, comptime order: AtomicOrder) void {\n    // 省略部分上下文...\n    return switch (order) {\n        .unordered, .monotonic =&gt; @compileError(\n            @tagName(order)\n            ++ \" only applies to atomic loads and stores\"\n        ),\n        .acquire =&gt; tsan.__tsan_acquire(addr),\n        .release =&gt; tsan.__tsan_release(addr),\n        .acq_rel, .seq_cst =&gt; {\n            tsan.__tsan_acquire(addr);\n            tsan.__tsan_release(addr);\n        },\n    };\n}\n因为传入的入参类型是 AtomicOrder 枚举，所以在分支里写 .acquire，编译器就能立刻心神领会它等价于 AtomicOrder.acquire，无需开发者做机械重复的输入。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#sec-type-cast",
+    "href": "Chapters/03-structs.html#sec-type-cast",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "2.5 类型转换（Type Casting）",
+    "text": "2.5 类型转换（Type Casting）\n在底层开发中，不同位宽整型、浮点型或指针之间的类型互转是高频操作。 在 C 语言里常用 (int)x 强制转换，容易隐蔽地截断数据；而 Zig 提供了非常严谨的类型转换内置函数族。\n\n2.5.1 显式安全强转：@as()\n当类型转换是明确且安全的时候，首选用 @as(TargetType, value)：\nconst std = @import(\"std\");\nconst expect = std.testing.expect;\ntest {\n    const x: usize = 500;\n    const y = @as(u32, x);\n    try expect(@TypeOf(y) == u32);\n}\n\n\n2.5.2 整型与浮点互转：@floatFromInt 与 @intFromFloat\n整型和浮点之间的转换存在舍入或精度变化，Zig 要求使用明确表意的内置函数：\nconst std = @import(\"std\");\nconst expect = std.testing.expect;\ntest {\n    const x: usize = 565;\n    const y: f32 = @floatFromInt(x);\n    try expect(@TypeOf(y) == f32);\n}\n\n\n2.5.3 指针强转：@ptrCast\n在底层做内存重解释或兼容 C ABI 时，指针强转很常见。Zig 专门用 @ptrCast() 来负责指针层面的类型变换（详见 Chapter 6）：\nconst std = @import(\"std\");\nconst expect = std.testing.expect;\ntest {\n    const bytes align(@alignOf(u32)) = [_]u8{\n        0x12, 0x12, 0x12, 0x12\n    };\n    const u32_ptr: *const u32 = @ptrCast(&bytes);\n    try expect(@TypeOf(u32_ptr) == *const u32);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#模块的本质就是结构体",
+    "href": "Chapters/03-structs.html#模块的本质就是结构体",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "2.6 模块的本质就是结构体",
+    "text": "2.6 模块的本质就是结构体\n最后，揭晓一个在 Zig 里极其迷人且统一的概念：每一个 .zig 源码文件（即模块），在编译器内部其实就是一个结构体（Struct）！\n当我们在代码里敲下：\nconst std = @import(\"std\");\n本质上，@import 是把整个标准库解析成了一个巨大的结构体对象，并赋给了 std 常量。我们用 std.debug.print 调用函数，跟访问普通结构体的静态方法在语法机制上没有任何区别。\n看知名开源项目 zap 中的 thread_pool.zig3： 在这个文件里，作者在最外层直接定义了公开的 init() 方法，整个 .zig 文件就扮演了线程池结构体本身：\nconst std = @import(\"std\");\nconst ThreadPool = @import(\"thread_pool.zig\");\nconst num_cpus = std.Thread.getCpuCount()\n    catch @panic(\"failed to get cpu core count\");\nconst num_threads = std.math.cast(u16, num_cpus)\n    catch std.math.maxInt(u16);\nconst pool = ThreadPool.init(\n    .{ .max_threads = num_threads }\n);\n这种高度统一的“模块即结构体”模型，大幅降低了语言的概念复杂度。在 Zig 里，你学懂了结构体，就相当于顺带学懂了模块系统！",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-structs.html#footnotes",
+    "href": "Chapters/03-structs.html#footnotes",
+    "title": "2  控制流、结构体、模块与类型系统",
+    "section": "",
+    "text": "https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig。↩︎\nhttps://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig。↩︎\nhttps://github.com/kprotty/zap/blob/blog/src/thread_pool.zig。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>控制流、结构体、模块与类型系统</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-memory.html",
+    "href": "Chapters/01-memory.html",
+    "title": "3  内存与分配器（Allocators）",
+    "section": "",
+    "text": "3.1 计算机的三大内存空间\n``\n在这一章中，咱们来死磕底层开发最核心的话题——内存。 Zig 究竟是如何管理与调度内存的？日常开发中有哪些顺手的工具？又有哪些独特设计让 Zig 的内存模型与众不同？看完本章，你心中就会有清晰的答案。\n计算机的一切运算都建立在内存基础之上。内存就像一张临时工作台，用来安放计算过程中产生的所有临时数据。没有内存，编程语言里的“变量”与“对象”就成了无源之水。\n在 Zig 源码中定义的每一个对象，在底层硬件中都必须有一块安身立命的物理内存。 根据定义位置和方式的不同，Zig 会把对象分配到不同的“内存区域”中。\n在 Zig 里，我们最关心的内存区域主要有 3 个：",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>内存与分配器（Allocators）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-memory.html#计算机的三大内存空间",
+    "href": "Chapters/01-memory.html#计算机的三大内存空间",
+    "title": "3  内存与分配器（Allocators）",
+    "section": "",
+    "text": "全局数据段（Global Data Section）；\n栈（Stack）；\n堆（Heap）。\n\n\n3.1.1 编译期已知 vs 运行时已知\nZig 在决定把一个对象塞到哪个内存空间时，核心评判标准之一就是：这个值到底是在“编译期”就已知，还是必须等“运行时”才能算出来？\n如果一个对象的值在编译阶段就已经白纸黑字写死在源码里，编译器在编译时就能把它的具体数值和字节大小算得一清二楚，这就是编译期已知（Compile-time known）。\n对 zig 编译器来说，它其实最在乎的是对象的长度/占用空间大小（Size），其次才是具体的数值。当然，如果值已知，那大小自然水落石出。\n因此，编译器的首要任务是摸清每个对象到底占多少字节： - 如果值在编译期已知，那大小自动敲定； - 如果值要在运行时才能算出，那么只有当该对象的类型具备固定的物理尺寸时，其大小才算编译期已知。\n什么叫“具有固定的物理尺寸”？比如 u32 占 4 字节、[10]u8 占 10 字节。 反过来，如果类型里包含一个长度不定的切片 []const u8，那它在编译期就属于“尺寸不固定”。因为在运行时这个切片可能装 2 个元素，也可能装 1000 个元素，编译器根本没法未卜先知。\n举个日常开发的场景：一个接受用户名字符串的函数，可能收到 3 个字符的短名字，也可能收到 100 个字符的长名字。这种入参切片的实际长度，显然只能留到程序跑起来（运行时）由外部输入决定。\n看下面这个例子：\nfn input_length(input: []const u8) usize {\n    const n = input.len;\n    return n;\n}\n\npub fn main() !void {\n    const name = \"Pedro\";\n    const array = [_]u8{1, 2, 3, 4};\n    _ = name; _ = array;\n}\n在 main() 函数里，常量 name 和 array 的内容直接硬编码在源码中，编译器一眼就能把它们算出来，这就是典型的编译期已知。\n而在 input_length() 函数里，形参 input 是一个动态切片 []const u8。在编译时，编译器根本猜不到谁会调它、会传多长的串进来。所以 input 的内容和长度都属于“运行时已知”。\n不过请注意：虽然 input.len 的具体数值是运行时才能拿到的，但承接结果的变量 n 的类型是 usize，而 usize 本身的内存占用在当前平台上是完全固定的（64 位系统上就是 8 字节）。所以 n 所需的内存空间在编译期依然是确定的。\n\n\n3.1.2 全局数据段（Global Data Register / Section）\n全局数据段是最终编译出来的二进制可执行文件中的一个静态区域，专门存放所有在编译期就彻底确定下来的数据。\n你在源码里写的所有字面量（比如字符串字面量 \"this is a string\"、整数 10、布尔值 true），以及所有在编译期已知且不可变的常量，统统被烘焙到了二进制文件的全局数据段里。\n日常写代码时大家基本不需要特意操心这个区域，它是只读且随程序载入自动存在的，开发者既不用手动申请，也不用手动释放。\n\n\n3.1.3 栈内存 vs 堆内存\n在系统级开发圈子里，“栈（Stack）还是堆（Heap）”永远是绕不开的经典话题。 初学者经常容易被“Stack vs Heap”这种字眼误导，以为它俩是非此即彼的对立关系。其实不然！在真实项目中，栈和堆是紧密互补的搭档，几乎每一个像样的 Zig 程序都在同时结合使用两者。\n先一句话概括它俩的核心分工： - 栈（Stack）：速度极快，用于存放生命周期跟随代码块、且尺寸在编译期固定已知的局部数据； - 堆（Heap）：容量极大、灵活多变，专门用于存放尺寸动态变化、或者生命周期需要跨越作用域的动态数据 (Chen and Guo 2022)。\n\n\n3.1.4 深入剖析栈内存（Stack）\n栈内存之所以叫“栈”，是因为它在底层的管理方式完全遵循数据结构里的后进先出（LIFO - Last In, First Out）机制。\n在 Zig 中，每次发生函数调用，操作系统就会在栈顶为该函数切出一块专属的栈帧（Stack Frame） (Chen and Guo 2022; Zig Software Foundation 2024)。 函数的所有形参、以及在函数体大括号内声明的局部变量，通通存放在这个专属栈帧里。\n看下面这个例子：\nfn add(x: u8, y: u8) u8 {\n    const result = x + y;\n    return result;\n}\n\npub fn main() !void {\n    const r = add(5, 27);\n    _ = r;\n}\n在上面的代码里，result 是 add() 内部的局部变量，存放在 add 的栈帧里；而 main() 里的 r 则存放在 main 的栈帧里。\n栈内存最大的杀手级特性是：全自动释放！ 只要函数执行完毕 return 返回，它对应的整个栈帧会被瞬间弹出并销毁，里面的所有局部变量灰飞烟灭。开发者完全不需要写一行代码去释放栈上的局部变量。\n\n\n\n\n\n\nImportant\n\n\n\n核心认知：分配在栈上的局部对象，在离开其所属的花括号作用域时，会被系统全自动销毁，不需要也不应该手动清理。\n\n\n不仅是函数，for 循环、if 分支等任何用花括号 {} 圈出来的作用域也是同样的道理。出了大括号，里面的局部变量就彻底失效了：\n// 这段代码根本编译不过！\nconst a = [_]u8{0, 1, 2, 3, 4};\nfor (0..a.len) |i| {\n    const index = i;\n    _ = index;\n}\n// 试图在循环体外面访问 index，直接报错，因为栈变量早随着作用域销毁了\nstd.debug.print(\"{d}\\n\", .{index});\n\n3.1.4.1 绝对不要返回指向栈上局部变量的指针！\n正因为栈内存在函数退出时会自动销毁，所以衍生出一条系统编程里的保命铁律：千！万！不！要！在函数里返回指向自身栈局部变量的指针！\n想想看：函数一返回，栈帧瞬间被覆写回收，你手里拿到的那个指针指向的就是一块已经作废的内存废墟。如果你拿着这个悬垂指针去解引用读写，就会引发灾难级的未定义行为（Undefined Behavior, UB）！\n看下面这段毒代码：\nfn add(x: u8, y: u8) *const u8 {\n    const result = x + y;\n    return &result; // 极其危险！返回了局部栈变量的指针！\n}\n\npub fn main() !void {\n    // 编译虽然勉强能过，但跑起来就是纯纯的未定义行为（UB），绝对严禁这么写！\n    const r = add(5, 27); _ = r;\n}\n在 C/C++ 社区，这个天坑让无数人交过血泪学费。在 Zig 里也一样：如果函数只是返回计算结果的值拷贝（比如直接返回 u8），那一点毛病没有；但如果想把一个对象持久化并把指针交出去，唯一的正道就是——把数据分配到堆上！\n\n\n\n3.1.5 深入剖析堆内存（Heap）\n栈虽然快如闪电，但有两个致命硬伤： 1. 尺寸必须在编译期定死； 2. 离开作用域立即自毁。\n这时候就需要堆内存来挑大梁了！ 堆是极其开阔且灵活的动态内存空间，专为“运行时动态扩容”和“持久跨作用域生命周期”而生。\n典型的例子是网络服务器（HTTP 服务、RPC 网关等）：服务器在启动前根本无法预估今天会涌进来 1 个请求还是 10 万个请求，每个请求上传的报文到底有多大。这种动态伸缩的业务场景，只能由堆内存来承载。\n但世界上没有免费的午餐：堆内存带来了极致的自由度，代价是所有权与生命周期的管控责任完全落在了程序员的肩上！\n\n与全自动回收的栈不同，堆上的每一寸内存，都必须由开发者显式申请，且在用完后显式释放 (Chen and Guo 2022)。\n\n在 Zig 里，你想动用堆内存，唯一合法的手段就是通过分配器（Allocator）去 alloc() 或 create()。\n\n\n\n\n\n\nImportant\n\n\n\n底层铁律：在堆上申请的每一片内存，都必须在用完后由你亲手释放！绝不能有头无尾。\n\n\n\n\n3.1.6 内存空间决策速查表\n总结一下 zig 编译器分配存储位置的内在逻辑：\n\n字面量（如 \"abc\"、123）：存放于全局只读数据段；\n编译期已知常量的 const 对象：存放于全局数据段；\n长度在编译期固定的局部变量/常量：存放于当前栈帧；\n通过分配器的 alloc() 或 create() 申请的对象：存放于该分配器管辖的内存池中（除固定栈缓冲区等特殊类型外，通常为堆内存）；\n堆内存唯一的合法访问入口是 Allocator。如果不经 Allocator，你绝不可能凭空拿到堆内存。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>内存与分配器（Allocators）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-memory.html#sec-stack-overflow",
+    "href": "Chapters/01-memory.html#sec-stack-overflow",
+    "title": "3  内存与分配器（Allocators）",
+    "section": "3.2 栈溢出（Stack Overflow）",
+    "text": "3.2 栈溢出（Stack Overflow）\n栈分配快归快，但容量非常有限（通常只有几兆字节）。 如果你试图在栈上申请一个巨大无比的数组，或者写了个死递归把调用栈堆穿，就会瞬间触发栈溢出（Stack Overflow），操作系统会立刻强行掐死程序（抛出经典的 Segmentation Fault / 段错误）：\nvar very_big_alloc: [1000 * 1000 * 24]u64 = undefined;\n@memset(very_big_alloc[0..], 0);\nSegmentation fault (core dumped)\n所以，大号数据和超长缓冲区千万别硬塞在栈上，老老实实用堆！",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>内存与分配器（Allocators）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-memory.html#sec-allocators",
+    "href": "Chapters/01-memory.html#sec-allocators",
+    "title": "3  内存与分配器（Allocators）",
+    "section": "3.3 分配器（Allocators）：Zig 的灵魂基石",
+    "text": "3.3 分配器（Allocators）：Zig 的灵魂基石\n在 Zig 的设计哲学里，有一条震撼整个系统开发圈的原则：“在 Zig 里，标准库绝不存在任何暗中瞒着你的隐藏内存分配！” (Sobeston 2024)。\n写过 C++ 的朋友对此肯定深恶痛绝：很多 STL 容器和操作符会在背后偷偷调用全局 malloc 分配堆内存，表面看人畜无害，底层却频频引发内存碎片和偶发卡顿，不深扒源码根本抓不出是谁干的。\n而在 Zig 里，规则透明到了极致：如果一个标准库函数或第三方库在执行过程中需要开辟内存，它就必须显式要求调用者在入参里传一个 Allocator 进来！\n这就形成了一条一目了然的判别法则： 看一个函数的入参列表，只要里面没有带 Allocator，你就敢 100% 拍胸脯保证：它绝不会私自在堆上偷偷申请任何内存！\n以标准库的 std.fmt.allocPrint() 为例（它类似 C 的 sprintf，用于动态拼装格式化字符串）：因为需要根据格式化结果动态申请内存，它的第一个形参就是 allocator：\nvar gpa = std.heap.DebugAllocator(.{}){};\nconst allocator = gpa.allocator();\nconst name = \"Pedro\";\nconst output = try std.fmt.allocPrint(\n    allocator,\n    \"Hello {s}!!!\",\n    .{name}\n);\ntry stdout.print(\"{s}\\n\", .{output});\ntry stdout.flush();\n由调用者来掌控“用哪种分配器、分配到哪里”，这才是真正的“内存全权掌控”。\n\n3.3.1 什么是 Allocator？\n在 Zig 中，Allocator 是所有动态内存分配策略的通用抽象接口（类似于 C 里的 malloc/free 套件，但更加模块化）。 Zig 标准库在 std.heap 模块下预置了多种专精于不同场景的现成分配器。\n无论底层是哪种具体分配器，它们对外都实现了统一的 Allocator 接口，标配提供以下核心方法： - alloc() / free()：用于申请和释放一组连续元素的切片（动态数组）； - create() / destroy()：用于申请和释放单个独立对象。\n这就意味着你的业务代码可以无缝切换不同的底层分配器，而上层业务调用的 API 签名完全不需要变动。\n\n\n3.3.2 常用分配器家族大盘点\n目前 Zig 标准库最常用的几种分配器包括：\n\nDebugAllocator()（通用调试分配器 / GPA）： 日常开发和单测的首选！它不仅能分配内存，更重要的是自带内存泄漏检测与非法指针检测！只要代码跑完忘了释放，它会把泄漏发生的行号清清楚楚打印出来。\npage_allocator（页分配器）： 直接向操作系统请求整页内存（通常一页是 4KB）。速度飞快，但如果只存几个字节会造成极大的内存浪费。一般用来做底层大块内存的初始背书。\nFixedBufferAllocator()（固定缓冲区分配器 / FBA）： 由你预先提供一段固定大小的 buffer（可以放在栈上也可以放在堆上），它在这个限定的圈子里划分内存。绝无动态扩容开销，嵌入式和极致高性能场景神器。\nArenaAllocator()（竞技场分配器 / 区域分配器）： 开发效率天花板！它包裹另一个底层分配器，允许你在业务里放肆 alloc() 几十上百次，用完之后只需调用一次 arena.deinit()，整块内存一键打包全部销毁！彻底告别写满屏幕 defer free() 的繁琐。\nc_allocator（C 标库分配器）： 底层直接桥接 C 标准库的 malloc() 和 free()。需要编译时开启 -lc 链接 C 运行时。\n\n\n\n3.3.3 实战：DebugAllocator（通用分配器）\n先看最经典的用法：\nconst std = @import(\"std\");\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    const some_number = try allocator.create(u32);\n    defer allocator.destroy(some_number);\n\n    some_number.* = @as(u32, 45);\n}\n\n\n3.3.4 实战：FixedBufferAllocator（定长缓冲区分配）\n看下面这段代码：我们预先在栈上准备了一个仅有 10 字节的 buffer 数组，然后用它初始化一个 FixedBufferAllocator。后续所有的 alloc 都在这 10 个字节里瓜分。如果超额申请，会直接干净利落地返回 OutOfMemory 错误：\nvar buffer: [10]u8 = undefined;\nfor (0..buffer.len) |i| {\n    buffer[i] = 0; // 初始化清零\n}\n\nvar fba = std.heap.FixedBufferAllocator.init(&buffer);\nconst allocator = fba.allocator();\nconst input = try allocator.alloc(u8, 5);\ndefer allocator.free(input);\n\n\n3.3.5 神器：ArenaAllocator（一键批量释放）\n写底层代码最怕的就是申请了十几个复杂结构体，每个都得小心翼翼写 defer free，万一漏一个就发生内存泄漏。 这时候 ArenaAllocator 就是救星！\n它采用类似“包工头”的思路：底层对接一个真实分配器（比如 GPA），在上层只管疯狂申请；当这批业务搞定后，只要调用一次 aa.deinit()，前面申请的所有小内存块被瞬间一锅端回收：\nvar gpa = std.heap.DebugAllocator(.{}){};\nvar aa = std.heap.ArenaAllocator.init(gpa.allocator());\ndefer aa.deinit(); // 离开作用域时，aa 内部申请的所有内存一键全部释放！\nconst allocator = aa.allocator();\n\nconst in1 = try allocator.alloc(u8, 5);\nconst in2 = try allocator.alloc(u8, 10);\nconst in3 = try allocator.alloc(u8, 15);\n_ = in1; _ = in2; _ = in3;\n在写编译器、解释器、CLI 脚本、或者单次 HTTP 请求处理流程中，Arena 模式是极其推崇的工业级最佳实践。\n\n\n3.3.6 动态切片分配：alloc() 与 free()\n当需要开辟一块能装多个元素的连续缓冲区时，用 alloc(Type, count)：\nconst std = @import(\"std\");\n\npub fn main(init: std.process.Init) !void {\n    var stdin_buffer: [1024]u8 = undefined;\n    var stdin_reader = std.Io.File.stdin().reader(init.io, &stdin_buffer);\n    const stdin = &stdin_reader.interface;\n\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n\n    // 在堆上开辟能放 50 个 u8 的缓冲区\n    var input = try allocator.alloc(u8, 50);\n    defer allocator.free(input);\n    @memset(input[0..], 0);\n\n    // 读取用户输入直到遇到换行符\n    const stream = try stdin.takeDelimiterExclusive('\\n');\n    @memcpy(input[0..stream.len], stream[0..]);\n    std.debug.print(\"{s}\\n\", .{input});\n}\n配合 defer allocator.free(input) 贴身释放，代码整洁且绝无泄漏可能。\n\n\n3.3.7 单对象专属分配：create() 与 destroy()\n如果只需要存单个独立对象（比如一个单独的结构体实例），不要滥用 alloc 去搞个长度为 1 的数组切片，正规军是用 create() 和 destroy()：\nconst std = @import(\"std\");\nconst User = struct {\n    id: usize,\n    name: []const u8,\n\n    pub fn init(id: usize, name: []const u8) User {\n        return .{ .id = id, .name = name };\n    }\n};\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    const user = try allocator.create(User);\n    defer allocator.destroy(user);\n\n    user.* = User.init(0, \"Pedro\");\n}\n记住这组搭档关系： - 数组切片批量存：alloc 对应 free； - 单个实体单独存：create 对应 destroy。\n\n\n\n\nChen, Jenny, and Ruohao Guo. 2022. “Stack and Heap Memory.” Introduction to Data Structures and Algorithms with C++ (USA). https://courses.engr.illinois.edu/cs225/fa2022/resources/stack-heap/.\n\n\nSobeston. 2024. Zig Guide. https://zig.guide/.\n\n\nZig Software Foundation. 2024. Language Reference. Zig Software Foundation. https://ziglang.org/documentation/master/.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>内存与分配器（Allocators）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html",
+    "href": "Chapters/01-base64.html",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "",
+    "text": "4.1 Base64 算法底层究竟是怎么跑的？\n``\n作为全书的第一个上手实战小项目，我想带你从零手写一个属于自己的 Base64 编解码器。 Base64 是一种极其经典的编码方案，核心用途是把任意二进制字节流转换为纯文本 ASCII 字符。 现代互联网的很多角落都在重度依赖它，专门用来向那些“只能安全传输文本”的老旧系统投递二进制数据。\n最直观的例子就是电子邮件（GMail、Outlook 等）。底层邮件传输走的是经典的简单邮件传输协议（SMTP），而 SMTP 天生只认纯文本。如果你想在邮件里夹带 PDF、Excel 或者图片这类二进制附件，邮件客户端就会先在后台把它们统统转成 Base64 字符串，然后再塞进邮件报文里发走。\n平时大家可能习惯了直接调内置函数（比如浏览器里的 btoa / atob 或各语言的标准库），今天咱们就把轮子彻底拆开，用纯正的 Zig 把它亲手造出来！\n在动手敲代码前，咱们先花点时间把它的算法底层逻辑拆解清楚。 首先看 Base64 的码表（64 字符表），它是整个编码体系的基石； 接着看编码器（Encoder）的 3 字节切 4 组逻辑； 最后再看解码器（Decoder）如何把 4 个字符还原回原始二进制字节。\n如果你对“编码”和“解码”的定义稍微有点模糊，可以随时跳到 Section 4.2 温习一下。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#base64-算法底层究竟是怎么跑的",
+    "href": "Chapters/01-base64.html#base64-算法底层究竟是怎么跑的",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "",
+    "text": "4.1.1 64 字符标尺表（Base64 Scale）\nBase64 顾名思义，基于一个索引范围从 0 到 63 的 64 字符标尺表。 要将二进制数据编码为 Base64，本质上就是把二进制数值映射为这个 64 字符表中对应的文字符号。\n这 64 个字符的排布规则非常整齐： - 0 ~ 25：大写英文字母 A ~ Z（共 26 个）； - 26 ~ 51：小写英文字母 a ~ z（共 26 个）； - 52 ~ 61：阿拉伯数字 0 ~ 9（共 10 个）； - 62 和 63：特殊字符 + 和 /。\n加起来正好 64 个字符！ 除此之外，大家在日常见到的等号 = 并不属于这 64 个字符表本身，它是 Base64 的特殊填充符（Padding），专门挂在末尾充当占位符，用来标记有效数据的终止位置。\n速查清单如下：\n\n索引 0 ~ 25：ASCII 大写字母 [A-Z]；\n索引 26 ~ 51：ASCII 小写字母 [a-z]；\n索引 52 ~ 61：一位阿拉伯数字 [0-9]；\n索引 62、63：分别为 + 和 /；\n字符 =：末尾填充占位符，表示有效数据结束。\n\n\n\n4.1.2 用查找表（Lookup Table）换取极致性能\n在计算机科学中，表示这种映射关系最高效的手段就是查找表（Lookup Table）——用极小的空间换取无敌的运行速度。 与其每次遇到一个数字都耗费 CPU 跑一堆 if-else 分支去算它是哪个字母，不如预先在内存里摆一个 64 字节的固定静态数组。需要哪个字符，直接拿下标做一次内存寻址 O(1) 秒拿，性能起飞！\n咱们用一个 Base64 结构体来承载整套逻辑。定义内部字段 _table 指向这 64 个字符组成的表，再配一个 init() 构造函数和一个用索引查字符的 _char_at() 辅助方法：\nconst Base64 = struct {\n    _table: *const [64]u8,\n\n    pub fn init() Base64 {\n        const upper = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\";\n        const lower = \"abcdefghijklmnopqrstuvwxyz\";\n        const numbers_symb = \"0123456789+/\";\n        return Base64{\n            ._table = upper ++ lower ++ numbers_symb,\n        };\n    }\n\n    pub fn _char_at(self: Base64, index: usize) u8 {\n        return self._table[index];\n    }\n};\n注意在 init() 里我们优雅地使用了之前学过的数组编译期拼接操作符 ++。 这样一来，查 28 号位的字符，直接调 _char_at(28) 就能精准拿到字母 ‘c’：\nconst base64 = Base64.init();\ntry stdout.print(\n    \"Character at index 28: {c}\\n\",\n    .{base64._char_at(28)}\n);\ntry stdout.flush();\nCharacter at index 28: c\n\n\n4.1.3 编码器工作原理：3 字节切 4 份\nBase64 编码器的黄金处理窗口是 3 个字节。 为什么偏偏是 3 字节？ 因为每个字节有 8 个比特（bit），3 字节正好是 \\(3 \\times 8 = 24\\) 个比特。 而 24 这个数字极具魔力：它正好能被 6 整除！\\(24 \\div 6 = 4\\)。\n也就是说，输入端的每 3 个字节（24 bit），正好可以均匀重新切分成 4 个 6 位的比特小块（每个 6 位数值范围恰好是 \\(0 \\sim 63\\)）！ 随后这 4 个 6 位数值直接对应到 64 字符表里的 4 个文字。\n编码器就是以 3 字节为步长，一轮接一轮往前滚，每轮吞入 3 字节，吐出 4 个 Base64 字符。\n那如果原始输入长度不是 3 的整数倍呢？比如刚好剩 2 个字节（16 bit）或者剩 1 个字节（8 bit）怎么办？ 瞧瞧 Figure 4.1：以包含 2 个字母的短串 “Hi” 为例，转成 Base64 之后会变成 “SGk=”：\n\n\n\n\n\n\nFigure 4.1: Base64 编码器执行逻辑流程图\n\n\n\n拆开看： “Hi” 只有 2 字节（16 bit），距离凑齐 24 bit 还差 8 bit。 在切分成 6 位块时： - 前 12 位切成前两个完整的 6 位块； - 剩下的 4 位不够 6 位，算法会在末尾强制补 2 个零（补齐到 6 位），构成第 3 个字符； - 第 4 个 6 位块彻底空空如也，直接打上等号 = 充当占位符（Padding）！\n同理，如果只有一个字节（8 bit），比如输入单字符 “0”（ASCII 码二进制为 00110000），编码后会变成 “MA==”：第 1 块 6 位正常映射，第 2 块由剩余的 2 位补 4 个零凑齐，最后两块由于彻底缺失，直接补上双等号 ==。\n\n\n4.1.4 解码器工作原理：逆向反推\n解码器就是编码器的镜像反向操作。 它的处理窗口变成了 4 个字符：每次吃进 4 个 Base64 字符，将它们重新还原融合成原始的 3 个字节。\n在解码输出里，每个还原出来的原始字节，通常是由输入的两个相邻 Base64 字符各出一部份比特拼装而成的。整体流程如 Figure 4.2 所示：\n\n\n\n\n\n\nFigure 4.2: Base64 解码器执行逻辑流程图\n\n\n\n步骤非常清晰： 1. 先吃进 4 个字符，通过码表查出它们对应的 0~63 索引数值； 2. 通过精准的位移和按位或运算，把这些 6 位碎片重新拼装成 8 位的原始字节； 3. 如果末尾遇到 = 填充符，直接跳过丢弃，不输出多余的伪字节。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#sec-encode-vs-decode",
+    "href": "Chapters/01-base64.html#sec-encode-vs-decode",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "4.2 编码（Encode）与解码（Decode）的区分",
+    "text": "4.2 编码（Encode）与解码（Decode）的区分\n做个通俗的定义梳理： - 编码（Encode）：把原始的二进制字节切片，翻译成人类可读的 Base64 文本切片； - 解码（Decode）：把 Base64 文本切片，精准还原回最初的原始二进制字节切片。\n一个工业级的 Base64 库，核心 API 就包含这对互为逆运算的方法。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#sec-base64-length-out",
+    "href": "Chapters/01-base64.html#sec-base64-length-out",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "4.3 预判输出缓冲区大小",
+    "text": "4.3 预判输出缓冲区大小\n在底层系统编程中，动态申请内存必须算得分毫不差。 无论编码还是解码，我们在向堆申请空间之前，都必须提前精确算出输出到底需要多少字节。\n\n4.3.1 编码输出长度计算\n对于编码器：每 3 字节输入产生 4 字节输出。如果除不尽，向上取整（Ceil）补齐到 3 的倍数。 所以算法是：ceil(输入长度 / 3) * 4。\n如果输入不到 3 字节（1 或 2 字节），输出固定占满 4 字节（带补位等号）。 在 Zig 标准库中，我们直接调用 std.math.divCeil() 向上取整：\nconst std = @import(\"std\");\nfn _calc_encode_length(input: []const u8) !usize {\n    if (input.len &lt; 3) {\n        return 4;\n    }\n    const n_groups: usize = try std.math.divCeil(\n        usize, input.len, 3\n    );\n    return n_groups * 4;\n}\n\n\n4.3.2 解码输出长度计算\n解码器刚好相反：每 4 字节输入还原成 3 字节。我们用 divFloor() 向下取整乘 3，同时从尾部开始扫描，发现几个 = 填充符就相应减去几个字节：\nconst std = @import(\"std\");\nfn _calc_decode_length(input: []const u8) !usize {\n    if (input.len &lt; 4) {\n        return 3;\n    }\n\n    const n_groups: usize = try std.math.divFloor(\n        usize, input.len, 4\n    );\n    var multiple_groups: usize = n_groups * 3;\n    var i: usize = input.len - 1;\n    while (i &gt; 0) : (i -= 1) {\n        if (input[i] == '=') {\n            multiple_groups -= 1;\n        } else {\n            break;\n        }\n    }\n\n    return multiple_groups;\n}",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#sec-encoder-logic",
+    "href": "Chapters/01-base64.html#sec-encoder-logic",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "4.4 核心位运算与编码实现",
+    "text": "4.4 核心位运算与编码实现\n终于来到最硬核的环节了！ 要把 3 字节均匀切成 4 个 6 位块，靠的就是底层开发者的基本功——位运算符（Bitwise Operators）： - 左移（&lt;&lt;） - 右移（&gt;&gt;） - 按位与掩码（&）\n\n4.4.1 6 位转换的位运算拆解\n我们面对的标准 3 字节窗口中，4 个输出字符是这么算出来的：\n\noutput[0]：直接拿 input[0] 右移 2 位（丢掉低 2 位，留下高 6 位）；\noutput[1]：由两部分拼接而成——取 input[0] 的最后 2 位（用 & 0x03 提取）并左移 4 位，再加上 input[1] 的高 4 位（右移 4 位）；\noutput[2]：同理，取 input[1] 的低 4 位（& 0x0F）左移 2 位，加上 input[2] 的高 2 位（右移 6 位）；\noutput[3]：直接取 input[2] 的最后 6 位（& 0x3F 掩码过滤）。\n\nFigure 4.3 直观展示了第二步的拼接全过程：深紫色的低 2 位与橙色的高 4 位无缝拼成了一个全新的 6 位数值：\n\n\n\n\n\n\nFigure 4.3: 第 2 字节由输入第 1 字节（紫）与第 2 字节（橙）位移合并生成\n\n\n\n把全部分支场景汇总，便得到了 Table 4.1 映射表：\n\n\n\nTable 4.1: 各种窗口边界下的 6-bit 转换代码对照表\n\n\n\n\n\n\n\n\n\n\n处理窗口字节数\n输出字节下标\nZig 位运算实现代码\n\n\n\n\n3\n0\ninput[0] &gt;&gt; 2\n\n\n3\n1\n((input[0] & 0x03) &lt;&lt; 4) + (input[1] &gt;&gt; 4)\n\n\n3\n2\n((input[1] & 0x0f) &lt;&lt; 2) + (input[2] &gt;&gt; 6)\n\n\n3\n3\ninput[2] & 0x3f\n\n\n2\n0\ninput[0] &gt;&gt; 2\n\n\n2\n1\n((input[0] & 0x03) &lt;&lt; 4) + (input[1] &gt;&gt; 4)\n\n\n2\n2\n((input[1] & 0x0f) &lt;&lt; 2)\n\n\n2\n3\n'='\n\n\n1\n0\ninput[0] &gt;&gt; 2\n\n\n1\n1\n((input[0] & 0x03) &lt;&lt; 4)\n\n\n1\n2\n'='\n\n\n1\n3\n'='\n\n\n\n\n\n\n\n\n4.4.2 编写 encode() 编码方法\n现在把上面的位运算逻辑组装成工业级方法。 注意方法的签名设计：因为输出长度只有在运行时才知道，我们必须传入 allocator: std.mem.Allocator，在堆上申请返回切片。\npub fn encode(self: Base64,\n              allocator: std.mem.Allocator,\n              input: []const u8) ![]u8 {\n\n    if (input.len == 0) {\n        return \"\";\n    }\n\n    const n_out = try _calc_encode_length(input);\n    var out = try allocator.alloc(u8, n_out);\n    var buf = [3]u8{ 0, 0, 0 };\n    var count: u8 = 0;\n    var iout: u64 = 0;\n\n    for (input, 0..) |_, i| {\n        buf[count] = input[i];\n        count += 1;\n        if (count == 3) {\n            out[iout] = self._char_at(buf[0] &gt;&gt; 2);\n            out[iout + 1] = self._char_at(\n                ((buf[0] & 0x03) &lt;&lt; 4) + (buf[1] &gt;&gt; 4)\n            );\n            out[iout + 2] = self._char_at(\n                ((buf[1] & 0x0f) &lt;&lt; 2) + (buf[2] &gt;&gt; 6)\n            );\n            out[iout + 3] = self._char_at(buf[2] & 0x3f);\n            iout += 4;\n            count = 0;\n        }\n    }\n\n    if (count == 1) {\n        out[iout] = self._char_at(buf[0] &gt;&gt; 2);\n        out[iout + 1] = self._char_at(\n            (buf[0] & 0x03) &lt;&lt; 4\n        );\n        out[iout + 2] = '=';\n        out[iout + 3] = '=';\n    }\n\n    if (count == 2) {\n        out[iout] = self._char_at(buf[0] &gt;&gt; 2);\n        out[iout + 1] = self._char_at(\n            ((buf[0] & 0x03) &lt;&lt; 4) + (buf[1] &gt;&gt; 4)\n        );\n        out[iout + 2] = self._char_at(\n            (buf[1] & 0x0f) &lt;&lt; 2\n        );\n        out[iout + 3] = '=';\n        iout += 4;\n    }\n\n    return out;\n}",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#sec-decoder-logic",
+    "href": "Chapters/01-base64.html#sec-decoder-logic",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "4.5 构建解码器逻辑",
+    "text": "4.5 构建解码器逻辑\n搞定编码器后，解码器的逻辑就顺理成章了。\n\n4.5.1 字符反查索引：_char_index()\n收到一个 Base64 字符（比如 'k'），我们得反查出它在 64 码表里的数值是多少。 这里写个朴素实用的扫描查找方法，如果是 = 则返回 64（越界哨兵）：\nfn _char_index(self: Base64, char: u8) u8 {\n    if (char == '=')\n        return 64;\n\n    var i: u8 = 0;\n    var output_index: u8 = 0;\n\n    while (i &lt; 64) : (i += 1) {\n        if (self._char_at(i) == char)\n            break;\n        output_index += 1;\n    }\n\n    return output_index;\n}\n\n\n4.5.2 解码逆向位移还原\n每次吃进 4 个字符查得的索引 buf[0..4]，通过逆向位移拼成原始 3 字节：\n\noutput[0] = (buf[0] &lt;&lt; 2) + (buf[1] &gt;&gt; 4);\noutput[1] = (buf[1] &lt;&lt; 4) + (buf[2] &gt;&gt; 2);\noutput[2] = (buf[2] &lt;&lt; 6) + buf[3];\n\nFigure 4.4 直观展现了如何把前两个 6 位数值拼回原始的 8 位字节：\n\n\n\n\n\n\nFigure 4.4: 解码端将第 1 个字符（紫）与第 2 个字符（橙）合并还原出原始字节\n\n\n\n\n\n\nTable 4.2: 解码过程中的 6 位逆向还原代码\n\n\n\n\n\n输出字节下标\n对应还原代码\n\n\n\n\n0\n(buf[0] &lt;&lt; 2) + (buf[1] &gt;&gt; 4)\n\n\n1\n(buf[1] &lt;&lt; 4) + (buf[2] &gt;&gt; 2)\n\n\n2\n(buf[2] &lt;&lt; 6) + buf[3]\n\n\n\n\n\n\n\n\n4.5.3 编写完整的 decode() 方法\nfn decode(self: Base64,\n          allocator: std.mem.Allocator,\n          input: []const u8) ![]u8 {\n\n    if (input.len == 0)\n        return \"\";\n\n    const n_output = try _calc_decode_length(input);\n    var tmp_buffer = [4]u8{ 0, 0, 0, 0 };\n    var count: u8 = 0;\n    var output_index: u64 = 0;\n    var output = try allocator.alloc(u8, n_output);\n    @memset(output[0..], 0);\n\n    for (0..input.len) |i| {\n        tmp_buffer[count] = self._char_index(input[i]);\n        count += 1;\n        if (count == 4) {\n            output[output_index] = (tmp_buffer[0] &lt;&lt; 2) + (tmp_buffer[1] &gt;&gt; 4);\n            if (tmp_buffer[2] != 64) {\n                output[output_index + 1] = (tmp_buffer[1] &lt;&lt; 4) + (tmp_buffer[2] &gt;&gt; 2);\n            }\n            if (tmp_buffer[3] != 64) {\n                output[output_index + 2] = (tmp_buffer[2] &lt;&lt; 6) + tmp_buffer[3];\n            }\n            output_index += 3;\n            count = 0;\n        }\n    }\n\n    return output;\n}",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#大功告成端到端跑通测试",
+    "href": "Chapters/01-base64.html#大功告成端到端跑通测试",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "4.6 大功告成：端到端跑通测试！",
+    "text": "4.6 大功告成：端到端跑通测试！\n至此，编解码全套链路全部搞定！ 咱们写个小测试跑一圈：用 FixedBufferAllocator 搞一块 1000 字节的定长缓冲区充当分配器，对字符串做一次完整的“编码再解码”往返操作：\nvar memory_buffer: [1000]u8 = undefined;\nvar fba = std.heap.FixedBufferAllocator.init(\n    &memory_buffer\n);\nconst allocator = fba.allocator();\n\nconst text = \"Testing some more stuff\";\nconst etext = \"VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=\";\nconst base64 = Base64.init();\nconst encoded_text = try base64.encode(\n    allocator, text\n);\nconst decoded_text = try base64.decode(\n    allocator, etext\n);\ntry stdout.print(\n    \"Encoded text: {s}\\n\", .{encoded_text}\n);\ntry stdout.print(\n    \"Decoded text: {s}\\n\", .{decoded_text}\n);\ntry stdout.flush();\n控制台输出完美对齐：\nEncoded text: VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=\nDecoded text: Testing some more stuff\n完整的整合源码可以在本书官方仓库的 ZigExamples/base64/base64_basic.zig1 查阅。 从内存分配到极致位运算，咱们不仅把 Base64 的底层逻辑彻底玩明白了，而且写出了一套完全合规、内存安全的工业级 Zig 代码！",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/01-base64.html#footnotes",
+    "href": "Chapters/01-base64.html#footnotes",
+    "title": "4  实战项目 1：手写 Base64 编解码器",
+    "section": "",
+    "text": "https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>实战项目 1：手写 Base64 编解码器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/02-debugging.html",
+    "href": "Chapters/02-debugging.html",
+    "title": "5  调试 Zig 应用程序",
+    "section": "",
+    "text": "5.1 朴素而强大的“Print 调试大法”\n``\n无论是哪门编程语言，想要写出靠谱的严肃工程，调试（Debugging）能力绝对是开发者的立身之本。 在这章里，我们将深入盘点在 Zig 开发中行之有效的调试策略和常用调试工具链。\n咱先从最经典、久经沙场的“打日志/打印输出（Print Debugging）”讲起。 排查 Bug 的核心诉求就是可见性（Visibility）——只要能亲眼看到变量在每一步到底算出了啥值，真相往往立刻大白。\n在日常编码中，大家最常用的就是 Zig 标准库的 stdout.print() 或 std.debug.print()。 在底层，你可以把调试信息吐到系统的标准输出流（stdout）或者标准错误流（stderr）里。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>调试 Zig 应用程序</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/02-debugging.html#朴素而强大的print-调试大法",
+    "href": "Chapters/02-debugging.html#朴素而强大的print-调试大法",
+    "title": "5  调试 Zig 应用程序",
+    "section": "",
+    "text": "5.1.1 标准输出流 stdout\n往 stdout 打印，我们需要先拿到对应的 Writer 写入器： 1. 调用 std.Io.File.stdout() 获取标准输出的文件描述符； 2. 调用它的 .writer() 方法挂上缓冲区并生成 Writer； 3. 随后调 .print() 格式化输出。\n这个 print() 的用法跟 C 的 printf()、Rust 的 println!() 几乎一模一样。第一个入参是模板字符串，第二个入参是用大括号包起来的匿名结构体参数列表。\n模板中的格式化占位符非常直观： - {d}：打印十进制数字（整型或浮点）； - {c}：打印 ASCII 字符； - {s}：打印字符串或字节切片； - {p}：打印指针内存地址； - {x} 或 {X}：打印十六进制数值； - {any}：通用自适应格式化（让编译器帮你自动挑选最合适的打印格式）。\nconst std = @import(\"std\");\nfn add(x: u8, y: u8) u8 {\n    return x + y;\n}\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    const result = add(34, 16);\n    try stdout.print(\"Result: {d}\", .{result});\n    try stdout.flush();\n}\n\n\n5.1.2 调试专属的 stderr：std.debug.print\n如果不想每次写一堆样板代码去初始化 stdout，只是临时在控制台打个桩，更推荐直接用 std.debug.print()！ 它默认直接往标准错误流（stderr）输出，不仅开箱即用，而且永远不会抛出需要 try 捕获的错误，用完随手就能删，是本地临时排查 Bug 的神器：\nconst std = @import(\"std\");\nfn add(x: u8, y: u8) u8 {\n    return x + y;\n}\n\npub fn main() !void {\n    const result = add(34, 16);\n    std.debug.print(\"Result: {d}\\n\", .{result});\n}",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>调试 Zig 应用程序</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/02-debugging.html#专业调试器debugger实战",
+    "href": "Chapters/02-debugging.html#专业调试器debugger实战",
+    "title": "5  调试 Zig 应用程序",
+    "section": "5.2 专业调试器（Debugger）实战",
+    "text": "5.2 专业调试器（Debugger）实战\n虽然打 Log 简单粗暴，但真要排查复杂崩溃、多线程死锁或内存踩踏，专业的调试器才是正规军。 作为底层系统语言，Zig 编译出的二进制完全兼容工业级调试工具，无论 GDB（GNU Debugger）还是 LLDB（LLVM Debugger）都能开箱即用。 在这里，我们以当今开发环境极具人气的 LLDB 为例做演示。\n\n5.2.1 必须以 Debug 模式编译\n想要调试器能精准定位到源码行号并看清局部变量，编译时必须保持在 Debug 模式！ 如果开了 ReleaseFast 或 ReleaseSmall，编译器会为了极限性能把调试符号（DWARF/PDB）大卸八块，各种函数还会被深度内联，调试器直接抓瞎。\n默认情况下，zig build-exe 默认就是按 Debug 模式编译的，无需额外加优化参数。\n\n\n5.2.2 手把手上手 LLDB 调试\n我们拿下面这个简单的小程序来实操走一圈：\nconst std = @import(\"std\");\nfn add_and_increment(a: u8, b: u8) u8 {\n    const sum = a + b;\n    const incremented = sum + 1;\n    return incremented;\n}\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    var n = add_and_increment(2, 3);\n    n = add_and_increment(n, n);\n    try stdout.print(\"Result: {d}!\\n\", .{n});\n    try stdout.flush();\n}\n先编译出可执行文件：\nzig build-exe add_program.zig\n接着启动 LLDB 挂载程序：\nlldb add_program\n在终端看到 (lldb) 提示符后，调试指令随时待命：\n\n打断点：敲 b main，在主函数入口打下断点；\n跑起来：敲 run，程序启动并在第一行命中断点暂停：\n\n(lldb) b main\nBreakpoint 1: where = debugging`debug1.main + 22\n    at debug1.zig:11:30, address = 0x00000000010341a6\n(lldb) run\nProcess 8654 launched: 'add_program' (x86_64)\nProcess 8654 stopped\n* thread #1, name = 'add_program',\n    stop reason = breakpoint 1.1 frame #0: 0x10341a6\n    add_program`debug1.main at add_program.zig:11:30\n   8    }\n   9\n   10   pub fn main() !void {\n-&gt; 11       var n = add_and_increment(2, 3);\n   12       n = add_and_increment(n, n);\n   13       try stdout.print(\"Result: {d}!\\n\", .{n});\n   14   }\n\n单步步过（Step Over）：敲 n，执行当前行并来到第 12 行；\n查看变量值：敲 p n，直接打印出变量 n 的当前数值：\n\n(lldb) n\nProcess 4798 stopped\n* thread #1, name = 'debugging',\n    stop reason = step over frame #0: 0x10341ae\n    debugging`debug1.main at debug1.zig:12:26\n   9\n   10   pub fn main() !void {\n   11       var n = add_and_increment(2, 3);\n-&gt; 12       n = add_and_increment(n, n);\n   13       try stdout.print(\"Result: {d}!\\n\", .{n});\n   14   }\n(lldb) p n\n(unsigned char) $1 = '\\x06'\n看输出：$1 = '\\x06'，对应十进制就是 6（2 + 3 + 1），完全正确！\n\n单步步入（Step Into）：敲 s，钻进 add_and_increment 函数体内部；\n透视当前栈帧所有局部变量：连续 n 走两步后，敲 frame variable，该栈帧里的所有局部状态尽收眼底：\n\n(lldb) s\nProcess 4798 stopped\n* thread #1, name = 'debugging',\n    stop reason = step in frame #0: 0x10342de\n    debugging`debug1.add_and_increment(a='\\x02', b='\\x03')\n    at debug1.zig:4:39\n-&gt; 4    fn add_and_increment(a: u8, b: u8) u8 {\n   5        const sum = a + b;\n   6        const incremented = sum + 1;\n   7        return incremented;\n(lldb) n\n(lldb) n\n(lldb) frame variable\n(unsigned char) a = '\\x06'\n(unsigned char) b = '\\x06'\n(unsigned char) sum = '\\f'\n(unsigned char) incremented = '\\x06'\n在这里，sum 显示为 '\\f'，在 ASCII 表中正好对应十六进制 0x0C，也就是十进制的 12（6 + 6）。 熟练掌握这几个基本指令，绝大多数底层 Bug 都能在几分钟内定位根因。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>调试 Zig 应用程序</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/02-debugging.html#运行时透视类型typeof",
+    "href": "Chapters/02-debugging.html#运行时透视类型typeof",
+    "title": "5  调试 Zig 应用程序",
+    "section": "5.3 运行时透视类型：@TypeOf()",
+    "text": "5.3 运行时透视类型：@TypeOf()\n在强类型语言里，很多编译报错本质上是“类型不匹配”引起的。 除了靠调试器，Zig 在语言层面提供了一个非常贴心的内置函数：@TypeOf()。 它就像 Python 里的 type() 或者 JS 里的 typeof，能直接返回目标变量的真实类型：\nconst std = @import(\"std\");\nconst expect = std.testing.expect;\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    const number: i32 = 5;\n    try expect(@TypeOf(number) == i32);\n    try stdout.print(\"{any}\\n\", .{@TypeOf(number)});\n    try stdout.flush();\n}\n在写泛型代码或复杂的类型转换时，善用 @TypeOf() 打印类型，能帮你省去大量瞎猜的时间。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>调试 Zig 应用程序</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/05-pointers.html",
+    "href": "Chapters/05-pointers.html",
+    "title": "6  指针与可选类型（Pointers and Optionals）",
+    "section": "",
+    "text": "6.1 常量对象 vs 变量对象下的指针规则\n``\n在紧接着的下一个实战项目中，咱们要手写一个属于自己的轻量 HTTP 服务器。 不过在动手造服务器之前，有一门系统底层开发的硬功夫必须拿下——指针（Pointers）与可选类型（Optionals）。 Zig 的指针继承了 C 指针的纯粹与极致性能，但在安全性上做出了脱胎换骨的升级。\n说白了，指针就是一个装了内存物理地址的对象。这个地址指向物理内存中某块具体的数据。\n看下面这个简单直观的例子：\n在 Zig 里取对象地址用经典的取地址符 &。把 number 的地址取出来赋给 pointer，pointer 就成了一个指针。\n拿到指针后，怎么顺藤摸瓜拿到（或者修改）它指向的真实数据呢？这个动作叫做解引用（Dereferencing）。 在 Zig 里，解引用的语法是在指针后面加 .*：\n这套 .* 语法非常舒服，因为它能极其自然地和方法调用链连在一起。还记得在 Section 2.3 中写的 User 结构体和它的 print_name() 方法吗？ 拿到了指向某个用户的指针，直接 pointer.*.print_name() 即可流畅链式调用：\n如果底层对象是可变的，我们也可以通过指针原地更新它的值：\n我们在开发中之所以如此青睐指针，核心目的是避免昂贵的数据内存拷贝（Copy / Move）。 如果一个结构体体量很大，在函数调用或跨作用域传递时如果按值拷贝，CPU 得老老实实搬运大量字节；而如果传一个轻巧的指针过去，开销仅仅是传一个 8 字节的内存地址，性能差距立竿见影。\n指针可以指向常量，也可以指向变量。 但请记住一条铁律：指针必须绝对尊重被指向目标的原生可变性！\n如果指针指向的是一个 const 常量对象，那你妄图通过指针修改它的值就是痴人说梦，编译器会当场翻脸报错：\n把 number 声明为 var 变量后，通过指针写值才能畅通无阻：\n在类型签名上区分得一清二楚： - 指向常量的指针，类型是 *const T（只读，无法通过它修改数据）； - 指向变量的指针，类型是 *T（可读可写）。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>指针与可选类型（Pointers and Optionals）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/05-pointers.html#sec-pointer-var",
+    "href": "Chapters/05-pointers.html#sec-pointer-var",
+    "title": "6  指针与可选类型（Pointers and Optionals）",
+    "section": "",
+    "text": "const number = 5;\nconst pointer = &number;\npointer.* = 6;\np.zig:6:12: error: cannot assign to constant\n    pointer.* = 6;\n\nvar number: u8 = 5;\nconst pointer = &number;\npointer.* = 6;\ntry stdout.print(\"{d}\\n\", .{number});\ntry stdout.flush();\n\n\n6.1.1 厘清“指针本身可变”与“指向的数据可变”\n初学者经常容易把“指针自身”和“指针指向的值”搞混： - 数据不可变，但指针自身可变：比如 var p = &c1;，随后 p = &c2;。指针里存的内存门牌号变了，但被指向的数据不能篡改：\nconst c1: u8 = 5;\nconst c2: u8 = 6;\nvar pointer = &c1;\ntry stdout.print(\"{d}\\n\", .{pointer.*});\npointer = &c2;\ntry stdout.print(\"{d}\\n\", .{pointer.*});\ntry stdout.flush();\n5\n6\n一句话理清： - const ptr: *T：指针自身固定（不能换指向），但指向的数据可改； - var ptr: *const T：指针自身可以随时换指向，但指向的数据是只读的。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>指针与可选类型（Pointers and Optionals）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/05-pointers.html#指针分类单项指针与多项指针",
+    "href": "Chapters/05-pointers.html#指针分类单项指针与多项指针",
+    "title": "6  指针与可选类型（Pointers and Optionals）",
+    "section": "6.2 指针分类：单项指针与多项指针",
+    "text": "6.2 指针分类：单项指针与多项指针\n在 Zig 规范中，主要有两种指针形态 (Zig Software Foundation 2024)：\n\n单项指针（Single-item pointer，*T）：明确只指向一个独立的对象。日常写业务绝大多数都是它。\n多项指针（Many-item pointer，[*]T）：星号放在方括号里，指向一块未知长度的连续内存首地址，允许做 C 语言风格的指针算术运算。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>指针与可选类型（Pointers and Optionals）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/05-pointers.html#指针算术运算pointer-arithmetic",
+    "href": "Chapters/05-pointers.html#指针算术运算pointer-arithmetic",
+    "title": "6  指针与可选类型（Pointers and Optionals）",
+    "section": "6.3 指针算术运算（Pointer Arithmetic）",
+    "text": "6.3 指针算术运算（Pointer Arithmetic）\n在 Zig 里，多项指针支持经典的指针算术加减：\nconst ar = [_]i32{ 1, 2, 3, 4 };\nvar ptr: [*]const i32 = &ar;\ntry stdout.print(\"{d}\\n\", .{ptr[0]});\nptr += 1;\ntry stdout.print(\"{d}\\n\", .{ptr[0]});\nptr += 1;\ntry stdout.print(\"{d}\\n\", .{ptr[0]});\ntry stdout.flush();\n1\n2\n3\n不过必须提醒的是：在纯正的 Zig 开发中，官方强烈建议优先使用切片（Slice）而不是裸的多项指针！ 因为切片自带长度信息，能享受编译期和运行时的防越界安全保护，完全不需要靠肉眼算指针偏移。\nconst ar = [_]i32{1,2,3,4};\nconst sl = ar[0..ar.len];\n_ = sl;",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>指针与可选类型（Pointers and Optionals）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/05-pointers.html#可选类型optionals与告别十亿美元错误",
+    "href": "Chapters/05-pointers.html#可选类型optionals与告别十亿美元错误",
+    "title": "6  指针与可选类型（Pointers and Optionals）",
+    "section": "6.4 可选类型（Optionals）与告别“十亿美元错误”",
+    "text": "6.4 可选类型（Optionals）与告别“十亿美元错误”\n写过 C 语言的朋友都知道，最恶心、最难排查的 Bug 往往是空指针异常（Null Pointer Dereference）。由于 C 里任何指针都可能偷偷是 NULL，开发者不得不精神紧张地到处写防御性判空代码。\n而在 Zig 里，所有普通对象和指针默认全部是非空的（Non-nullable）！ 你不需要也不可能在普通类型里藏一个 null。如果你敢给普通类型塞 null，编译器当场教做人：\nvar number: u8 = 5;\nnumber = null;\np5.zig:5:14: error: expected type 'u8',\n        found '@TypeOf(null)'\n    number = null;\n             ^~~~\n普通指针也是同样的规则：在 Zig 里，普通的 *T 指针绝对不可能为 null！你可以彻底丢掉心智包袱，闭着眼睛安全解引用。\n\n6.4.1 显式标记可能为空：可选类型 ?T\n但在实际业务中，我们难免会遇到“某个值可能存在、也可能不存在（为空）”的合理需求。 这时候就要用到可选类型（Optionals）。\n在任何类型前面加一个问号 ?，就能把它升级为可选类型：\nvar num: ?i32 = 5;\nnum = null; // 合法！因为它是可选类型\n\n\n6.4.2 可选指针（Optional Pointers）\n同理，如果你需要一个在特殊情况下可以为 null 的指针，类型前面同样加问号 ?*T：\nvar num: i32 = 5;\nvar ptr: ?*i32 = &num;\nptr = null; // 合法！\nnum = 6;\n细看对比： - ?*i32：可选指针（指针本身可能是 null，如果不为 null 则指向一个实在的 i32）； - *?i32：指向可选值的指针（指针本身绝对不为 null，但它指向的那个槽位里装的可能是 null）。\nvar num: ?i32 = 5;\n// 此时 ptr 类型是 *?i32\nconst ptr = &num;\n_ = ptr;\n\n\n6.4.3 优雅处理 null 的三大法宝\n既然一个变量被标成了 ?T，那你在读取它之前，Zig 就会逼着你必须对 null 可能性进行显式处理。主要有以下三种姿势：\n\n6.4.3.1 姿势一：if 模式匹配解包\n如果非空就顺势拆包，在竖线 |val| 里拿到的就是绝对安全的非空变量：\nconst num: ?i32 = 5;\nif (num) |not_null_num| {\n    try stdout.print(\"{d}\\n\", .{not_null_num});\n    try stdout.flush();\n}\n\n\n6.4.3.2 姿势二：orelse 兜底表达式（最常用！）\norelse 就像二元操作符：左边是非空就用左边，如果是 null 就自动回落到右边的默认值，写起来一气呵成：\nconst x: ?i32 = null;\nconst dbl = (x orelse 15) * 2;\ntry stdout.print(\"{d}\\n\", .{dbl});\ntry stdout.flush();\n\n\n6.4.3.3 姿势三：opt.? 强拆包（断言非空）\n如果你在逻辑上 100% 确定它此时绝不可能是 null，可以用 .? 强行拆包。 但请切记：一旦猜错撞上了 null，程序会在运行时直接触发 panic 崩溃报错：\nconst std = @import(\"std\");\nfn return_null(n: i32) ?i32 {\n    if (n == 5) return null;\n    return n;\n}\n\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    const y: ?i32 = return_null(5);\n    try stdout.print(\"{d}\\n\", .{y.?});\n    try stdout.flush();\n}\nthread 12767 panic: attempt to use null value\np7.zig:12:34: 0x103419d in main (p7):\n    try stdout.print(\"{d}\\n\", .{y.?});\n                                 ^\n掌握了指针和 ? 可选类型，接下来迎接咱们的，就是高并发、高吞吐的实战项目——手写 HTTP 服务器！\n\n\n\n\nZig Software Foundation. 2024. Language Reference. Zig Software Foundation. https://ziglang.org/documentation/master/.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>指针与可选类型（Pointers and Optionals）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html",
+    "href": "Chapters/04-http-server.html",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "",
+    "text": "7.1 到底什么是 HTTP 服务器？\n``\n在这章里，咱们开启全书的第二个硬核实战项目：从零手写一个极简 HTTP 服务器。\n虽然 Zig 标准库本身在 std.http.Server 里提供了一套高层 HTTP 服务实现，但咱们这次的目标是从零手搓（From scratch），顺着网线摸到底层 TCP 套接字和流读写，把 HTTP 协议和网络 I/O 的底层骨架彻底扒开来看个透彻！\n剥开所有花哨的框架包装，任何服务器本质上都是一个常驻后台的死循环程序：它静静监听着某个端口，等待客户端（比如浏览器、手机 App、命令行 curl）发起连接。 一旦有连接握手成功，服务器接纳（Accept）该连接，双方就通过这个双向字节流通道互发消息。\n而双方在通道里往来的文本报文，必须严格遵从一套约定俗成的通用格式规范——这就是统治现代万维网的 HTTP 协议（超文本传输协议）。没有它，我们今天熟悉的 Web 世界根本无从谈起。\n简单总结：所谓的 Web 服务器，就是守着端口、用 HTTP 协议规范跟客户端互通有无的 TCP 守护进程。 如果想重温 HTTP 协议的官方规范概览，非常推荐阅读 Mozilla MDN 上的 HTTP 概述文档1。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#sec-how-http-works",
+    "href": "Chapters/04-http-server.html#sec-how-http-works",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.2 HTTP 服务器是怎样工作的？",
+    "text": "7.2 HTTP 服务器是怎样工作的？\n你可以把 HTTP 服务器想象成一家大型酒店前台的接待员： 接待员整天坐在前台大堂，随时等待客人进门。\n当客人推门进来（客户端发起连接），前台接待员走上前跟他沟通：“先生您住几天？”（接收客户端的 HTTP Request / 请求报文）。 随后前台查询空房、核对房型、刷卡结账，最后把房卡和账单递到客人手上：“为您办妥了，请拿好房卡”（给客户端回传 HTTP Response / 响应报文）。 客人拿着房卡上楼休息后，本次交互告一段落（关闭连接），前台接待员转身回到前台，继续静静等待下一位客人光临。\n这就是 HTTP 服务器的核心运作循环： 1. 等待客户端敲门； 2. 接纳连接； 3. 读取 HTTP Request：弄清楚客户端到底想要啥（是拿网页、查 API、还是提交表单）； 4. 业务处理； 5. 发送 HTTP Response：把状态码（200、404 等）和数据吐回给客户端； 6. 关闭连接，重回等待状态。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#sec-http-how-impl",
+    "href": "Chapters/04-http-server.html#sec-http-how-impl",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.3 工业级底层服务是怎么实现的？",
+    "text": "7.3 工业级底层服务是怎么实现的？\n在底层（比如 C 语言世界），实现一个基础 HTTP 服务必须走完标准的 BSD/POSIX 套接字流程：\n\n创建 Socket：申请一个 TCP 套接字描述符（代表通讯管道）；\nBind（绑定）：给套接字绑定一个具体的网络门牌号（IP 地址 + 端口号）；\nListen（监听）：将套接字置于监听状态，开启操作系统的连接排队队列；\nAccept（接纳）：阻塞等待客户端连接到来，一旦到来就切出一个新的专属通信通道；\n收发报文：读取 Request 并写回 Response；\nClose（关闭）：挥手断开连接。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#动手实现服务器第一阶段",
+    "href": "Chapters/04-http-server.html#动手实现服务器第一阶段",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.4 动手实现服务器：第一阶段",
+    "text": "7.4 动手实现服务器：第一阶段\n\n7.4.1 创建服务端网络对象\n咱们先单独建一个 Zig 模块 server.zig，专门用来负责端口绑定和监听。\n随着 Zig 0.16 引入全新的统一网络 I/O 体系，我们直接基于现代化的 std.Io.net API 展开：通过 std.Io.net.IpAddress 解析 IP 端口并调用 .listen() 开启 TCP 监听。\n网络通信需要 IP 和端口： - IP：这里选用本机的回环地址（Loopback / Localhost）127.0.0.1； - 端口（Port）：在 TCP 中是一个 16 位无符号整数（Zig 中的 u16），范围是 0 ~ 65535。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 3490。\n看下面封装的 Server 结构体：\nconst std = @import(\"std\");\nconst Socket = std.Io.net.Socket;\nconst Protocol = std.Io.net.Protocol;\n\npub const Server = struct {\n    host: []const u8,\n    port: u16,\n    addr: std.Io.net.IpAddress,\n    io: std.Io,\n\n    pub fn init(io: std.Io) !Server {\n        const host: []const u8 = \"127.0.0.1\";\n        const port: u16 = 3490;\n        const addr = try std.Io.net.IpAddress.parseIp4(\n            host, port\n        );\n\n        return .{.host=host, .port=port, .addr=addr, .io=io};\n    }\n\n    pub fn listen(self: Server) !std.Io.net.Server {\n        std.debug.print(\"Server Addr: {s}:{any}\\n\", .{self.host, self.port});\n        return try self.addr.listen(\n            self.io,\n            .{.mode=Socket.Mode.stream, .protocol=Protocol.tcp}\n        );\n    }\n};\n\n\n7.4.2 监听并接收客户端连接\n在主程序 main.zig 中，我们引入刚才的 server.zig，开启监听并调用 accept() 等待连接：\nconst std = @import(\"std\");\nconst Server = @import(\"server.zig\").Server;\n\npub fn main(init: std.process.Init) !void {\n    const io = init.io;\n    const server = try Server.init(io);\n    var listening = try server.listen();\n    const connection = try listening.accept(io);\n    defer connection.close(io);\n}\n如果此时跑这个程序，终端会挂起（阻塞）——因为它正在死等客户端向 127.0.0.1:3490 发起 TCP 握手。\n注意：在生产级 HTTP 服务中，通常会在一个无限 while 循环里不断 accept，并把每个新连接抛给一个独立的协程或线程处理，实现高并发并行吞吐。目前为了循序渐进，咱们先聚焦在处理单个连接上。\n\n\n7.4.3 读取来自客户端的 HTTP 请求报文\n连接建立后，拿到的是一个双向的 connection 流对象： - 向流中写入（Write）数据 = 给客户端回送报文； - 从流中读取（Read）数据 = 接收客户端发送的报文。\n我们新建一个 request.zig 模块，编写 read_request() 函数，从 Socket 流里提取客户端发过来的请求内容：\nconst std = @import(\"std\");\nconst Stream = std.Io.net.Stream;\n\npub fn read_request(io: std.Io, conn: Stream, buffer: []u8) !void {\n    var recv_buffer: [1024]u8 = undefined;\n    var reader = conn.reader(io, &recv_buffer);\n    const reader_interface = &reader.interface;\n    var start_index: usize = 0;\n    for (0..5) |_| {\n        const len = try read_next_line(reader_interface, buffer, start_index);\n        start_index += len;\n    }\n}\n\nfn read_next_line(reader: *std.Io.Reader, buffer: []u8, start_index: usize) !usize {\n    const next_line = try reader.takeDelimiterInclusive('\\n');\n    @memcpy(\n        buffer[start_index..(start_index + next_line.len)],\n        next_line[0..],\n    );\n    return next_line.len;\n}",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#检验阶段性成果捕捉真实浏览器请求",
+    "href": "Chapters/04-http-server.html#检验阶段性成果捕捉真实浏览器请求",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.5 检验阶段性成果：捕捉真实浏览器请求",
+    "text": "7.5 检验阶段性成果：捕捉真实浏览器请求\n把 read_request 接入 main.zig，并把收到的原始请求打印到终端：\nconst std = @import(\"std\");\nconst Request = @import(\"request.zig\");\nconst Server = @import(\"server.zig\").Server;\n\npub fn main(init: std.process.Init) !void {\n    const io = init.io;\n    const server = try Server.init(io);\n    var listening = try server.listen();\n    const connection = try listening.accept(io);\n    defer connection.close(io);\n\n    var request_buffer: [1000]u8 = undefined;\n    @memset(request_buffer[0..], 0);\n    try Request.read_request(\n        io,\n        connection,\n        request_buffer[0..]\n    );\n\n    std.debug.print(\"{s}\\n\", .{request_buffer});\n}\n敲下 zig run src/main.zig，控制台打印出监听地址并就绪：\n\n\n\n\n\n\nFigure 7.1: 终端执行并进入监听状态\n\n\n\n打开浏览器访问 http://localhost:3490（或者跑一段简单的 Python 请求脚本）。此时浏览器会转圈，因为咱们还没写回传 Response 的逻辑； 但回头看终端控制台，浏览器亲手发送的真实 HTTP 请求报文已经被咱们抓个正着！\n\n\n\n\n\n\nFigure 7.2: 终端成功抓包并打印出浏览器发来的真实 HTTP Request 报文",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#sec-enum",
+    "href": "Chapters/04-http-server.html#sec-enum",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.6 知识点加餐：Zig 枚举（Enums）",
+    "text": "7.6 知识点加餐：Zig 枚举（Enums）\n在解析报文之前，我们先插播一个必不可少的语言特性：枚举（Enums）。\n当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE…），用枚举是类型安全的最优解：\nconst PrimaryColorRGB = enum {\n    RED, GREEN, BLUE\n};\nconst acolor = PrimaryColorRGB.RED;\n_ = acolor;\n如果手滑传错了不存在的枚举项，编译器在编译期就会立刻拦截报错：\nconst acolor = PrimaryColorRGB.MAGENTA;\ne1.zig:5:36: error: enum 'PrimaryColorRGB' has\n        no member named 'MAGENTA':\n    const acolor = PrimaryColorRGB.MAGENTA;\n                                   ^~~~~~~\n而且在 Zig 里，枚举跟结构体一样，内部可以挂载自定义方法！",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#动手实现服务器第二阶段请求解析与响应回传",
+    "href": "Chapters/04-http-server.html#动手实现服务器第二阶段请求解析与响应回传",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.7 动手实现服务器：第二阶段（请求解析与响应回传）",
+    "text": "7.7 动手实现服务器：第二阶段（请求解析与响应回传）\nHTTP 请求报文通常包含三部分： 1. 起始行（Request Line）：包含方法（Method）、请求路径（URI）和协议版本（HTTP Version），例如 GET /users/list HTTP/1.1； 2. 请求头（Headers）：由冒号分隔的键值对组成（如 Host: localhost、Accept: text/html）； 3. 请求体（Body）：POST/PUT 时携带的载荷数据（GET 请求通常没有 Body）。\n在当前项目中，我们聚焦于解析最重要的起始行，并完整支持 GET 方法。\n\n7.7.1 优雅的请求方法映射：StaticStringMap\n怎么把报文里的 \"GET\" 字符串快速转换成枚举呢？ Zig 标准库提供了一个极度强悍的工具：std.static_string_map.StaticStringMap！ 它能在编译期根据一组固定字符串键值构建高效的静态字典，查找极快且不需要任何堆内存分配：\nconst std = @import(\"std\");\npub const Method = enum {\n    GET,\n    pub fn init(text: []const u8) !Method {\n        return MethodMap.get(text).?;\n    }\n    pub fn is_supported(m: []const u8) bool {\n        const method = MethodMap.get(m);\n        if (method) |_| {\n            return true;\n        }\n        return false;\n    }\n};\nconst Map = std.static_string_map.StaticStringMap;\nconst MethodMap = Map(Method).initComptime(.{\n    .{ \"GET\", Method.GET },\n});\n\n\n7.7.2 解析起始行：parse_request()\n我们定义一个 Request 结构体，并通过标准库切分函数拆解首行：\nconst Request = struct {\n    method: Method,\n    version: []const u8,\n    uri: []const u8,\n    pub fn init(method: Method,\n                uri: []const u8,\n                version: []const u8) Request {\n        return Request{\n            .method = method,\n            .uri = uri,\n            .version = version,\n        };\n    }\n};\n\npub fn parse_request(text: []u8) Request {\n    const line_index = std.mem.indexOfScalar(\n        u8, text, '\\n'\n    ) orelse text.len;\n    var iterator = std.mem.splitScalar(\n        u8, text[0..line_index], ' '\n    );\n    const method = try Method.init(iterator.next().?);\n    const uri = iterator.next().?;\n    const version = iterator.next().?;\n    const request = Request.init(method, uri, version);\n    return request;\n}\n\n\n7.7.3 编写 HTTP Response 响应回传\n最后一步，给客户端回传 HTTP 报文。 新建 response.zig，分别实现 200 成功和 404 未找到两套标准响应：\nconst std = @import(\"std\");\nconst Stream = std.Io.net.Stream;\n\npub fn send_200(conn: Stream, io: std.Io) !void {\n    const message = (\n        \"HTTP/1.1 200 OK\\nContent-Length: 48\"\n        ++ \"\\nContent-Type: text/html\\n\"\n        ++ \"Connection: Closed\\n\\n&lt;html&gt;&lt;body&gt;\"\n        ++ \"&lt;h1&gt;Hello, World!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;\"\n    );\n    var stream_writer = conn.writer(io, &.{});\n    _ = try stream_writer.interface.write(message);\n}\n\npub fn send_404(conn: Stream, io: std.Io) !void {\n    const message = (\n        \"HTTP/1.1 404 Not Found\\nContent-Length: 50\"\n        ++ \"\\nContent-Type: text/html\\n\"\n        ++ \"Connection: Closed\\n\\n&lt;html&gt;&lt;body&gt;\"\n        ++ \"&lt;h1&gt;File not found!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;\"\n    );\n    var stream_writer = conn.writer(io, &.{});\n    _ = try stream_writer.interface.write(message);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#完整串联真正的hello-world网页现身",
+    "href": "Chapters/04-http-server.html#完整串联真正的hello-world网页现身",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "7.8 完整串联：真正的“Hello, World!”网页现身",
+    "text": "7.8 完整串联：真正的“Hello, World!”网页现身\n把全部模块在 main.zig 里大一统串联起来：\nconst std = @import(\"std\");\nconst Method = @import(\"request.zig\").Method;\nconst Request = @import(\"request.zig\");\nconst Response = @import(\"response.zig\");\nconst Server = @import(\"server.zig\").Server;\n\npub fn main(init: std.process.Init) !void {\n    const io = init.io;\n    const server = try Server.init(io);\n    var listening = try server.listen();\n    const connection = try listening.accept(io);\n    defer connection.close(io);\n\n    var request_buffer: [1000]u8 = undefined;\n    @memset(request_buffer[0..], 0);\n    try Request.read_request(\n        io,\n        connection,\n        request_buffer[0..]\n    );\n    const request = Request.parse_request(request_buffer[0..]);\n    if (request.method == Method.GET) {\n        if (std.mem.eql(u8, request.uri, \"/\")) {\n            try Response.send_200(connection, io);\n        } else {\n            try Response.send_404(connection, io);\n        }\n    }\n}\n再次敲下 zig run 并用浏览器刷新 http://localhost:3490！ 这一次，浏览器窗口里瞬间赫然弹出了大号加粗的 “Hello, World!” 网页！\n\n\n\n\n\n\nFigure 7.3: 浏览器成功收到我们亲手写的 HTTP 服务器响应并渲染出 HTML 网页\n\n\n\n从原始 TCP 监听，到逐行拆解 HTTP 请求，再到亲手拼接标准的 HTTP 状态行与 HTML 报文——不依赖任何现成 Web 框架，你亲手造出了一个货真价实跑在本地的 HTTP 服务！",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/04-http-server.html#footnotes",
+    "href": "Chapters/04-http-server.html#footnotes",
+    "title": "7  实战项目 2：从零手写 HTTP 服务器",
+    "section": "",
+    "text": "https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>实战项目 2：从零手写 HTTP 服务器</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html",
+    "href": "Chapters/03-unittests.html",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "",
+    "text": "8.1 认识原生 test 代码块\n``\n在这一章中，咱们来聊聊 Zig 里的单元测试（Unit Tests）。 看看在 Zig 中日常单测的工作流是怎样的，以及如何用 zig test 命令把测试用例跑得又快又准。\n在很多语言里写单测，往往需要先挑选并引入一套第三方测试框架（比如 Python 的 pytest、C++ 的 Catch2 或 GTest）。 但在 Zig 里，单测是语言的一等公民，直接原生内置在语法中！\n编写单测极其简单，直接使用 test \"测试用例描述\" 声明一个测试块即可。 在测试块内部，你可以书写任何普通的 Zig 业务代码，并使用 std.testing 模块提供的各种断言工具来验证结果。\n看下面这个最朴素的测试用例：\n在同一个 .zig 源码文件里，你可以一口气写任意多个 test 块。 而且最棒的是：test 块可以直接与业务代码混写在同一个文件里！ 平时执行 zig build、build-exe 或 build-lib 编译发布版本时，编译器会完全把这些 test 块当作空气自动忽略，绝对不会给最终的二进制体积增加一丁点负担。\n去翻翻 Zig 官方标准库的源码（比如 std.ArrayList1），你会发现官方核心团队全部推崇这种“代码写在哪，单测就紧贴在它屁股底下”的写法，极其方便随手回归。\n当然，如果你有强迫症、喜欢把单测集中在专门的 tests/ 目录里独立管理，也完全支持，全凭个人工程习惯。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#认识原生-test-代码块",
+    "href": "Chapters/03-unittests.html#认识原生-test-代码块",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "",
+    "text": "const std = @import(\"std\");\nconst expect = std.testing.expect;\ntest \"testing simple sum\" {\n    const a: u8 = 2;\n    const b: u8 = 2;\n    try expect((a + b) == 4);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#怎样运行单元测试",
+    "href": "Chapters/03-unittests.html#怎样运行单元测试",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "8.2 怎样运行单元测试",
+    "text": "8.2 怎样运行单元测试\n既然日常编译会忽略 test 块，那怎么跑测试呢？ 直接使用编译器的 zig test 子命令即可：\nzig test simple_sum.zig\n终端会飞速扫过该文件中的每一个 test 块并输出测试通过状态：\n1/1 simple_sum.test.testing simple sum... OK\nAll 1 tests passed.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#杀手锏自动检测内存泄漏testing-allocator",
+    "href": "Chapters/03-unittests.html#杀手锏自动检测内存泄漏testing-allocator",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "8.3 杀手锏：自动检测内存泄漏（Testing Allocator）",
+    "text": "8.3 杀手锏：自动检测内存泄漏（Testing Allocator）\n写底层 C/C++ 代码最让人头大的就是内存泄漏（Memory Leak）和双重释放（Double Free），排查起来往往需要动用 Valgrind 等外挂工具，繁琐得要命。\n而在 Zig 里，官方直接把内存排雷雷达做进了单测体系中——这就是神级工具：std.testing.allocator！\n在前面的 Section 3.1.5 和 Section 3.3 中我们强调过：在 Zig 里，凡是需要在堆上申请内存的函数，都要求显式传入一个分配器。 所以只要在写单测时，把 std.testing.allocator 喂给待测函数，这个分配器就会在底层紧盯每一次内存申请与释放。\n如果你的函数中途忘了释放某块内存，单测不仅会立刻判挂，还会把导致泄漏的那行代码的行号和完整堆栈调用轨迹（Stack Trace）当场甩出来！\n看下面这个故意泄漏内存的反面例子：\nconst std = @import(\"std\");\nconst Allocator = std.mem.Allocator;\nfn some_memory_leak(allocator: Allocator) !void {\n    const buffer = try allocator.alloc(u32, 10);\n    _ = buffer;\n    // 故意不释放内存直接 return 退出！\n}\n\ntest \"memory leak\" {\n    const allocator = std.testing.allocator;\n    try some_memory_leak(allocator);\n}\n跑 zig test 时，测试立刻爆红，精准指认罪魁祸首：\nTest [1/1] leak_memory.test.memory leak...\n    [gpa] (err): memory address 0x7c1fddf39000 leaked:\n./ZigExamples/debugging/leak_memory.zig:4:39: 0x10395f2\n    const buffer = try allocator.alloc(u32, 10);\n                                      ^\n./ZigExamples/debugging/leak_memory.zig:12:25: 0x10398ea\n    try some_memory_leak(allocator);\n\n... more stack trace\n有了这套机制，只要单测跑绿，你就敢 100% 拍胸脯保证：代码绝对没有内存泄漏！",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#测试预期错误error-assertions",
+    "href": "Chapters/03-unittests.html#测试预期错误error-assertions",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "8.4 测试预期错误（Error Assertions）",
+    "text": "8.4 测试预期错误（Error Assertions）\n很多时候我们需要专门测试异常分支：验证某函数在接收到非法输入时，是否如期抛出了指定的错误（比如 Python 里的 pytest.raises）。\n在 Zig 中，用标准库的 std.testing.expectError： 第一个入参是预期的具体错误类型（如 error.OutOfMemory），第二个入参是预期会抛错的函数调用：\nconst std = @import(\"std\");\nconst Allocator = std.mem.Allocator;\nconst expectError = std.testing.expectError;\nfn alloc_error(allocator: Allocator) !void {\n    var ibuffer = try allocator.alloc(u8, 100);\n    defer allocator.free(ibuffer);\n    ibuffer[0] = 2;\n}\n\ntest \"testing error\" {\n    var buffer: [10]u8 = undefined;\n    var fba = std.heap.FixedBufferAllocator.init(&buffer);\n    const allocator = fba.allocator();\n    try expectError(error.OutOfMemory, alloc_error(allocator));\n}\n上面这段测试中，我们用一个仅有 10 字节的固定缓冲区分配器去申请 100 字节，alloc_error 如期抛出了 error.OutOfMemory，单测顺利通过。如果抛出其他类型错误或没有抛错，单测就会失败。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#常用断言方法族速查",
+    "href": "Chapters/03-unittests.html#常用断言方法族速查",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "8.5 常用断言方法族速查",
+    "text": "8.5 常用断言方法族速查\n除了最基础的 expect(expr == true)，标准库还提供了一系列表达力拉满的对比断言：\n\n8.5.1 标量对比：expectEqual()\n对比两个基本值（注意第一个是期望值，第二个是实际值）：\nconst std = @import(\"std\");\ntest \"values are equal?\" {\n    const v1 = 15;\n    const v2 = 18;\n    try std.testing.expectEqual(v1, v2);\n}\n失败时会给出清晰的数值比对信息：\n1/1 ve.test.values are equal?...\n    expected 15, found 18\n    FAIL (TestExpectedEqual)\n\n\n8.5.2 数组与切片比对：expectEqualSlices()\n对比两个数组或切片里的元素是否完全一致，需先传入元素类型：\nconst std = @import(\"std\");\ntest \"arrays are equal?\" {\n    const array1 = [3]u32{1, 2, 3};\n    const array2 = [3]u32{1, 2, 3};\n    try std.testing.expectEqualSlices(\n        u32, &array1, &array2\n    );\n}\n\n\n8.5.3 字符串精准比对：expectEqualStrings()\n对比两个字符串文本。如果不一致，它会像 git diff 一样在控制台高亮指出从哪一行的哪个字符开始出现分歧：\nconst std = @import(\"std\");\ntest \"strings are equal?\" {\n    const str1 = \"hello, world!\";\n    const str2 = \"Hello, world!\";\n    try std.testing.expectEqualStrings(\n        str1, str2\n    );\n}\n1/1 t.test.strings are equal?...\n====== expected this output: =========\nhello, world!␃\n======== instead found this: =========\nHello, world!␃\n======================================\nFirst difference occurs on line 1:\nexpected:\nhello, world!\n^ ('\\x68')\nfound:\nHello, world!\n^ ('\\x48')\n把单元测试融入日常开发习惯，配合 std.testing.allocator 的自动化内存体检，写起 Zig 代码那叫一个踏实！",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/03-unittests.html#footnotes",
+    "href": "Chapters/03-unittests.html#footnotes",
+    "title": "8  单元测试（Unit Tests）",
+    "section": "",
+    "text": "https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>单元测试（Unit Tests）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html",
+    "href": "Chapters/07-build-system.html",
+    "title": "9  构建系统（Build System）",
+    "section": "",
+    "text": "9.1 源码是如何被构建出来的？\n``\n在这一章中，咱们来聊聊 Zig 最让人直呼“真香”的王牌杀器——原生构建系统（Build System），看看一个真正的中大型工程在 Zig 里是如何被构建出来的。\n以往在 C/C++ 领域，配一套跨平台构建环境有多折磨，老程序员们都深有体会：GNU Make、Autotools、CMake、Ninja… 各家工具层层嵌套，光是写 CMakeLists.txt 就能把人劝退。 而 Zig 带来了一场革命：它直接把构建系统做成了语言原生的一部分！ 你不需要去学什么晦涩的 DSL 配置语法，直接用纯正的 Zig 语言本身来写构建脚本（build.zig），享受全套的编译期类型检查和 IDE 智能补全！\n想深入了解构建系统的朋友，还可以翻阅 Zig 官网的《构建系统专题指南》1以及社区开发者 Felix 撰写的神级系列文章2。\n此外，跨平台交叉编译（Cross-compilation）绝对是 Zig 的招牌绝活。以往在 C/C++ 甚至 Rust 里想在 Windows 上一键打出 Linux 或 macOS 的二进制，通常要配复杂的虚拟机或 Docker 交叉工具链；而在 Zig 里，仅凭单机一个干净的 zig 编译器，就能丝滑交叉编译到上百种目标操作系统和 CPU 架构！\n在底层编译型语言中，构建本质上就是让编译器将我们写的源码翻译为 CPU 机器指令。 在 Zig 中，一个典型的编译构建流程包含这几个核心输入：\n所有的构建调度规则，统一编写在项目根目录下的 build.zig 脚本里。\n这个构建脚本的核心是围绕构建目标（Targets）展开的。所谓 Target，就是你希望编译器最终交付给你的构建产物：",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#源码是如何被构建出来的",
+    "href": "Chapters/07-build-system.html#源码是如何被构建出来的",
+    "title": "9  构建系统（Build System）",
+    "section": "",
+    "text": "包含源码的 Zig 模块（Modules）；\n外部依赖库文件（动态库 .so/.dll 或静态库 .a/.lib）；\n决定优化等级与平台目标的编译选项/参数。\n\n\n\n\n独立可执行程序（Executable）（Windows 上的 .exe，Linux 上的 ELF 二进制）；\n动态共享库（Shared Library）（Linux 上的 .so，Windows 上的 .dll）；\n静态库（Static Library）（Linux 上的 .a，Windows 上的 .lib）；\n单测可执行文件（Test Executable）。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#sec-build-fun",
+    "href": "Chapters/07-build-system.html#sec-build-fun",
+    "title": "9  构建系统（Build System）",
+    "section": "9.2 认识唯一的构建主入口：build() 函数",
+    "text": "9.2 认识唯一的构建主入口：build() 函数\n每一个合法的 build.zig 脚本都必须且只能对外暴露一个顶层的公开函数：\npub fn build(b: *std.Build) void\n它就像主程序里的 pub fn main() 一样，是整个工程构建生命周期的唯一指挥官！ 它接收一个指向 std.Build 对象的指针 b，我们通过调用 b 上的各种方法来组装构建流程图（DAG）。\n看一个最基础的最小构建脚本：\nconst std = @import(\"std\");\npub fn build(b: *std.Build) void {\n    const exe = b.addExecutable(.{\n        .name = \"hello\",\n        .root_module = b.createModule(.{\n            .root_source_file = b.path(\"hello.zig\"),\n            .target = b.graph.host\n        })\n    });\n    b.installArtifact(exe);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#sec-targets",
+    "href": "Chapters/07-build-system.html#sec-targets",
+    "title": "9  构建系统（Build System）",
+    "section": "9.3 核心构建目标对象（Target Objects）",
+    "text": "9.3 核心构建目标对象（Target Objects）\n通过 std.Build 指针 b，我们可以声明各种类型的产物：\n\nb.addExecutable(...)：声明生成一个可执行文件；\nb.addSharedLibrary(...)：声明生成一个动态链接库；\nb.addStaticLibrary(...)：声明生成一个静态链接库；\nb.addTest(...)：声明生成单测运行二进制。\n\n在参数配置中，有两个最关键的必填项： - name：生成产物的名称（通常设为你的工程名）； - root_module：定义模块配置。其中 root_source_file 指定该模块的入口文件（比如 b.path(\"src/main.zig\")）。\n\n9.3.1 智能依赖树自动解析\n跟 CMake 必须手动把每一个 .c/.cpp 文件一个个苦哈哈地列在名单里不同，Zig 拥有全自动依赖发现能力！ 只要你给出了 root_source_file 入口，zig 编译器就会顺藤摸瓜，通过文件内部的所有 @import 语句自动把整个项目引用的全部模块一次性解析出完整的依赖拓扑图，既省心又绝不漏文件。\n\n\n9.3.2 极其关键的临门一脚：b.installArtifact()\n无数新手常犯的一个错误是：在脚本里调完 b.addExecutable 就以为万事大吉，结果执行 zig build 发现根目录下啥也没生成！\n请敲黑板牢记：声明了产物之后，必须显式调用 b.installArtifact(exe)！ 构建系统在编译完成后，默认会把中间产物放在临时缓存区；只有被 installArtifact 标记的最终产物，才会被拷贝并安装到根目录的 zig-out/ 输出目录中！\nconst exe = b.addExecutable(.{\n    .name = \"hello\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"hello.zig\"),\n        .target = b.graph.host\n    })\n});\n\nb.installArtifact(exe); // 必须有这句！",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#掌控四大编译优化模式",
+    "href": "Chapters/07-build-system.html#掌控四大编译优化模式",
+    "title": "9  构建系统（Build System）",
+    "section": "9.4 掌控四大编译优化模式",
+    "text": "9.4 掌控四大编译优化模式\nZig 的构建模式不仅仅是区分“开发”和“上线”，而是围绕“极致性能”与“运行时安全”两个维度做出了非常考究的平衡，共有四大模式：\n\nDebug（默认）： 编译速度极快，保留全部调试符号，开启全部运行时安全检查（越界、溢出自动 panic），单测与日常开发标配；\nReleaseSafe： 开启编译优化让代码跑得飞快，但依然保留全部运行时边界安全检查！金融、高安全、核心后台服务首选；\nReleaseFast： 榨干硬件性能的极限模式！关闭部分运行时检查，全力压榨 CPU 指令集优化，游戏引擎、高频交易首选；\nReleaseSmall： 追求最小二进制体积，极端裁剪符号表，嵌入式开发与物联网固件首选。\n\n在 build.zig 中配置构建模式：\nconst exe = b.addExecutable(.{\n    .name = \"hello\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"hello.zig\"),\n        .target = b.graph.host,\n        .optimize = .ReleaseSafe\n    })\n});\nb.installArtifact(exe);",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#声明构建版本号语义化版本",
+    "href": "Chapters/07-build-system.html#声明构建版本号语义化版本",
+    "title": "9  构建系统（Build System）",
+    "section": "9.5 声明构建版本号（语义化版本）",
+    "text": "9.5 声明构建版本号（语义化版本）\n可以通过 version 字段为产物打上标准的 SemVer 语义化版本号：\nconst exe = b.addExecutable(.{\n    .name = \"hello\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"hello.zig\"),\n        .target = b.graph.host\n    }),\n    .version = .{\n        .major = 2, .minor = 9, .patch = 7\n    }\n});\nb.installArtifact(exe);",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#sec-detect-os",
+    "href": "Chapters/07-build-system.html#sec-detect-os",
+    "title": "9  构建系统（Build System）",
+    "section": "9.6 在构建脚本中探测操作系统",
+    "text": "9.6 在构建脚本中探测操作系统\n根据不同操作系统走不同构建逻辑是日常刚需。在构建脚本里引入 @import(\"builtin\")，就能随时探测当前的目标平台：\nconst builtin = @import(\"builtin\");\nif (builtin.target.os.tag == .windows) {\n    // 只在目标是 Windows 时执行的特定构建逻辑\n}",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#为构建系统添加一键运行步骤run-step",
+    "href": "Chapters/07-build-system.html#为构建系统添加一键运行步骤run-step",
+    "title": "9  构建系统（Build System）",
+    "section": "9.7 为构建系统添加“一键运行”步骤（Run Step）",
+    "text": "9.7 为构建系统添加“一键运行”步骤（Run Step）\nRust 开发者最喜欢 cargo run 那种“编译完立刻顺手跑起来”的体验。在 Zig 的构建脚本里，我们也只需要两三行代码就能配出一个 zig build run 指令！\n步骤： 1. 用 b.addRunArtifact(exe) 为可执行产物创建一个“运行工件”； 2. 用 b.step(\"run\", \"Run the project\") 注册一个对外暴露的构建子命令名称； 3. 声明依赖关系：run_step.dependOn(&run_arti.step)。\nconst exe = b.addExecutable(.{\n    .name = \"hello\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"src/hello.zig\"),\n        .target = b.graph.host\n    })\n});\nb.installArtifact(exe);\n\nconst run_arti = b.addRunArtifact(exe);\nconst run_step = b.step(\"run\", \"Run the project\");\nrun_step.dependOn(&run_arti.step);\n敲下 zig build --help，你就能看到刚才注册的自定义指令：\nzig build --help\nSteps:\n  ...\n  run   Run the project\n  ...\n随后在终端敲一行：\nzig build run\n编译、链接、自动拉起运行一气呵成！",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#集成单测构建步骤zig-build-tests",
+    "href": "Chapters/07-build-system.html#集成单测构建步骤zig-build-tests",
+    "title": "9  构建系统（Build System）",
+    "section": "9.8 集成单测构建步骤：zig build tests",
+    "text": "9.8 集成单测构建步骤：zig build tests\n同样的套路，我们还可以把整个项目的单测打包成一条统一的 zig build tests 指令：\nconst test_exe = b.addTest(.{\n    .name = \"unit_tests\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"src/main.zig\"),\n        .target = b.graph.host\n    })\n});\n\nconst run_test = b.addRunArtifact(test_exe);\nconst test_step = b.step(\"tests\", \"Run unit tests\");\ntest_step.dependOn(&run_test.step);\n团队成员拉下代码，直接敲 zig build tests，全工程所有模块的测试用例就会被批量扫过并执行。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#接收命令行自定义参数user-provided-options",
+    "href": "Chapters/07-build-system.html#接收命令行自定义参数user-provided-options",
+    "title": "9  构建系统（Build System）",
+    "section": "9.9 接收命令行自定义参数（User-provided Options）",
+    "text": "9.9 接收命令行自定义参数（User-provided Options）\n很多时候我们希望构建过程可以通过命令行参数动态定制（例如是否启用某套特性）： 使用 b.option(Type, name, description) 即可！\n定义好的选项会自动成为 zig build 的 -D&lt;name&gt; 命令行参数：\nconst std = @import(\"std\");\npub fn build(b: *std.Build) void {\n    const use_zlib = b.option(\n        bool,\n        \"use_zlib\",\n        \"Should link to zlib?\"\n    ) orelse false;\n    const exe = b.addExecutable(.{\n        .name = \"hello\",\n        .root_module = b.createModule(.{\n            .root_source_file = b.path(\"example.zig\"),\n            .target = b.graph.host\n        })\n    });\n    if (use_zlib) {\n        exe.root_module.linkSystemLibrary(\"zlib\", .{});\n    }\n    b.installArtifact(exe);\n}\n命令行调用姿势：\nzig build -Duse_zlib=true",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#链接外部库系统动态库与本地子模块",
+    "href": "Chapters/07-build-system.html#链接外部库系统动态库与本地子模块",
+    "title": "9  构建系统（Build System）",
+    "section": "9.10 链接外部库（系统动态库与本地子模块）",
+    "text": "9.10 链接外部库（系统动态库与本地子模块）\n\n9.10.1 链接系统全局安装的库：linkSystemLibrary\n如果目标机器的系统里已经预装了某些 C/C++ 共享库（比如 libpng、openssl），直接用 linkSystemLibrary，Zig 底层会自动借助系统的 pkg-config 精准寻路：\nconst std = @import(\"std\");\npub fn build(b: *std.Build) void {\n    const exe = b.addExecutable(.{\n        .name = \"image_filter\",\n        .root_module = b.createModule(.{\n            .root_source_file = b.path(\"src/main.zig\"),\n            .target = b.graph.host,\n            .link_libc = true,\n        })\n    });\n    exe.root_module.linkSystemLibrary(\"png\", .{});\n    b.installArtifact(exe);\n}\n\n\n9.10.2 链接项目内自带的本地源码库：linkLibrary\n如果是项目自研的或者放在子模块里的代码，我们可以用 addStaticLibrary 或 addSharedLibrary 声明子库，然后直接调 exe.root_module.linkLibrary(sub_lib) 将它们合体：\nconst dynamic_lib = b.addSharedLibrary(.{\n    .name = \"c_api\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"src/c_api.zig\"),\n        .target = b.graph.host\n    })\n});\nb.installArtifact(dynamic_lib);\n\nconst app_exe = b.addExecutable(.{\n    .name = \"my_app\",\n    .root_module = b.createModule(.{\n        .root_source_file = b.path(\"src/main.zig\"),\n        .target = b.graph.host\n    })\n});\napp_exe.root_module.linkLibrary(dynamic_lib);",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#sec-building-c-code",
+    "href": "Chapters/07-build-system.html#sec-building-c-code",
+    "title": "9  构建系统（Build System）",
+    "section": "9.11 降维打击：直接拿 Zig 构建纯 C 语言项目！",
+    "text": "9.11 降维打击：直接拿 Zig 构建纯 C 语言项目！\nZig 最让 C 语言圈惊艳的一大能力在于：zig 编译器体内直接内置了一个顶级的 Clang/C 编译器！ 这意味着，你可以用 build.zig 把历史悠久、复杂的 C 语言大项目打包得服服帖帖！\n以世界上著名的纯 C 字体引擎 FreeType 为例，我们在 Zig 脚本里可以这样写：\n\n声明静态库产物并开启 Libc 链接：\n\nconst lib = b.addStaticLibrary(.{\n    .name = \"freetype\",\n    .root_module = b.createModule(.{\n        .target = b.graph.host,\n        .link_libc = true\n    })\n});\n\n配置 C 编译器参数与宏定义（Macros）：\n\nconst c_flags = [_][]const u8{\n    \"-Wall\",\n    \"-Wextra\",\n    \"-Werror\",\n};\n\nlib.root_module.addCMacro(\"FT_DISABLE_ZLIB\", \"TRUE\");\nlib.root_module.addCMacro(\"FT_DISABLE_PNG\", \"TRUE\");\n\n添加 C 源文件列表并挂载头文件包含路径：\n\nlib.root_module.addCSourceFiles({\n    .files = &[_][]const u8{\n        \"src/autofit/autofit.c\",\n        \"src/base/ftbase.c\",\n    },\n    .flags = &c_flags\n});\n\nlib.root_module.addIncludePath(.{ .path = \"./include\" });\nb.installArtifact(lib);\n不需要装 GCC，不需要装 Clang，不需要伺候 Autotools。一个几兆大小的 zig 二进制，就能把 C 语言工程打包得整整齐齐。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/07-build-system.html#footnotes",
+    "href": "Chapters/07-build-system.html#footnotes",
+    "title": "9  构建系统（Build System）",
+    "section": "",
+    "text": "https://ziglang.org/learn/build-system/#user-provided-options。↩︎\nhttps://zig.news/xq/zig-build-explained-part-1-59lf。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>构建系统（Build System）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-error-handling.html",
+    "href": "Chapters/09-error-handling.html",
+    "title": "10  错误处理与联合体（Unions）",
+    "section": "",
+    "text": "10.1 核心认知：错误是一等公民的值（Errors as Values）\n``\n在这章中，咱们来把 Zig 的错误处理（Error Handling）体系以及联合体（Unions）彻底聊透。 在前面的 Section 1.2.3 里，大家已经见识过 try 关键字的威力。但 Zig 的错误处理工具箱远不止这些，catch、错误集（Error sets）、errdefer 以及带标签联合体（Tagged Unions），才是构建坚不可摧的大型底层系统的核心利刃。\n在搞懂具体语法前，首先必须建立起对 Zig 错误哲学的认知：在 Zig 里，错误本质上是一个实在的具体数值（Value）！ (Zig Software Foundation 2024) 它既不是隐秘抛出、不知在何处被接住的运行时异常（Exception），也不是深不见底的黑盒。 错误值可以像普通整数一样在函数间传递、可以存入变量、可以进行集合转换。\n写惯了 Python 或 C++ 的同学可能习惯了抛异常（throw）。但在那些语言里，调用方很容易因遗漏 try-catch 而导致未捕获异常一路击穿整个调用栈。 而在 Zig 里，所有可能发生的错误都必须显式处理，编译器绝不允许你视而不见！ 你甚至不能像对待普通变量那样，用下划线 _ 随手把一个错误联合结果丢弃掉：\n编译器一眼识破并当场报错：\n编译器会直接提醒你：“这里返回的是错误集，麻烦老老实实用 try、catch 或者 if 处理干净！”",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>错误处理与联合体（Unions）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-error-handling.html#核心认知错误是一等公民的值errors-as-values",
+    "href": "Chapters/09-error-handling.html#核心认知错误是一等公民的值errors-as-values",
+    "title": "10  错误处理与联合体（Unions）",
+    "section": "",
+    "text": "const cwd = std.Io.Dir.cwd();\n// 试图对可能报错的操作用下划线蒙混过关\n_ = cwd.openFile(\n    init.io, \"doesnt_exist.txt\", .{ .mode = .write_only }\n);\n\nt.zig:8:17: error: error set is discarded\nt.zig:8:17: note: consider using 'try', 'catch', or 'if'\n\n\n10.1.1 从函数中返回错误：感叹号 ! 与错误联合\n如果一个函数在执行过程中可能会报错，那它的返回值类型签名里就必须带上感叹号 !（表示错误联合 Error Union）：\nfn print_name(stdout: *std.Io.Writer) !void {\n    try stdout.print(\"My name is Pedro!\", .{});\n    try stdout.flush();\n}\n在上面的 !void 中，感叹号左侧没有显式指定错误类型，这叫推导错误联合（Inferred Error Set），由编译器自动分析函数体推导可能抛出的错误集合。\n而在正规库开发中，为了保证严谨性和自解释文档能力，我们通常会在感叹号左边显式列出具体的错误集类型：\n&lt;错误类型&gt;!&lt;成功时的返回值类型&gt;\n例如 Zig 标准库 HTTP 客户端模块里的 fill() 函数：\npub fn fill(conn: *Connection) ReadError!void {\n    // 函数体...\n}\n这清楚地告诉所有调用者：该函数要么成功返回 void，要么只会返回属于 ReadError 范围内的具体错误！\n\n\n10.1.2 错误集（Error Sets）\n当一个函数可能抛出多种不同原因的错误时，我们可以用 error{ ... } 定义一个错误集（Error Set）：\npub fn resolvePath(\n    ally: mem.Allocator,\n    p: []const u8,\n) error{\n    OutOfMemory,\n    CurrentWorkingDirectoryUnlinked,\n    Unexpected,\n}![]u8 {\n    // 函数体...\n}\n在真实工程里，通常会给这组错误起一个清晰的大写类型名复用：\npub const ReadError = error{\n    TlsFailure,\n    TlsAlert,\n    ConnectionTimedOut,\n    ConnectionResetByPeer,\n    UnexpectedReadFailure,\n    EndOfStream,\n};\n\npub fn readvDirect(\n        conn: *Connection,\n        buffers: []std.posix.iovec\n    ) ReadError!usize {\n    // ...\n}\n\n\n10.1.3 错误值的自动类型收敛（子集到超集）\n如果错误集 A 包含了错误集 B 里的所有成员（即 \\(A \\supset B\\)），那么在 Zig 中，B 集合里的错误值可以隐式自动转换为 A 集合类型：\nconst std = @import(\"std\");\nconst A = error{\n    ConnectionTimeoutError,\n    DatabaseNotFound,\n    OutOfMemory,\n    InvalidToken,\n};\nconst B = error {\n    OutOfMemory,\n};\n\nfn cast(err: B) A {\n    return err; // 隐式自动向上收敛\n}\n\ntest \"coerce error value\" {\n    const error_value = cast(B.OutOfMemory);\n    try std.testing.expect(\n        error_value == A.OutOfMemory\n    );\n}",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>错误处理与联合体（Unions）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-error-handling.html#优雅处理错误的四大姿势",
+    "href": "Chapters/09-error-handling.html#优雅处理错误的四大姿势",
+    "title": "10  错误处理与联合体（Unions）",
+    "section": "10.2 优雅处理错误的四大姿势",
+    "text": "10.2 优雅处理错误的四大姿势\n在 Zig 中，处理错误主要有以下四种地道姿势：\n\n10.2.1 姿势一：try 快速向上传播（甩锅给上游）\ntry expr 的语义是： 如果表达式顺利执行成功，把成功值拆包放行； 如果表达式返回了错误，立刻提前 return 该错误，交由上一级调用者去头疼！\n当你身处底层辅助函数、本身无法决定怎么处理这个错误时，直接 try 是最干脆利落的甩锅姿势。\n\n\n10.2.2 姿势二：catch 就地兜底与消费\n请敲黑板重点注意：在 Zig 里，try 和 catch 是两套完全互斥独立的机制，绝不能像传统语言那样连在一起写成 try ... catch！\ncatch 放在可能报错的表达式后面，负责拦截错误并就地解决：\n\n10.2.2.1 1. 提供默认兜底值（最地道！）\n如果报错，就自动回落到默认值，极具表现力：\n// 解析失败时自动兜底为数字 13\nconst number = parseU64(str, 10) catch 13;\n\n\n10.2.2.2 2. 接错误处理逻辑块\n通过 catch |err| { ... } 捕获具体错误对象并写日志或做后置处理：\npub fn main(init: std.process.Init) !void {\n    const cwd = std.Io.Dir.cwd();\n    const file = cwd.openFile(\n        init.io, \"doesnt_exist.txt\", .{}\n    ) catch |err| {\n        logger.record_context();\n        logger.log_error(err);\n        return err; // 记录完日志后再次抛出\n    };\n}\n\n\n\n10.2.3 姿势三：if 分支模式匹配解包\nif (parseU64(str, 10)) |number| {\n    // 成功分支，拿到纯净的 number\n} else |err| {\n    // 失败分支，拿到具体的 err\n}\n若要针对不同类型的具体错误做差异化响应，配合 switch 堪称绝配：\nif (add_tasks_to_queue(&queue, tasks)) |_| {\n    distribute_tasks(&queue);\n} else |err| switch (err) {\n    error.InvalidTaskName =&gt; {\n        // 处理无效任务名\n    },\n    error.TimeoutTooBig =&gt; {\n        // 处理超时超限\n    },\n    error.QueueNotFound =&gt; {\n        // 处理队列未找到\n    },\n}\n\n\n10.2.4 姿势四：errdefer 异常回滚清理\n还记得前文讲过的 errdefer 吗？ errdefer 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！\n思考一个典型场景：函数在堆上申请了一个新对象并要插入数据库，最后把这个对象作为返回值交出去：\nfn create_user(db: Database, allocator: Allocator) !User {\n    const user = try allocator.create(User);\n    errdefer allocator.destroy(user); // 挂上防漏油阀门！\n\n    // 如果向数据库插入时报错提前退出了：\n    _ = try db.register_user(user);\n    \n    // 如果一切顺利，user 成功交出，errdefer 不会触发，调用方负责接管其生命周期\n    return user;\n}\n如果在入库那一行（db.register_user）报错了，函数中断退出，普通的 defer 此时帮不上忙（因为正常返回时不能销毁它）；而 errdefer 则精准介入，在带着错误闪崩退出的前一刻，把刚刚申请的 user 干净释放，彻底杜绝内存泄漏！",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>错误处理与联合体（Unions）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-error-handling.html#sec-unions",
+    "href": "Chapters/09-error-handling.html#sec-unions",
+    "title": "10  错误处理与联合体（Unions）",
+    "section": "10.3 联合体（Unions）与带标签联合体（Tagged Unions）",
+    "text": "10.3 联合体（Unions）与带标签联合体（Tagged Unions）\n联合体（Union）定义了一个变量在某一瞬间只能是多种可能类型中的某一种。 它类似于 Python 的 typing.Union 或 C 语言里的 union。\n举个跨多云存储的实际例子：数据既可能传往 AWS S3、也可能发给 Azure Blob 或 Google Cloud：\nconst LakeTarget = union {\n    azure: AzureBlob,\n    amazon: AmazonS3,\n    google: GoogleGCP,\n};\n在普通 union 中，同一时间只有一个字段能够处于激活状态。如果你尝试访问没有激活的字段，运行时直接触发 panic：\nvar target = LakeTarget {\n    .azure = AzureBlob.init()\n};\n// 此时 target 内部激活的是 azure 字段，直接写 google 字段会直接 panic\ntarget.google = GoogleGCP.init();\n想要切换字段，必须整体重新赋值：\ntarget = LakeTarget {\n    .google = GoogleGCP.init()\n};\n\n10.3.1 现代模式匹配天花板：带标签联合体（Tagged Unions）\n普通 union 最大的痛点是无法直接用 switch 匹配分支。 而只要给它加上 (enum) 标签——union(enum)，它就升级为了现代编程语言里大名鼎鼎的带标签联合体（Tagged Union / 代数数据类型 ADT）！\n看 Zig 官方编译器源码 grammar.zig1 里的写法：\npub const Registry = union(enum) {\n    core: CoreRegistry,\n    extension: ExtensionRegistry,\n};\n一旦变成 union(enum)，在 switch 里做模式匹配解构就跟呼吸一样顺畅自然：\nswitch (reg) {\n    .core =&gt; |c| c.doSomething(),\n    .extension =&gt; |e| e.doSomethingElse(),\n}\n错误处理清晰透明，联合体类型严丝合缝，这正是 Zig 能写出顶级高可靠软件的底气所在！\n\n\n\n\nZig Software Foundation. 2024. In-Depth Overview. Zig Software Foundation. https://ziglang.org/learn/overview/.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>错误处理与联合体（Unions）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-error-handling.html#footnotes",
+    "href": "Chapters/09-error-handling.html#footnotes",
+    "title": "10  错误处理与联合体（Unions）",
+    "section": "",
+    "text": "https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>错误处理与联合体（Unions）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-data-structures.html",
+    "href": "Chapters/09-data-structures.html",
+    "title": "11  常用数据结构（Data Structures）",
+    "section": "",
+    "text": "11.1 动态数组：std.ArrayList\n``\n在这章中，咱们来系统盘点 Zig 标准库中日常出镜率最高的核心通用数据结构：动态数组 ArrayList、各种专精场景的哈希表 HashMap、链表 LinkedList，以及在高性能和游戏开发圈大放异彩的 MultiArrayList。\n在 Python 或 JavaScript 等高级语言里，列表天生就是动态伸缩的。 但在 C、C++、Rust 和 Zig 等底层语言中，原生数组默认都是尺寸固定的静态数组（Section 1.6）。 对应到 C++ 的 std::vector 和 Rust 的 Vec，Zig 官方给出的工业级动态数组解决方案就是 std.ArrayList。\nstd.ArrayList 底层维护了一块连续的内存空间。当元素塞满时，它会自动在堆上开辟一块更大的连续新内存，把旧数据整体搬迁（Copy）过去，并把先前的老内存释放掉。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>常用数据结构（Data Structures）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-data-structures.html#sec-dynamic-array",
+    "href": "Chapters/09-data-structures.html#sec-dynamic-array",
+    "title": "11  常用数据结构（Data Structures）",
+    "section": "",
+    "text": "11.1.1 容量（Capacity）与长度（Length）的区别\n聊动态数组，必须分清两个概念： - 容量（Capacity）：底层这块内存当前最多能装多少个元素（超出必须扩容）； - 长度（Length / Size）：当前容器里实际已经装进去了多少个元素（即 items.len）。\n在日常运行中，动态数组通常会预留一部分空闲缓冲槽位，这就是容量与长度的差值。\n\n\n\n\n\n\nFigure 11.1: 动态数组的容量（Capacity）与长度（Length）示意图\n\n\n\n如图 Figure 11.1 所示：当 length == capacity 撞线时，就代表池子满了。下一次追加元素就会触发重分配扩容（Reallocation）。 因为扩容涉及“申请新大内存 -&gt; 批量数据拷贝 -&gt; 释放旧内存”，开销非常昂贵。\n\n\n\n\n\n\nTip\n\n\n\n开发避坑诀窍：如果你在初始化时大致能预估数据规模，强烈建议优先使用 initCapacity() 预先分配好容量，直接将昂贵的动态扩容次数降到最低！\n\n\n// 读取当前容量\nbuffer.capacity;\n// 读取当前已存长度\nbuffer.items.len;\n\n\n11.1.2 创建与初始化 ArrayList\n因为要在堆上申请内存，初始化必须显式喂给它一个 Allocator。 同时需要传入元素类型，比如 std.ArrayList(u8) 或自定义的结构体 std.ArrayList(User)：\nvar gpa = std.heap.DebugAllocator(.{}){};\nconst allocator = gpa.allocator();\nvar buffer = try std.ArrayList(u8)\n    .initCapacity(allocator, 100);\ndefer buffer.deinit(allocator);\n\n\n11.1.3 追加元素：append() 与 appendSlice()\ntry buffer.append(allocator, 'H');\ntry buffer.appendSlice(allocator, \"ello World!\");\n\n\n11.1.4 删除元素：orderedRemove vs swapRemove\n\npop()：弹掉并返回尾部最后一个元素；\norderedRemove(index)：删除指定下标元素，保持原有相对顺序（底层会把 index 之后的所有元素往前平移一位，时间复杂度 \\(O(n)\\)）；\nswapRemove(index)（性能神器）：如果你不在意顺序，用它！它直接把数组末尾的最后一个元素瞬移过来填坑，然后尾部指针自减，时间复杂度直接打到常数级 \\(O(1)\\)！\n\nvar gpa = std.heap.DebugAllocator(.{}){};\nconst allocator = gpa.allocator();\nvar buffer = try std.ArrayList(u8)\n    .initCapacity(allocator, 100);\ndefer buffer.deinit(allocator);\n\nfor (0..10) |i| {\n    const index: u8 = @intCast(i);\n    try buffer.append(allocator, index);\n}\n\nstd.debug.print(\n    \"{any}\\n\", .{buffer.items}\n);\n_ = buffer.orderedRemove(3);\n_ = buffer.orderedRemove(3);\n\nstd.debug.print(\"{any}\\n\", .{buffer.items});\nstd.debug.print(\"{any}\\n\", .{buffer.items.len});\n{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }\n{ 0, 1, 2, 5, 6, 7, 8, 9 }\n8\n\n\n11.1.5 指定位置插入：insert() 与 insertSlice()\nvar gpa = std.heap.DebugAllocator(.{}){};\nconst allocator = gpa.allocator();\nvar buffer = try std.ArrayList(u8)\n    .initCapacity(allocator, 10);\ndefer buffer.deinit(allocator);\n\ntry buffer.appendSlice(allocator, \"My Pedro\");\ntry buffer.insert(allocator, 4, '3');\ntry buffer.insertSlice(allocator, 2, \" name\");\nfor (buffer.items) |char| {\n    try stdout.print(\"{c}\", .{char});\n}\ntry stdout.flush();\nMy name P3edro",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>常用数据结构（Data Structures）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-data-structures.html#sec-maps-hashtables",
+    "href": "Chapters/09-data-structures.html#sec-maps-hashtables",
+    "title": "11  常用数据结构（Data Structures）",
+    "section": "11.2 哈希表家族（Maps / HashTables）",
+    "text": "11.2 哈希表家族（Maps / HashTables）\n哈希表通过哈希函数将键（Key）映射到底层数组的桶位（Buckets），提供近乎 \\(O(1)\\) 的高速增删查改。\n\n\n\n\n\n\nFigure 11.2: 哈希表底层桶位映射示意图\n\n\n\n在 Zig 标准库中，官方针对不同场景量身定制了多种哈希表变体：\n\n11.2.1 1. 通用哈希表：AutoHashMap(K, V)\n最通用的哈希表，底层自动挑选最优哈希算法：\nconst std = @import(\"std\");\nconst AutoHashMap = std.hash_map.AutoHashMap;\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    var hash_table = AutoHashMap(u32, u16).init(allocator);\n    defer hash_table.deinit();\n\n    try hash_table.put(54321, 89);\n    try hash_table.put(50050, 55);\n    try hash_table.put(57709, 41);\n    std.debug.print(\n        \"N of values stored: {d}\\n\",\n        .{hash_table.count()}\n    );\n    std.debug.print(\n        \"Value at key 50050: {d}\\n\",\n        .{hash_table.get(50050).?}\n    );\n\n    if (hash_table.remove(57709)) {\n        std.debug.print(\n            \"Value at key 57709 successfully removed!\\n\",\n            .{}\n        );\n    }\n    std.debug.print(\n        \"N of values stored: {d}\\n\",\n        .{hash_table.count()}\n    );\n}\n\n11.2.1.1 遍历哈希表\n使用 iterator() 拿到迭代器，在 while 中通过 kv.key_ptr.* 和 kv.value_ptr.* 读取键值：\nconst std = @import(\"std\");\nconst AutoHashMap = std.hash_map.AutoHashMap;\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    var hash_table = AutoHashMap(u32, u16).init(allocator);\n    defer hash_table.deinit();\n\n    try hash_table.put(54321, 89);\n    try hash_table.put(50050, 55);\n    try hash_table.put(57709, 41);\n\n    var it = hash_table.iterator();\n    while (it.next()) |kv| {\n        std.debug.print(\"Key: {d} | \", .{kv.key_ptr.*});\n        std.debug.print(\"Value: {d}\\n\", .{kv.value_ptr.*});\n    }\n}\n\n\n\n11.2.2 2. 高速有序哈希表：ArrayHashMap / AutoArrayHashMap\n如果你在业务中需要频繁遍历全表，或者必须严格保证插入顺序（Insertion Order），请使用 AutoArrayHashMap！ 它将键值对保存在连续数组中，遍历性能极快，Cache 局部性极高。\n\n\n11.2.3 3. 字符串键专属哈希表：StringHashMap 与 StringArrayHashMap\n注意：普通的 AutoHashMap 不能直接拿字符串切片 []const u8 当 Key（因为切片是胖指针，直接比较会对比指针地址而非字符串内容）。\n要用字符串做 Key，请使用官方专门打造的 std.StringHashMap(V)（以及保序的 std.StringArrayHashMap(V)）：\nconst std = @import(\"std\");\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    var ages = std.StringHashMap(u8).init(allocator);\n    defer ages.deinit();\n\n    try ages.put(\"Pedro\", 25);\n    try ages.put(\"Matheus\", 21);\n    try ages.put(\"Abgail\", 42);\n\n    var it = ages.iterator();\n    while (it.next()) |kv| {\n        std.debug.print(\"Key: {s} | \", .{kv.key_ptr.*});\n        std.debug.print(\"Age: {d}\\n\", .{kv.value_ptr.*});\n    }\n}",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>常用数据结构（Data Structures）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-data-structures.html#链表linked-lists",
+    "href": "Chapters/09-data-structures.html#链表linked-lists",
+    "title": "11  常用数据结构（Data Structures）",
+    "section": "11.3 链表（Linked Lists）",
+    "text": "11.3 链表（Linked Lists）\nZig 标准库在 std.SinglyLinkedList 和 std.DoublyLinkedList 中提供了原生单双向链表。\n\n\n\n\n\n\nFigure 11.3: 单向链表结构示意图\n\n\n\n\n\n\n\n\n\nFigure 11.4: 双向链表结构示意图\n\n\n\n\n11.3.1 侵入式设计与 @fieldParentPtr\nZig 的链表采用了类似 Linux 内核的经典侵入式链表设计：节点结构 node: std.SinglyLinkedList.Node 作为一个字段直接嵌入到你的业务结构体中。 在遍历时，通过 Zig 内置的 @fieldParentPtr 函数，从 node 指针反向计算并获得外部宿主结构体的真实指针：\nconst NodeU32 = struct {\n    data: u32,\n    node: std.SinglyLinkedList.Node = .{},\n};\n\nvar list: std.SinglyLinkedList = .{};\nvar one: NodeU32 = .{ .data = 1 };\nvar two: NodeU32 = .{ .data = 2 };\nvar three: NodeU32 = .{ .data = 3 };\nvar five: NodeU32 = .{ .data = 5 };\n\nlist.prepend(&two.node); // {2}\nlist.prepend(&five.node); // {5, 2}\nlist.prepend(&three.node); // {3, 5, 2}\nlist.prepend(&one.node); // {1, 3, 5, 2}\n\nvar it = list.first;\nwhile (it) |node| : (it = node.next) {\n    const l: *NodeU32 = @fieldParentPtr(\n        \"node\", node\n    );\n    try stdout.print(\n        \"Current value: {}\", .{l.data}\n    );\n}\ntry stdout.flush();",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>常用数据结构（Data Structures）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/09-data-structures.html#降维打击面向数据设计的-multiarraylistsoa-架构",
+    "href": "Chapters/09-data-structures.html#降维打击面向数据设计的-multiarraylistsoa-架构",
+    "title": "11  常用数据结构（Data Structures）",
+    "section": "11.4 降维打击：面向数据设计的 MultiArrayList（SoA 架构）",
+    "text": "11.4 降维打击：面向数据设计的 MultiArrayList（SoA 架构）\n在游戏引擎、渲染器和大数据批处理领域，面向对象传统的“结构体数组（AoS, Array of Structs）”往往会导致灾难性的 CPU 缓存未命中（Cache Miss）。\n假设有 Person 结构体：\nconst Person = struct {\n    name: []const u8,\n    age: u8,\n    height: f32,\n};\n如果用传统的 ArrayList(Person)，内存中的布局是： [Person0, Person1, Person2...]。当你的逻辑仅仅想统计全员的 age 时，CPU 每次把数据载入缓存行，都不得不把无关的 name 和 height 也一起搬上总线，内存带宽浪费高达 70%！\n而 Zig 官方内置了 std.MultiArrayList——它在底层直接将数据重构成数组的结构体（SoA, Struct of Arrays）！\n\n\n\n\n\n\nFigure 11.5: MultiArrayList（SoA）内部物理内存拆分示意图\n\n\n\n它在底层将每个字段拆解为各自独立的平行动态数组： - 一个连续数组只放所有人的 name； - 一个连续数组只放所有人的 age； - 一个连续数组只放所有人的 height。\n当你只需要遍历年龄时，调 people.items(.age)，CPU 能以满格的缓存行利用率做连续向量化吞吐，速度直接拉升一个数量级：\nconst std = @import(\"std\");\nconst Person = struct {\n    name: []const u8,\n    age: u8,\n    height: f32,\n};\nconst PersonArray = std.MultiArrayList(Person);\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n    var people = PersonArray{};\n    defer people.deinit(allocator);\n\n    try people.append(allocator, .{\n        .name = \"Auguste\", .age = 15, .height = 1.54\n    });\n    try people.append(allocator, .{\n        .name = \"Elena\", .age = 26, .height = 1.65\n    });\n    try people.append(allocator, .{\n        .name = \"Michael\", .age = 64, .height = 1.87\n    });\n}\n在性能极其敏感的场景下，MultiArrayList 绝对是 Zig 献给开发者的极致工程礼物！",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>常用数据结构（Data Structures）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html",
+    "href": "Chapters/10-stack-project.html",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "",
+    "text": "12.1 深入理解 Zig 的杀手锏：comptime\n``\n在这章中，咱们来开启全书的第三个实战小项目：亲手实现一个工业级通用栈（Stack）数据结构。 在计算机科班体系里，手写栈、队列往往是刚入门时的大作业； 但千万别小瞧它！正因为栈本身的业务逻辑极度纯粹清晰，它成了我们彻底搞懂 Zig 最具杀伤力的核心特性——编译期计算（comptime）与泛型（Generics）的最佳实战训练场！\n如果说 Zig 有什么特性让 Rust 和 C++ 开发者都为之惊艳，那绝对是 comptime（编译期执行）！ 在 Section 3.1.1 中我们聊过编译期已知与运行时已知的界限。而 comptime 关键字直接赋予了开发者在编译阶段执行任意 Zig 代码的无上权力！\n在日常编码中，comptime 主要有三大使用姿势：",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#sec-comptime",
+    "href": "Chapters/10-stack-project.html#sec-comptime",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "",
+    "text": "修饰函数形参（要求调用方传进来的实参必须在编译期板上钉钉）；\n修饰单条表达式（强制该表达式在编译时计算出常量结果）；\n修饰代码块（让整段逻辑在编译期求值跑通）。\n\n\n12.1.1 姿势一：修饰函数形参（编译期参数）\n当给形参加上 comptime 时，编译器会死死卡住校验：传入的值必须在编译阶段就能算出来。如果传入运行时才能决定的动态变量（比如控制台用户输入），编译器当场拒绝编译：\nfn twice(comptime num: u32) u32 {\n    return num * 2;\n}\ntest \"test comptime\" {\n    _ = twice(5678); // 合法！5678 是编译期常数\n}\n如果传了来自 stdin 的运行时数据，编译器会直接甩出报错：unable to resolve comptime value。\n\n\n12.1.2 姿势二：修饰表达式与代码块（编译期算力）\n很多复杂的数学计算、常量查表甚至阶乘递归，根本不需要留到运行时白白消耗用户的 CPU！ 直接在前面加上 comptime，编译器在编译你的代码时就会把结果算好并烘焙进二进制：\nconst expect = @import(\"std\").testing.expect;\nfn fibonacci(index: u32) u32 {\n    if (index &lt; 2) return index;\n    return fibonacci(index - 1) + fibonacci(index - 2);\n}\n\ntest \"fibonacci\" {\n    // 运行时计算\n    try expect(fibonacci(7) == 13);\n    // 编译期直接算完，二进制里直接拿着 13 跑！\n    try comptime expect(fibonacci(7) == 13);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#sec-generics",
+    "href": "Chapters/10-stack-project.html#sec-generics",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "12.2 Zig 的极简泛型哲学：类型即普通参数",
+    "text": "12.2 Zig 的极简泛型哲学：类型即普通参数\n写过 C++ 的同学一定被复杂的模板元编程（Template Metaprogramming）和几百行的编译报错折磨过； Java 和 Rust 则引入了专门的尖括号语法 &lt;T&gt;。\n而 Zig 的泛型设计极具大师级的极简美感：在 Zig 里，根本没有引入任何晦涩的专门泛型 DSL，泛型本质上就是一个接收“类型（type）”作为编译期入参的普通函数！\n在 Zig 中，type 本身是一等公民。 看下面这个极简的泛型最大值比较函数：\nfn max(comptime T: type, a: T, b: T) T {\n    return if (a &gt; b) a else b;\n}\n入参 T 的类型就是 type！调用时传 u8，它就为你特化生成 u8 版本；传 f64，就自动生成 f64 版本：\nconst std = @import(\"std\");\nfn max(comptime T: type, a: T, b: T) T {\n    return if (a &gt; b) a else b;\n}\ntest \"test max\" {\n    const n1 = max(u8, 4, 10);\n    std.debug.print(\"Max n1: {d}\\n\", .{n1});\n    const n2 = max(f64, 89.24, 64.001);\n    std.debug.print(\"Max n2: {d}\\n\", .{n2});\n}\nMax n1: 10\nMax n2: 89.24\n同理，泛型数据结构本质上就是一个以 comptime T: type 为形参、返回值类型为 type 的“结构体工厂函数”！ 接下来咱们就用这个原理亲手造一个泛型栈！",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#sec-what-stack",
+    "href": "Chapters/10-stack-project.html#sec-what-stack",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "12.3 栈的核心机制回顾",
+    "text": "12.3 栈的核心机制回顾\n栈是典型的后进先出（LIFO - Last In, First Out）结构，就像一叠盘子： - push：把新盘子压在最顶上； - pop：把最顶上的盘子拿走。\n\n\n\n\n\n\nFigure 12.1: 栈的压栈（Push）与出栈（Pop）示意图",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#编写栈结构先从具体类型开始",
+    "href": "Chapters/10-stack-project.html#编写栈结构先从具体类型开始",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "12.4 编写栈结构：先从具体类型开始",
+    "text": "12.4 编写栈结构：先从具体类型开始\n为了不一下子引入过多复杂度，咱们先写一个专门存 u32 的版本：\nconst std = @import(\"std\");\nconst Allocator = std.mem.Allocator;\nconst Stack = struct {\n    items: []u32,\n    capacity: usize,\n    length: usize,\n    allocator: Allocator,\n\n    pub fn init(allocator: Allocator, capacity: usize) !Stack {\n        var buf = try allocator.alloc(u32, capacity);\n        return .{\n            .items = buf[0..],\n            .capacity = capacity,\n            .length = 0,\n            .allocator = allocator,\n        };\n    }\n};\n\n12.4.1 实现压栈：push() 与动态扩容\n当 length + 1 &gt; capacity 时，池子满了。我们申请原容量 2 倍的新内存，用 @memcpy 将老数据整体平移，再释放老内存：\npub fn push(self: *Stack, val: u32) !void {\n    if ((self.length + 1) &gt; self.capacity) {\n        var new_buf = try self.allocator.alloc(\n            u32, self.capacity * 2\n        );\n        @memcpy(\n            new_buf[0..self.capacity], self.items\n        );\n        self.allocator.free(self.items);\n        self.items = new_buf;\n        self.capacity = self.capacity * 2;\n    }\n    self.items[self.length] = val;\n    self.length += 1;\n}\n\n\n12.4.2 实现出栈与析构：pop() 和 deinit()\npub fn pop(self: *Stack) void {\n    if (self.length == 0) return;\n\n    self.items[self.length - 1] = undefined;\n    self.length -= 1;\n}\n\npub fn deinit(self: *Stack) void {\n    self.allocator.free(self.items);\n}",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#终极升维将栈改造为工业级通用泛型",
+    "href": "Chapters/10-stack-project.html#终极升维将栈改造为工业级通用泛型",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "12.5 终极升维：将栈改造为工业级通用泛型！",
+    "text": "12.5 终极升维：将栈改造为工业级通用泛型！\n现在，见证奇迹的时刻到了！ 怎么把上面只支持 u32 的栈，改造成能装任意类型（u8、f64、甚至自定义的 User 结构体）的泛型栈？\n只需要给外层包一个函数 fn Stack(comptime T: type) type，并将内部所有的 u32 换成泛型参数 T！\nfn Stack(comptime T: type) type {\n    return struct {\n        items: []T,\n        capacity: usize,\n        length: usize,\n        allocator: Allocator,\n        const Self = @This();\n\n        pub fn init(allocator: Allocator,\n                    capacity: usize) !Stack(T) {\n            var buf = try allocator.alloc(T, capacity);\n            return .{\n                .items = buf[0..],\n                .capacity = capacity,\n                .length = 0,\n                .allocator = allocator,\n            };\n        }\n\n        pub fn push(self: *Self, val: T) !void {\n            if ((self.length + 1) &gt; self.capacity) {\n                var new_buf = try self.allocator.alloc(\n                    T, self.capacity * 2\n                );\n                @memcpy(\n                    new_buf[0..self.capacity], self.items\n                );\n                self.allocator.free(self.items);\n                self.items = new_buf;\n                self.capacity = self.capacity * 2;\n            }\n\n            self.items[self.length] = val;\n            self.length += 1;\n        }\n\n        pub fn pop(self: *Self) void {\n            if (self.length == 0) return;\n            self.items[self.length - 1] = undefined;\n            self.length -= 1;\n        }\n\n        pub fn deinit(self: *Self) void {\n            self.allocator.free(self.items);\n        }\n    };\n}",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/10-stack-project.html#跑通泛型栈测试",
+    "href": "Chapters/10-stack-project.html#跑通泛型栈测试",
+    "title": "12  实战项目 3：手写泛型栈数据结构",
+    "section": "12.6 跑通泛型栈测试！",
+    "text": "12.6 跑通泛型栈测试！\n想要一个装 u8 的栈？直接 Stack(u8)；想要存字符串？直接 Stack([]const u8)！\nvar gpa = std.heap.DebugAllocator(.{}){};\nconst allocator = gpa.allocator();\nconst Stacku8 = Stack(u8);\nvar stack = try Stacku8.init(allocator, 10);\ndefer stack.deinit();\n\ntry stack.push(1);\ntry stack.push(2);\ntry stack.push(3);\ntry stack.push(4);\ntry stack.push(5);\ntry stack.push(6);\n\nstd.debug.print(\"Stack len: {d}\\n\", .{stack.length});\nstd.debug.print(\"Stack capacity: {d}\\n\", .{stack.capacity});\n\nstack.pop();\nstd.debug.print(\"Stack len: {d}\\n\", .{stack.length});\nstack.pop();\nstd.debug.print(\"Stack len: {d}\\n\", .{stack.length});\nstd.debug.print(\n    \"Stack state: {any}\\n\",\n    .{stack.items[0..stack.length]}\n);\nStack len: 6\nStack capacity: 10\nStack len: 5\nStack len: 4\nStack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }\n弄懂了这套模式，你就彻底参透了 Zig 标准库里 std.ArrayList(T)、std.AutoHashMap(K, V) 等所有容器的核心源码实现！",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>实战项目 3：手写泛型栈数据结构</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html",
+    "href": "Chapters/12-file-op.html",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "",
+    "text": "13.1 输入与输出（I/O）底层本质\n``\n在这章中，咱们来聊聊如何使用 Zig 标准库（尤其是 std.Io 模块）提供的跨平台工具链，来执行文件系统操作以及底层输入输出（I/O）调度。\n平时在高级语言里写 input()、print()、console.log()，大家早已习以为常。 但你有没有深究过：这些高级函数在底层到底是如何与操作系统（OS）打交道的？\n归根结底，语言层面的输入输出，本质上都是操作系统提供的三大标准数据通道的浅层封装： - stdout（标准输出）：程序向控制台吐正常结果的数据通道； - stdin（标准输入）：程序从控制台键盘或上游管道吃输入的数据通道； - stderr（标准错误）：专门用来打印报错和警告日志的独立通道。\n现代操作系统会为每个正在运行的进程独立分配一套互不干扰的 stdin、stdout 和 stderr 文件描述符。",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html#sec-writer-reader",
+    "href": "Chapters/12-file-op.html#sec-writer-reader",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "13.2 Reader 与 Writer 统一设计模式",
+    "text": "13.2 Reader 与 Writer 统一设计模式\n在 Zig 的 I/O 架构中，有一个贯穿始终的设计模式——Reader 与 Writer 模式。 在 Zig 中，几乎所有的 I/O 操作最终都收敛到两个核心接口类型： - Reader：负责从“某个地方”读取字节流； - Writer：负责向“某个地方”写入字节流。\n这个“某个地方”可以是磁盘上的文件、网络 TCP Socket，也可以是控制台终端。 无论底层硬件形态怎么变，只要拿到了对应的 Reader 或 Writer，上层调用的 API 始终高度一致： - Writer 拥有 print()（格式化写入）、writeAll()（整块刷入）等方法； - Reader 拥有 readSliceAll()（读满指定切片）、takeDelimiterExclusive()（按分隔符截取读取）等利器。",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html#sec-new-io-backend",
+    "href": "Chapters/12-file-op.html#sec-new-io-backend",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "13.3 Zig 现代架构大革新：全新的 io 后端参数",
+    "text": "13.3 Zig 现代架构大革新：全新的 io 后端参数\n随着 Zig 0.16 的推出，标准库对网络和文件 I/O 进行了划时代的重构：引入了可插拔的 I/O 执行后端（I/O Backends）！\n就像我们在 Chapter 3 讲过的：写 Zig 代码第一件事是挑选合适的 Allocator；而在现代 Zig 中，做 I/O 操作前，你也需要指定一个 io 后端！ 不管是基于线程池调度的 std.Io.Threaded，还是基于事件驱动 Ring 的 std.Io.Evented，均可按需注入。\n在日常开发中，现代 Zig 的主函数支持接收 init: std.process.Init 形参，你可以直接拿开箱即用、已经按当前操作系统调优好的 init.io 后端：\nconst std = @import(\"std\");\npub fn main(init: std.process.Init) !void {\n    const cwd = std.Io.Dir.cwd();\n    const file = try cwd.openFile(\n        init.io, \"foo.txt\", .{ .mode = .read_only }\n    );\n    defer file.close(init.io);\n\n    var read_buffer: [1024]u8 = undefined;\n    var fr = file.reader(init.io, &read_buffer);\n    var reader = &fr.interface;\n\n    var buffer: [300]u8 = undefined;\n    @memset(buffer[0..], 0);\n    _ = reader.readSliceAll(buffer[0..]) catch 0;\n\n    std.debug.print(\"{s}\\n\", .{buffer});\n}",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html#sec-buffered-io",
+    "href": "Chapters/12-file-op.html#sec-buffered-io",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "13.4 带缓冲的 I/O（Buffered I/O）：性能生死线",
+    "text": "13.4 带缓冲的 I/O（Buffered I/O）：性能生死线\n系统调用（Syscall）是极度昂贵的。如果你的程序每读写 1 个字节，就傻乎乎地触发一次用户态到内核态的上下文切换，CPU 会被严重拖慢。\n\n\n\n\n\n\nFigure 13.1: 无缓冲 I/O：频繁系统调用拖垮性能\n\n\n\n\n\n\n\n\n\nFigure 13.2: 带缓冲 I/O：批量吞吐极大减少系统调用\n\n\n\n如 Figure 13.2 所示：带缓冲的 I/O（Buffered I/O）在用户态预留了一块内存缓冲区（通常为 4KB，对应 1 页内存）。 读数据时，操作系统一次性把一整页字节捞进缓冲区，后续读取全部在用户内存里极速消耗；只有缓冲区耗尽时才发起下一次系统调用。\n\n13.4.1 显式掌控缓冲区（No Hidden Allocations）\n在 C 语言里，FILE* 背后会悄悄开辟缓冲，开发者无法直观感知； 而 Zig 践行绝对的透明可控原则：在构造 reader 或 writer 时，你必须显式提供一段缓冲区切片（比如 [1024]u8）！ 缓冲区放栈上还是堆上、开 512 字节还是 8KB，完全由开发者自行敲定！\n\n\n13.4.2 敲黑板重点提醒：千万别忘了 flush()！\n在带缓冲写入模式下，调用 writeAll() 只是把数据暂存到了内存缓冲区里，并没有真正持久化写入磁盘或终端！ 必须显式调用 writer.flush()，缓冲区里的字节才会真正刷到物理介质上！ 很多新手写代码发现控制台死活没输出，十有八九就是漏掉了最后这句 flush()！\nconst std = @import(\"std\");\npub fn main(init: std.process.Init) !void {\n    var stdout_buffer: [1024]u8 = undefined;\n    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);\n    const stdout = &stdout_writer.interface;\n    try stdout.writeAll(\n        \"This message was written into stdout.\\n\"\n    );\n    try stdout.flush(); // 关键动作：冲刷缓冲区！\n}",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html#文件系统实战从-cwd-展开",
+    "href": "Chapters/12-file-op.html#文件系统实战从-cwd-展开",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "13.5 文件系统实战：从 CWD 展开",
+    "text": "13.5 文件系统实战：从 CWD 展开\n在 Zig 中，任何文件系统操作都必须从一个具体的目录句柄（std.Io.Dir）起步。 最常用的起点就是程序的当前工作目录（CWD）：\nconst cwd = std.Io.Dir.cwd();\n\n\n\n\n\n\nFigure 13.3: 在终端启动程序时的当前工作目录 CWD 示意图\n\n\n\n\n13.5.1 创建与写入文件：createFile()\nconst std = @import(\"std\");\npub fn main(init: std.process.Init) !void {\n    const cwd = std.Io.Dir.cwd();\n    const file = try cwd.createFile(\n        init.io, \"foo.txt\", .{}\n    );\n    defer file.close(init.io); // 用完务必随手关闭！\n\n    _ = try file.writePositionalAll(\n        init.io, \"Writing this line to the file\\n\", 0\n    );\n}\n注意：createFile() 默认会直接清空覆盖同名旧文件；若希望创建时就具备读权限，需传入 .{ .read = true }。\n\n\n13.5.2 打开文件与追加写入：openFile()\n打开现有文件用 openFile()，常用模式有： - .read_only：只读； - .write_only：只写； - .read_write：读写双全（在 Windows 系统下追加写入通常建议使用 .read_write 以保证权限兼容）。\n获取文件当前长度并从尾部追加内容：\nconst std = @import(\"std\");\npub fn main(init: std.process.Init) !void {\n    const cwd = std.Io.Dir.cwd();\n    const file = try cwd.openFile(init.io, \"foo.txt\", .{ .mode = .read_write });\n    defer file.close(init.io);\n\n    const length = try file.length(init.io);\n    _ = try file.writePositionalAll(\n        init.io, \"Some random text to write\\n\", length\n    );\n}\n\n\n13.5.3 拷贝与删除文件\n删除文件：\ntry cwd.deleteFile(init.io, \"foo.txt\");\n拷贝文件：\ntry cwd.copyFile(\n    \"foo.txt\",\n    cwd,\n    \"backup/foo.txt\",\n    init.io,\n    .{}\n);",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/12-file-op.html#目录遍历与多级递归创建",
+    "href": "Chapters/12-file-op.html#目录遍历与多级递归创建",
+    "title": "13  文件系统与输入输出（I/O）",
+    "section": "13.6 目录遍历与多级递归创建",
+    "text": "13.6 目录遍历与多级递归创建\n\n13.6.1 遍历目录下的所有文件\n打开目录时打上 .{ .iterate = true } 标记，即可使用 dir.iterate() 进行迭代遍历：\nconst cwd = std.Io.Dir.cwd();\nconst dir = try cwd.openDir(\n    init.io,\n    \"ZigExamples/file-io/\",\n    .{ .iterate = true }\n);\nvar it = dir.iterate();\nwhile (try it.next(init.io)) |entry| {\n    try stdout.print(\n        \"File name: {s}\\n\",\n        .{entry.name}\n    );\n}\ntry stdout.flush();\n如果需要递归遍历所有子目录深度，改用 dir.walk()。\n\n\n13.6.2 创建与删除目录\n\ncreateDir()：创建单级子目录；\ncreateDirPath()：递归创建多级完整路径（类似 Linux 的 mkdir -p）：\n\ntry cwd.createDirPath(init.io, \"src/decoders/jpg/\");\ntry cwd.deleteDir(init.io, \"src\");\n掌握了统一的 Reader/Writer 模式、带缓冲机制以及可插拔的 io 架构，你在 Zig 里处理任何高频文件和数据流都能游刃有余！",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>文件系统与输入输出（I/O）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-zig-c-interop.html",
+    "href": "Chapters/14-zig-c-interop.html",
+    "title": "14  Zig 与 C 语言的无缝互操作（C Interoperability）",
+    "section": "",
+    "text": "14.1 为什么说 Zig 的 C 互操作堪称降维打击？\n``\n在这一章中，咱们来聊聊 Zig 最让系统级开发者欲罢不能的看家本领——与 C 语言的零摩擦无缝互操作（C Interop）。 在 Section 9.11 中我们见识过如何直接用 zig 编译器编译 C 代码； 而这一章我们要更进一步：直接在 Zig 代码里无缝调用 C 语言函数、传递结构体、引入已有的成熟 C 语言生态库！\n在紧接着的下一个实战项目中，我们就会亲手接入知名的开源 C 语言图像处理库。\n在很多主流高级语言里（Python、JavaScript、Java、Rust 等），想要调一段现成的 C 代码，往往得先折腾复杂的外部函数接口（FFI）、手写冗长易错的胶水代码（Bindings / CGO），环境稍微配错就报链接错误。\n而在 Zig 里，C 语言互操作是深深刻在编译器骨髓里的！ 要在 Zig 中调用 C 代码，全流程只需两步： 1. 引入 C 头文件（.h）； 2. 在构建时链接上对应的 C 动态/静态库（-lc 等）。",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Zig 与 C 语言的无缝互操作（C Interoperability）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-zig-c-interop.html#为什么说-zig-的-c-互操作堪称降维打击",
+    "href": "Chapters/14-zig-c-interop.html#为什么说-zig-的-c-互操作堪称降维打击",
+    "title": "14  Zig 与 C 语言的无缝互操作（C Interoperability）",
+    "section": "",
+    "text": "14.1.1 引入 C 头文件的两种地道姿势\n引入 C 头文件主要有以下两种途径（底层本质完全相通）：\n\n14.1.1.1 姿势一：利用 zig translate-c 静态转译\nZig 官方自带了一个强大的转译子命令 translate-c。它能把 C 头文件直接翻译成纯正合规的 Zig 源码！\nzig translate-c /usr/include/stdio.h \\\n    -lc -I/usr/include \\\n    -D_NO_CRT_STDIO_INLINE=1 &gt; c.zig\n随后在业务代码里就像引用普通 Zig 模块一样 @import(\"c.zig\")，所有 C 函数直接点出来用：\nconst c = @import(\"c.zig\");\npub fn main() !void {\n    const x: f32 = 1772.94122;\n    _ = c.printf(\"%.3f\\n\", x);\n}\n\n\n14.1.1.2 姿势二：代码内直接调用 @cImport()（日常最常用！）\n不用手动在命令行跑转译，直接在源码里使用内置函数 @cImport() 和 @cInclude()。编译器会在编译期自动完成头文件转译与加载：\nconst c = @cImport({\n    @cDefine(\"_NO_CRT_STDIO_INLINE\", \"1\");\n    @cInclude(\"stdio.h\");\n    @cInclude(\"math.h\");\n});\n\npub fn main() !void {\n    const x: f32 = 15.2;\n    const y = c.powf(x, @as(f32, 2.6));\n    _ = c.printf(\"%.3f\\n\", y);\n}\n1182.478\n只要在编译时带上 -lc -lm 链接 Libc 和数学库，C 语言能力信手拈来！",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Zig 与 C 语言的无缝互操作（C Interoperability）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-zig-c-interop.html#sec-zig-obj-to-c",
+    "href": "Chapters/14-zig-c-interop.html#sec-zig-obj-to-c",
+    "title": "14  Zig 与 C 语言的无缝互操作（C Interoperability）",
+    "section": "14.2 Zig 对象向 C 接口传参避坑指南",
+    "text": "14.2 Zig 对象向 C 接口传参避坑指南\n把数据传给 C 函数时，主要分为两种情况：\n\n14.2.1 1. 自动转换（Auto-conversion）\n对于原生基础类型（i32 对应 int，u8 对应 unsigned char，f32 对应 float），编译器会自动完成 ABI 对齐。 对于未显式指定类型的字符串字面量，编译器会根据上下文自动将其视作以 \\0 结尾的 C 字符串（[*c]const u8）：\nconst c = @cImport({\n    @cDefine(\"_NO_CRT_STDIO_INLINE\", \"1\");\n    @cInclude(\"stdio.h\");\n});\n\npub fn main() !void {\n    // 这里的字面量 \"foo.txt\" 会被编译器自动推导为 C 字符串传给 fopen\n    const file = c.fopen(\"foo.txt\", \"rb\");\n    if (file == null) {\n        @panic(\"Could not open file!\");\n    }\n    _ = c.fclose(file);\n}\n\n\n14.2.2 2. 需要手动适配：切片字符串传给 C 接口\n如果你手头是一个正规的 Zig 字符串切片 []const u8，直接扔给 C 函数会触发编译报错：\nerror: expected type '[*c]const u8', found '[]const u8'\n因为 C 语言不知道切片的长度机制，它只认指向连续内存的首地址指针（且末尾必须以空字符 \\0 截断）。 解决方案很简单：读取切片的 .ptr 属性，或者用 @ptrCast() 拿到裸指针传给 C：\n    const path: []const u8 = \"foo.txt\";\n    // 传 path.ptr 给 C 接口，平滑解决！\n    const file = c.fopen(path.ptr, \"rb\");",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Zig 与 C 语言的无缝互操作（C Interoperability）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-zig-c-interop.html#sec-c-inputs",
+    "href": "Chapters/14-zig-c-interop.html#sec-c-inputs",
+    "title": "14  Zig 与 C 语言的无缝互操作（C Interoperability）",
+    "section": "14.3 在 Zig 里创建与使用 C 结构体",
+    "text": "14.3 在 Zig 里创建与使用 C 结构体\n通过 @cImport 引入的 C 头文件里的所有 struct 和 typedef，会自动映射成 Zig 命名空间里的类型。 比如在 user.h 中定义的 C 结构体：\n#include &lt;stdint.h&gt;\ntypedef struct {\n    uint64_t id;\n    char* name;\n} User;\n在 Zig 中直接把 c.User 当成普通类型来用：\nconst std = @import(\"std\");\nconst c = @cImport({\n    @cInclude(\"user.h\");\n});\n\npub fn main() !void {\n    var gpa = std.heap.DebugAllocator(.{}){};\n    const allocator = gpa.allocator();\n\n    var new_user: c.User = undefined;\n    new_user.id = 1;\n    \n    // 分配带 \\0 结尾的 C 字符串给 name\n    var user_name = try allocator.alloc(u8, 12);\n    defer allocator.free(user_name);\n    @memcpy(user_name[0..(user_name.len - 1)], \"pedropark99\");\n    user_name[user_name.len - 1] = 0; // 手动补哨兵 0\n    new_user.name = user_name.ptr;\n}\n而在成熟的 C 库中（如 FreeType、HarfBuzz、libpng），通常都自带现成的工厂构造函数（如 hb_buffer_create()），直接调用就能拿到初始化好的指针，省去了手动拼接字段的苦活。",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Zig 与 C 语言的无缝互操作（C Interoperability）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-zig-c-interop.html#sec-pass-c-structs",
+    "href": "Chapters/14-zig-c-interop.html#sec-pass-c-structs",
+    "title": "14  Zig 与 C 语言的无缝互操作（C Interoperability）",
+    "section": "14.4 在 Zig 函数间传递 C 结构体：务必传指针！",
+    "text": "14.4 在 Zig 函数间传递 C 结构体：务必传指针！\n很多 C 结构体在底层设计上都是带有上下文状态或内部句柄的。 当你在自己的 Zig 辅助函数间流转 C 结构体时，千万不要直接按值拷贝传递，必须按引用指针传递（*c.User）！ 在函数体内部通过 .* 解引用访问或修改字段：\nconst std = @import(\"std\");\nconst c = @cImport({\n    @cInclude(\"user.h\");\n});\n\nfn set_user_id(id: u64, user: *c.User) void {\n    user.*.id = id; // 通过 .* 解引用指针安全修改\n}\n\npub fn main(init: std.process.Init) !void {\n    var new_user: c.User = undefined;\n    new_user.id = 1;\n    set_user_id(25, &new_user); // 传引用指针\n    std.debug.print(\"New ID: {any}\\n\", .{new_user.id});\n}\n把 C 的生态彻底化为己用，接下来在第 15 章，咱们就用 Zig 真正链接成熟的 C 图形库，亲手开发一套图像滤镜项目！",
+    "crumbs": [
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Zig 与 C 语言的无缝互操作（C Interoperability）</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html",
+    "href": "Chapters/13-image-filter.html",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "",
+    "text": "15.1 人眼究竟是如何感知颜色的？\n``\n在这章中，咱们来搞第四个趣味与硬核兼备的实战项目：开发一个给图片加滤镜的程序。 具体来说，我们要亲手实现一个灰度滤镜（Grayscale Filter），把任意一张彩色照片变成极具质感的黑白复古大片。\n作为试验素材，我们使用智利裔美国知名演员 Pedro Pascal（佩德罗·帕斯卡）的照片（见 Figure 15.1）：\n代码量其实并不大，但在动手敲代码之前，我们得先把数字图像的底层原理摸透：电脑到底是怎么在显卡和内存里用二进制表示颜色的？PNG（便携式网络图形）文件格式的内部又是怎么封装的？\n本章跑通后，程序会吃进原始彩色 PNG 图片，并在当前工作目录吐出一张完全灰度化的黑白版本（如 Figure 15.2 所示）。 本项目的完整整合代码可以在官方仓库的 ZigExamples/image_filter 目录1找到。\n聊计算机图形学，必须先聊聊人眼的生理构造。因为现代数字图像的所有技术标准，全都是像素级模拟人类眼球感知机理而设计的。\n你可以把人眼看成一个高精度的光学传感器： 我们看到的五彩斑斓，本质上都是物体表面对入射光线的反射。光是所有色彩的物理源头！ 正如艾萨克·牛顿在 1660 年代著名的三棱镜分光实验中所证实的2：白光其实是由各种单色光混合而成的。\n而在人类视网膜里，分布着感知颜色的功臣——视锥细胞（Cone cells）。 人眼一共有 3 种不同的视锥细胞，它们分别对红（Red）、绿（Green）、蓝（Blue）三个波段的光谱最为敏感。\n视锥细胞捕获到不同比例的红绿蓝光强后，转换成微弱的电信号顺着视神经传给大脑皮层。大脑将这三路电信号融合，最终在我们的脑海里呈现出千变万化的色彩世界！",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#sec-digital-img",
+    "href": "Chapters/13-image-filter.html#sec-digital-img",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.2 计算机数字图像底层原理",
+    "text": "15.2 计算机数字图像底层原理\n在计算机图形学中，图像主要分为矢量图（Vector）和位图（光栅图 Raster）。我们日常处理的照片绝大多数都是位图（Raster Images）（如 JPEG、PNG）。\n位图在本质上就是一个由像素点整齐排布构成的 2D 像素矩阵。 把任何一张数字图片无限放大，你会看到一个个排列整齐的单色马赛克小方块——这就是像素（Pixel）：\n\n\n\n\n\n\nFigure 15.3: 将位图无限放大后呈现出的一个个像素网格\n\n\n\n像素越多，画面越细腻。常见的 1080P 高清图片分辨率是 \\(1920 \\times 1080\\)，意味着整张图包含了高达 \\(2,073,600\\) 个像素点！\n在主流的 RGB 颜色空间中，每个像素用三个数字 (R, G, B) 分别标明红、绿、蓝的亮度比例。比如 (199, 78, 70) 偏砖红，(129, 77, 250) 偏亮紫。\n\n15.2.1 像素的排布与扫描方向\n现代计算机屏幕和位图文件遵循标准的从上到下、从左到右的扫描线排布顺序： 矩阵的第 0 行从左往右排布，接着是第 1 行、第 2 行……如图 Figure 15.4 所示：\n\n\n\n\n\n\nFigure 15.4: 位图像素在屏幕上的排列与扫描顺序\n\n\n\n\n\n15.2.2 在代码中如何表示像素矩阵？\n在系统级语言（Zig、C 等）里，为了保证 CPU 缓存的极致命中和内存连续性，我们一律将 2D 像素矩阵拍平成一维连续连续数组（1D Array）来存储！\n因为红、绿、蓝三个通道的取值范围是 \\(0 \\sim 255\\)，正好用 1 个无符号 8 位整数（u8，1 字节）就能分毫不差地装下。\n对于 RGB 图像，连续 3 个 u8 代表一个像素（\\([R_0, G_0, B_0, R_1, G_1, B_1...]\\)）； 而对于带 Alpha 透明度通道的 RGBA 图像（例如本例中的 PNG），连续 4 个 u8 代表一个像素：\\([R, G, B, A]\\)。",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#引入极速轻量的现代-c-语言库libspng",
+    "href": "Chapters/13-image-filter.html#引入极速轻量的现代-c-语言库libspng",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.3 引入极速轻量的现代 C 语言库：libspng",
+    "text": "15.3 引入极速轻量的现代 C 语言库：libspng\nPNG 文件不是裸数据，它内部经过了复杂的 Deflate 压缩与滤波。 要解压和编码 PNG，老牌官方库 libpng 代码繁重且 API 晦涩； 在这里我们选用目前工业界极受好评的现代化轻量级替代方案——libspng3。它极其小巧、速度极快，而且 API 极其亲民！\n本地编译本项目前，请确保系统中已经安装了 libspng 开发包（可参考官方构建指南4）。",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#第一阶段读取并解码-png-像素",
+    "href": "Chapters/13-image-filter.html#第一阶段读取并解码-png-像素",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.4 第一阶段：读取并解码 PNG 像素",
+    "text": "15.4 第一阶段：读取并解码 PNG 像素\n利用上一章学到的 @cImport，直接引入 stdio.h 和 spng.h：\nconst c = @cImport({\n    @cDefine(\"_NO_CRT_STDIO_INLINE\", \"1\");\n    @cInclude(\"stdio.h\");\n    @cInclude(\"spng.h\");\n});\n\nconst path = \"pedro_pascal.png\";\nconst file_descriptor = c.fopen(path, \"rb\");\nif (file_descriptor == null) {\n    @panic(\"Could not open file!\");\n}\nconst ctx = c.spng_ctx_new(0) orelse unreachable;\n_ = c.spng_set_png_file(\n    ctx, @ptrCast(file_descriptor)\n);\n别忘了用完关闭文件句柄：\nif (c.fclose(file_descriptor) != 0) {\n    return error.CouldNotCloseFileDescriptor;\n}\n\n15.4.1 1. 读取 PNG 头信息（IHDR）\n获取宽高、位宽和颜色模式：\nfn get_image_header(ctx: *c.spng_ctx) !c.spng_ihdr {\n    var image_header: c.spng_ihdr = undefined;\n    if (c.spng_get_ihdr(ctx, &image_header) != 0) {\n        return error.CouldNotGetImageHeader;\n    }\n    return image_header;\n}\n\nvar image_header = try get_image_header(ctx);\n\n\n15.4.2 2. 计算缓冲区大小并开辟内存\n调用 spng_decoded_image_size 算出解压全部像素到底需要多少字节，并用 Allocator 在堆上开辟连续缓冲区：\nfn calc_output_size(ctx: *c.spng_ctx) !u64 {\n    var output_size: u64 = 0;\n    const status = c.spng_decoded_image_size(\n        ctx, c.SPNG_FMT_RGBA8, &output_size\n    );\n    if (status != 0) {\n        return error.CouldNotCalcOutputSize;\n    }\n    return output_size;\n}\n\nconst output_size = try calc_output_size(ctx);\nvar buffer = try allocator.alloc(u8, output_size);\n@memset(buffer[0..], 0);\n\n\n15.4.3 3. 解码并提取原始像素\n一键将压缩数据解压灌入内存：\nfn read_data_to_buffer(ctx: *c.spng_ctx, buffer: []u8) !void {\n    const status = c.spng_decode_image(\n        ctx,\n        buffer.ptr,\n        buffer.len,\n        c.SPNG_FMT_RGBA8,\n        0\n    );\n    if (status != 0) {\n        return error.CouldNotDecodeImage;\n    }\n}\n\ntry read_data_to_buffer(ctx, buffer[0..]);\n此时随手打印前 12 个字节：\n{\n    200, 194, 216, 255, 203, 197,\n    219, 255, 206, 200, 223, 255\n}\n能清晰看到每隔 4 个字节就是透明度 255（完全不透明），前三个数值分别是 R、G、B。",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#第二阶段施加经典人眼灰度滤镜算法",
+    "href": "Chapters/13-image-filter.html#第二阶段施加经典人眼灰度滤镜算法",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.5 第二阶段：施加经典人眼灰度滤镜算法",
+    "text": "15.5 第二阶段：施加经典人眼灰度滤镜算法\n怎么把彩色变成黑白？ 新手常犯的一个错误是：直接把三者求平均值 (R + G + B) / 3。 千万别这么干！因为人类视网膜对不同波段的光敏感度差异极大：人眼对绿光极其敏感，对红光次之，对蓝光最钝！ 如果简单平均，画面明暗对比会严重失真、发灰发脏。\n在国际标准 ITU-R BT.709（sRGB 色彩空间标配）中，人眼感知灰度的加权线性亮度公式如下：\n\\[\n    p' = (0.2126 \\times r) + (0.7152 \\times g) + (0.0722 \\times b)\n\\tag{15.1}\\]\n绿色独占 71.5% 的权重！\n编写像素循环处理函数：每次跨越 4 字节（步长为 4），通过 @floatFromInt 转成浮点做加权融合，再用 @intFromFloat 强转回整型，写回当前像素的 R、G、B 通道（保持 Alpha 不变）：\nfn apply_image_filter(buffer: []u8) !void {\n    const len = buffer.len;\n    const red_factor: f16 = 0.2126;\n    const green_factor: f16 = 0.7152;\n    const blue_factor: f16 = 0.0722;\n    var index: u64 = 0;\n    while (index &lt; len) : (index += 4) {\n        const rf: f16 = @floatFromInt(buffer[index]);\n        const gf: f16 = @floatFromInt(buffer[index + 1]);\n        const bf: f16 = @floatFromInt(buffer[index + 2]);\n        const y_linear: f16 = (\n            (rf * red_factor) + (gf * green_factor)\n            + (bf * blue_factor)\n        );\n        buffer[index] = @intFromFloat(y_linear);\n        buffer[index + 1] = @intFromFloat(y_linear);\n        buffer[index + 2] = @intFromFloat(y_linear);\n    }\n}\n\ntry apply_image_filter(buffer[0..]);",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#第三阶段将处理后的图片重新打包写盘",
+    "href": "Chapters/13-image-filter.html#第三阶段将处理后的图片重新打包写盘",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.6 第三阶段：将处理后的图片重新打包写盘",
+    "text": "15.6 第三阶段：将处理后的图片重新打包写盘\n将处理好的内存缓冲区重新编码成合规的 PNG 文件：\nfn save_png(image_header: *c.spng_ihdr, buffer: []u8) !void {\n    const path = \"pedro_pascal_filter.png\";\n    const file_descriptor = c.fopen(path.ptr, \"wb\");\n    if (file_descriptor == null) {\n        return error.CouldNotOpenFile;\n    }\n    const ctx = (\n        c.spng_ctx_new(c.SPNG_CTX_ENCODER)\n        orelse unreachable\n    );\n    defer c.spng_ctx_free(ctx);\n    _ = c.spng_set_png_file(ctx, @ptrCast(file_descriptor));\n    _ = c.spng_set_ihdr(ctx, image_header);\n\n    const encode_status = c.spng_encode_image(\n        ctx,\n        buffer.ptr,\n        buffer.len,\n        c.SPNG_FMT_PNG,\n        c.SPNG_ENCODE_FINALIZE\n    );\n    if (encode_status != 0) {\n        return error.CouldNotEncodeImage;\n    }\n    if (c.fclose(file_descriptor) != 0) {\n        return error.CouldNotCloseFileDescriptor;\n    }\n}\n\ntry save_png(&image_header, buffer[0..]);",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#编写-build.zig-构建链接脚本",
+    "href": "Chapters/13-image-filter.html#编写-build.zig-构建链接脚本",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "15.7 编写 build.zig 构建链接脚本",
+    "text": "15.7 编写 build.zig 构建链接脚本\n最后，用我们学过的 Zig 构建系统将代码和第三方库链接起来：\nconst std = @import(\"std\");\npub fn build(b: *std.Build) void {\n    const exe = b.addExecutable(.{\n        .name = \"image_filter\",\n        .root_module = b.createModule(.{\n            .root_source_file = b.path(\"src/image_filter.zig\"),\n            .target = b.graph.host,\n            .link_libc = true\n        })\n    });\n    // 链接系统安装的 libspng 和数学库\n    exe.root_module.linkSystemLibrary(\"spng\", .{});\n    exe.root_module.linkSystemLibrary(\"m\", .{});\n    b.installArtifact(exe);\n}\n终端执行 zig build run，眨眼之间，一张带有电影质感的黑白灰度肖像（Figure 15.2）已经在当前目录悄然出炉！",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/13-image-filter.html#footnotes",
+    "href": "Chapters/13-image-filter.html#footnotes",
+    "title": "15  实战项目 4：开发图像灰度滤镜",
+    "section": "",
+    "text": "https://github.com/pedropark99/zig-book/tree/main/ZigExamples/image_filter。↩︎\nhttps://library.si.edu/exhibition/color-in-a-new-light/science。↩︎\nhttps://libspng.org/。↩︎\nhttps://libspng.org/docs/build/。↩︎",
+    "crumbs": [
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>实战项目 4：开发图像灰度滤镜</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html",
+    "href": "Chapters/14-threads.html",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "",
+    "text": "16.1 到底什么是线程？为什么需要它？\n``\n在这一章中，咱们来聊聊现代高性能系统级开发的重头戏——多线程与并发并行计算（Concurrency & Parallelism）。 Zig 标准库在 std.Thread 模块中提供了开箱即用的原生内核级线程抽象，其底层规范严格遵循 POSIX 线程（pthread）模式，跨平台性能极佳。\n简单来说，线程就是一段独立的执行上下文。 默认情况下，普通程序都是单线程（Single-threaded）的：指令只能按先后顺序一条一条排队执行。 如果遇上耗时操作（比如读大文件、等网络响应、算复杂图形），整个程序就会被彻底卡死，无法同时响应其他任务。\n最直观的生活例子就像餐厅服务员： 如果是个单线程服务员：他给一号桌点完单送到后厨，然后就傻傻站在出餐口前等厨师把菜炒好，期间既不给二号桌点单，也不给三号桌结账。这餐厅非倒闭不可！ 而多线程的做法是：服务员把订单往后厨一塞（派发一个异步线程去炒菜），自己立刻转身去接待其他桌的客人；后厨菜好了直接端走上桌。\n现代 Web 浏览器（Chrome、Edge 等）的多标签页、修图软件（Photoshop）以及大型 3D 游戏，底层全靠多线程把多核 CPU 算力拉满。",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#进程process与线程thread的区别",
+    "href": "Chapters/14-threads.html#进程process与线程thread的区别",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.2 进程（Process）与线程（Thread）的区别",
+    "text": "16.2 进程（Process）与线程（Thread）的区别\n经常有初学者搞混这两个概念，记住以下核心分工：\n\n进程（Process）：操作系统分配资源的独立基本单位（你在任务管理器里看到的每个软件实例都是一个进程）。每个进程有自己完全隔离的虚拟内存空间；\n线程（Thread）：CPU 调度的基本单位，依附于进程而存在（一个进程可以孵化出多个线程）。\n\n关键共享机制： - 独立部分：每个线程拥有自己专属独立的栈帧（Stack Frame），栈上的局部变量互不打扰； - 共享部分：同一个进程下的所有线程，共享同一片堆内存（Heap）、全局静态数据段，以及标准 I/O 文件描述符（stdout/stdin/stderr）！\n正因为堆内存完全共享，多线程之间传递数据速度极快（传个指针即可），但随之而来的也是最凶险的技术深水区——数据竞争（Data Race）。",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#创建并启动一个线程thread.spawn",
+    "href": "Chapters/14-threads.html#创建并启动一个线程thread.spawn",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.3 创建并启动一个线程：Thread.spawn",
+    "text": "16.3 创建并启动一个线程：Thread.spawn\n在 Zig 中创建新线程，直接调用 std.Thread.spawn()：\npub fn spawn(config: SpawnConfig, comptime function: anytype, args: anytype) !Thread\n它接收三个核心参数： 1. SpawnConfig：配置项（可指定专属栈大小 stack_size，默认给足 16MB；传 .{} 走默认配置）； 2. function：要在新线程里执行的入口函数； 3. args：传给该函数的参数元组（如 .{init.io}）。\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nconst duration = std.Io.Duration.fromSeconds(1);\nconst clock: std.Io.Clock = .awake;\n\nfn do_some_work(io: std.Io) !void {\n    std.debug.print(\"Starting the work.\\n\", .{});\n    try std.Io.sleep(io, duration, clock);\n    std.debug.print(\"Finishing the work.\\n\", .{});\n}\n\npub fn main(init: std.process.Init) !void {\n    const thread = try Thread.spawn(.{}, do_some_work, .{init.io});\n    thread.join();\n}",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#线程的归宿join-与-detach-二选一不可漏调",
+    "href": "Chapters/14-threads.html#线程的归宿join-与-detach-二选一不可漏调",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.4 线程的归宿：join() 与 detach() 二选一（不可漏调！）",
+    "text": "16.4 线程的归宿：join() 与 detach() 二选一（不可漏调！）\n新线程创建后，主线程对它必须给出明确的态度，必须在 join() 与 detach() 中严格二选一：\n\n16.4.1 姿势一：thread.join()（等待收工）\n调用 join() 会让当前主线程陷入阻塞等待，直到该子线程把活全干完退出为止，顺带安全回收线程分配的底层系统资源。\npub fn main() !void {\n    const thread = try Thread.spawn(.{}, do_some_work, .{});\n    thread.join(); // 主线程在此等子线程完事\n}\n\n\n16.4.2 姿势二：thread.detach()（放飞自流）\n如果你压根不在乎子线程啥时候完工，也不需要拿它的返回值，调用 detach() 把线程分离出去。分离后的线程成了“自由人”，跑完会自动向操作系统销毁释放，主线程扭头就走：\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nfn print_id(id: *const u8) !void {\n    std.debug.print(\"Thread ID: {d}\\n\", .{id.*});\n}\n\npub fn main() !void {\n    const id1: u8 = 1;\n    const thread1 = try Thread.spawn(.{}, print_id, .{&id1});\n    thread1.detach(); // 放飞它，主线程直接退出\n    std.debug.print(\"Finish main\\n\", .{});\n}\n\n避坑保命铁律：创建出来的线程，绝对不能既不 join 也不 detach！否则该线程会沦为游离在系统内核里的“僵尸句柄”，引发严重的操作系统句柄泄漏！",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#经典翻车现场数据竞争data-race",
+    "href": "Chapters/14-threads.html#经典翻车现场数据竞争data-race",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.5 经典翻车现场：数据竞争（Data Race）",
+    "text": "16.5 经典翻车现场：数据竞争（Data Race）\n来看一段典型的多线程翻车代码：两个线程同时对全局共享变量 counter 各自累加 10 万次，理论上最终结果应该是 200,000：\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nvar counter: usize = 0;\n\nfn increment() void {\n    for (0..100000) |_| {\n        counter += 1; // 两个线程无保护并发写同一个变量！\n    }\n}\n\npub fn main() !void {\n    const thr1 = try Thread.spawn(.{}, increment, .{});\n    const thr2 = try Thread.spawn(.{}, increment, .{});\n    thr1.join();\n    thr2.join();\n    std.debug.print(\"Couter value: {d}\\n\", .{counter});\n}\n跑出来的结果让人大跌眼镜：\nCouter value: 117254\n为什么严重缩水？ 因为在硬件 CPU 层面，counter += 1 根本不是一步到位的，而是拆解成了三个步骤： 1. 从内存把值读进 CPU 寄存器； 2. 寄存器做加 1 计算； 3. 把新值写回内存。\n当两个线程并发跑时，线程 B 经常在线程 A 还没写回内存之前就把老值读走了，导致两个线程的自增互相覆盖（撕裂），大量计数白白丢失！这片争抢写共享变量的代码区，在计算机理论中就叫临界区（Critical Section）。",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#互斥锁mutex排队保平安",
+    "href": "Chapters/14-threads.html#互斥锁mutex排队保平安",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.6 互斥锁（Mutex）：排队保平安",
+    "text": "16.6 互斥锁（Mutex）：排队保平安\n解决数据竞争的标配武器就是互斥锁（Mutex - Mutually Exclusive）。 它就像洗手间的门锁：同一时刻只允许一个人拿钥匙进门（lock）；其他人必须在门外老实排队；里面的人办完事开锁出来（unlock），排在队首的下一位才能进去。\n在 Zig 中使用 std.Io.Mutex（或 std.Thread.Mutex）保护临界区：\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nconst Mutex = std.Io.Mutex;\nconst State = Mutex.State;\nvar counter: usize = 0;\n\nfn increment(io: std.Io, mutex: *Mutex) !void {\n    for (0..100000) |_| {\n        try mutex.lock(io);   // 上锁\n        counter += 1;         // 安全独占临界区\n        mutex.unlock(io);     // 释放锁\n    }\n}\n\npub fn main(init: std.process.Init) !void {\n    var mutex: Mutex = .{\n        .state=std.atomic.Value(State).init(.unlocked)\n    };\n\n    const thr1 = try Thread.spawn(.{}, increment, .{init.io, &mutex});\n    const thr2 = try Thread.spawn(.{}, increment, .{init.io, &mutex});\n    thr1.join();\n    thr2.join();\n    std.debug.print(\"Couter value: {d}\\n\", .{counter});\n}\n加上锁之后，跑出来稳如泰山的 200000！",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#读写锁rwlock读共享写独占",
+    "href": "Chapters/14-threads.html#读写锁rwlock读共享写独占",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.7 读写锁（RwLock）：读共享、写独占",
+    "text": "16.7 读写锁（RwLock）：读共享、写独占\n如果一个资源大部分时间都在被几百个线程并发读取、极少被修改（比如在线配置缓存），互斥锁会把所有读请求也强制排成单线，性能大打折扣。\n这时候读写锁（std.Io.RwLock / std.Thread.RwLock）便派上用场： - 读锁（lockShared）：共享锁，允许多个读者同时并发读取； - 写锁（lock）：排他独占锁，一旦有人要写，所有读者和写者全部停步等待。\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nconst RwLock = std.Io.RwLock;\nconst duration = std.Io.Duration.fromSeconds(2);\nconst clock: std.Io.Clock = .awake;\nvar counter: u32 = 0;\n\nfn reader(io: std.Io, id: u32, lock: *RwLock) !void {\n    while (true) {\n        if (lock.tryLockShared(io)) {\n            std.debug.print(\"Thread {d}: {d}\\n\", .{id, counter});\n            _ = lock.unlockShared(io);\n            try std.Io.sleep(io, duration, clock);\n        }\n    }\n}\n\nfn writer(io: std.Io, lock: *RwLock) !void {\n    while (true) {\n        if (lock.tryLock(io)) {\n            counter += 1;\n            _ = lock.unlock(io);\n            try std.Io.sleep(io, duration, clock);\n        }\n    }\n}",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/14-threads.html#并发排坑与优雅退出graceful-shutdown",
+    "href": "Chapters/14-threads.html#并发排坑与优雅退出graceful-shutdown",
+    "title": "16  Zig 多线程与并发并行计算",
+    "section": "16.8 并发排坑与优雅退出（Graceful Shutdown）",
+    "text": "16.8 并发排坑与优雅退出（Graceful Shutdown）\n\n16.8.1 1. 死锁（Deadlock）\n当线程 1 拿着锁 A 等锁 B，而线程 2 拿着锁 B 等锁 A 时，双方都在死等对方松手，程序永久僵死。 避坑原则：在所有线程中，加锁顺序必须严格保持全局一致（永远先拿 A、再拿 B，绝不逆序）。\n\n\n16.8.2 2. 优雅停机：原子标志位控制\n在 C 语言里经常有人动用 pthread_kill 暴力强杀线程，这是极其危险的违规操作（会导致资源悬挂在半空）。 Zig 崇尚纯粹的优雅退出：用 std.atomic.Value(bool) 原子布尔变量充当停机旗标，工作线程每次循环自行检查状态，安全从容退出：\nconst std = @import(\"std\");\nconst Thread = std.Thread;\nconst clock: std.Io.Clock = .awake;\nconst duration = std.Io.Duration.fromSeconds(2);\nvar running = std.atomic.Value(bool).init(true);\nvar counter: u64 = 0;\n\nfn do_more_work(io: std.Io) !void {\n    try std.Io.sleep(io, duration, clock);\n}\n\nfn work(io: std.Io) !void {\n    while (running.load(.monotonic)) {\n        for (0..10000) |_| {\n            counter += 1;\n        }\n        if (counter &gt; 15000) {\n            std.debug.print(\"Time to cancel the thread.\\n\", .{});\n            running.store(false, .monotonic); // 触发通知优雅退出\n        } else {\n            std.debug.print(\"Time to do more work.\\n\", .{});\n            try do_more_work(io);\n        }\n    }\n}\n\npub fn main(init: std.process.Init) !void {\n    const thread = try Thread.spawn(.{}, work, .{init.io});\n    thread.join();\n}\n理清了内核线程模型、临界区保护与原子调度，你在多核硬件上写并发服务器或高吞吐引擎时就能稳操胜券！",
+    "crumbs": [
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Zig 多线程与并发并行计算</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/15-vectors.html",
+    "href": "Chapters/15-vectors.html",
+    "title": "17  向量类型与 SIMD 硬件级并行加速",
+    "section": "",
+    "text": "17.1 到底什么是 SIMD？\n``\n在这章中，咱们来聊聊 Zig 里的向量类型（Vectors）与 SIMD（单指令多数据流）加速。\n首先必须给 C++ 同学打一剂预防针：在 Zig 里，@Vector 绝不是 C++ 里充当动态数组的 std::vector！ Zig 里的动态数组叫 std.ArrayList（详见 Section 11.1）。这里的 @Vector，是直通 CPU 底层硬件向量寄存器、用于做 SIMD 密集计算的高性能向量类型！\nSIMD 是 Single Instruction, Multiple Data（单指令多数据流）的英文缩写。 在音视频解码、3D 渲染、物理引擎和 AI 大模型矩阵乘法中，到处都有它的身影。\n普通计算是标量（Scalar）模式：如果要给 4 组数字做加法，CPU 必须老老实实执行 4 次独立的加法指令（ADD），一条接一条跑； 而 SIMD 则是向量化并行模式：现代 CPU（Intel/AMD 的 AVX2/AVX-512、Apple/ARM 的 NEON）体内拥有专门的大位宽寄存器（128 位、256 位甚至 512 位）。一条 SIMD 机器指令，就能同时并排完成 4 个（甚至 16 个）数字的加法计算！\n如果说前一章的多线程是“找多个工人同时干活”，那 SIMD 就是“一个工人手里拿了一把能同时切 4 根胡萝卜的特制排刀”！\n在 Zig 中，当你在向量类型上使用普通操作符时，编译器会自动生成高度优化的底层 SIMD 硬件指令，默认做到全元素并行运算：",
+    "crumbs": [
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>向量类型与 SIMD 硬件级并行加速</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/15-vectors.html#到底什么是-simd",
+    "href": "Chapters/15-vectors.html#到底什么是-simd",
+    "title": "17  向量类型与 SIMD 硬件级并行加速",
+    "section": "",
+    "text": "算术运算：+、-、*、/、@divFloor()、@sqrt() 等；\n位运算：&gt;&gt;、&lt;&lt;、&、|、~；\n比较运算：&lt;、&gt;、==。",
+    "crumbs": [
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>向量类型与 SIMD 硬件级并行加速</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/15-vectors.html#sec-what-vectors",
+    "href": "Chapters/15-vectors.html#sec-what-vectors",
+    "title": "17  向量类型与 SIMD 硬件级并行加速",
+    "section": "17.2 向量类型的使用姿势",
+    "text": "17.2 向量类型的使用姿势\n在 Zig 里声明向量，使用内置函数 @Vector(len, PrimitiveType)： 第一个入参是向量包含的元素数量，第二个入参是元素的底层原生数据类型（如 u32、f32）。\n看下面这个极具美感的例子：两个向量直接用普通的加号 + 相加：\nconst v1 = @Vector(4, u32){4, 12, 37, 9};\nconst v2 = @Vector(4, u32){10, 22, 5, 12};\nconst v3 = v1 + v2; // 硬件单条指令同时完成 4 个元素的并行加法！\ntry stdout.print(\"{any}\\n\", .{v3});\ntry stdout.flush();\n这里压根不需要写 for 循环一个个累加，一条指令同时完成 4 组元素的并行运算，极其优雅！\n\n17.2.1 将普通数组转换为向量\n如果手头已经有一段常规的静态数组，可以通过隐式赋值或切片解引用将其一键升级为硬件向量：\nconst a1 = [4]u32{4, 12, 37, 9};\nconst v1: @Vector(4, u32) = a1;          // 整体转换\nconst v2: @Vector(2, u32) = a1[1..3].*; // 截取切片转为 2 元素向量\n_ = v1; _ = v2;\n注意：只有长度在编译期已知（Compile-time known）的数组或切片，才能被转换为向量。\n\n\n17.2.2 标量广播填充：@splat()\n如果你想创建一个所有元素数值都相同的向量，不需要手动敲一长串重复数字，直接调用内置的 @splat() 进行标量广播：\n// 一键生成填满 10 个 16 的向量\nconst v1: @Vector(10, u32) = @splat(16);\ntry stdout.print(\"{any}\\n\", .{v1});\ntry stdout.flush();\n\n\n17.2.3 避坑提示：切勿创建过大的超宽向量！\n向量在底层是紧密贴合 CPU 硬件寄存器物理规格的（通常为 128、256 或 512 位宽）。 它绝不是让你拿来当无限扩容的大容器用的。如果你手滑试图声明一个拥有上百万元素的超大向量（比如 @Vector(1000000, u32)），编译时大概率会直接把 LLVM 后端撑爆并导致崩溃：\n// 千万不要这么写！超大尺寸向量会导致编译崩溃！\nconst v1: @Vector(1000000, u32) = @splat(16);\n_ = v1;\nSegmentation fault (core dumped)\n记住：向量专注小步快跑的高密集计算，海量数据存储请老老实实找 std.ArrayList！",
+    "crumbs": [
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>向量类型与 SIMD 硬件级并行加速</span>"
+    ]
+  },
+  {
+    "objectID": "Chapters/references.html",
+    "href": "Chapters/references.html",
+    "title": "参考文献",
+    "section": "",
+    "text": "``\n\n\nChen, Jenny, and Ruohao Guo. 2022. “Stack and Heap Memory.”\nIntroduction to Data Structures and Algorithms with C++ (USA).\nhttps://courses.engr.illinois.edu/cs225/fa2022/resources/stack-heap/.\n\n\nKim, Juhee, Jinbum Park, Sihyeon Roh, et al. 2024. TikTag: Breaking\nARM’s Memory Tagging Extension with Speculative Execution. https://arxiv.org/abs/2406.08719.\n\n\nSobeston. 2024. Zig Guide. https://zig.guide/.\n\n\nZig Software Foundation. 2024a. In-Depth Overview. Zig Software\nFoundation. https://ziglang.org/learn/overview/.\n\n\nZig Software Foundation. 2024b. Language Reference. Zig\nSoftware Foundation. https://ziglang.org/documentation/master/.",
+    "crumbs": [
+      "参考文献"
+    ]
+  }
+]

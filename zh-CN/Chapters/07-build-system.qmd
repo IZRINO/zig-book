@@ -1,0 +1,366 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+
+# 构建系统（Build System） {#sec-build-system}
+
+在这一章中，咱们来聊聊 Zig 最让人直呼“真香”的王牌杀器——**原生构建系统（Build System）**，看看一个真正的中大型工程在 Zig 里是如何被构建出来的。
+
+以往在 C/C++ 领域，配一套跨平台构建环境有多折磨，老程序员们都深有体会：GNU Make、Autotools、CMake、Ninja... 各家工具层层嵌套，光是写 CMakeLists.txt 就能把人劝退。
+而 Zig 带来了一场革命：**它直接把构建系统做成了语言原生的一部分！**
+你不需要去学什么晦涩的 DSL 配置语法，直接用纯正的 Zig 语言本身来写构建脚本（`build.zig`），享受全套的编译期类型检查和 IDE 智能补全！
+
+想深入了解构建系统的朋友，还可以翻阅 Zig 官网的[《构建系统专题指南》](https://ziglang.org/learn/build-system/#user-provided-options)[^zig-art1]以及社区开发者 Felix 撰写的神级系列文章[^felix]。
+
+[^felix]: <https://zig.news/xq/zig-build-explained-part-1-59lf>。
+[^zig-art1]: <https://ziglang.org/learn/build-system/#user-provided-options>。
+
+此外，**跨平台交叉编译（Cross-compilation）**绝对是 Zig 的招牌绝活。以往在 C/C++ 甚至 Rust 里想在 Windows 上一键打出 Linux 或 macOS 的二进制，通常要配复杂的虚拟机或 Docker 交叉工具链；而在 Zig 里，仅凭单机一个干净的 `zig` 编译器，就能丝滑交叉编译到上百种目标操作系统和 CPU 架构！
+
+
+## 源码是如何被构建出来的？
+
+在底层编译型语言中，构建本质上就是让编译器将我们写的源码翻译为 CPU 机器指令。
+在 Zig 中，一个典型的编译构建流程包含这几个核心输入：
+
+- 包含源码的 Zig 模块（Modules）；
+- 外部依赖库文件（动态库 `.so`/`.dll` 或静态库 `.a`/`.lib`）；
+- 决定优化等级与平台目标的编译选项/参数。
+
+所有的构建调度规则，统一编写在项目根目录下的 **`build.zig`** 脚本里。
+
+这个构建脚本的核心是围绕**构建目标（Targets）**展开的。所谓 Target，就是你希望编译器最终交付给你的构建产物：
+
+1. **独立可执行程序（Executable）**（Windows 上的 `.exe`，Linux 上的 ELF 二进制）；
+2. **动态共享库（Shared Library）**（Linux 上的 `.so`，Windows 上的 `.dll`）；
+3. **静态库（Static Library）**（Linux 上的 `.a`，Windows 上的 `.lib`）；
+4. **单测可执行文件（Test Executable）**。
+
+
+## 认识唯一的构建主入口：`build()` 函数 {#sec-build-fun}
+
+每一个合法的 `build.zig` 脚本都必须且只能对外暴露一个顶层的公开函数：
+
+```zig
+pub fn build(b: *std.Build) void
+```
+
+它就像主程序里的 `pub fn main()` 一样，是整个工程构建生命周期的唯一指挥官！
+它接收一个指向 `std.Build` 对象的指针 `b`，我们通过调用 `b` 上的各种方法来组装构建流程图（DAG）。
+
+看一个最基础的最小构建脚本：
+
+```zig
+const std = @import("std");
+pub fn build(b: *std.Build) void {
+    const exe = b.addExecutable(.{
+        .name = "hello",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("hello.zig"),
+            .target = b.graph.host
+        })
+    });
+    b.installArtifact(exe);
+}
+```
+
+
+## 核心构建目标对象（Target Objects） {#sec-targets}
+
+通过 `std.Build` 指针 `b`，我们可以声明各种类型的产物：
+
+- `b.addExecutable(...)`：声明生成一个可执行文件；
+- `b.addSharedLibrary(...)`：声明生成一个动态链接库；
+- `b.addStaticLibrary(...)`：声明生成一个静态链接库；
+- `b.addTest(...)`：声明生成单测运行二进制。
+
+在参数配置中，有两个最关键的必填项：
+- **`name`**：生成产物的名称（通常设为你的工程名）；
+- **`root_module`**：定义模块配置。其中 `root_source_file` 指定该模块的入口文件（比如 `b.path("src/main.zig")`）。
+
+### 智能依赖树自动解析
+
+跟 CMake 必须手动把每一个 `.c`/`.cpp` 文件一个个苦哈哈地列在名单里不同，**Zig 拥有全自动依赖发现能力**！
+只要你给出了 `root_source_file` 入口，`zig` 编译器就会顺藤摸瓜，通过文件内部的所有 `@import` 语句自动把整个项目引用的全部模块一次性解析出完整的依赖拓扑图，既省心又绝不漏文件。
+
+### 极其关键的临门一脚：`b.installArtifact()`
+
+无数新手常犯的一个错误是：在脚本里调完 `b.addExecutable` 就以为万事大吉，结果执行 `zig build` 发现根目录下啥也没生成！
+
+请敲黑板牢记：**声明了产物之后，必须显式调用 `b.installArtifact(exe)`！**
+构建系统在编译完成后，默认会把中间产物放在临时缓存区；只有被 `installArtifact` 标记的最终产物，才会被拷贝并安装到根目录的 **`zig-out/`** 输出目录中！
+
+```zig
+const exe = b.addExecutable(.{
+    .name = "hello",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("hello.zig"),
+        .target = b.graph.host
+    })
+});
+
+b.installArtifact(exe); // 必须有这句！
+```
+
+
+## 掌控四大编译优化模式
+
+Zig 的构建模式不仅仅是区分“开发”和“上线”，而是围绕“极致性能”与“运行时安全”两个维度做出了非常考究的平衡，共有四大模式：
+
+1. **`Debug`（默认）**：
+   编译速度极快，保留全部调试符号，开启全部运行时安全检查（越界、溢出自动 panic），单测与日常开发标配；
+2. **`ReleaseSafe`**：
+   开启编译优化让代码跑得飞快，**但依然保留全部运行时边界安全检查**！金融、高安全、核心后台服务首选；
+3. **`ReleaseFast`**：
+   榨干硬件性能的极限模式！关闭部分运行时检查，全力压榨 CPU 指令集优化，游戏引擎、高频交易首选；
+4. **`ReleaseSmall`**：
+   追求最小二进制体积，极端裁剪符号表，嵌入式开发与物联网固件首选。
+
+在 `build.zig` 中配置构建模式：
+
+```zig
+const exe = b.addExecutable(.{
+    .name = "hello",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("hello.zig"),
+        .target = b.graph.host,
+        .optimize = .ReleaseSafe
+    })
+});
+b.installArtifact(exe);
+```
+
+
+## 声明构建版本号（语义化版本）
+
+可以通过 `version` 字段为产物打上标准的 SemVer 语义化版本号：
+
+```zig
+const exe = b.addExecutable(.{
+    .name = "hello",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("hello.zig"),
+        .target = b.graph.host
+    }),
+    .version = .{
+        .major = 2, .minor = 9, .patch = 7
+    }
+});
+b.installArtifact(exe);
+```
+
+
+## 在构建脚本中探测操作系统 {#sec-detect-os}
+
+根据不同操作系统走不同构建逻辑是日常刚需。在构建脚本里引入 `@import("builtin")`，就能随时探测当前的目标平台：
+
+```zig
+const builtin = @import("builtin");
+if (builtin.target.os.tag == .windows) {
+    // 只在目标是 Windows 时执行的特定构建逻辑
+}
+```
+
+
+## 为构建系统添加“一键运行”步骤（Run Step）
+
+Rust 开发者最喜欢 `cargo run` 那种“编译完立刻顺手跑起来”的体验。在 Zig 的构建脚本里，我们也只需要两三行代码就能配出一个 `zig build run` 指令！
+
+步骤：
+1. 用 `b.addRunArtifact(exe)` 为可执行产物创建一个“运行工件”；
+2. 用 `b.step("run", "Run the project")` 注册一个对外暴露的构建子命令名称；
+3. 声明依赖关系：`run_step.dependOn(&run_arti.step)`。
+
+```zig
+const exe = b.addExecutable(.{
+    .name = "hello",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("src/hello.zig"),
+        .target = b.graph.host
+    })
+});
+b.installArtifact(exe);
+
+const run_arti = b.addRunArtifact(exe);
+const run_step = b.step("run", "Run the project");
+run_step.dependOn(&run_arti.step);
+```
+
+敲下 `zig build --help`，你就能看到刚才注册的自定义指令：
+
+```bash
+zig build --help
+```
+
+```
+Steps:
+  ...
+  run   Run the project
+  ...
+```
+
+随后在终端敲一行：
+
+```bash
+zig build run
+```
+
+编译、链接、自动拉起运行一气呵成！
+
+
+## 集成单测构建步骤：`zig build tests`
+
+同样的套路，我们还可以把整个项目的单测打包成一条统一的 `zig build tests` 指令：
+
+```zig
+const test_exe = b.addTest(.{
+    .name = "unit_tests",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("src/main.zig"),
+        .target = b.graph.host
+    })
+});
+
+const run_test = b.addRunArtifact(test_exe);
+const test_step = b.step("tests", "Run unit tests");
+test_step.dependOn(&run_test.step);
+```
+
+团队成员拉下代码，直接敲 `zig build tests`，全工程所有模块的测试用例就会被批量扫过并执行。
+
+
+## 接收命令行自定义参数（User-provided Options）
+
+很多时候我们希望构建过程可以通过命令行参数动态定制（例如是否启用某套特性）：
+使用 `b.option(Type, name, description)` 即可！
+
+定义好的选项会自动成为 `zig build` 的 `-D<name>` 命令行参数：
+
+```zig
+const std = @import("std");
+pub fn build(b: *std.Build) void {
+    const use_zlib = b.option(
+        bool,
+        "use_zlib",
+        "Should link to zlib?"
+    ) orelse false;
+    const exe = b.addExecutable(.{
+        .name = "hello",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("example.zig"),
+            .target = b.graph.host
+        })
+    });
+    if (use_zlib) {
+        exe.root_module.linkSystemLibrary("zlib", .{});
+    }
+    b.installArtifact(exe);
+}
+```
+
+命令行调用姿势：
+
+```bash
+zig build -Duse_zlib=true
+```
+
+
+## 链接外部库（系统动态库与本地子模块）
+
+### 链接系统全局安装的库：`linkSystemLibrary`
+
+如果目标机器的系统里已经预装了某些 C/C++ 共享库（比如 `libpng`、`openssl`），直接用 `linkSystemLibrary`，Zig 底层会自动借助系统的 `pkg-config` 精准寻路：
+
+```zig
+const std = @import("std");
+pub fn build(b: *std.Build) void {
+    const exe = b.addExecutable(.{
+        .name = "image_filter",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = b.graph.host,
+            .link_libc = true,
+        })
+    });
+    exe.root_module.linkSystemLibrary("png", .{});
+    b.installArtifact(exe);
+}
+```
+
+### 链接项目内自带的本地源码库：`linkLibrary`
+
+如果是项目自研的或者放在子模块里的代码，我们可以用 `addStaticLibrary` 或 `addSharedLibrary` 声明子库，然后直接调 `exe.root_module.linkLibrary(sub_lib)` 将它们合体：
+
+```zig
+const dynamic_lib = b.addSharedLibrary(.{
+    .name = "c_api",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("src/c_api.zig"),
+        .target = b.graph.host
+    })
+});
+b.installArtifact(dynamic_lib);
+
+const app_exe = b.addExecutable(.{
+    .name = "my_app",
+    .root_module = b.createModule(.{
+        .root_source_file = b.path("src/main.zig"),
+        .target = b.graph.host
+    })
+});
+app_exe.root_module.linkLibrary(dynamic_lib);
+```
+
+
+## 降维打击：直接拿 Zig 构建纯 C 语言项目！ {#sec-building-c-code}
+
+Zig 最让 C 语言圈惊艳的一大能力在于：**`zig` 编译器体内直接内置了一个顶级的 Clang/C 编译器！**
+这意味着，你可以用 `build.zig` 把历史悠久、复杂的 C 语言大项目打包得服服帖帖！
+
+以世界上著名的纯 C 字体引擎 **FreeType** 为例，我们在 Zig 脚本里可以这样写：
+
+1. **声明静态库产物并开启 Libc 链接**：
+
+```zig
+const lib = b.addStaticLibrary(.{
+    .name = "freetype",
+    .root_module = b.createModule(.{
+        .target = b.graph.host,
+        .link_libc = true
+    })
+});
+```
+
+2. **配置 C 编译器参数与宏定义（Macros）**：
+
+```zig
+const c_flags = [_][]const u8{
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+};
+
+lib.root_module.addCMacro("FT_DISABLE_ZLIB", "TRUE");
+lib.root_module.addCMacro("FT_DISABLE_PNG", "TRUE");
+```
+
+3. **添加 C 源文件列表并挂载头文件包含路径**：
+
+```zig
+lib.root_module.addCSourceFiles({
+    .files = &[_][]const u8{
+        "src/autofit/autofit.c",
+        "src/base/ftbase.c",
+    },
+    .flags = &c_flags
+});
+
+lib.root_module.addIncludePath(.{ .path = "./include" });
+b.installArtifact(lib);
+```
+
+不需要装 GCC，不需要装 Clang，不需要伺候 Autotools。一个几兆大小的 `zig` 二进制，就能把 C 语言工程打包得整整齐齐。

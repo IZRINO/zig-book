@@ -1,0 +1,271 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# 指针与可选类型（Pointers and Optionals） {#sec-pointer}
+
+在紧接着的下一个实战项目中，咱们要手写一个属于自己的轻量 HTTP 服务器。
+不过在动手造服务器之前，有一门系统底层开发的硬功夫必须拿下——**指针（Pointers）与可选类型（Optionals）**。
+Zig 的指针继承了 C 指针的纯粹与极致性能，但在安全性上做出了脱胎换骨的升级。
+
+说白了，指针就是一个装了内存物理地址的对象。这个地址指向物理内存中某块具体的数据。
+
+看下面这个简单直观的例子：
+
+```zig
+const number: u8 = 5;
+const pointer = &number;
+_ = pointer;
+```
+
+在 Zig 里取对象地址用经典的取地址符 `&`。把 `number` 的地址取出来赋给 `pointer`，`pointer` 就成了一个指针。
+
+拿到指针后，怎么顺藤摸瓜拿到（或者修改）它指向的真实数据呢？这个动作叫做**解引用（Dereferencing）**。
+在 Zig 里，解引用的语法是在指针后面加 `.*`：
+
+```zig
+const number: u8 = 5;
+const pointer = &number;
+const doubled = 2 * pointer.*;
+std.debug.print("{d}\n", .{doubled});
+```
+
+这套 `.*` 语法非常舒服，因为它能极其自然地和方法调用链连在一起。还记得在 @sec-structs-and-oop 中写的 `User` 结构体和它的 `print_name()` 方法吗？
+拿到了指向某个用户的指针，直接 `pointer.*.print_name()` 即可流畅链式调用：
+
+```zig
+const u = User.init(1, "pedro", "email@gmail.com");
+const pointer = &u;
+try pointer.*.print_name();
+```
+
+```
+pedro
+```
+
+如果底层对象是可变的，我们也可以通过指针原地更新它的值：
+
+```zig
+var number: u8 = 5;
+const pointer = &number;
+pointer.* = 6;
+try stdout.print("{d}\n", .{number});
+try stdout.flush();
+```
+
+我们在开发中之所以如此青睐指针，核心目的是**避免昂贵的数据内存拷贝（Copy / Move）**。
+如果一个结构体体量很大，在函数调用或跨作用域传递时如果按值拷贝，CPU 得老老实实搬运大量字节；而如果传一个轻巧的指针过去，开销仅仅是传一个 8 字节的内存地址，性能差距立竿见影。
+
+
+## 常量对象 vs 变量对象下的指针规则 {#sec-pointer-var}
+
+指针可以指向常量，也可以指向变量。
+但请记住一条铁律：**指针必须绝对尊重被指向目标的原生可变性！**
+
+如果指针指向的是一个 `const` 常量对象，那你妄图通过指针修改它的值就是痴人说梦，编译器会当场翻脸报错：
+
+```zig
+const number = 5;
+const pointer = &number;
+pointer.* = 6;
+```
+
+```
+p.zig:6:12: error: cannot assign to constant
+    pointer.* = 6;
+```
+
+把 `number` 声明为 `var` 变量后，通过指针写值才能畅通无阻：
+
+```zig
+var number: u8 = 5;
+const pointer = &number;
+pointer.* = 6;
+try stdout.print("{d}\n", .{number});
+try stdout.flush();
+```
+
+在类型签名上区分得一清二楚：
+- 指向常量的指针，类型是 **`*const T`**（只读，无法通过它修改数据）；
+- 指向变量的指针，类型是 **`*T`**（可读可写）。
+
+### 厘清“指针本身可变”与“指向的数据可变”
+
+初学者经常容易把“指针自身”和“指针指向的值”搞混：
+- **数据不可变，但指针自身可变**：比如 `var p = &c1;`，随后 `p = &c2;`。指针里存的内存门牌号变了，但被指向的数据不能篡改：
+
+```zig
+const c1: u8 = 5;
+const c2: u8 = 6;
+var pointer = &c1;
+try stdout.print("{d}\n", .{pointer.*});
+pointer = &c2;
+try stdout.print("{d}\n", .{pointer.*});
+try stdout.flush();
+```
+
+```
+5
+6
+```
+
+一句话理清：
+- `const ptr: *T`：指针自身固定（不能换指向），但指向的数据可改；
+- `var ptr: *const T`：指针自身可以随时换指向，但指向的数据是只读的。
+
+
+## 指针分类：单项指针与多项指针
+
+在 Zig 规范中，主要有两种指针形态 [@zigdocs]：
+
+1. **单项指针（Single-item pointer，`*T`）**：明确只指向一个独立的对象。日常写业务绝大多数都是它。
+2. **多项指针（Many-item pointer，`[*]T`）**：星号放在方括号里，指向一块未知长度的连续内存首地址，允许做 C 语言风格的指针算术运算。
+
+
+## 指针算术运算（Pointer Arithmetic）
+
+在 Zig 里，多项指针支持经典的指针算术加减：
+
+```zig
+const ar = [_]i32{ 1, 2, 3, 4 };
+var ptr: [*]const i32 = &ar;
+try stdout.print("{d}\n", .{ptr[0]});
+ptr += 1;
+try stdout.print("{d}\n", .{ptr[0]});
+ptr += 1;
+try stdout.print("{d}\n", .{ptr[0]});
+try stdout.flush();
+```
+
+```
+1
+2
+3
+```
+
+不过必须提醒的是：在纯正的 Zig 开发中，**官方强烈建议优先使用切片（Slice）而不是裸的多项指针**！
+因为切片自带长度信息，能享受编译期和运行时的防越界安全保护，完全不需要靠肉眼算指针偏移。
+
+```zig
+const ar = [_]i32{1,2,3,4};
+const sl = ar[0..ar.len];
+_ = sl;
+```
+
+
+## 可选类型（Optionals）与告别“十亿美元错误”
+
+写过 C 语言的朋友都知道，最恶心、最难排查的 Bug 往往是**空指针异常（Null Pointer Dereference）**。由于 C 里任何指针都可能偷偷是 `NULL`，开发者不得不精神紧张地到处写防御性判空代码。
+
+**而在 Zig 里，所有普通对象和指针默认全部是非空的（Non-nullable）！**
+你不需要也不可能在普通类型里藏一个 `null`。如果你敢给普通类型塞 `null`，编译器当场教做人：
+
+```zig
+var number: u8 = 5;
+number = null;
+```
+```
+p5.zig:5:14: error: expected type 'u8',
+        found '@TypeOf(null)'
+    number = null;
+             ^~~~
+```
+
+普通指针也是同样的规则：**在 Zig 里，普通的 `*T` 指针绝对不可能为 null**！你可以彻底丢掉心智包袱，闭着眼睛安全解引用。
+
+
+### 显式标记可能为空：可选类型 `?T`
+
+但在实际业务中，我们难免会遇到“某个值可能存在、也可能不存在（为空）”的合理需求。
+这时候就要用到**可选类型（Optionals）**。
+
+在任何类型前面加一个问号 `?`，就能把它升级为可选类型：
+
+```zig
+var num: ?i32 = 5;
+num = null; // 合法！因为它是可选类型
+```
+
+### 可选指针（Optional Pointers）
+
+同理，如果你需要一个在特殊情况下可以为 null 的指针，类型前面同样加问号 `?*T`：
+
+```zig
+var num: i32 = 5;
+var ptr: ?*i32 = &num;
+ptr = null; // 合法！
+num = 6;
+```
+
+细看对比：
+- **`?*i32`**：可选指针（指针本身可能是 null，如果不为 null 则指向一个实在的 `i32`）；
+- **`*?i32`**：指向可选值的指针（指针本身绝对不为 null，但它指向的那个槽位里装的可能是 null）。
+
+```zig
+var num: ?i32 = 5;
+// 此时 ptr 类型是 *?i32
+const ptr = &num;
+_ = ptr;
+```
+
+
+### 优雅处理 null 的三大法宝 {#sec-null-handling}
+
+既然一个变量被标成了 `?T`，那你在读取它之前，Zig 就会逼着你必须对 `null` 可能性进行显式处理。主要有以下三种姿势：
+
+#### 姿势一：`if` 模式匹配解包
+
+如果非空就顺势拆包，在竖线 `|val|` 里拿到的就是绝对安全的非空变量：
+
+```zig
+const num: ?i32 = 5;
+if (num) |not_null_num| {
+    try stdout.print("{d}\n", .{not_null_num});
+    try stdout.flush();
+}
+```
+
+#### 姿势二：`orelse` 兜底表达式（最常用！）
+
+`orelse` 就像二元操作符：左边是非空就用左边，如果是 null 就自动回落到右边的默认值，写起来一气呵成：
+
+```zig
+const x: ?i32 = null;
+const dbl = (x orelse 15) * 2;
+try stdout.print("{d}\n", .{dbl});
+try stdout.flush();
+```
+
+#### 姿势三：`opt.?` 强拆包（断言非空）
+
+如果你在逻辑上 100% 确定它此时绝不可能是 null，可以用 `.?` 强行拆包。
+但请切记：一旦猜错撞上了 null，程序会在运行时直接触发 panic 崩溃报错：
+
+```zig
+const std = @import("std");
+fn return_null(n: i32) ?i32 {
+    if (n == 5) return null;
+    return n;
+}
+
+pub fn main(init: std.process.Init) !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);
+    const stdout = &stdout_writer.interface;
+    const y: ?i32 = return_null(5);
+    try stdout.print("{d}\n", .{y.?});
+    try stdout.flush();
+}
+```
+
+```
+thread 12767 panic: attempt to use null value
+p7.zig:12:34: 0x103419d in main (p7):
+    try stdout.print("{d}\n", .{y.?});
+                                 ^
+```
+
+掌握了指针和 `?` 可选类型，接下来迎接咱们的，就是高并发、高吞吐的实战项目——手写 HTTP 服务器！

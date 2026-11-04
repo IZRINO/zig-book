@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; 控制流、结构体、模块与类型系统 – Zig 语言入门</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Chapters/01-memory.html" rel="next">
+<link href="../Chapters/01-zig-weird.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-5de16f5e46225c21e2daa90d340bf64f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-3218d7d29a29f08bc4fdf3802c3e3ca5.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-5de16f5e46225c21e2daa90d340bf64f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-f0ec3cdcb2135e02ab8a6b3c461c3b20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e638886a13cc8c7aea73962d26d2f25b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-f0ec3cdcb2135e02ab8a6b3c461c3b20.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6CHJXK4CEV"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          toggle.setAttribute("aria-checked", alternate ? "true" : "false");
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455).
+    // Not run on load: stylesheets are set before first paint there, and
+    // scrolling would undo the scroll to a URL fragment (#14973).
+    // The one pixel nudge keeps the reader where they were.
+    const refreshSafariScrollbar = () => {
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        const scrollY = window.scrollY;
+        window.scrollTo(0, scrollY > 0 ? scrollY - 1 : 1);
+        setTimeout(() => {
+          window.scrollTo(0, scrollY);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      refreshSafariScrollbar();
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zig 语言入门</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-language" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-globe" role="img">
+</i> 
+ <span class="menu-text">语言 / Language</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-language">    
+        <li>
+    <a class="dropdown-item" href="../index.html">
+ <span class="dropdown-text">简体中文</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Chapters/03-structs.html">
+ <span class="dropdown-text">English</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <button type="button" role="switch" aria-checked="false" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode" aria-label="Toggle dark mode"><i class="bi"></i></button>
+</div>
+            <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/03-structs.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">控制流、结构体、模块与类型系统</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
+        <div class="sidebar-tools-main">
+    <a href="../../Chapters/03-structs.html" title="English" class="quarto-navigation-tool px-1" aria-label="English"><i class="bi bi-globe"></i> <span style="font-size: 0.85rem; font-weight: 500;">English</span></a>
+</div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">欢迎阅读</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-zig-weird.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">初识 Zig</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/03-structs.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">控制流、结构体、模块与类型系统</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">内存与分配器（Allocators）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/01-base64.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">实战项目 1：手写 Base64 编解码器</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/02-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">调试 Zig 应用程序</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/05-pointers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">指针与可选类型（Pointers and Optionals）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/04-http-server.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">实战项目 2：从零手写 HTTP 服务器</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/03-unittests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">单元测试（Unit Tests）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/07-build-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">构建系统（Build System）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/09-error-handling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/09-data-structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/10-stack-project.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">实战项目 3：手写泛型栈数据结构</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/14-zig-c-interop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Zig 与 C 语言的无缝互操作（C Interoperability）</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/13-image-filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/15-vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Chapters/references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">参考文献</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-zig-control-flow" id="toc-sec-zig-control-flow" class="nav-link active" data-scroll-target="#sec-zig-control-flow"><span class="header-section-number">2.1</span> 控制流（Control Flow）</a>
+  <ul class="collapse">
+  <li><a href="#if-else-条件分支" id="toc-if-else-条件分支" class="nav-link" data-scroll-target="#if-else-条件分支"><span class="header-section-number">2.1.1</span> if / else 条件分支</a></li>
+  <li><a href="#sec-switch" id="toc-sec-switch" class="nav-link" data-scroll-target="#sec-switch"><span class="header-section-number">2.1.2</span> switch 分支匹配</a></li>
+  <li><a href="#sec-defer" id="toc-sec-defer" class="nav-link" data-scroll-target="#sec-defer"><span class="header-section-number">2.1.3</span> 资源清理神器：<code>defer</code></a></li>
+  <li><a href="#sec-errdefer1" id="toc-sec-errdefer1" class="nav-link" data-scroll-target="#sec-errdefer1"><span class="header-section-number">2.1.4</span> 报错才触发的容错清理：<code>errdefer</code></a></li>
+  <li><a href="#for-循环迭代" id="toc-for-循环迭代" class="nav-link" data-scroll-target="#for-循环迭代"><span class="header-section-number">2.1.5</span> for 循环迭代</a></li>
+  <li><a href="#while-循环与自增表达式" id="toc-while-循环与自增表达式" class="nav-link" data-scroll-target="#while-循环与自增表达式"><span class="header-section-number">2.1.6</span> while 循环与自增表达式</a></li>
+  <li><a href="#掌控节奏break-与-continue" id="toc-掌控节奏break-与-continue" class="nav-link" data-scroll-target="#掌控节奏break-与-continue"><span class="header-section-number">2.1.7</span> 掌控节奏：<code>break</code> 与 <code>continue</code></a></li>
+  </ul></li>
+  <li><a href="#sec-fun-pars" id="toc-sec-fun-pars" class="nav-link" data-scroll-target="#sec-fun-pars"><span class="header-section-number">2.2</span> 函数入参是不可变的！</a>
+  <ul class="collapse">
+  <li><a href="#白嫖的编译器极致优化" id="toc-白嫖的编译器极致优化" class="nav-link" data-scroll-target="#白嫖的编译器极致优化"><span class="header-section-number">2.2.1</span> 白嫖的编译器极致优化</a></li>
+  <li><a href="#确实想改入参传指针" id="toc-确实想改入参传指针" class="nav-link" data-scroll-target="#确实想改入参传指针"><span class="header-section-number">2.2.2</span> 确实想改入参？传指针！</a></li>
+  </ul></li>
+  <li><a href="#sec-structs-and-oop" id="toc-sec-structs-and-oop" class="nav-link" data-scroll-target="#sec-structs-and-oop"><span class="header-section-number">2.3</span> 结构体与面向对象（Structs and OOP）</a>
+  <ul class="collapse">
+  <li><a href="#sec-pub-keyword" id="toc-sec-pub-keyword" class="nav-link" data-scroll-target="#sec-pub-keyword"><span class="header-section-number">2.3.1</span> 跨模块可见性：<code>pub</code> 关键字</a></li>
+  <li><a href="#sec-anonymous-struct-literals" id="toc-sec-anonymous-struct-literals" class="nav-link" data-scroll-target="#sec-anonymous-struct-literals"><span class="header-section-number">2.3.2</span> 匿名结构体字面量（Anonymous Struct Literals）</a></li>
+  <li><a href="#结构体类型必须是常量const" id="toc-结构体类型必须是常量const" class="nav-link" data-scroll-target="#结构体类型必须是常量const"><span class="header-section-number">2.3.3</span> 结构体类型必须是常量（const）</a></li>
+  <li><a href="#sec-self-arg" id="toc-sec-self-arg" class="nav-link" data-scroll-target="#sec-self-arg"><span class="header-section-number">2.3.4</span> 结构体方法的 <code>self</code> 参数</a></li>
+  <li><a href="#结构体内部状态变更self-vs-self" id="toc-结构体内部状态变更self-vs-self" class="nav-link" data-scroll-target="#结构体内部状态变更self-vs-self"><span class="header-section-number">2.3.5</span> 结构体内部状态变更：<code>*Self</code> vs <code>Self</code></a></li>
+  </ul></li>
+  <li><a href="#sec-type-inference" id="toc-sec-type-inference" class="nav-link" data-scroll-target="#sec-type-inference"><span class="header-section-number">2.4</span> 类型推断（Type Inference）</a></li>
+  <li><a href="#sec-type-cast" id="toc-sec-type-cast" class="nav-link" data-scroll-target="#sec-type-cast"><span class="header-section-number">2.5</span> 类型转换（Type Casting）</a>
+  <ul class="collapse">
+  <li><a href="#显式安全强转as" id="toc-显式安全强转as" class="nav-link" data-scroll-target="#显式安全强转as"><span class="header-section-number">2.5.1</span> 显式安全强转：<code>@as()</code></a></li>
+  <li><a href="#整型与浮点互转floatfromint-与-intfromfloat" id="toc-整型与浮点互转floatfromint-与-intfromfloat" class="nav-link" data-scroll-target="#整型与浮点互转floatfromint-与-intfromfloat"><span class="header-section-number">2.5.2</span> 整型与浮点互转：<code>@floatFromInt</code> 与 <code>@intFromFloat</code></a></li>
+  <li><a href="#指针强转ptrcast" id="toc-指针强转ptrcast" class="nav-link" data-scroll-target="#指针强转ptrcast"><span class="header-section-number">2.5.3</span> 指针强转：<code>@ptrCast</code></a></li>
+  </ul></li>
+  <li><a href="#模块的本质就是结构体" id="toc-模块的本质就是结构体" class="nav-link" data-scroll-target="#模块的本质就是结构体"><span class="header-section-number">2.6</span> 模块的本质就是结构体</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">控制流、结构体、模块与类型系统</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>``</p>
+<p>在上一章里，我们盘点了 Zig 的很多语法特性，尤其是在 <a href="01-zig-weird.html#sec-root-file" class="quarto-xref"><span>Section 1.2.2</span></a> 和 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中解析了项目的基础骨架。 但要应付日常开发，我们还有几个重量级的核心机制必须吃透。</p>
+<p>在本章中，我们将从日常写业务最常用的<strong>控制流语句</strong>（如各种循环、条件分支等）讲起； 接着聊聊 Zig 里的<strong>结构体（Struct）</strong>，以及如何在 Zig 里用结构体优雅实现面向对象（OOP）模式； 随后我们会深入类型系统的<strong>类型推断</strong>与<strong>类型转换（Type Casting）</strong>； 最后，我们会揭开 Zig 模块（Module）的神秘面纱——看看为什么在 Zig 里“模块本质上就是一个大结构体”。</p>
+<section id="sec-zig-control-flow" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="sec-zig-control-flow"><span class="header-section-number">2.1</span> 控制流（Control Flow）</h2>
+<p>写程序本质上就是做逻辑决断：要么满足某种条件就走这段逻辑，要么对一批数据做循环迭代。 在计算机科学中，“控制流”指的就是程序指令的执行顺序。而能够改变执行顺序的语法骨架，我们就叫它控制流语句。</p>
+<p>大家最熟悉的控制流包括 <code>if/else</code>、<code>switch</code>、各种 <code>loop</code> 循环，以及随时用来跳出或继续的 <code>break</code> 和 <code>continue</code>。</p>
+<section id="if-else-条件分支" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="if-else-条件分支"><span class="header-section-number">2.1.1</span> if / else 条件分支</h3>
+<p>条件分支允许我们根据布尔表达式的真假，决定执行哪一段代码块。 在 Zig 里写 <code>if/else</code> 非常直观，跟大多数 C 族语言一脉相承：<code>if</code> 后面跟带括号的布尔表达式，大括号内是命中 <code>true</code> 时执行的逻辑；可选的 <code>else</code> 块则在表达式为 <code>false</code> 时兜底。</p>
+<p>来看个简单的例子：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> x <span class="op">=</span> <span class="dv">5</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="op">&gt;</span> <span class="dv">10</span>) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"x &gt; 10!</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"x &lt;= 10!</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="sec-switch" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="sec-switch"><span class="header-section-number">2.1.2</span> switch 分支匹配</h3>
+<p>Zig 也提供了非常强大的 <code>switch</code> 语句，整体风格和 Rust 的模式匹配颇为神似。 用法是用 <code>switch (value) { ... }</code> 包住需要做分支判断的值，在大括号里罗列各个匹配分支。</p>
+<p>看下面这个例子：我们定义了一个叫 <code>Role</code> 的枚举（关于枚举的细节详见 <a href="04-http-server.html#sec-enum" class="quarto-xref"><span>Section 7.6</span></a>），列举了一家假想公司里的各路技术与业务岗位（如软件工程师 <code>SE</code>、数据工程师 <code>DE</code>、产品经理 <code>PM</code> 等）。</p>
+<p>在 <code>switch</code> 中，我们用到了 Zig 的类型推断（分支名前面的小圆点 <code>.</code>，详见 <a href="#sec-type-inference" class="quarto-xref"><span>Section 2.4</span></a>），这样编译器就能自动推导出来自 <code>Role</code> 的具体分支。 同时，多个匹配项可以用逗号合并到同一个分支中（比如 <code>.DE, .DA =&gt; ...</code>）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Role <span class="op">=</span> <span class="kw">enum</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    SE<span class="op">,</span> DPE<span class="op">,</span> DE<span class="op">,</span> DA<span class="op">,</span> PM<span class="op">,</span> PO<span class="op">,</span> KS</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_writer <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>File<span class="op">.</span>stdout()<span class="op">.</span>writer(init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>stdout_buffer);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stdout <span class="op">=</span> <span class="op">&amp;</span>stdout_writer<span class="op">.</span>interface;</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> area<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> role <span class="op">=</span> Role<span class="op">.</span>SE;</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> (role) {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>PM<span class="op">,</span> <span class="op">.</span>SE<span class="op">,</span> <span class="op">.</span>DPE<span class="op">,</span> <span class="op">.</span>PO <span class="op">=&gt;</span> {</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            area <span class="op">=</span> <span class="st">"Platform"</span>;</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        }<span class="op">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>DE<span class="op">,</span> <span class="op">.</span>DA <span class="op">=&gt;</span> {</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            area <span class="op">=</span> <span class="st">"Data &amp; Analytics"</span>;</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        }<span class="op">,</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>KS <span class="op">=&gt;</span> {</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            area <span class="op">=</span> <span class="st">"Sales"</span>;</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        }<span class="op">,</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{area});</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="switch-必须穷尽所有可能exhaustive" class="level4" data-number="2.1.2.1">
+<h4 data-number="2.1.2.1" class="anchored" data-anchor-id="switch-必须穷尽所有可能exhaustive"><span class="header-section-number">2.1.2.1</span> switch 必须穷尽所有可能（Exhaustive）</h4>
+<p>这里有一个非常硬核的设计约束：<strong>在 Zig 里，<code>switch</code> 语句必须穷尽（Exhaust）目标类型的所有可能取值！</strong></p>
+<p>在上面的例子中，<code>role</code> 变量属于 <code>Role</code> 枚举类型，它一共只有 7 种可能取值。你在 <code>switch</code> 里就必须保证这 7 种情况都被明确覆盖，一个都不能漏。 如果你少写了一个分支，编译器会立刻撂挑子报错，绝不允许留下任何未被显式处理的漏网之鱼。这和 Rust 的 match 机制如出一辙，最大程度规避了逻辑死角。</p>
+</section>
+<section id="兜底分支-else" class="level4" data-number="2.1.2.2">
+<h4 data-number="2.1.2.2" class="anchored" data-anchor-id="兜底分支-else"><span class="header-section-number">2.1.2.2</span> 兜底分支 else</h4>
+<p>如果取值范围太大（比如整数或字符），不可能手动把每一个值都列出来，这时候就可以祭出 <code>else</code> 兜底分支。</p>
+<p>看看 Zig 标准库 <a href="https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig"><code>debug.zig</code> 模块</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 中的这个真实切片：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> dump_hex_fallible(bytes<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 省略部分代码...</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> (byte) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span> <span class="op">=&gt;</span> <span class="cf">try</span> writer<span class="op">.</span>writeAll(<span class="st">"␊"</span>)<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="ch">'</span><span class="sc">\r</span><span class="ch">'</span> <span class="op">=&gt;</span> <span class="cf">try</span> writer<span class="op">.</span>writeAll(<span class="st">"␍"</span>)<span class="op">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="ch">'</span><span class="sc">\t</span><span class="ch">'</span> <span class="op">=&gt;</span> <span class="cf">try</span> writer<span class="op">.</span>writeAll(<span class="st">"␉"</span>)<span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="op">=&gt;</span> <span class="cf">try</span> writer<span class="op">.</span>writeByte(<span class="ch">'.'</span>)<span class="op">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在实际业务中，<code>else</code> 分支也常被用来处理“不支持的非法状态”，直接抛错或者触发 <code>@panic()</code> 熔断：</p>
+<p>另外请注意：<strong>Zig 的 <code>switch</code> 是一个表达式（Expression）</strong>！这意味着分支执行的结果可以直接赋给一个新对象：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> level<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">4</span>;</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> category <span class="op">=</span> <span class="cf">switch</span> (level) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span> <span class="op">=&gt;</span> <span class="st">"beginner"</span><span class="op">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">=&gt;</span> <span class="st">"professional"</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">=&gt;</span> {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">@panic</span>(<span class="st">"Not supported level!"</span>);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{category});</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>thread 13103 panic: Not supported level!
+t.zig:9:13: 0x1033c58 in main (switch2)
+            @panic("Not supported level!");
+            ^</code></pre>
+</section>
+<section id="在-switch-中支持范围表达式" class="level4" data-number="2.1.2.3">
+<h4 data-number="2.1.2.3" class="anchored" data-anchor-id="在-switch-中支持范围表达式"><span class="header-section-number">2.1.2.3</span> 在 switch 中支持范围表达式</h4>
+<p>Zig 的 <code>switch</code> 还支持用 <code>...</code> 操作符定义闭区间范围（两端均包含）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> level<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">4</span>;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> category <span class="op">=</span> <span class="cf">switch</span> (level) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span><span class="op">...</span><span class="dv">25</span> <span class="op">=&gt;</span> <span class="st">"beginner"</span><span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">26</span><span class="op">...</span><span class="dv">75</span> <span class="op">=&gt;</span> <span class="st">"intermediary"</span><span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">76</span><span class="op">...</span><span class="dv">100</span> <span class="op">=&gt;</span> <span class="st">"professional"</span><span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">=&gt;</span> {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">@panic</span>(<span class="st">"Not supported level!"</span>);</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{category});</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>字符匹配也同样好使，比如 <code>'a'...'z'</code> 就能瞬间匹配所有小写英文字母。</p>
+</section>
+<section id="带标签的-switch类似-c-语言-goto" class="level4" data-number="2.1.2.4">
+<h4 data-number="2.1.2.4" class="anchored" data-anchor-id="带标签的-switch类似-c-语言-goto"><span class="header-section-number">2.1.2.4</span> 带标签的 switch（类似 C 语言 goto）</h4>
+<p>从 Zig 0.14.0 开始，<code>switch</code> 语句也支持打标签了！结合 <code>continue :label value;</code>，你可以实现类似状态机或高级跳转的流转逻辑：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>xsw<span class="op">:</span> <span class="cf">switch</span> (<span class="bu">@as</span>(<span class="dt">u8</span><span class="op">,</span> <span class="dv">1</span>)) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">=&gt;</span> {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"First branch</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span> <span class="op">:</span>xsw <span class="dv">2</span>;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">=&gt;</span> <span class="cf">continue</span> <span class="op">:</span>xsw <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">=&gt;</span> <span class="cf">return</span><span class="op">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4</span> <span class="op">=&gt;</span> {}<span class="op">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="op">=&gt;</span> {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> stdout<span class="op">.</span>print(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Unmatched case, value: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{<span class="bu">@as</span>(<span class="dt">u8</span><span class="op">,</span> <span class="dv">1</span>)}</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        );</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="sec-defer" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="sec-defer"><span class="header-section-number">2.1.3</span> 资源清理神器：<code>defer</code></h3>
+<p>在 Zig 的控制流与内存管理中，<code>defer</code> 拥有举足轻重的地位。 简单一句话概括：<strong><code>defer</code> 允许你登记一条表达式，让它在退出当前作用域时自动执行。</strong></p>
+<p>Go 语言开发者可能马上会想到 Go 里的 <code>defer</code>。 但请务必注意区别：<strong>Go 的 <code>defer</code> 是在当前“函数退出”时执行，而 Zig 的 <code>defer</code> 是在当前“作用域退出”时执行！</strong> 一个函数内部可以有循环、<code>if</code> 块等很多子作用域，一旦跳出该大括号，挂在里面的 <code>defer</code> 就会立刻触发，心智模型更紧凑、资源回收也更及时。</p>
+<p>看个最直观的例子：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> std<span class="op">.</span>debug<span class="op">.</span>print(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Exiting function ...</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Adding some numbers ...</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> x <span class="op">=</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span>; _ <span class="op">=</span> x;</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Multiplying ...</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> y <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">8</span>; _ <span class="op">=</span> y;</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Adding some numbers ...
+Multiplying ...
+Exiting function ...</code></pre>
+<p>需要指出的是：<code>defer</code> 属于<strong>无条件延迟（Unconditional defer）</strong>。 不管你是正常 return 退出、遇到报错提前甩锅退出、还是被 break 跳出，只要出了这个花括号作用域，<code>defer</code> 登记的动作就必定执行，雷打不动。</p>
+</section>
+<section id="sec-errdefer1" class="level3" data-number="2.1.4">
+<h3 data-number="2.1.4" class="anchored" data-anchor-id="sec-errdefer1"><span class="header-section-number">2.1.4</span> 报错才触发的容错清理：<code>errdefer</code></h3>
+<p>有了无条件的 <code>defer</code>，Zig 还贴心准备了它的同胞兄弟——<code>errdefer</code>。 <code>errdefer</code> 是<strong>有条件的延迟执行（Conditional defer）</strong>：<strong>它登记的表达式，只有在当前作用域因发生错误而提前退出时才会执行！</strong> 如果整个流程顺顺当当跑完退出，<code>errdefer</code> 里的内容就像空气一样，完全不会被调用。</p>
+<p>这在系统底层开发中简直是神技！比如你向系统连续申请了 3 块内存或打开了 3 个资源句柄，当第 3 个操作报错失败时，你必须把前面已经申请成功的 2 个半成品资源及时释放掉。用 <code>errdefer</code> 就能写出极其清爽的异常回滚逻辑（我们会在 <a href="09-error-handling.html#sec-errdefer2" class="quarto-xref"><span>Section 10.2.4</span></a> 做更多实战演示）。</p>
+<p>另外还要记住一个关键执行顺序规则：<strong>多个 <code>defer</code> / <code>errdefer</code> 是按后进先出（LIFO）的倒序执行的！</strong>（即写在后面的先执行，写在前面的后执行）。</p>
+<p>看下面这段代码验证：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> foo() <span class="op">!</span><span class="dt">void</span> { <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>FooError; }</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> i<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">1</span>;</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">errdefer</span> std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Value of i: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> i <span class="op">=</span> <span class="dv">2</span>;</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> foo();</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Value of i: 2
+error: FooError
+/t.zig:6:5: 0x1037e48 in foo (defer)
+    return error.FooError;
+    ^</code></pre>
+<p>因为 <code>defer i = 2;</code> 写在后面，所以在报错退出时它先执行，把 <code>i</code> 改成了 2；随后前面的 <code>errdefer</code> 打印出的就是 2。 如果调换两行顺序：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> foo() <span class="op">!</span><span class="dt">void</span> { <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>FooError; }</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> i<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">1</span>;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> i <span class="op">=</span> <span class="dv">2</span>;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">errdefer</span> std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Value of i: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> foo();</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Value of i: 1
+error: FooError
+/t.zig:6:5: 0x1037e48 in foo (defer)
+    return error.FooError;
+    ^</code></pre>
+</section>
+<section id="for-循环迭代" class="level3" data-number="2.1.5">
+<h3 data-number="2.1.5" class="anchored" data-anchor-id="for-循环迭代"><span class="header-section-number">2.1.5</span> for 循环迭代</h3>
+<p>日常处理数组或切片，<code>for</code> 循环是绝对的主力。 Zig 的 <code>for</code> 语法有自己的独特审美：用括号包住要迭代的集合，后面用一对竖线 <code>|val|</code> 声明接收每个元素的迭代器变量：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (items) <span class="op">|</span>value<span class="op">|</span> {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 循环体代码</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>看个遍历数组打印 ASCII 码的例子：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> name <span class="op">=</span> [_]<span class="dt">u8</span>{<span class="ch">'P'</span><span class="op">,</span><span class="ch">'e'</span><span class="op">,</span><span class="ch">'d'</span><span class="op">,</span><span class="ch">'r'</span><span class="op">,</span><span class="ch">'o'</span>};</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (name) <span class="op">|</span>char<span class="op">|</span> {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d} | "</span><span class="op">,</span> <span class="op">.</span>{char});</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>如果遍历时既想要元素值，又想要当前下标索引怎么办？ 非常优雅！Zig 允许在 <code>for</code> 括号里传入第二个范围序列 <code>0..</code>，并在竖线里同时捕获值与下标：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> name <span class="op">=</span> <span class="st">"Pedro"</span>;</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (name<span class="op">,</span> <span class="dv">0</span><span class="op">..</span>) <span class="op">|</span>_<span class="op">,</span> i<span class="op">|</span> {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d} | "</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>0 | 1 | 2 | 3 | 4 |</code></pre>
+<p>注意上面我们用 <code>_</code> 显式丢弃了字符值，只留下了自增索引 <code>i</code>，避免触发闲置变量编译报错。</p>
+</section>
+<section id="while-循环与自增表达式" class="level3" data-number="2.1.6">
+<h3 data-number="2.1.6" class="anchored" data-anchor-id="while-循环与自增表达式"><span class="header-section-number">2.1.6</span> while 循环与自增表达式</h3>
+<p><code>while</code> 负责按条件循环，只要括号里的布尔表达式为 <code>true</code> 就一直跑：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> i<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">1</span>;</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (i <span class="op">&lt;</span> <span class="dv">5</span>) {</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d} | "</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    i <span class="op">+=</span> <span class="dv">1</span>;</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Zig 还支持在 <code>while</code> 头部通过冒号 <code>: (expr)</code> 绑定自增步进逻辑，写起来非常紧凑：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> i<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">1</span>;</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (i <span class="op">&lt;</span> <span class="dv">5</span>) <span class="op">:</span> (i <span class="op">+=</span> <span class="dv">1</span>) {</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d} | "</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="掌控节奏break-与-continue" class="level3" data-number="2.1.7">
+<h3 data-number="2.1.7" class="anchored" data-anchor-id="掌控节奏break-与-continue"><span class="header-section-number">2.1.7</span> 掌控节奏：<code>break</code> 与 <code>continue</code></h3>
+<p>想中途跳出循环用 <code>break</code>，想跳过当前轮次直奔下一轮用 <code>continue</code>。</p>
+<p>看这个用 <code>break</code> 终止无限循环的例子：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> i<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (<span class="cn">true</span>) {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">==</span> <span class="dv">10</span>) {</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span>;</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    i <span class="op">+=</span> <span class="dv">1</span>;</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> std<span class="op">.</span>testing<span class="op">.</span>expect(i <span class="op">==</span> <span class="dv">10</span>);</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"Everything worked!"</span><span class="op">,</span> <span class="op">.</span>{});</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>以及用 <code>continue</code> 过滤偶数、只打印奇数的经典用法：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ns <span class="op">=</span> [_]<span class="dt">u8</span>{<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">5</span><span class="op">,</span><span class="dv">6</span>};</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (ns) <span class="op">|</span>i<span class="op">|</span> {</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((i <span class="op">%</span> <span class="dv">2</span>) <span class="op">==</span> <span class="dv">0</span>) {</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span>;</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d} | "</span><span class="op">,</span> <span class="op">.</span>{i});</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="sec-fun-pars" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="sec-fun-pars"><span class="header-section-number">2.2</span> 函数入参是不可变的！</h2>
+<p>这里必须郑重强调 Zig 的另一条铁律：<strong>在 Zig 里，函数的所有形参默认全都是不可变常量（Immutable）！</strong></p>
+<p>看看下面这桩反面教材：在 <code>add2</code> 函数里试图对传进来的参数 <code>x</code> 做直接修改，编译器当场教做人：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add2(x<span class="op">:</span> <span class="dt">u32</span>) <span class="dt">u32</span> {</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> x <span class="op">+</span> <span class="dv">2</span>;</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x;</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> y <span class="op">=</span> add2(<span class="dv">4</span>);</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{y});</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>t.zig:3:5: error: cannot assign to constant
+    x = x + 2;
+    ^</code></pre>
+<section id="白嫖的编译器极致优化" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="白嫖的编译器极致优化"><span class="header-section-number">2.2.1</span> 白嫖的编译器极致优化</h3>
+<p>Zig 为什么要对函数参数做如此苛刻的不可变约束？ 因为这样给编译器开辟了巨大的性能优化空间！</p>
+<p>如果是传基础小数据（如 <code>u32</code>、<code>bool</code>），编译器直接按值传递（拷贝到栈帧）； 但如果传入的是结构体、大数组等重型复合数据，由于函数内部绝对承诺不会擅自篡改入参，<strong>编译器就会智能决定到底是用按值传递还是按引用指针传递，怎么快怎么来！</strong> 这项零成本性能福利全靠参数不可变保证。</p>
+</section>
+<section id="确实想改入参传指针" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="确实想改入参传指针"><span class="header-section-number">2.2.2</span> 确实想改入参？传指针！</h3>
+<p>如果在业务场景下确实需要由函数修改外部状态（比如调用 C 接口或更新复杂结构体），正规解法是<strong>传指针</strong>（例如用 <code>*u32</code> 代替 <code>u32</code>），然后在函数体里通过 <code>.*</code> 做解引用修改：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add2(x<span class="op">:</span> <span class="op">*</span><span class="dt">u32</span>) <span class="dt">void</span> {</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> d<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">2</span>;</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">.*</span> <span class="op">=</span> x<span class="op">.*</span> <span class="op">+</span> d;</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> x<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">4</span>;</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    add2(<span class="op">&amp;</span>x);</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Result: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{x});</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Result: 6</code></pre>
+</section>
+</section>
+<section id="sec-structs-and-oop" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="sec-structs-and-oop"><span class="header-section-number">2.3</span> 结构体与面向对象（Structs and OOP）</h2>
+<p>Zig 更偏向于 C 风格的过程式语言，而不是 C++ 或 Java 那套重型面向对象。所以 Zig 里面没有复杂的 class 类、继承树和多态虚表。 但别慌！<strong>在 Zig 里，我们完全可以通过结构体（Struct）写出非常纯粹地道的面向对象代码。</strong></p>
+<p>你可以用 <code>struct</code> 定义新类型，不仅可以包含字段成员（Data members），还可以在里面挂载函数（Methods）。这样属于该类型的所有实例就能直接调用这些方法。</p>
+<p>在命名规范上，Zig 社区统一约定： - <strong><code>init()</code></strong>：充当构造函数，用于创建和初始化实例； - <strong><code>deinit()</code></strong>：充当析构函数，负责释放该实例占用的底层资源。</p>
+<p>看下面这个经典的 <code>User</code> 结构体：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> User <span class="op">=</span> <span class="kw">struct</span> {</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    email<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> init(id<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>            name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            email<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) User {</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> User {</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>id <span class="op">=</span> id<span class="op">,</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>name <span class="op">=</span> name<span class="op">,</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>email <span class="op">=</span> email</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>        };</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> print_name(<span class="va">self</span><span class="op">:</span> User<span class="op">,</span> stdout<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Io<span class="op">.</span>Writer) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{<span class="va">self</span><span class="op">.</span>name});</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_writer <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>File<span class="op">.</span>stdout()<span class="op">.</span>writer(init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>stdout_buffer);</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stdout <span class="op">=</span> <span class="op">&amp;</span>stdout_writer<span class="op">.</span>interface;</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> u <span class="op">=</span> User<span class="op">.</span>init(<span class="dv">1</span><span class="op">,</span> <span class="st">"pedro"</span><span class="op">,</span> <span class="st">"email@gmail.com"</span>);</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> u<span class="op">.</span>print_name(stdout);</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>注意细节：结构体内部每个字段定义末尾必须以<strong>逗号（<code>,</code>）</strong>结尾，而不是分号。</p>
+<section id="sec-pub-keyword" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="sec-pub-keyword"><span class="header-section-number">2.3.1</span> 跨模块可见性：<code>pub</code> 关键字</h3>
+<p>正如之前强调的，Zig 所有成员默认都是私有的。 如果你的 <code>User</code> 结构体写在 <code>user.zig</code> 模块里，想要在另一个 <code>register.zig</code> 里使用它，就必须给结构体本身以及它的方法显式打上 <code>pub</code> 标记：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">// user.zig</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="at">const</span> User <span class="op">=</span> <span class="kw">struct</span> {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    email<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(id<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span> name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span> email<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) User {</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> User{ <span class="op">.</span>id <span class="op">=</span> id<span class="op">,</span> <span class="op">.</span>name <span class="op">=</span> name<span class="op">,</span> <span class="op">.</span>email <span class="op">=</span> email };</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> print_name(<span class="va">self</span><span class="op">:</span> User) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ...</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">// register.zig</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> user <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"user.zig"</span>);</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> u<span class="op">:</span> user<span class="op">.</span>User <span class="op">=</span> user<span class="op">.</span>User<span class="op">.</span>init(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span><span class="op">,</span> <span class="st">"pedro"</span><span class="op">,</span> <span class="st">"email@gmail.com"</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> u;</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="sec-anonymous-struct-literals" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="sec-anonymous-struct-literals"><span class="header-section-number">2.3.2</span> 匿名结构体字面量（Anonymous Struct Literals）</h3>
+<p>正常声明结构体字面量时，一般会在大括号前带上类型名 <code>User { ... }</code>。 但在 Zig 中，你可以直接省掉类型名，用 <code>.{}</code> 这种<strong>匿名结构体字面量</strong>语法！</p>
+<p>前面的小圆点 <code>.</code> 会告诉编译器：“这里有个结构体，麻烦结合上下文帮我自动推导它的类型！”</p>
+<p>我们在 <code>stdout.print()</code> 里传参数时见到的 <code>.{ "world" }</code>，就是典型的匿名结构体字面量。编译器会根据格式化字符串的需求自动构建这个包裹类型，用起来极其清爽：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_writer <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>File<span class="op">.</span>stdout()<span class="op">.</span>writer(init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>stdout_buffer);</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stdout <span class="op">=</span> <span class="op">&amp;</span>stdout_writer<span class="op">.</span>interface;</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"Hello, {s}!</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{<span class="st">"world"</span>});</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="结构体类型必须是常量const" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="结构体类型必须是常量const"><span class="header-section-number">2.3.3</span> 结构体类型必须是常量（const）</h3>
+<p>在 Zig 里，所有的类型（Types）在编译期都是一等公民，它们必须是 <code>const</code> 或 <code>comptime</code>。 你绝不能用 <code>var</code> 去声明一个结构体类型，必须一律使用 <code>const</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Vec3 <span class="op">=</span> <span class="kw">struct</span> {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    x<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    y<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    z<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="sec-self-arg" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="sec-self-arg"><span class="header-section-number">2.3.4</span> 结构体方法的 <code>self</code> 参数</h3>
+<p>在方法定义中，我们通常用 <code>self</code> 作为第一个形参，它代表当前调用该方法的对象实例本身。</p>
+<p>看下面这个三维向量 <code>Vec3</code> 计算欧氏距离的示例：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> m <span class="op">=</span> std<span class="op">.</span>math;</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Vec3 <span class="op">=</span> <span class="kw">struct</span> {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    z<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> distance(<span class="va">self</span><span class="op">:</span> Vec3<span class="op">,</span> other<span class="op">:</span> Vec3) <span class="dt">f64</span> {</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> xd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>x <span class="op">-</span> other<span class="op">.</span>x<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> yd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>y <span class="op">-</span> other<span class="op">.</span>y<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> zd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>z <span class="op">-</span> other<span class="op">.</span>z<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m<span class="op">.</span>sqrt(xd <span class="op">+</span> yd <span class="op">+</span> zd);</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>调用时直接 <code>v1.distance(v2)</code>，Zig 会自动把 <code>v1</code> 作为 <code>self</code> 传进去：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> v1 <span class="op">=</span> Vec3 {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>x <span class="op">=</span> <span class="fl">4.2</span><span class="op">,</span> <span class="op">.</span>y <span class="op">=</span> <span class="fl">2.4</span><span class="op">,</span> <span class="op">.</span>z <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> v2 <span class="op">=</span> Vec3 {</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>x <span class="op">=</span> <span class="fl">5.1</span><span class="op">,</span> <span class="op">.</span>y <span class="op">=</span> <span class="fl">5.6</span><span class="op">,</span> <span class="op">.</span>z <span class="op">=</span> <span class="fl">1.6</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Distance: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{v1<span class="op">.</span>distance(v2)}</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Distance: 3.3970575502926055</code></pre>
+</section>
+<section id="结构体内部状态变更self-vs-self" class="level3" data-number="2.3.5">
+<h3 data-number="2.3.5" class="anchored" data-anchor-id="结构体内部状态变更self-vs-self"><span class="header-section-number">2.3.5</span> 结构体内部状态变更：<code>*Self</code> vs <code>Self</code></h3>
+<p>如果一个方法只读取数据、不改动任何字段（如上面的 <code>distance</code>），形参写 <code>self: Vec3</code> 就够了。</p>
+<p>但如果你的方法需要<strong>修改结构体自身的字段</strong>（例如给坐标翻倍），该怎么写？</p>
+<p>还记得前文讲过的“函数入参是不可变常量”吗？如果你写 <code>self: Vec3</code> 然后去执行 <code>self.x *= 2.0;</code>，编译器马上会怒喷 <code>cannot assign to constant</code>！</p>
+<p>因此，<strong>只要方法内部需要修改自身状态，<code>self</code> 参数必须声明为指针类型 <code>*Vec3</code>！</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> m <span class="op">=</span> std<span class="op">.</span>math;</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Vec3 <span class="op">=</span> <span class="kw">struct</span> {</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    x<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    y<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    z<span class="op">:</span> <span class="dt">f64</span><span class="op">,</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> distance(<span class="va">self</span><span class="op">:</span> Vec3<span class="op">,</span> other<span class="op">:</span> Vec3) <span class="dt">f64</span> {</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> xd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>x <span class="op">-</span> other<span class="op">.</span>x<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> yd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>y <span class="op">-</span> other<span class="op">.</span>y<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> zd <span class="op">=</span> m<span class="op">.</span>pow(<span class="dt">f64</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>z <span class="op">-</span> other<span class="op">.</span>z<span class="op">,</span> <span class="fl">2.0</span>);</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m<span class="op">.</span>sqrt(xd <span class="op">+</span> yd <span class="op">+</span> zd);</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> twice(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Vec3) <span class="dt">void</span> {</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>x <span class="op">=</span> <span class="va">self</span><span class="op">.</span>x <span class="op">*</span> <span class="fl">2.0</span>;</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>y <span class="op">=</span> <span class="va">self</span><span class="op">.</span>y <span class="op">*</span> <span class="fl">2.0</span>;</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>z <span class="op">=</span> <span class="va">self</span><span class="op">.</span>z <span class="op">*</span> <span class="fl">2.0</span>;</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>调用也非常省心：哪怕调用方写的是 <code>v3.twice()</code>，Zig 也会自动为我们取指针传递，直接原地更新：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> v3 <span class="op">=</span> Vec3 {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>x <span class="op">=</span> <span class="fl">4.2</span><span class="op">,</span> <span class="op">.</span>y <span class="op">=</span> <span class="fl">2.4</span><span class="op">,</span> <span class="op">.</span>z <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>};</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>v3<span class="op">.</span>twice();</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Doubled: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{v3<span class="op">.</span>x});</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Doubled: 8.4</code></pre>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>开发避坑诀窍</strong>：只要结构体的方法需要修改自身任何一个字段的值，函数签名里的 <code>self</code> 务必写成指针类型 <code>*T</code>，而不是普通值 <code>T</code>。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-type-inference" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="sec-type-inference"><span class="header-section-number">2.4</span> 类型推断（Type Inference）</h2>
+<p>虽然 Zig 是严格的强类型语言，但它并不死板。很多时候我们不需要把冗长的类型名反反复复手敲一遍。 在 Zig 中，触发类型推断的魔术符号就是<strong>小圆点（<code>.</code>）</strong>。</p>
+<p>每当你看到以 <code>.</code> 开头的字面量或枚举项时，就代表我们在对编译器说：“请结合上下文，自动推断出这里应该是什么类型吧！”这有点类似于 C++ 的 <code>auto</code>，但用在字面量上更加灵巧。</p>
+<p>看 Zig 标准库原子操作模块 <a href="https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig"><code>atomic.zig</code></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 里的真实代码：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">inline</span> <span class="kw">fn</span> fence(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Self<span class="op">,</span> <span class="at">comptime</span> order<span class="op">:</span> AtomicOrder) <span class="dt">void</span> {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 省略部分上下文...</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="cf">switch</span> (order) {</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>unordered<span class="op">,</span> <span class="op">.</span>monotonic <span class="op">=&gt;</span> <span class="bu">@compileError</span>(</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>            <span class="bu">@tagName</span>(order)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">++</span> <span class="st">" only applies to atomic loads and stores"</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>        )<span class="op">,</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>acquire <span class="op">=&gt;</span> tsan<span class="op">.</span>__tsan_acquire(addr)<span class="op">,</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>release <span class="op">=&gt;</span> tsan<span class="op">.</span>__tsan_release(addr)<span class="op">,</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>acq_rel<span class="op">,</span> <span class="op">.</span>seq_cst <span class="op">=&gt;</span> {</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>            tsan<span class="op">.</span>__tsan_acquire(addr);</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>            tsan<span class="op">.</span>__tsan_release(addr);</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>        }<span class="op">,</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    };</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>因为传入的入参类型是 <code>AtomicOrder</code> 枚举，所以在分支里写 <code>.acquire</code>，编译器就能立刻心神领会它等价于 <code>AtomicOrder.acquire</code>，无需开发者做机械重复的输入。</p>
+</section>
+<section id="sec-type-cast" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="sec-type-cast"><span class="header-section-number">2.5</span> 类型转换（Type Casting）</h2>
+<p>在底层开发中，不同位宽整型、浮点型或指针之间的类型互转是高频操作。 在 C 语言里常用 <code>(int)x</code> 强制转换，容易隐蔽地截断数据；而 Zig 提供了非常严谨的类型转换内置函数族。</p>
+<section id="显式安全强转as" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="显式安全强转as"><span class="header-section-number">2.5.1</span> 显式安全强转：<code>@as()</code></h3>
+<p>当类型转换是<strong>明确且安全</strong>的时候，首选用 <code>@as(TargetType, value)</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> expect <span class="op">=</span> std<span class="op">.</span>testing<span class="op">.</span>expect;</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> {</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> x<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">500</span>;</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> y <span class="op">=</span> <span class="bu">@as</span>(<span class="dt">u32</span><span class="op">,</span> x);</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> expect(<span class="bu">@TypeOf</span>(y) <span class="op">==</span> <span class="dt">u32</span>);</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="整型与浮点互转floatfromint-与-intfromfloat" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="整型与浮点互转floatfromint-与-intfromfloat"><span class="header-section-number">2.5.2</span> 整型与浮点互转：<code>@floatFromInt</code> 与 <code>@intFromFloat</code></h3>
+<p>整型和浮点之间的转换存在舍入或精度变化，Zig 要求使用明确表意的内置函数：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> expect <span class="op">=</span> std<span class="op">.</span>testing<span class="op">.</span>expect;</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> {</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> x<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">565</span>;</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> y<span class="op">:</span> <span class="dt">f32</span> <span class="op">=</span> @floatFromInt(x);</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> expect(<span class="bu">@TypeOf</span>(y) <span class="op">==</span> <span class="dt">f32</span>);</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="指针强转ptrcast" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="指针强转ptrcast"><span class="header-section-number">2.5.3</span> 指针强转：<code>@ptrCast</code></h3>
+<p>在底层做内存重解释或兼容 C ABI 时，指针强转很常见。Zig 专门用 <code>@ptrCast()</code> 来负责指针层面的类型变换（详见 <a href="05-pointers.html" class="quarto-xref"><span>Chapter 6</span></a>）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> expect <span class="op">=</span> std<span class="op">.</span>testing<span class="op">.</span>expect;</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> {</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> bytes <span class="kw">align</span>(<span class="bu">@alignOf</span>(<span class="dt">u32</span>)) <span class="op">=</span> [_]<span class="dt">u8</span>{</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span><span class="er">x12</span><span class="op">,</span> <span class="dv">0</span><span class="er">x12</span><span class="op">,</span> <span class="dv">0</span><span class="er">x12</span><span class="op">,</span> <span class="dv">0</span><span class="er">x12</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    };</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> u32_ptr<span class="op">:</span> <span class="op">*</span><span class="at">const</span> <span class="dt">u32</span> <span class="op">=</span> <span class="bu">@ptrCast</span>(<span class="op">&amp;</span>bytes);</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> expect(<span class="bu">@TypeOf</span>(u32_ptr) <span class="op">==</span> <span class="op">*</span><span class="at">const</span> <span class="dt">u32</span>);</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="模块的本质就是结构体" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="模块的本质就是结构体"><span class="header-section-number">2.6</span> 模块的本质就是结构体</h2>
+<p>最后，揭晓一个在 Zig 里极其迷人且统一的概念：<strong>每一个 <code>.zig</code> 源码文件（即模块），在编译器内部其实就是一个结构体（Struct）！</strong></p>
+<p>当我们在代码里敲下：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>本质上，<code>@import</code> 是把整个标准库解析成了一个巨大的结构体对象，并赋给了 <code>std</code> 常量。我们用 <code>std.debug.print</code> 调用函数，跟访问普通结构体的静态方法在语法机制上没有任何区别。</p>
+<p>看知名开源项目 <code>zap</code> 中的 <a href="https://github.com/kprotty/zap/blob/blog/src/thread_pool.zig"><code>thread_pool.zig</code></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>： 在这个文件里，作者在最外层直接定义了公开的 <code>init()</code> 方法，整个 <code>.zig</code> 文件就扮演了线程池结构体本身：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ThreadPool <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"thread_pool.zig"</span>);</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> num_cpus <span class="op">=</span> std<span class="op">.</span>Thread<span class="op">.</span>getCpuCount()</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="bu">@panic</span>(<span class="st">"failed to get cpu core count"</span>);</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> num_threads <span class="op">=</span> std<span class="op">.</span>math<span class="op">.</span>cast(<span class="dt">u16</span><span class="op">,</span> num_cpus)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> std<span class="op">.</span>math<span class="op">.</span>maxInt(<span class="dt">u16</span>);</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pool <span class="op">=</span> ThreadPool<span class="op">.</span>init(</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{ <span class="op">.</span>max_threads <span class="op">=</span> num_threads }</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>这种高度统一的“模块即结构体”模型，大幅降低了语言的概念复杂度。在 Zig 里，你学懂了结构体，就相当于顺带学懂了模块系统！</p>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig" class="uri">https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig" class="uri">https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://github.com/kprotty/zap/blob/blog/src/thread_pool.zig" class="uri">https://github.com/kprotty/zap/blob/blog/src/thread_pool.zig</a>。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-lang-switch-sync">
+document.addEventListener('DOMContentLoaded', function() {
+  var isZh = window.location.pathname.indexOf('/zh-CN/') !== -1;
+  var path = window.location.pathname;
+  var hash = window.location.hash || '';
+  
+  var links = document.querySelectorAll('a[aria-label="中文版"], a[aria-label="English"]');
+  links.forEach(function(link) {
+    var target = '';
+    if (isZh) {
+      target = path.replace('/zh-CN/', '/');
+    } else {
+      if (path.endsWith('/') || path.endsWith('/index.html')) {
+        target = path.replace(/\/index\.html$/, '').replace(/\/$/, '') + '/zh-CN/index.html';
+      } else {
+        target = path.replace('/Chapters/', '/zh-CN/Chapters/');
+      }
+    }
+    if (target) {
+      link.setAttribute('href', target + hash);
+    }
+  });
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const toggle = window.document.createElement('button');
+      toggle.type = "button";
+      toggle.setAttribute("role", "switch");
+      toggle.setAttribute("aria-checked", "false");
+      toggle.classList.add('top-right');
+      toggle.classList.add('quarto-color-scheme-toggle');
+      toggle.setAttribute("aria-label", "Toggle dark mode");
+      toggle.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      toggle.appendChild(i);
+      // Put the toggle in a landmark of its own, so that landmark navigation
+      // can reach it.
+      //
+      // The container is always a fresh direct child of body, and the toggle is
+      // never moved into page furniture that the theme or the author controls.
+      // The toggle is positioned against the page, so any ancestor that
+      // establishes a containing block captures it: a positioned element or a
+      // grid for position: absolute, and transform, filter, will-change or
+      // contain for position: fixed. A direct child of body has none of these
+      // to inherit, and the shift when one appears is silent and visual.
+      //
+      // ARIA says a document should have at most one banner, and axe reports a
+      // duplicate whether or not the banners carry distinct labels. So use a
+      // header when the page has no banner yet, and a named region otherwise.
+      //
+      // A header is a banner wherever it sits, unless it is inside sectioning
+      // content, so this cannot just look at the children of body: a custom
+      // page layout wraps the title block header in a plain div. An explicit
+      // role="banner" always counts.
+      const sectioning = 'article, aside, main, nav, section, [role="article"], [role="complementary"], [role="main"], [role="navigation"], [role="region"]';
+      const hasBanner = Array.from(
+        window.document.querySelectorAll('header:not([role]), [role="banner"]')
+      ).some(function(el) {
+        return el.hasAttribute("role") || el.closest(sectioning) === null;
+      });
+      const container = window.document.createElement(hasBanner ? "div" : "header");
+      if (hasBanner) {
+        container.setAttribute("role", "region");
+        container.setAttribute("aria-label", "Toggle dark mode");
+      }
+      container.classList.add('quarto-color-scheme-toggle-container');
+      container.appendChild(toggle);
+      window.document.body.appendChild(container);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
+  <div class="nav-page nav-page-previous">
+      <a href="../Chapters/01-zig-weird.html" class="pagination-link" aria-label="初识 Zig">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">初识 Zig</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Chapters/01-memory.html" class="pagination-link" aria-label="内存与分配器（Allocators）">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">内存与分配器（Allocators）</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

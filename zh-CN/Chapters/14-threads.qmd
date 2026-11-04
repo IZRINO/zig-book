@@ -1,0 +1,272 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# Zig 多线程与并发并行计算 {#sec-thread}
+
+在这一章中，咱们来聊聊现代高性能系统级开发的重头戏——**多线程与并发并行计算（Concurrency & Parallelism）**。
+Zig 标准库在 `std.Thread` 模块中提供了开箱即用的原生内核级线程抽象，其底层规范严格遵循 POSIX 线程（`pthread`）模式，跨平台性能极佳。
+
+
+## 到底什么是线程？为什么需要它？ {#sec-what-thread}
+
+简单来说，线程就是一段独立的执行上下文。
+默认情况下，普通程序都是**单线程（Single-threaded）**的：指令只能按先后顺序一条一条排队执行。
+如果遇上耗时操作（比如读大文件、等网络响应、算复杂图形），整个程序就会被彻底卡死，无法同时响应其他任务。
+
+最直观的生活例子就像餐厅服务员：
+如果是个单线程服务员：他给一号桌点完单送到后厨，然后就傻傻站在出餐口前等厨师把菜炒好，期间既不给二号桌点单，也不给三号桌结账。这餐厅非倒闭不可！
+而多线程的做法是：服务员把订单往后厨一塞（派发一个异步线程去炒菜），自己立刻转身去接待其他桌的客人；后厨菜好了直接端走上桌。
+
+现代 Web 浏览器（Chrome、Edge 等）的多标签页、修图软件（Photoshop）以及大型 3D 游戏，底层全靠多线程把多核 CPU 算力拉满。
+
+
+## 进程（Process）与线程（Thread）的区别
+
+经常有初学者搞混这两个概念，记住以下核心分工：
+
+- **进程（Process）**：操作系统分配资源的独立基本单位（你在任务管理器里看到的每个软件实例都是一个进程）。每个进程有自己完全隔离的虚拟内存空间；
+- **线程（Thread）**：CPU 调度的基本单位，依附于进程而存在（一个进程可以孵化出多个线程）。
+
+**关键共享机制**：
+- **独立部分**：每个线程拥有自己专属独立的**栈帧（Stack Frame）**，栈上的局部变量互不打扰；
+- **共享部分**：同一个进程下的所有线程，**共享同一片堆内存（Heap）、全局静态数据段，以及标准 I/O 文件描述符（`stdout`/`stdin`/`stderr`）**！
+
+正因为堆内存完全共享，多线程之间传递数据速度极快（传个指针即可），但随之而来的也是最凶险的技术深水区——**数据竞争（Data Race）**。
+
+
+## 创建并启动一个线程：`Thread.spawn`
+
+在 Zig 中创建新线程，直接调用 `std.Thread.spawn()`：
+
+```zig
+pub fn spawn(config: SpawnConfig, comptime function: anytype, args: anytype) !Thread
+```
+
+它接收三个核心参数：
+1. **`SpawnConfig`**：配置项（可指定专属栈大小 `stack_size`，默认给足 16MB；传 `.{}` 走默认配置）；
+2. **`function`**：要在新线程里执行的入口函数；
+3. **`args`**：传给该函数的参数元组（如 `.{init.io}`）。
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+const duration = std.Io.Duration.fromSeconds(1);
+const clock: std.Io.Clock = .awake;
+
+fn do_some_work(io: std.Io) !void {
+    std.debug.print("Starting the work.\n", .{});
+    try std.Io.sleep(io, duration, clock);
+    std.debug.print("Finishing the work.\n", .{});
+}
+
+pub fn main(init: std.process.Init) !void {
+    const thread = try Thread.spawn(.{}, do_some_work, .{init.io});
+    thread.join();
+}
+```
+
+
+## 线程的归宿：`join()` 与 `detach()` 二选一（不可漏调！）
+
+新线程创建后，主线程对它必须给出明确的态度，**必须在 `join()` 与 `detach()` 中严格二选一**：
+
+### 姿势一：`thread.join()`（等待收工）
+
+调用 `join()` 会让当前主线程陷入阻塞等待，直到该子线程把活全干完退出为止，顺带安全回收线程分配的底层系统资源。
+
+```zig
+pub fn main() !void {
+    const thread = try Thread.spawn(.{}, do_some_work, .{});
+    thread.join(); // 主线程在此等子线程完事
+}
+```
+
+### 姿势二：`thread.detach()`（放飞自流）
+
+如果你压根不在乎子线程啥时候完工，也不需要拿它的返回值，调用 `detach()` 把线程分离出去。分离后的线程成了“自由人”，跑完会自动向操作系统销毁释放，主线程扭头就走：
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+fn print_id(id: *const u8) !void {
+    std.debug.print("Thread ID: {d}\n", .{id.*});
+}
+
+pub fn main() !void {
+    const id1: u8 = 1;
+    const thread1 = try Thread.spawn(.{}, print_id, .{&id1});
+    thread1.detach(); // 放飞它，主线程直接退出
+    std.debug.print("Finish main\n", .{});
+}
+```
+
+::: {.callout-danger}
+**避坑保命铁律**：创建出来的线程，**绝对不能既不 join 也不 detach**！否则该线程会沦为游离在系统内核里的“僵尸句柄”，引发严重的操作系统句柄泄漏！
+:::
+
+
+## 经典翻车现场：数据竞争（Data Race）
+
+来看一段典型的多线程翻车代码：两个线程同时对全局共享变量 `counter` 各自累加 10 万次，理论上最终结果应该是 200,000：
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+var counter: usize = 0;
+
+fn increment() void {
+    for (0..100000) |_| {
+        counter += 1; // 两个线程无保护并发写同一个变量！
+    }
+}
+
+pub fn main() !void {
+    const thr1 = try Thread.spawn(.{}, increment, .{});
+    const thr2 = try Thread.spawn(.{}, increment, .{});
+    thr1.join();
+    thr2.join();
+    std.debug.print("Couter value: {d}\n", .{counter});
+}
+```
+
+跑出来的结果让人大跌眼镜：
+
+```
+Couter value: 117254
+```
+
+为什么严重缩水？
+因为在硬件 CPU 层面，`counter += 1` 根本不是一步到位的，而是拆解成了三个步骤：
+1. 从内存把值读进 CPU 寄存器；
+2. 寄存器做加 1 计算；
+3. 把新值写回内存。
+
+当两个线程并发跑时，线程 B 经常在线程 A 还没写回内存之前就把老值读走了，导致两个线程的自增互相覆盖（撕裂），大量计数白白丢失！这片争抢写共享变量的代码区，在计算机理论中就叫**临界区（Critical Section）**。
+
+
+## 互斥锁（Mutex）：排队保平安
+
+解决数据竞争的标配武器就是**互斥锁（Mutex - Mutually Exclusive）**。
+它就像洗手间的门锁：同一时刻只允许一个人拿钥匙进门（`lock`）；其他人必须在门外老实排队；里面的人办完事开锁出来（`unlock`），排在队首的下一位才能进去。
+
+在 Zig 中使用 `std.Io.Mutex`（或 `std.Thread.Mutex`）保护临界区：
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+const Mutex = std.Io.Mutex;
+const State = Mutex.State;
+var counter: usize = 0;
+
+fn increment(io: std.Io, mutex: *Mutex) !void {
+    for (0..100000) |_| {
+        try mutex.lock(io);   // 上锁
+        counter += 1;         // 安全独占临界区
+        mutex.unlock(io);     // 释放锁
+    }
+}
+
+pub fn main(init: std.process.Init) !void {
+    var mutex: Mutex = .{
+        .state=std.atomic.Value(State).init(.unlocked)
+    };
+
+    const thr1 = try Thread.spawn(.{}, increment, .{init.io, &mutex});
+    const thr2 = try Thread.spawn(.{}, increment, .{init.io, &mutex});
+    thr1.join();
+    thr2.join();
+    std.debug.print("Couter value: {d}\n", .{counter});
+}
+```
+
+加上锁之后，跑出来稳如泰山的 `200000`！
+
+
+## 读写锁（RwLock）：读共享、写独占
+
+如果一个资源大部分时间都在被几百个线程并发读取、极少被修改（比如在线配置缓存），互斥锁会把所有读请求也强制排成单线，性能大打折扣。
+
+这时候**读写锁（`std.Io.RwLock` / `std.Thread.RwLock`）**便派上用场：
+- **读锁（`lockShared`）**：共享锁，允许多个读者同时并发读取；
+- **写锁（`lock`）**：排他独占锁，一旦有人要写，所有读者和写者全部停步等待。
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+const RwLock = std.Io.RwLock;
+const duration = std.Io.Duration.fromSeconds(2);
+const clock: std.Io.Clock = .awake;
+var counter: u32 = 0;
+
+fn reader(io: std.Io, id: u32, lock: *RwLock) !void {
+    while (true) {
+        if (lock.tryLockShared(io)) {
+            std.debug.print("Thread {d}: {d}\n", .{id, counter});
+            _ = lock.unlockShared(io);
+            try std.Io.sleep(io, duration, clock);
+        }
+    }
+}
+
+fn writer(io: std.Io, lock: *RwLock) !void {
+    while (true) {
+        if (lock.tryLock(io)) {
+            counter += 1;
+            _ = lock.unlock(io);
+            try std.Io.sleep(io, duration, clock);
+        }
+    }
+}
+```
+
+
+## 并发排坑与优雅退出（Graceful Shutdown）
+
+### 1. 死锁（Deadlock）
+
+当线程 1 拿着锁 A 等锁 B，而线程 2 拿着锁 B 等锁 A 时，双方都在死等对方松手，程序永久僵死。
+**避坑原则**：在所有线程中，**加锁顺序必须严格保持全局一致**（永远先拿 A、再拿 B，绝不逆序）。
+
+### 2. 优雅停机：原子标志位控制
+
+在 C 语言里经常有人动用 `pthread_kill` 暴力强杀线程，这是极其危险的违规操作（会导致资源悬挂在半空）。
+**Zig 崇尚纯粹的优雅退出**：用 `std.atomic.Value(bool)` 原子布尔变量充当停机旗标，工作线程每次循环自行检查状态，安全从容退出：
+
+```zig
+const std = @import("std");
+const Thread = std.Thread;
+const clock: std.Io.Clock = .awake;
+const duration = std.Io.Duration.fromSeconds(2);
+var running = std.atomic.Value(bool).init(true);
+var counter: u64 = 0;
+
+fn do_more_work(io: std.Io) !void {
+    try std.Io.sleep(io, duration, clock);
+}
+
+fn work(io: std.Io) !void {
+    while (running.load(.monotonic)) {
+        for (0..10000) |_| {
+            counter += 1;
+        }
+        if (counter > 15000) {
+            std.debug.print("Time to cancel the thread.\n", .{});
+            running.store(false, .monotonic); // 触发通知优雅退出
+        } else {
+            std.debug.print("Time to do more work.\n", .{});
+            try do_more_work(io);
+        }
+    }
+}
+
+pub fn main(init: std.process.Init) !void {
+    const thread = try Thread.spawn(.{}, work, .{init.io});
+    thread.join();
+}
+```
+
+理清了内核线程模型、临界区保护与原子调度，你在多核硬件上写并发服务器或高吞吐引擎时就能稳操胜券！

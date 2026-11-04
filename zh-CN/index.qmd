@@ -1,0 +1,140 @@
+---
+syntax-definition: "../Assets/zig.xml"
+---
+
+:::: {.content-hidden when-format="epub"}
+::: {.content-hidden when-format="pdf"}
+
+# 欢迎阅读 {.unnumbered}
+
+欢迎！这里是《Zig 语言入门：基于项目的实操指南》（Introduction to Zig: a project-based book）开源网页版的起始页。本书原作者为 [Pedro Duarte Faria](https://pedro-faria.netlify.app/)。
+这是一本开源的技术入门书，带你探索 [Zig 编程语言](https://ziglang.org/)——一门现代化、通用且专注于构建高性能、健壮底层软件的新一代系统级编程语言。
+
+## 支持原项目！ {.unnumbered}
+
+如果你喜欢这个项目并希望支持原作者，可以在 Amazon 或 Leanpub 上购买本书的 PDF、电子书或纸质实体版：
+
+{{< include ../Assets/button.html >}}
+
+{{< include ../Assets/leanpub-button.html >}}
+
+
+### 直接赞助原作者
+
+你也可以通过以下途径直接给原作者赞助：
+
+- PayPal 捐赠
+- Revolut 转账
+
+这些支持能直接激励原作者继续创作此类优质内容，让作者能够持续为开源社区编写更多好用的工具和高质量学习资料。
+
+### PayPal
+
+{{< include ../Assets/paypal-button.html >}}
+
+### Revolut
+
+你可以通过以下银行与 Swift 汇款信息进行 Swift 支付：
+
+```
+收款人 (Recipient): Pedro Duarte Faria
+BIC/SWIFT Code: REVOSGS2
+账号 (Account number): 6124512226
+开户行名称及地址: Revolut Technologies Singapore Pte. Ltd, 6 Battery Road, Floor 6-01, 049909, Singapore, Singapore
+对应 BIC: CHASGB2L
+```
+
+如果你使用的是 Revolut 账户，可以直接扫码转账：
+
+{{< include ../Assets/revolut-button.html >}}
+
+:::
+::::
+
+
+## 关于本书 {.unnumbered}
+
+这是一本面向 [Zig 编程语言](https://ziglang.org/) 的开源、偏实战的技术入门读物。作为一门现代化通用底层语言，Zig 的设计初衷就是为了写出运行极致优化、运行状态稳定可靠的高质量软件。
+
+本书英文原版官方仓库：<https://github.com/pedropark99/zig-book>。
+
+无论是新手小白还是资深老手，读这本书都会有所收获。本书最大的特点是拒绝枯燥的语法死记硬背，而是像经典的《Python 编程：从入门到实践》（Eric Matthes 著）一样，**手把手通过写真实小项目带大家玩转 Zig**。
+书中实战涵盖了：从零实现 Base64 编解码器、手写轻量 HTTP 服务器、开发图像滤镜等一系列趣味与硬核兼备的项目。
+
+跟着整本书敲下来，你会掌握：
+
+- Zig 语法全貌，以及它与 C、C++、Rust 的设计哲学对比。
+- 常用数据结构、底层内存分配器（Allocator）、文件系统与 I/O 操作。
+- 可选类型（Optionals）——告别空指针异常的现代化空值处理新范式。
+- 如何编写测试用例与在实际开发中高效调试 Zig 程序。
+- 作为一等公民的值类型错误体系（Errors as values）及其优雅处理姿势。
+- 使用 Zig 语言内置的原生构建系统（Build System）编译 C 与 Zig 项目。
+- Zig 与 C 语言的丝滑互操作（C Interop）。
+- 线程并发与 SIMD 向量化并行加速。
+- 以及更多底层系统开发的实战技巧。
+
+
+## 关于作者 {.unnumbered}
+
+Pedro Duarte Faria 拥有巴西欧鲁普雷图联邦大学经济学学士学位。目前在 [DSM-Firmenich](https://www.dsm-firmenich.com)[^dsm] 担任资深数据工程师，同时也是 Databricks 认证的 Apache Spark 3.0 助理开发者。
+
+[^dsm]: <https://www.dsm-firmenich.com>
+
+作者在数据行业深耕超过 4 年，曾为多家研究机构以及巴西金融界巨头（如 BMG 银行、Sodexo 和 Pan 银行）构建数据产品、数据管道、报表体系与分析引擎。
+
+除了数据工程师的身份，Pedro 也是一名对编程充满狂热的软件开发者，热衷于学习和传授编程技术。尽管日常工作中会使用多种语言，但他尤其精通 R 语言，并曾在研究生院（如 PPEA-UFOP^[<https://ppea.ufop.br/>]）以及多所联邦和州级机构（如 FJP-MG^[<http://fjp.mg.gov.br/>]）举办过多场讲座和培训课程。
+
+个人主页：<https://pedro-faria.netlify.app/>
+
+LinkedIn：<https://www.linkedin.com/in/pedro-faria-a68140209/>
+
+Mastodon：[\@pedropark99\@fosstodon.org](https://fosstodon.org/@pedropark99)
+
+Twitter (X)：[\@PedroPark9](https://twitter.com/PedroPark9)
+
+## 开源许可 {.unnumbered}
+
+版权所有 © 2025 Pedro Duarte Faria。本书遵循 [CC-BY 4.0 知识共享署名 4.0 国际许可协议](https://creativecommons.org/licenses/by/4.0/)[^cc-license] 开源发布。
+
+[^cc-license]: <https://creativecommons.org/licenses/by/4.0/>
+
+![](../Figures/creative-commoms-88x31.png){width=88px}
+
+
+## 书籍编译元数据 {.unnumbered}
+
+本书英文原版使用以下版本的 [Zig](https://ziglang.org) 和 [Quarto](https://quarto.org) 编译构建：
+
+Zig 0.17.0 与 Quarto 1.11.9
+
+## 引用本书 {.unnumbered}
+
+如果你在学术研究或项目中引用本书，可使用如下 BibTeX 条目：
+
+```
+@book{pedro2024,
+    author = {Pedro Duarte Faria},
+    title = {Introduction to Zig},
+    subtitle = {a project-based book},
+    month = {October},
+    edition = {1},
+    year = {2024},
+    address = {Belo Horizonte},
+    url = {https://github.com/pedropark99/zig-book}
+}
+```
+
+## 通讯作者与维护者 {.unnumbered}
+
+Pedro Duarte Faria
+
+联系邮箱：[pedropark99\@gmail.com](mailto:pedropark99@gmail.com)
+
+个人网站：<https://pedro-faria.netlify.app/>
+
+
+## 致谢 {.unnumbered}
+
+本书凝聚了与 Zig 社区众多开发者深入探讨和交流的智慧结晶。我（Pedro Duarte Faria）在此向每一位参与探讨的伙伴致以最真诚的谢意，同时也由衷感谢给予直接贡献的朋友们。以下是参与者的致谢名单（姓名及 GitHub 用户名）：
+
+Calin Martinconi (\@martinconic), Steffen Roller (\@sroller), Chris Boesch (\@chrboesch), Lv Sihan (\@Pokryton), saurabh sharma. (\@esskayesss), slackline (\@slackline), Markus Kurz (\@kurz-m), Rubin Simons (\@rubin55), Bruno (\@PoorlyDefinedBehaviour), Ilia Choly (\@icholy), Korri Katti (\@KorryKatti), Vedang Manerikar (\@vedang), Tommaso Ricci (\@Zorgatone), Primo Sabatini (\@primos63), Santiago Fernandez (\@santif), Hamza Wahed (\@HamzaWahed), mwilbur (\@mwilbur), Dima Budaragin (\@dbud), Jorge Jímenez (\@jorge-j1m), Alexander (\@alexwheezy), Maarten Coopens (\@maarteNNNN), Niklas Johansson (\@Raphexion), glystik (\@glystik), Michael Lynch (\@mtlynch), Yashank (\@stickyburn), _blf_ (\@bengtfrost), Karl Gaissmaier (\@gaissmai), Ben Scheirman (\@subdigital), Ariel Otilibili (\@ariel-anieli), kitajusSus (\@kitajusSus), Luciogi (\@Luciogi), Anish Gowda (\@anishgowda21), Vlad Sirenko (\@sirenkovladd), brendan fattig (\@brendanny), Fristender (\@Fristender), Christian C. Berclaz (\@ChrisGVE), Vitaly Kogogin (\@obergodmar), Nod Erik (\@noderik), David Stelter (\@David-Stelter)

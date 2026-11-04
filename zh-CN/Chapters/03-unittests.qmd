@@ -1,0 +1,207 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# 单元测试（Unit Tests） {#sec-unittests}
+
+在这一章中，咱们来聊聊 Zig 里的**单元测试（Unit Tests）**。
+看看在 Zig 中日常单测的工作流是怎样的，以及如何用 `zig test` 命令把测试用例跑得又快又准。
+
+
+## 认识原生 `test` 代码块
+
+在很多语言里写单测，往往需要先挑选并引入一套第三方测试框架（比如 Python 的 `pytest`、C++ 的 `Catch2` 或 `GTest`）。
+但在 Zig 里，**单测是语言的一等公民，直接原生内置在语法中**！
+
+编写单测极其简单，直接使用 `test "测试用例描述"` 声明一个测试块即可。
+在测试块内部，你可以书写任何普通的 Zig 业务代码，并使用 `std.testing` 模块提供的各种断言工具来验证结果。
+
+看下面这个最朴素的测试用例：
+
+```zig
+const std = @import("std");
+const expect = std.testing.expect;
+test "testing simple sum" {
+    const a: u8 = 2;
+    const b: u8 = 2;
+    try expect((a + b) == 4);
+}
+```
+
+在同一个 `.zig` 源码文件里，你可以一口气写任意多个 `test` 块。
+而且最棒的是：**`test` 块可以直接与业务代码混写在同一个文件里**！
+平时执行 `zig build`、`build-exe` 或 `build-lib` 编译发布版本时，编译器会完全把这些 `test` 块当作空气自动忽略，绝对不会给最终的二进制体积增加一丁点负担。
+
+去翻翻 Zig 官方标准库的源码（比如 [`std.ArrayList`](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig)[^zig-array]），你会发现官方核心团队全部推崇这种“代码写在哪，单测就紧贴在它屁股底下”的写法，极其方便随手回归。
+
+当然，如果你有强迫症、喜欢把单测集中在专门的 `tests/` 目录里独立管理，也完全支持，全凭个人工程习惯。
+
+[^zig-std-lib]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std>。
+[^zig-array]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig>。
+
+
+## 怎样运行单元测试
+
+既然日常编译会忽略 `test` 块，那怎么跑测试呢？
+直接使用编译器的 `zig test` 子命令即可：
+
+```bash
+zig test simple_sum.zig
+```
+
+终端会飞速扫过该文件中的每一个 `test` 块并输出测试通过状态：
+
+```
+1/1 simple_sum.test.testing simple sum... OK
+All 1 tests passed.
+```
+
+
+## 杀手锏：自动检测内存泄漏（Testing Allocator）
+
+写底层 C/C++ 代码最让人头大的就是**内存泄漏（Memory Leak）**和**双重释放（Double Free）**，排查起来往往需要动用 Valgrind 等外挂工具，繁琐得要命。
+
+**而在 Zig 里，官方直接把内存排雷雷达做进了单测体系中——这就是神级工具：`std.testing.allocator`！**
+
+在前面的 @sec-heap 和 @sec-allocators 中我们强调过：在 Zig 里，凡是需要在堆上申请内存的函数，都要求显式传入一个分配器。
+所以只要在写单测时，**把 `std.testing.allocator` 喂给待测函数**，这个分配器就会在底层紧盯每一次内存申请与释放。
+
+如果你的函数中途忘了释放某块内存，单测不仅会立刻判挂，还会把**导致泄漏的那行代码的行号和完整堆栈调用轨迹（Stack Trace）当场甩出来**！
+
+看下面这个故意泄漏内存的反面例子：
+
+```zig
+const std = @import("std");
+const Allocator = std.mem.Allocator;
+fn some_memory_leak(allocator: Allocator) !void {
+    const buffer = try allocator.alloc(u32, 10);
+    _ = buffer;
+    // 故意不释放内存直接 return 退出！
+}
+
+test "memory leak" {
+    const allocator = std.testing.allocator;
+    try some_memory_leak(allocator);
+}
+```
+
+跑 `zig test` 时，测试立刻爆红，精准指认罪魁祸首：
+
+```
+Test [1/1] leak_memory.test.memory leak...
+    [gpa] (err): memory address 0x7c1fddf39000 leaked:
+./ZigExamples/debugging/leak_memory.zig:4:39: 0x10395f2
+    const buffer = try allocator.alloc(u32, 10);
+                                      ^
+./ZigExamples/debugging/leak_memory.zig:12:25: 0x10398ea
+    try some_memory_leak(allocator);
+
+... more stack trace
+```
+
+有了这套机制，只要单测跑绿，你就敢 100% 拍胸脯保证：代码绝对没有内存泄漏！
+
+
+## 测试预期错误（Error Assertions）
+
+很多时候我们需要专门测试异常分支：验证某函数在接收到非法输入时，是否如期抛出了指定的错误（比如 Python 里的 `pytest.raises`）。
+
+在 Zig 中，用标准库的 `std.testing.expectError`：
+第一个入参是预期的具体错误类型（如 `error.OutOfMemory`），第二个入参是预期会抛错的函数调用：
+
+```zig
+const std = @import("std");
+const Allocator = std.mem.Allocator;
+const expectError = std.testing.expectError;
+fn alloc_error(allocator: Allocator) !void {
+    var ibuffer = try allocator.alloc(u8, 100);
+    defer allocator.free(ibuffer);
+    ibuffer[0] = 2;
+}
+
+test "testing error" {
+    var buffer: [10]u8 = undefined;
+    var fba = std.heap.FixedBufferAllocator.init(&buffer);
+    const allocator = fba.allocator();
+    try expectError(error.OutOfMemory, alloc_error(allocator));
+}
+```
+
+上面这段测试中，我们用一个仅有 10 字节的固定缓冲区分配器去申请 100 字节，`alloc_error` 如期抛出了 `error.OutOfMemory`，单测顺利通过。如果抛出其他类型错误或没有抛错，单测就会失败。
+
+
+## 常用断言方法族速查
+
+除了最基础的 `expect(expr == true)`，标准库还提供了一系列表达力拉满的对比断言：
+
+### 标量对比：`expectEqual()`
+
+对比两个基本值（注意第一个是期望值，第二个是实际值）：
+
+```zig
+const std = @import("std");
+test "values are equal?" {
+    const v1 = 15;
+    const v2 = 18;
+    try std.testing.expectEqual(v1, v2);
+}
+```
+
+失败时会给出清晰的数值比对信息：
+
+```
+1/1 ve.test.values are equal?...
+    expected 15, found 18
+    FAIL (TestExpectedEqual)
+```
+
+### 数组与切片比对：`expectEqualSlices()`
+
+对比两个数组或切片里的元素是否完全一致，需先传入元素类型：
+
+```zig
+const std = @import("std");
+test "arrays are equal?" {
+    const array1 = [3]u32{1, 2, 3};
+    const array2 = [3]u32{1, 2, 3};
+    try std.testing.expectEqualSlices(
+        u32, &array1, &array2
+    );
+}
+```
+
+### 字符串精准比对：`expectEqualStrings()`
+
+对比两个字符串文本。如果不一致，它会像 `git diff` 一样在控制台高亮指出从哪一行的哪个字符开始出现分歧：
+
+```zig
+const std = @import("std");
+test "strings are equal?" {
+    const str1 = "hello, world!";
+    const str2 = "Hello, world!";
+    try std.testing.expectEqualStrings(
+        str1, str2
+    );
+}
+```
+
+```
+1/1 t.test.strings are equal?...
+====== expected this output: =========
+hello, world!␃
+======== instead found this: =========
+Hello, world!␃
+======================================
+First difference occurs on line 1:
+expected:
+hello, world!
+^ ('\x68')
+found:
+Hello, world!
+^ ('\x48')
+```
+
+把单元测试融入日常开发习惯，配合 `std.testing.allocator` 的自动化内存体检，写起 Zig 代码那叫一个踏实！

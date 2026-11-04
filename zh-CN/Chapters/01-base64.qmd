@@ -1,0 +1,439 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+# 实战项目 1：手写 Base64 编解码器 {#sec-base64}
+
+作为全书的第一个上手实战小项目，我想带你从零手写一个属于自己的 Base64 编解码器。
+Base64 是一种极其经典的编码方案，核心用途是把任意二进制字节流转换为纯文本 ASCII 字符。
+现代互联网的很多角落都在重度依赖它，专门用来向那些“只能安全传输文本”的老旧系统投递二进制数据。
+
+最直观的例子就是电子邮件（GMail、Outlook 等）。底层邮件传输走的是经典的简单邮件传输协议（SMTP），而 SMTP 天生只认纯文本。如果你想在邮件里夹带 PDF、Excel 或者图片这类二进制附件，邮件客户端就会先在后台把它们统统转成 Base64 字符串，然后再塞进邮件报文里发走。
+
+平时大家可能习惯了直接调内置函数（比如浏览器里的 `btoa` / `atob` 或各语言的标准库），今天咱们就把轮子彻底拆开，用纯正的 Zig 把它亲手造出来！
+
+
+## Base64 算法底层究竟是怎么跑的？
+
+在动手敲代码前，咱们先花点时间把它的算法底层逻辑拆解清楚。
+首先看 Base64 的码表（64 字符表），它是整个编码体系的基石；
+接着看编码器（Encoder）的 3 字节切 4 组逻辑；
+最后再看解码器（Decoder）如何把 4 个字符还原回原始二进制字节。
+
+如果你对“编码”和“解码”的定义稍微有点模糊，可以随时跳到 @sec-encode-vs-decode 温习一下。
+
+
+### 64 字符标尺表（Base64 Scale） {#sec-base64-scale}
+
+Base64 顾名思义，基于一个索引范围从 0 到 63 的 64 字符标尺表。
+要将二进制数据编码为 Base64，本质上就是把二进制数值映射为这个 64 字符表中对应的文字符号。
+
+这 64 个字符的排布规则非常整齐：
+- **0 ~ 25**：大写英文字母 `A ~ Z`（共 26 个）；
+- **26 ~ 51**：小写英文字母 `a ~ z`（共 26 个）；
+- **52 ~ 61**：阿拉伯数字 `0 ~ 9`（共 10 个）；
+- **62 和 63**：特殊字符 `+` 和 `/`。
+
+加起来正好 64 个字符！
+除此之外，大家在日常见到的等号 `=` 并不属于这 64 个字符表本身，它是 Base64 的特殊填充符（Padding），专门挂在末尾充当占位符，用来标记有效数据的终止位置。
+
+速查清单如下：
+
+- 索引 0 ~ 25：ASCII 大写字母 `[A-Z]`；
+- 索引 26 ~ 51：ASCII 小写字母 `[a-z]`；
+- 索引 52 ~ 61：一位阿拉伯数字 `[0-9]`；
+- 索引 62、63：分别为 `+` 和 `/`；
+- 字符 `=`：末尾填充占位符，表示有效数据结束。
+
+
+### 用查找表（Lookup Table）换取极致性能 {#sec-base64-table}
+
+在计算机科学中，表示这种映射关系最高效的手段就是**查找表（Lookup Table）**——用极小的空间换取无敌的运行速度。
+与其每次遇到一个数字都耗费 CPU 跑一堆 `if-else` 分支去算它是哪个字母，不如预先在内存里摆一个 64 字节的固定静态数组。需要哪个字符，直接拿下标做一次内存寻址 `O(1)` 秒拿，性能起飞！
+
+咱们用一个 `Base64` 结构体来承载整套逻辑。定义内部字段 `_table` 指向这 64 个字符组成的表，再配一个 `init()` 构造函数和一个用索引查字符的 `_char_at()` 辅助方法：
+
+```zig
+const Base64 = struct {
+    _table: *const [64]u8,
+
+    pub fn init() Base64 {
+        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lower = "abcdefghijklmnopqrstuvwxyz";
+        const numbers_symb = "0123456789+/";
+        return Base64{
+            ._table = upper ++ lower ++ numbers_symb,
+        };
+    }
+
+    pub fn _char_at(self: Base64, index: usize) u8 {
+        return self._table[index];
+    }
+};
+```
+
+注意在 `init()` 里我们优雅地使用了之前学过的数组编译期拼接操作符 `++`。
+这样一来，查 28 号位的字符，直接调 `_char_at(28)` 就能精准拿到字母 'c'：
+
+```zig
+const base64 = Base64.init();
+try stdout.print(
+    "Character at index 28: {c}\n",
+    .{base64._char_at(28)}
+);
+try stdout.flush();
+```
+
+```
+Character at index 28: c
+```
+
+
+### 编码器工作原理：3 字节切 4 份 {#sec-base64-encoder-algo}
+
+Base64 编码器的黄金处理窗口是 **3 个字节**。
+为什么偏偏是 3 字节？
+因为每个字节有 8 个比特（bit），3 字节正好是 $3 \times 8 = 24$ 个比特。
+而 24 这个数字极具魔力：它正好能被 6 整除！$24 \div 6 = 4$。
+
+也就是说，**输入端的每 3 个字节（24 bit），正好可以均匀重新切分成 4 个 6 位的比特小块（每个 6 位数值范围恰好是 $0 \sim 63$）！** 随后这 4 个 6 位数值直接对应到 64 字符表里的 4 个文字。
+
+编码器就是以 3 字节为步长，一轮接一轮往前滚，每轮吞入 3 字节，吐出 4 个 Base64 字符。
+
+那如果原始输入长度不是 3 的整数倍呢？比如刚好剩 2 个字节（16 bit）或者剩 1 个字节（8 bit）怎么办？
+瞧瞧 @fig-base64-algo1：以包含 2 个字母的短串 "Hi" 为例，转成 Base64 之后会变成 "SGk="：
+
+![Base64 编码器执行逻辑流程图](../../Figures/base64-encoder-flow.png){#fig-base64-algo1}
+
+拆开看：
+"Hi" 只有 2 字节（16 bit），距离凑齐 24 bit 还差 8 bit。
+在切分成 6 位块时：
+- 前 12 位切成前两个完整的 6 位块；
+- 剩下的 4 位不够 6 位，算法会在末尾**强制补 2 个零（补齐到 6 位）**，构成第 3 个字符；
+- 第 4 个 6 位块彻底空空如也，直接打上等号 `=` 充当占位符（Padding）！
+
+同理，如果只有一个字节（8 bit），比如输入单字符 "0"（ASCII 码二进制为 `00110000`），编码后会变成 "MA=="：第 1 块 6 位正常映射，第 2 块由剩余的 2 位补 4 个零凑齐，最后两块由于彻底缺失，直接补上双等号 `==`。
+
+
+### 解码器工作原理：逆向反推 {#sec-base64-decoder-algo}
+
+解码器就是编码器的镜像反向操作。
+它的处理窗口变成了 **4 个字符**：每次吃进 4 个 Base64 字符，将它们重新还原融合成原始的 **3 个字节**。
+
+在解码输出里，每个还原出来的原始字节，通常是由输入的两个相邻 Base64 字符各出一部份比特拼装而成的。整体流程如 @fig-base64-algo2 所示：
+
+![Base64 解码器执行逻辑流程图](../../Figures/base64-decoder-flow.png){#fig-base64-algo2}
+
+步骤非常清晰：
+1. 先吃进 4 个字符，通过码表查出它们对应的 0~63 索引数值；
+2. 通过精准的位移和按位或运算，把这些 6 位碎片重新拼装成 8 位的原始字节；
+3. 如果末尾遇到 `=` 填充符，直接跳过丢弃，不输出多余的伪字节。
+
+
+## 编码（Encode）与解码（Decode）的区分 {#sec-encode-vs-decode}
+
+做个通俗的定义梳理：
+- **编码（Encode）**：把原始的二进制字节切片，翻译成人类可读的 Base64 文本切片；
+- **解码（Decode）**：把 Base64 文本切片，精准还原回最初的原始二进制字节切片。
+
+一个工业级的 Base64 库，核心 API 就包含这对互为逆运算的方法。
+
+
+## 预判输出缓冲区大小 {#sec-base64-length-out}
+
+在底层系统编程中，动态申请内存必须算得分毫不差。
+无论编码还是解码，我们在向堆申请空间之前，都必须提前精确算出输出到底需要多少字节。
+
+### 编码输出长度计算
+
+对于编码器：每 3 字节输入产生 4 字节输出。如果除不尽，向上取整（Ceil）补齐到 3 的倍数。
+所以算法是：`ceil(输入长度 / 3) * 4`。
+
+如果输入不到 3 字节（1 或 2 字节），输出固定占满 4 字节（带补位等号）。
+在 Zig 标准库中，我们直接调用 `std.math.divCeil()` 向上取整：
+
+```zig
+const std = @import("std");
+fn _calc_encode_length(input: []const u8) !usize {
+    if (input.len < 3) {
+        return 4;
+    }
+    const n_groups: usize = try std.math.divCeil(
+        usize, input.len, 3
+    );
+    return n_groups * 4;
+}
+```
+
+### 解码输出长度计算
+
+解码器刚好相反：每 4 字节输入还原成 3 字节。我们用 `divFloor()` 向下取整乘 3，同时从尾部开始扫描，发现几个 `=` 填充符就相应减去几个字节：
+
+```zig
+const std = @import("std");
+fn _calc_decode_length(input: []const u8) !usize {
+    if (input.len < 4) {
+        return 3;
+    }
+
+    const n_groups: usize = try std.math.divFloor(
+        usize, input.len, 4
+    );
+    var multiple_groups: usize = n_groups * 3;
+    var i: usize = input.len - 1;
+    while (i > 0) : (i -= 1) {
+        if (input[i] == '=') {
+            multiple_groups -= 1;
+        } else {
+            break;
+        }
+    }
+
+    return multiple_groups;
+}
+```
+
+
+## 核心位运算与编码实现 {#sec-encoder-logic}
+
+终于来到最硬核的环节了！
+要把 3 字节均匀切成 4 个 6 位块，靠的就是底层开发者的基本功——**位运算符（Bitwise Operators）**：
+- 左移（`<<`）
+- 右移（`>>`）
+- 按位与掩码（`&`）
+
+### 6 位转换的位运算拆解 {#sec-6bit-transf}
+
+我们面对的标准 3 字节窗口中，4 个输出字符是这么算出来的：
+
+1. **`output[0]`**：直接拿 `input[0]` 右移 2 位（丢掉低 2 位，留下高 6 位）；
+2. **`output[1]`**：由两部分拼接而成——取 `input[0]` 的最后 2 位（用 `& 0x03` 提取）并左移 4 位，再加上 `input[1]` 的高 4 位（右移 4 位）；
+3. **`output[2]`**：同理，取 `input[1]` 的低 4 位（`& 0x0F`）左移 2 位，加上 `input[2]` 的高 2 位（右移 6 位）；
+4. **`output[3]`**：直接取 `input[2]` 的最后 6 位（`& 0x3F` 掩码过滤）。
+
+@fig-encoder-bitshift 直观展示了第二步的拼接全过程：深紫色的低 2 位与橙色的高 4 位无缝拼成了一个全新的 6 位数值：
+
+![第 2 字节由输入第 1 字节（紫）与第 2 字节（橙）位移合并生成](../../Figures/base64-encoder-bit-shift.png){#fig-encoder-bitshift}
+
+把全部分支场景汇总，便得到了 @tbl-transf-6bit 映射表：
+
+::: {#tbl-transf-6bit}
+
+| 处理窗口字节数 | 输出字节下标 | Zig 位运算实现代码                         |
+|----------------|--------------|--------------------------------------------|
+| 3              | 0            | `input[0] >> 2`                            |
+| 3              | 1            | `((input[0] & 0x03) << 4) + (input[1] >> 4)` |
+| 3              | 2            | `((input[1] & 0x0f) << 2) + (input[2] >> 6)` |
+| 3              | 3            | `input[2] & 0x3f`                            |
+| 2              | 0            | `input[0] >> 2`                            |
+| 2              | 1            | `((input[0] & 0x03) << 4) + (input[1] >> 4)` |
+| 2              | 2            | `((input[1] & 0x0f) << 2)`                   |
+| 2              | 3            | `'='`                                        |
+| 1              | 0            | `input[0] >> 2`                            |
+| 1              | 1            | `((input[0] & 0x03) << 4)`                   |
+| 1              | 2            | `'='`                                        |
+| 1              | 3            | `'='`                                        |
+
+: 各种窗口边界下的 6-bit 转换代码对照表
+
+:::
+
+
+### 编写 `encode()` 编码方法
+
+现在把上面的位运算逻辑组装成工业级方法。
+注意方法的签名设计：因为输出长度只有在运行时才知道，我们必须传入 `allocator: std.mem.Allocator`，在堆上申请返回切片。
+
+```zig
+pub fn encode(self: Base64,
+              allocator: std.mem.Allocator,
+              input: []const u8) ![]u8 {
+
+    if (input.len == 0) {
+        return "";
+    }
+
+    const n_out = try _calc_encode_length(input);
+    var out = try allocator.alloc(u8, n_out);
+    var buf = [3]u8{ 0, 0, 0 };
+    var count: u8 = 0;
+    var iout: u64 = 0;
+
+    for (input, 0..) |_, i| {
+        buf[count] = input[i];
+        count += 1;
+        if (count == 3) {
+            out[iout] = self._char_at(buf[0] >> 2);
+            out[iout + 1] = self._char_at(
+                ((buf[0] & 0x03) << 4) + (buf[1] >> 4)
+            );
+            out[iout + 2] = self._char_at(
+                ((buf[1] & 0x0f) << 2) + (buf[2] >> 6)
+            );
+            out[iout + 3] = self._char_at(buf[2] & 0x3f);
+            iout += 4;
+            count = 0;
+        }
+    }
+
+    if (count == 1) {
+        out[iout] = self._char_at(buf[0] >> 2);
+        out[iout + 1] = self._char_at(
+            (buf[0] & 0x03) << 4
+        );
+        out[iout + 2] = '=';
+        out[iout + 3] = '=';
+    }
+
+    if (count == 2) {
+        out[iout] = self._char_at(buf[0] >> 2);
+        out[iout + 1] = self._char_at(
+            ((buf[0] & 0x03) << 4) + (buf[1] >> 4)
+        );
+        out[iout + 2] = self._char_at(
+            (buf[1] & 0x0f) << 2
+        );
+        out[iout + 3] = '=';
+        iout += 4;
+    }
+
+    return out;
+}
+```
+
+
+## 构建解码器逻辑 {#sec-decoder-logic}
+
+搞定编码器后，解码器的逻辑就顺理成章了。
+
+### 字符反查索引：`_char_index()` {#sec-map-base64-index}
+
+收到一个 Base64 字符（比如 `'k'`），我们得反查出它在 64 码表里的数值是多少。
+这里写个朴素实用的扫描查找方法，如果是 `=` 则返回 64（越界哨兵）：
+
+```zig
+fn _char_index(self: Base64, char: u8) u8 {
+    if (char == '=')
+        return 64;
+
+    var i: u8 = 0;
+    var output_index: u8 = 0;
+
+    while (i < 64) : (i += 1) {
+        if (self._char_at(i) == char)
+            break;
+        output_index += 1;
+    }
+
+    return output_index;
+}
+```
+
+### 解码逆向位移还原
+
+每次吃进 4 个字符查得的索引 `buf[0..4]`，通过逆向位移拼成原始 3 字节：
+
+1. `output[0] = (buf[0] << 2) + (buf[1] >> 4);`
+2. `output[1] = (buf[1] << 4) + (buf[2] >> 2);`
+3. `output[2] = (buf[2] << 6) + buf[3];`
+
+@fig-decoder-bitshift 直观展现了如何把前两个 6 位数值拼回原始的 8 位字节：
+
+![解码端将第 1 个字符（紫）与第 2 个字符（橙）合并还原出原始字节](../../Figures/base64-decoder-bit-shift.png){#fig-decoder-bitshift}
+
+::: {#tbl-6bit-decode}
+
+| 输出字节下标 | 对应还原代码                  |
+|--------------|-------------------------------|
+| 0            | `(buf[0] << 2) + (buf[1] >> 4)` |
+| 1            | `(buf[1] << 4) + (buf[2] >> 2)` |
+| 2            | `(buf[2] << 6) + buf[3]`        |
+
+: 解码过程中的 6 位逆向还原代码
+
+:::
+
+
+### 编写完整的 `decode()` 方法
+
+```zig
+fn decode(self: Base64,
+          allocator: std.mem.Allocator,
+          input: []const u8) ![]u8 {
+
+    if (input.len == 0)
+        return "";
+
+    const n_output = try _calc_decode_length(input);
+    var tmp_buffer = [4]u8{ 0, 0, 0, 0 };
+    var count: u8 = 0;
+    var output_index: u64 = 0;
+    var output = try allocator.alloc(u8, n_output);
+    @memset(output[0..], 0);
+
+    for (0..input.len) |i| {
+        tmp_buffer[count] = self._char_index(input[i]);
+        count += 1;
+        if (count == 4) {
+            output[output_index] = (tmp_buffer[0] << 2) + (tmp_buffer[1] >> 4);
+            if (tmp_buffer[2] != 64) {
+                output[output_index + 1] = (tmp_buffer[1] << 4) + (tmp_buffer[2] >> 2);
+            }
+            if (tmp_buffer[3] != 64) {
+                output[output_index + 2] = (tmp_buffer[2] << 6) + tmp_buffer[3];
+            }
+            output_index += 3;
+            count = 0;
+        }
+    }
+
+    return output;
+}
+```
+
+
+## 大功告成：端到端跑通测试！
+
+至此，编解码全套链路全部搞定！
+咱们写个小测试跑一圈：用 `FixedBufferAllocator` 搞一块 1000 字节的定长缓冲区充当分配器，对字符串做一次完整的“编码再解码”往返操作：
+
+```zig
+var memory_buffer: [1000]u8 = undefined;
+var fba = std.heap.FixedBufferAllocator.init(
+    &memory_buffer
+);
+const allocator = fba.allocator();
+
+const text = "Testing some more stuff";
+const etext = "VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=";
+const base64 = Base64.init();
+const encoded_text = try base64.encode(
+    allocator, text
+);
+const decoded_text = try base64.decode(
+    allocator, etext
+);
+try stdout.print(
+    "Encoded text: {s}\n", .{encoded_text}
+);
+try stdout.print(
+    "Decoded text: {s}\n", .{decoded_text}
+);
+try stdout.flush();
+```
+
+控制台输出完美对齐：
+
+```
+Encoded text: VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=
+Decoded text: Testing some more stuff
+```
+
+完整的整合源码可以在本书官方仓库的 `ZigExamples/base64/base64_basic.zig`[^zig-base64-algo] 查阅。
+从内存分配到极致位运算，咱们不仅把 Base64 的底层逻辑彻底玩明白了，而且写出了一套完全合规、内存安全的工业级 Zig 代码！
+
+[^repo]: <https://github.com/pedropark99/zig-book>。
+[^zig-base64-algo]: <https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig>。

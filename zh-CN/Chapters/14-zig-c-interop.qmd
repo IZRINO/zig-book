@@ -1,0 +1,184 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+
+# Zig 与 C 语言的无缝互操作（C Interoperability） {#sec-c-interop}
+
+在这一章中，咱们来聊聊 Zig 最让系统级开发者欲罢不能的看家本领——**与 C 语言的零摩擦无缝互操作（C Interop）**。
+在 @sec-building-c-code 中我们见识过如何直接用 `zig` 编译器编译 C 代码；
+而这一章我们要更进一步：直接在 Zig 代码里无缝调用 C 语言函数、传递结构体、引入已有的成熟 C 语言生态库！
+
+在紧接着的下一个实战项目中，我们就会亲手接入知名的开源 C 语言图像处理库。
+
+
+## 为什么说 Zig 的 C 互操作堪称降维打击？
+
+在很多主流高级语言里（Python、JavaScript、Java、Rust 等），想要调一段现成的 C 代码，往往得先折腾复杂的外部函数接口（FFI）、手写冗长易错的胶水代码（Bindings / CGO），环境稍微配错就报链接错误。
+
+**而在 Zig 里，C 语言互操作是深深刻在编译器骨髓里的！**
+要在 Zig 中调用 C 代码，全流程只需两步：
+1. 引入 C 头文件（`.h`）；
+2. 在构建时链接上对应的 C 动态/静态库（`-lc` 等）。
+
+
+### 引入 C 头文件的两种地道姿势 {#sec-strategy-c}
+
+引入 C 头文件主要有以下两种途径（底层本质完全相通）：
+
+#### 姿势一：利用 `zig translate-c` 静态转译
+
+Zig 官方自带了一个强大的转译子命令 `translate-c`。它能把 C 头文件直接翻译成纯正合规的 Zig 源码！
+
+```bash
+zig translate-c /usr/include/stdio.h \
+    -lc -I/usr/include \
+    -D_NO_CRT_STDIO_INLINE=1 > c.zig
+```
+
+随后在业务代码里就像引用普通 Zig 模块一样 `@import("c.zig")`，所有 C 函数直接点出来用：
+
+```zig
+const c = @import("c.zig");
+pub fn main() !void {
+    const x: f32 = 1772.94122;
+    _ = c.printf("%.3f\n", x);
+}
+```
+
+#### 姿势二：代码内直接调用 `@cImport()`（日常最常用！）
+
+不用手动在命令行跑转译，直接在源码里使用内置函数 `@cImport()` 和 `@cInclude()`。编译器会在编译期自动完成头文件转译与加载：
+
+```zig
+const c = @cImport({
+    @cDefine("_NO_CRT_STDIO_INLINE", "1");
+    @cInclude("stdio.h");
+    @cInclude("math.h");
+});
+
+pub fn main() !void {
+    const x: f32 = 15.2;
+    const y = c.powf(x, @as(f32, 2.6));
+    _ = c.printf("%.3f\n", y);
+}
+```
+
+```
+1182.478
+```
+
+只要在编译时带上 `-lc -lm` 链接 Libc 和数学库，C 语言能力信手拈来！
+
+
+## Zig 对象向 C 接口传参避坑指南 {#sec-zig-obj-to-c}
+
+把数据传给 C 函数时，主要分为两种情况：
+
+### 1. 自动转换（Auto-conversion）
+
+对于原生基础类型（`i32` 对应 `int`，`u8` 对应 `unsigned char`，`f32` 对应 `float`），编译器会自动完成 ABI 对齐。
+对于**未显式指定类型的字符串字面量**，编译器会根据上下文自动将其视作以 `\0` 结尾的 C 字符串（`[*c]const u8`）：
+
+```zig
+const c = @cImport({
+    @cDefine("_NO_CRT_STDIO_INLINE", "1");
+    @cInclude("stdio.h");
+});
+
+pub fn main() !void {
+    // 这里的字面量 "foo.txt" 会被编译器自动推导为 C 字符串传给 fopen
+    const file = c.fopen("foo.txt", "rb");
+    if (file == null) {
+        @panic("Could not open file!");
+    }
+    _ = c.fclose(file);
+}
+```
+
+### 2. 需要手动适配：切片字符串传给 C 接口
+
+如果你手头是一个正规的 Zig 字符串切片 `[]const u8`，直接扔给 C 函数会触发编译报错：
+
+```
+error: expected type '[*c]const u8', found '[]const u8'
+```
+
+因为 C 语言不知道切片的长度机制，它只认指向连续内存的首地址指针（且末尾必须以空字符 `\0` 截断）。
+解决方案很简单：读取切片的 **`.ptr`** 属性，或者用 `@ptrCast()` 拿到裸指针传给 C：
+
+```zig
+    const path: []const u8 = "foo.txt";
+    // 传 path.ptr 给 C 接口，平滑解决！
+    const file = c.fopen(path.ptr, "rb");
+```
+
+
+## 在 Zig 里创建与使用 C 结构体 {#sec-c-inputs}
+
+通过 `@cImport` 引入的 C 头文件里的所有 `struct` 和 `typedef`，会自动映射成 Zig 命名空间里的类型。
+比如在 `user.h` 中定义的 C 结构体：
+
+```c
+#include <stdint.h>
+typedef struct {
+    uint64_t id;
+    char* name;
+} User;
+```
+
+在 Zig 中直接把 `c.User` 当成普通类型来用：
+
+```zig
+const std = @import("std");
+const c = @cImport({
+    @cInclude("user.h");
+});
+
+pub fn main() !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    const allocator = gpa.allocator();
+
+    var new_user: c.User = undefined;
+    new_user.id = 1;
+    
+    // 分配带 \0 结尾的 C 字符串给 name
+    var user_name = try allocator.alloc(u8, 12);
+    defer allocator.free(user_name);
+    @memcpy(user_name[0..(user_name.len - 1)], "pedropark99");
+    user_name[user_name.len - 1] = 0; // 手动补哨兵 0
+    new_user.name = user_name.ptr;
+}
+```
+
+而在成熟的 C 库中（如 FreeType、HarfBuzz、libpng），通常都自带现成的工厂构造函数（如 `hb_buffer_create()`），直接调用就能拿到初始化好的指针，省去了手动拼接字段的苦活。
+
+
+## 在 Zig 函数间传递 C 结构体：务必传指针！ {#sec-pass-c-structs}
+
+很多 C 结构体在底层设计上都是带有上下文状态或内部句柄的。
+当你在自己的 Zig 辅助函数间流转 C 结构体时，**千万不要直接按值拷贝传递，必须按引用指针传递（`*c.User`）**！
+在函数体内部通过 `.*` 解引用访问或修改字段：
+
+```zig
+const std = @import("std");
+const c = @cImport({
+    @cInclude("user.h");
+});
+
+fn set_user_id(id: u64, user: *c.User) void {
+    user.*.id = id; // 通过 .* 解引用指针安全修改
+}
+
+pub fn main(init: std.process.Init) !void {
+    var new_user: c.User = undefined;
+    new_user.id = 1;
+    set_user_id(25, &new_user); // 传引用指针
+    std.debug.print("New ID: {any}\n", .{new_user.id});
+}
+```
+
+把 C 的生态彻底化为己用，接下来在第 15 章，咱们就用 Zig 真正链接成熟的 C 图形库，亲手开发一套图像滤镜项目！

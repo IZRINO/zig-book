@@ -1,0 +1,218 @@
+﻿---
+syntax-definition: "../../Assets/zig.xml"
+---
+
+``
+
+
+
+
+# 文件系统与输入输出（I/O） {#sec-filesystem}
+
+在这章中，咱们来聊聊如何使用 Zig 标准库（尤其是 `std.Io` 模块）提供的跨平台工具链，来执行**文件系统操作**以及**底层输入输出（I/O）调度**。
+
+
+## 输入与输出（I/O）底层本质 {#sec-io-basics}
+
+平时在高级语言里写 `input()`、`print()`、`console.log()`，大家早已习以为常。
+但你有没有深究过：这些高级函数在底层到底是如何与操作系统（OS）打交道的？
+
+归根结底，语言层面的输入输出，本质上都是操作系统提供的三大标准数据通道的浅层封装：
+- **`stdout`（标准输出）**：程序向控制台吐正常结果的数据通道；
+- **`stdin`（标准输入）**：程序从控制台键盘或上游管道吃输入的数据通道；
+- **`stderr`（标准错误）**：专门用来打印报错和警告日志的独立通道。
+
+现代操作系统会为每个正在运行的进程独立分配一套互不干扰的 `stdin`、`stdout` 和 `stderr` 文件描述符。
+
+
+## Reader 与 Writer 统一设计模式 {#sec-writer-reader}
+
+在 Zig 的 I/O 架构中，有一个贯穿始终的设计模式——**Reader 与 Writer 模式**。
+在 Zig 中，几乎所有的 I/O 操作最终都收敛到两个核心接口类型：
+- **`Reader`**：负责从“某个地方”读取字节流；
+- **`Writer`**：负责向“某个地方”写入字节流。
+
+这个“某个地方”可以是磁盘上的文件、网络 TCP Socket，也可以是控制台终端。
+无论底层硬件形态怎么变，只要拿到了对应的 `Reader` 或 `Writer`，上层调用的 API 始终高度一致：
+- `Writer` 拥有 `print()`（格式化写入）、`writeAll()`（整块刷入）等方法；
+- `Reader` 拥有 `readSliceAll()`（读满指定切片）、`takeDelimiterExclusive()`（按分隔符截取读取）等利器。
+
+
+## Zig 现代架构大革新：全新的 `io` 后端参数 {#sec-new-io-backend}
+
+随着 Zig 0.16 的推出，标准库对网络和文件 I/O 进行了划时代的重构：引入了**可插拔的 I/O 执行后端（I/O Backends）**！
+
+就像我们在 @sec-memory-chap 讲过的：写 Zig 代码第一件事是挑选合适的 Allocator；而在现代 Zig 中，做 I/O 操作前，你也需要指定一个 `io` 后端！
+不管是基于线程池调度的 `std.Io.Threaded`，还是基于事件驱动 Ring 的 `std.Io.Evented`，均可按需注入。
+
+在日常开发中，现代 Zig 的主函数支持接收 `init: std.process.Init` 形参，你可以直接拿开箱即用、已经按当前操作系统调优好的 `init.io` 后端：
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    const cwd = std.Io.Dir.cwd();
+    const file = try cwd.openFile(
+        init.io, "foo.txt", .{ .mode = .read_only }
+    );
+    defer file.close(init.io);
+
+    var read_buffer: [1024]u8 = undefined;
+    var fr = file.reader(init.io, &read_buffer);
+    var reader = &fr.interface;
+
+    var buffer: [300]u8 = undefined;
+    @memset(buffer[0..], 0);
+    _ = reader.readSliceAll(buffer[0..]) catch 0;
+
+    std.debug.print("{s}\n", .{buffer});
+}
+```
+
+
+## 带缓冲的 I/O（Buffered I/O）：性能生死线 {#sec-buffered-io}
+
+系统调用（Syscall）是极度昂贵的。如果你的程序每读写 1 个字节，就傻乎乎地触发一次用户态到内核态的上下文切换，CPU 会被严重拖慢。
+
+![无缓冲 I/O：频繁系统调用拖垮性能](../../Figures/unbuffered-io.png){#fig-unbuffered-io width=60%}
+
+![带缓冲 I/O：批量吞吐极大减少系统调用](../../Figures/buffered-io.png){#fig-buffered-io}
+
+如 @fig-buffered-io 所示：带缓冲的 I/O（Buffered I/O）在用户态预留了一块内存缓冲区（通常为 4KB，对应 1 页内存）。
+读数据时，操作系统一次性把一整页字节捞进缓冲区，后续读取全部在用户内存里极速消耗；只有缓冲区耗尽时才发起下一次系统调用。
+
+### 显式掌控缓冲区（No Hidden Allocations）
+
+在 C 语言里，`FILE*` 背后会悄悄开辟缓冲，开发者无法直观感知；
+**而 Zig 践行绝对的透明可控原则：在构造 `reader` 或 `writer` 时，你必须显式提供一段缓冲区切片（比如 `[1024]u8`）！**
+缓冲区放栈上还是堆上、开 512 字节还是 8KB，完全由开发者自行敲定！
+
+### 敲黑板重点提醒：千万别忘了 `flush()`！
+
+在带缓冲写入模式下，调用 `writeAll()` 只是把数据暂存到了内存缓冲区里，**并没有真正持久化写入磁盘或终端！**
+必须显式调用 **`writer.flush()`**，缓冲区里的字节才会真正刷到物理介质上！
+很多新手写代码发现控制台死活没输出，十有八九就是漏掉了最后这句 `flush()`！
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);
+    const stdout = &stdout_writer.interface;
+    try stdout.writeAll(
+        "This message was written into stdout.\n"
+    );
+    try stdout.flush(); // 关键动作：冲刷缓冲区！
+}
+```
+
+
+## 文件系统实战：从 CWD 展开
+
+在 Zig 中，任何文件系统操作都必须从一个具体的**目录句柄（`std.Io.Dir`）**起步。
+最常用的起点就是程序的当前工作目录（CWD）：
+
+```zig
+const cwd = std.Io.Dir.cwd();
+```
+
+![在终端启动程序时的当前工作目录 CWD 示意图](../../Figures/cwd.png){#fig-cwd}
+
+
+### 创建与写入文件：`createFile()` {#sec-creating-files}
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    const cwd = std.Io.Dir.cwd();
+    const file = try cwd.createFile(
+        init.io, "foo.txt", .{}
+    );
+    defer file.close(init.io); // 用完务必随手关闭！
+
+    _ = try file.writePositionalAll(
+        init.io, "Writing this line to the file\n", 0
+    );
+}
+```
+
+*注意：`createFile()` 默认会直接清空覆盖同名旧文件；若希望创建时就具备读权限，需传入 `.{ .read = true }`。*
+
+
+### 打开文件与追加写入：`openFile()`
+
+打开现有文件用 `openFile()`，常用模式有：
+- `.read_only`：只读；
+- `.write_only`：只写；
+- `.read_write`：读写双全（在 Windows 系统下追加写入通常建议使用 `.read_write` 以保证权限兼容）。
+
+获取文件当前长度并从尾部追加内容：
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    const cwd = std.Io.Dir.cwd();
+    const file = try cwd.openFile(init.io, "foo.txt", .{ .mode = .read_write });
+    defer file.close(init.io);
+
+    const length = try file.length(init.io);
+    _ = try file.writePositionalAll(
+        init.io, "Some random text to write\n", length
+    );
+}
+```
+
+### 拷贝与删除文件
+
+删除文件：
+```zig
+try cwd.deleteFile(init.io, "foo.txt");
+```
+
+拷贝文件：
+```zig
+try cwd.copyFile(
+    "foo.txt",
+    cwd,
+    "backup/foo.txt",
+    init.io,
+    .{}
+);
+```
+
+
+## 目录遍历与多级递归创建
+
+### 遍历目录下的所有文件
+
+打开目录时打上 `.{ .iterate = true }` 标记，即可使用 `dir.iterate()` 进行迭代遍历：
+
+```zig
+const cwd = std.Io.Dir.cwd();
+const dir = try cwd.openDir(
+    init.io,
+    "ZigExamples/file-io/",
+    .{ .iterate = true }
+);
+var it = dir.iterate();
+while (try it.next(init.io)) |entry| {
+    try stdout.print(
+        "File name: {s}\n",
+        .{entry.name}
+    );
+}
+try stdout.flush();
+```
+
+如果需要递归遍历所有子目录深度，改用 `dir.walk()`。
+
+### 创建与删除目录
+
+- **`createDir()`**：创建单级子目录；
+- **`createDirPath()`**：递归创建多级完整路径（类似 Linux 的 `mkdir -p`）：
+
+```zig
+try cwd.createDirPath(init.io, "src/decoders/jpg/");
+try cwd.deleteDir(init.io, "src");
+```
+
+掌握了统一的 Reader/Writer 模式、带缓冲机制以及可插拔的 `io` 架构，你在 Zig 里处理任何高频文件和数据流都能游刃有余！
