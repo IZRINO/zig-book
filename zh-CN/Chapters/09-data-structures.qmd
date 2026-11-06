@@ -361,6 +361,8 @@ Key: 57709
 
 不过，与我在 @sec-dynamic-array-remove 中描述的不同，`ArrayHashMap` 中的这两个方法接收的输入不是索引，而是键，就像 `HashMap` 对象的 `remove()` 方法那样。如果你想用索引而不是键作为输入，应该使用 `swapRemoveAt()` 和 `orderedRemoveAt()` 方法。
 
+（译注：Zig 0.17.1 的标准库里已经没有 `std.AutoArrayHashMap`，下面这段代码会编译报错。对应的类型是 `std.array_hash_map.Auto(K, V)`，它不在内部保存分配器，要写成 `var hash_table: std.array_hash_map.Auto(u32, u16) = .empty;`，并在 `put()`、`deinit()` 等需要分配内存的方法里传入分配器，例如 `try hash_table.put(allocator, 1, 2);`、`defer hash_table.deinit(allocator);`。）
+
 ```zig
 var hash_table = AutoArrayHashMap(u32, u16)
     .init(allocator);
@@ -370,7 +372,7 @@ defer hash_table.deinit();
 
 ### `StringHashMap` 哈希表 {#sec-string-hash-map}
 
-你会发现，前几节介绍的另外两种哈希表都不接受切片类型作为键。也就是说，在这两种哈希表中，你不能用切片值来表示键。（译注：在 Zig 0.17.1 中，如果把 `[]const u8` 用作 `AutoHashMap` 或 `AutoArrayHashMap` 的键类型，会直接得到编译错误，错误信息会提示改用 `std.StringHashMap`。）
+你会发现，前几节介绍的另外两种哈希表都不接受切片类型作为键。也就是说，在这两种哈希表中，你不能用切片值来表示键。（译注：在 Zig 0.17.1 中，如果把 `[]const u8` 用作 `AutoHashMap` 的键类型，会直接得到编译错误，错误信息会提示改用 `std.StringHashMap`；`std.array_hash_map.Auto` 用切片作键同样会编译报错。）
 
 这带来的最明显的后果是，你不能在这些哈希表中用字符串作为键。但用字符串作为哈希表的键是极为常见的做法。
 
@@ -431,6 +433,8 @@ Zig 标准库还提供了一种把 `StringHashMap` 和 `ArrayHashMap` 的优缺�
 ```zig
 var ages = std.StringArrayHashMap(u8).init(allocator);
 ```
+
+（译注：Zig 0.17.1 的标准库里也没有 `std.StringArrayHashMap`，对应的类型是 `std.array_hash_map.String(V)`，用法和上面的 `std.array_hash_map.Auto` 一样：`var ages: std.array_hash_map.String(u8) = .empty;`，调用 `put()`、`deinit()` 时传入分配器。）
 
 
 ## 链表（Linked Lists）
