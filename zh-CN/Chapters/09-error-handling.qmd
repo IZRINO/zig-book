@@ -1,15 +1,13 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
 
 
 
 # 错误处理与联合体（Unions） {#sec-error-handling}
 
-在这章中，咱们来把 Zig 的**错误处理（Error Handling）体系**以及**联合体（Unions）**彻底聊透。
-在前面的 @sec-main-file 里，大家已经见识过 `try` 关键字的威力。但 Zig 的错误处理工具箱远不止这些，`catch`、错误集（Error sets）、`errdefer` 以及带标签联合体（Tagged Unions），才是构建坚不可摧的大型底层系统的核心利刃。
+在本章中，我想讨论 Zig 中的错误处理是怎么做的。我们已经简单了解过 Zig 中处理错误的一种策略，也就是 @sec-main-file 中介绍的 `try` 关键字，但还没有学习其他方法，比如 `catch` 关键字。我还想在本章中讨论如何在 Zig 中创建联合体类型。
 
 
 ## 核心认知：错误是一等公民的值（Errors as Values）
@@ -37,7 +35,7 @@ t.zig:8:17: error: error set is discarded
 t.zig:8:17: note: consider using 'try', 'catch', or 'if'
 ```
 
-编译器会直接提醒你：“这里返回的是错误集，麻烦老老实实用 `try`、`catch` 或者 `if` 处理干净！”
+编译器会提醒你：这里返回的是可能包含错误的错误联合类型，需要用 `try`、`catch` 或 `if` 处理。
 
 
 ### 从函数中返回错误：感叹号 `!` 与错误联合
@@ -51,13 +49,15 @@ fn print_name(stdout: *std.Io.Writer) !void {
 }
 ```
 
-在上面的 `!void` 中，感叹号左侧没有显式指定错误类型，这叫**推导错误联合（Inferred Error Set）**，由编译器自动分析函数体推导可能抛出的错误集合。
+在上面的 `!void` 中，感叹号左侧没有显式指定错误类型，这叫**推导错误集（inferred error set）**，由编译器分析函数体，推导出函数可能返回的错误集合。
 
-而在正规库开发中，为了保证严谨性和自解释文档能力，我们通常会在感叹号左边显式列出具体的错误集类型：
+如果你愿意，也可以在感叹号左边显式指定函数可能返回的错误集。这样一来，编译器就能检查函数中是否产生了返回类型里没有声明的错误：
 
 ```
-<错误类型>!<成功时的返回值类型>
+<error-value>!<valid-value>
 ```
+
+（即：`<错误值>!<正常返回值>`。）
 
 例如 Zig 标准库 HTTP 客户端模块里的 `fill()` 函数：
 
@@ -72,7 +72,7 @@ pub fn fill(conn: *Connection) ReadError!void {
 
 ### 错误集（Error Sets）
 
-当一个函数可能抛出多种不同原因的错误时，我们可以用 `error{ ... }` 定义一个**错误集（Error Set）**：
+当一个函数可能返回多种不同类型的错误时，我们可以用 `error{ ... }` 定义一个**错误集（Error Set）**。错误集本质上是一种特殊的联合体类型（Union，我们将在 @sec-unions 中深入探讨联合体）：
 
 ```zig
 pub fn resolvePath(
@@ -108,7 +108,7 @@ pub fn readvDirect(
 ```
 
 
-### 错误值的自动类型收敛（子集到超集）
+### 错误值的类型转换（从子集到超集）
 
 如果错误集 `A` 包含了错误集 `B` 里的所有成员（即 $A \supset B$），那么在 Zig 中，`B` 集合里的错误值可以隐式自动转换为 `A` 集合类型：
 
@@ -125,7 +125,7 @@ const B = error {
 };
 
 fn cast(err: B) A {
-    return err; // 隐式自动向上收敛
+    return err; // 隐式转换为超集类型
 }
 
 test "coerce error value" {
@@ -136,27 +136,36 @@ test "coerce error value" {
 }
 ```
 
+```
+1/1 file6de04e52901.test.coerce error value...OK
+All 1 tests passed.
+```
+
 
 ## 优雅处理错误的四大姿势
 
-在 Zig 中，处理错误主要有以下四种地道姿势：
+在 Zig 中，处理错误主要有以下四种常用策略：
 
-### 姿势一：`try` 快速向上传播（甩锅给上游）
+- `try` 关键字；
+- `catch` 关键字；
+- `if` 语句；
+- `errdefer` 关键字。
 
-`try expr` 的语义是：
-如果表达式顺利执行成功，把成功值拆包放行；
-如果表达式返回了错误，**立刻提前 return 该错误，交由上一级调用者去头疼！**
+### `try` 的真正含义：向上传播错误
 
-当你身处底层辅助函数、本身无法决定怎么处理这个错误时，直接 `try` 是最干脆利落的甩锅姿势。
+正如我们在 @sec-main-file 中初次见到的，当一个表达式的返回类型为 `!T` 时，使用 `try expr` 的语义是：
+请执行该表达式；如果它返回了合法的正常值，则解包并返回该值继续往下走；但如果它返回了错误值，则**立即将该错误从当前函数中 `return` 返回出去，并终止当前函数的继续执行**。
+
+换言之，当你认为遇到错误时最合理的策略就是立即中止当前流程并将错误向上传播时，就使用 `try`。
 
 
-### 姿势二：`catch` 就地兜底与消费
+### `catch` 关键字：就地捕获与兜底
 
-请敲黑板重点注意：**在 Zig 里，`try` 和 `catch` 是两套完全互斥独立的机制，绝不能像传统语言那样连在一起写成 `try ... catch`！**
+需要特别注意的是：**在 Zig 中，你可以使用 `try` 或 `catch` 来处理错误，但绝不能将 `try` 和 `catch` 连在一起同时使用！**在 Zig 里，`try` 和 `catch` 是两套完全独立的错误处理策略。
 
 `catch` 放在可能报错的表达式后面，负责拦截错误并就地解决：
 
-#### 1. 提供默认兜底值（最地道！）
+#### 1. 提供默认值
 
 如果报错，就自动回落到默认值，极具表现力：
 
@@ -183,7 +192,9 @@ pub fn main(init: std.process.Init) !void {
 ```
 
 
-### 姿势三：`if` 分支模式匹配解包
+### 使用 `if` 语句处理错误
+
+你也可以使用 `if` 语句来处理 Zig 中的错误：如果表达式返回正常值，则将其解包到 `|number|` 中执行 `if` 分支；如果返回错误，则在 `else |err|` 分支中捕获并处理该错误：
 
 ```zig
 if (parseU64(str, 10)) |number| {
@@ -193,7 +204,7 @@ if (parseU64(str, 10)) |number| {
 }
 ```
 
-若要针对不同类型的具体错误做差异化响应，配合 `switch` 堪称绝配：
+如果表达式可能返回多种不同类型的错误，且你希望针对每种具体错误采取不同的处理逻辑，Zig 官方文档建议将 `if` 语句与 `switch` 语句结合使用 [@zigdocs]：
 
 ```zig
 if (add_tasks_to_queue(&queue, tasks)) |_| {
@@ -212,12 +223,12 @@ if (add_tasks_to_queue(&queue, tasks)) |_| {
 ```
 
 
-### 姿势四：`errdefer` 异常回滚清理 {#sec-errdefer2}
+### `errdefer` 关键字：错误回滚清理 {#sec-errdefer2}
 
-还记得前文讲过的 `errdefer` 吗？
+回顾我们在 @sec-defer 和 @sec-errdefer1 中介绍过的 `defer` 与 `errdefer`：无条件的 `defer` 总是在当前作用域结束时执行，而
 **`errdefer` 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！**
 
-思考一个典型场景：函数在堆上申请了一个新对象并要插入数据库，最后把这个对象作为返回值交出去：
+思考一个典型场景：函数使用我们在 @sec-allocators 中介绍的分配器在堆上创建了一个新的 `User` 对象，将其注册到数据库中，最后把该 `user` 对象作为返回值交出去：
 
 ```zig
 fn create_user(db: Database, allocator: Allocator) !User {
@@ -232,13 +243,15 @@ fn create_user(db: Database, allocator: Allocator) !User {
 }
 ```
 
-如果在入库那一行（`db.register_user`）报错了，函数中断退出，普通的 `defer` 此时帮不上忙（因为正常返回时不能销毁它）；而 `errdefer` 则精准介入，在带着错误闪崩退出的前一刻，把刚刚申请的 `user` 干净释放，彻底杜绝内存泄漏！
+如果在入库那一行（`db.register_user`）报错了，函数中断退出，普通的 `defer` 此时帮不上忙（因为正常返回时不能销毁它）；而 `errdefer` 则精准介入，在函数带着错误返回之前，释放刚刚申请的 `user`，保证这块内存在出错时也会被释放。
 
 
 ## 联合体（Unions）与带标签联合体（Tagged Unions） {#sec-unions}
 
 联合体（Union）定义了一个变量**在某一瞬间只能是多种可能类型中的某一种**。
-它类似于 Python 的 `typing.Union` 或 C 语言里的 `union`。
+它与 C 语言中的 `union` 作用相同，效果上也类似于在 Python 中使用 [`typing.Union`](https://docs.python.org/3/library/typing.html#typing.Union)[^pyunion]。
+
+[^pyunion]: <https://docs.python.org/3/library/typing.html#typing.Union>
 
 举个跨多云存储的实际例子：数据既可能传往 AWS S3、也可能发给 Azure Blob 或 Google Cloud：
 
@@ -248,33 +261,54 @@ const LakeTarget = union {
     amazon: AmazonS3,
     google: GoogleGCP,
 };
+
+fn send_event(
+    event: Event,
+    lake_target: LakeTarget
+) bool {
+    // 函数体...
+}
 ```
 
-在普通 union 中，**同一时间只有一个字段能够处于激活状态**。如果你尝试访问没有激活的字段，运行时直接触发 panic：
+下面的例子演示了这一逻辑。注意，我们先用 `azure` 数据成员实例化这个联合体对象，所以这个 `target` 对象中只包含 `azure` 数据成员，只有这个数据成员处于激活状态。这就是为什么这个代码示例的最后一行是无效的：我们试图实例化当前对这个 `target` 对象来说处于非激活状态的数据成员 `google`，结果程序进入 panic 模式，用一条醒目的错误信息警告我们犯了这个错误。
 
 ```zig
 var target = LakeTarget {
     .azure = AzureBlob.init()
 };
-// 此时 target 内部激活的是 azure 字段，直接写 google 字段会直接 panic
+// Only the `azure` data member exist inside
+// the `target` object, and, as a result, this
+// line below is invalid:
 target.google = GoogleGCP.init();
 ```
 
-想要切换字段，必须整体重新赋值：
+```
+thread 2177312 panic: access of union field 'google' while
+    field 'azure' is active:
+    target.google = GoogleGCP.init();
+          ^
+```
+
+所以，在实例化一个联合体对象时，必须从联合体类型列出的数据类型（即数据成员）中选择一个。在上面的例子中，我选择使用 `azure` 数据成员，结果其他所有数据成员都自动处于非激活状态，实例化对象之后就不能再使用它们了。
+
+你可以通过完全重新定义整个联合体对象来激活另一个数据成员。在下面的例子中，我一开始使用 `azure` 数据成员，然后把 `target` 对象重新定义为一个使用 `google` 数据成员的新 `LakeTarget` 对象。
 
 ```zig
+var target = LakeTarget {
+    .azure = AzureBlob.init()
+};
 target = LakeTarget {
     .google = GoogleGCP.init()
 };
 ```
 
 
-### 现代模式匹配天花板：带标签联合体（Tagged Unions）
+### 带标签联合体（Tagged Unions）
 
-普通 union 最大的痛点是无法直接用 `switch` 匹配分支。
-而只要给它加上 `(enum)` 标签——**`union(enum)`**，它就升级为了现代编程语言里大名鼎鼎的**带标签联合体（Tagged Union / 代数数据类型 ADT）**！
+普通 `union` 的一个局限是无法直接作为我们在 @sec-switch 中介绍的 `switch` 语句的输入。
+如果需要在 `switch` 语句中对联合体对象进行分支匹配，只需在 `union` 声明后加上 `(enum)`，将其定义为**带标签联合体（Tagged Union）**！
 
-看 Zig 官方编译器源码 [`grammar.zig`](https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig)[^grammar] 里的写法：
+看 Zig 仓库中的 [`grammar.zig`](https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig)[^grammar] 里的写法：
 
 [^grammar]: <https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig>。
 
@@ -284,14 +318,3 @@ pub const Registry = union(enum) {
     extension: ExtensionRegistry,
 };
 ```
-
-一旦变成 `union(enum)`，在 `switch` 里做模式匹配解构就跟呼吸一样顺畅自然：
-
-```zig
-switch (reg) {
-    .core => |c| c.doSomething(),
-    .extension => |e| e.doSomethingElse(),
-}
-```
-
-错误处理清晰透明，联合体类型严丝合缝，这正是 Zig 能写出顶级高可靠软件的底气所在！

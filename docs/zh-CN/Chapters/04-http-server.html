@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -440,7 +459,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -458,7 +477,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -485,7 +504,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
   <ul>
   <li><a href="#到底什么是-http-服务器" id="toc-到底什么是-http-服务器" class="nav-link active" data-scroll-target="#到底什么是-http-服务器"><span class="header-section-number">7.1</span> 到底什么是 HTTP 服务器？</a></li>
   <li><a href="#sec-how-http-works" id="toc-sec-how-http-works" class="nav-link" data-scroll-target="#sec-how-http-works"><span class="header-section-number">7.2</span> HTTP 服务器是怎样工作的？</a></li>
-  <li><a href="#sec-http-how-impl" id="toc-sec-http-how-impl" class="nav-link" data-scroll-target="#sec-http-how-impl"><span class="header-section-number">7.3</span> 工业级底层服务是怎么实现的？</a></li>
+  <li><a href="#sec-http-how-impl" id="toc-sec-http-how-impl" class="nav-link" data-scroll-target="#sec-http-how-impl"><span class="header-section-number">7.3</span> HTTP 服务器通常是怎么实现的？</a></li>
   <li><a href="#动手实现服务器第一阶段" id="toc-动手实现服务器第一阶段" class="nav-link" data-scroll-target="#动手实现服务器第一阶段"><span class="header-section-number">7.4</span> 动手实现服务器：第一阶段</a>
   <ul class="collapse">
   <li><a href="#sec-create-socket" id="toc-sec-create-socket" class="nav-link" data-scroll-target="#sec-create-socket"><span class="header-section-number">7.4.1</span> 创建服务端网络对象</a></li>
@@ -494,13 +513,17 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#检验阶段性成果捕捉真实浏览器请求" id="toc-检验阶段性成果捕捉真实浏览器请求" class="nav-link" data-scroll-target="#检验阶段性成果捕捉真实浏览器请求"><span class="header-section-number">7.5</span> 检验阶段性成果：捕捉真实浏览器请求</a></li>
   <li><a href="#sec-enum" id="toc-sec-enum" class="nav-link" data-scroll-target="#sec-enum"><span class="header-section-number">7.6</span> 知识点加餐：Zig 枚举（Enums）</a></li>
-  <li><a href="#动手实现服务器第二阶段请求解析与响应回传" id="toc-动手实现服务器第二阶段请求解析与响应回传" class="nav-link" data-scroll-target="#动手实现服务器第二阶段请求解析与响应回传"><span class="header-section-number">7.7</span> 动手实现服务器：第二阶段（请求解析与响应回传）</a>
+  <li><a href="#sec-impl-server-part2" id="toc-sec-impl-server-part2" class="nav-link" data-scroll-target="#sec-impl-server-part2"><span class="header-section-number">7.7</span> 动手实现服务器：第二阶段</a>
   <ul class="collapse">
-  <li><a href="#优雅的请求方法映射staticstringmap" id="toc-优雅的请求方法映射staticstringmap" class="nav-link" data-scroll-target="#优雅的请求方法映射staticstringmap"><span class="header-section-number">7.7.1</span> 优雅的请求方法映射：<code>StaticStringMap</code></a></li>
-  <li><a href="#解析起始行parse_request" id="toc-解析起始行parse_request" class="nav-link" data-scroll-target="#解析起始行parse_request"><span class="header-section-number">7.7.2</span> 解析起始行：<code>parse_request()</code></a></li>
-  <li><a href="#编写-http-response-响应回传" id="toc-编写-http-response-响应回传" class="nav-link" data-scroll-target="#编写-http-response-响应回传"><span class="header-section-number">7.7.3</span> 编写 HTTP Response 响应回传</a></li>
+  <li><a href="#请求起始行the-top-level-header" id="toc-请求起始行the-top-level-header" class="nav-link" data-scroll-target="#请求起始行the-top-level-header"><span class="header-section-number">7.7.1</span> 请求起始行（The top-level header）</a></li>
+  <li><a href="#请求头列表the-list-of-http-headers" id="toc-请求头列表the-list-of-http-headers" class="nav-link" data-scroll-target="#请求头列表the-list-of-http-headers"><span class="header-section-number">7.7.2</span> 请求头列表（The list of HTTP headers）</a></li>
+  <li><a href="#请求体the-body" id="toc-请求体the-body" class="nav-link" data-scroll-target="#请求体the-body"><span class="header-section-number">7.7.3</span> 请求体（The body）</a></li>
+  <li><a href="#定义-http-请求方法枚举creating-the-http-method-enum" id="toc-定义-http-请求方法枚举creating-the-http-method-enum" class="nav-link" data-scroll-target="#定义-http-请求方法枚举creating-the-http-method-enum"><span class="header-section-number">7.7.4</span> 定义 HTTP 请求方法枚举（Creating the HTTP Method enum）</a></li>
+  <li><a href="#编写请求解析函数writing-the-parse-request-function" id="toc-编写请求解析函数writing-the-parse-request-function" class="nav-link" data-scroll-target="#编写请求解析函数writing-the-parse-request-function"><span class="header-section-number">7.7.5</span> 编写请求解析函数（Writing the parse request function）</a></li>
+  <li><a href="#在主函数中使用解析函数using-the-parse-request-function" id="toc-在主函数中使用解析函数using-the-parse-request-function" class="nav-link" data-scroll-target="#在主函数中使用解析函数using-the-parse-request-function"><span class="header-section-number">7.7.6</span> 在主函数中使用解析函数（Using the parse request function）</a></li>
+  <li><a href="#向客户端回发-http-响应sending-the-http-response-to-the-client" id="toc-向客户端回发-http-响应sending-the-http-response-to-the-client" class="nav-link" data-scroll-target="#向客户端回发-http-响应sending-the-http-response-to-the-client"><span class="header-section-number">7.7.7</span> 向客户端回发 HTTP 响应（Sending the HTTP Response to the client）</a></li>
   </ul></li>
-  <li><a href="#完整串联真正的hello-world网页现身" id="toc-完整串联真正的hello-world网页现身" class="nav-link" data-scroll-target="#完整串联真正的hello-world网页现身"><span class="header-section-number">7.8</span> 完整串联：真正的“Hello, World!”网页现身</a></li>
+  <li><a href="#sec-http-final" id="toc-sec-http-final" class="nav-link" data-scroll-target="#sec-http-final"><span class="header-section-number">7.8</span> 最终运行效果与浏览器验证</a></li>
   </ul>
 </nav>
     </div>
@@ -527,14 +550,13 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
 <p>在这章里，咱们开启全书的第二个硬核实战项目：<strong>从零手写一个极简 HTTP 服务器</strong>。</p>
 <p>虽然 Zig 标准库本身在 <code>std.http.Server</code> 里提供了一套高层 HTTP 服务实现，但咱们这次的目标是<strong>从零手搓（From scratch）</strong>，顺着网线摸到底层 TCP 套接字和流读写，把 HTTP 协议和网络 I/O 的底层骨架彻底扒开来看个透彻！</p>
 <section id="到底什么是-http-服务器" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="到底什么是-http-服务器"><span class="header-section-number">7.1</span> 到底什么是 HTTP 服务器？</h2>
-<p>剥开所有花哨的框架包装，任何服务器本质上都是一个<strong>常驻后台的死循环程序</strong>：它静静监听着某个端口，等待客户端（比如浏览器、手机 App、命令行 curl）发起连接。 一旦有连接握手成功，服务器接纳（Accept）该连接，双方就通过这个双向字节流通道互发消息。</p>
-<p>而双方在通道里往来的文本报文，必须严格遵从一套约定俗成的通用格式规范——这就是统治现代万维网的 <strong>HTTP 协议（超文本传输协议）</strong>。没有它，我们今天熟悉的 Web 世界根本无从谈起。</p>
-<p>简单总结：所谓的 Web 服务器，就是守着端口、用 HTTP 协议规范跟客户端互通有无的 TCP 守护进程。 如果想重温 HTTP 协议的官方规范概览，非常推荐阅读 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview">Mozilla MDN 上的 HTTP 概述文档</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p>剥开所有花哨的框架包装，HTTP 服务器本质上是一个无限期等待客户端连接的程序，就像酒店前台等待新客人到来一样。 一旦有连接握手成功，服务器接纳（Accept）该连接，双方就通过这个双向字节流通道互发消息。</p>
+<p>而双方在通道里往来的文本报文，必须遵循特定的格式，即 <strong>HTTP 协议（超文本传输协议）</strong> 所规定的格式。</p>
+<p>简单来说，HTTP 服务器就是通过 HTTP 协议与客户端交换消息的服务器。 如果想重温 HTTP 协议的官方规范概览，非常推荐阅读 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview">Mozilla MDN 上的 HTTP 概述文档</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
 </section>
 <section id="sec-how-http-works" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="sec-how-http-works"><span class="header-section-number">7.2</span> HTTP 服务器是怎样工作的？</h2>
@@ -543,8 +565,8 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <p>这就是 HTTP 服务器的核心运作循环： 1. <strong>等待客户端敲门</strong>； 2. <strong>接纳连接</strong>； 3. <strong>读取 HTTP Request</strong>：弄清楚客户端到底想要啥（是拿网页、查 API、还是提交表单）； 4. <strong>业务处理</strong>； 5. <strong>发送 HTTP Response</strong>：把状态码（200、404 等）和数据吐回给客户端； 6. <strong>关闭连接</strong>，重回等待状态。</p>
 </section>
 <section id="sec-http-how-impl" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="sec-http-how-impl"><span class="header-section-number">7.3</span> 工业级底层服务是怎么实现的？</h2>
-<p>在底层（比如 C 语言世界），实现一个基础 HTTP 服务必须走完标准的 BSD/POSIX 套接字流程：</p>
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-http-how-impl"><span class="header-section-number">7.3</span> HTTP 服务器通常是怎么实现的？</h2>
+<p>以 C 语言为例，技术社区中有许多优秀的教程与视频演示了如何用 C 语言从零实现简易 HTTP 服务器（例如 <span class="citation" data-cites="jeffrey_http">Yu (<a href="references.html#ref-jeffrey_http" role="doc-biblioref">2023</a>)</span>、<span class="citation" data-cites="nipun_http">Weerasiri (<a href="references.html#ref-nipun_http" role="doc-biblioref">2023</a>)</span> 以及 <span class="citation" data-cites="eric_http">Meehan (<a href="references.html#ref-eric_http" role="doc-biblioref">2021</a>)</span>）。 在底层（比如 C 语言世界），实现一个基础 HTTP 服务必须走完标准的 BSD/POSIX 套接字流程：</p>
 <ol type="1">
 <li><strong>创建 Socket</strong>：申请一个 TCP 套接字描述符（代表通讯管道）；</li>
 <li><strong>Bind（绑定）</strong>：给套接字绑定一个具体的网络门牌号（IP 地址 + 端口号）；</li>
@@ -559,125 +581,135 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <section id="sec-create-socket" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="sec-create-socket"><span class="header-section-number">7.4.1</span> 创建服务端网络对象</h3>
 <p>咱们先单独建一个 Zig 模块 <code>server.zig</code>，专门用来负责端口绑定和监听。</p>
-<p>随着 Zig 0.16 引入全新的统一网络 I/O 体系，我们直接基于现代化的 <code>std.Io.net</code> API 展开：通过 <code>std.Io.net.IpAddress</code> 解析 IP 端口并调用 <code>.listen()</code> 开启 TCP 监听。</p>
-<p>网络通信需要 IP 和端口： - <strong>IP</strong>：这里选用本机的回环地址（Loopback / Localhost）<code>127.0.0.1</code>； - <strong>端口（Port）</strong>：在 TCP 中是一个 16 位无符号整数（Zig 中的 <code>u16</code>），范围是 0 ~ 65535。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 <code>3490</code>。</p>
+<p>现在，我们需要在代码中创建一个 TCP 套接字对象。在本书之前的版本中，我们通过 Zig 标准库的 <code>std.posix.socket()</code> 函数来创建 TCP 套接字。但 Zig 0.16 引入了新的 IO 接口，这个函数和新的 <code>std.Io.net.Stream</code> API 搭配起来很别扭。</p>
+<p>因此，这次我换一种做法。简单来说，我们通过 <a href="https://ziglang.org/documentation/master/std/#std.Io.net.IpAddress.listen"><code>std.Io.net.IpAddress</code> 的 <code>listen()</code> 方法</a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>创建 TCP 套接字。然后，对于这个由 <code>std.Io.net.Server</code> 类型表示的 TCP 套接字，我们使用 <code>accept()</code> 方法在服务器与客户端之间建立连接。通过 <code>accept()</code> 得到的这个”连接对象”，我们可以访问一个流，服务器和客户端借助它交换消息。</p>
+<p>正如我们在 <a href="#sec-http-how-impl" class="quarto-xref"><span>Section 7.3</span></a> 中提到的，每个服务端套接字都需要绑定具体的 IP 地址与端口号： - <strong>IP</strong>：这里选用本机的回环地址（Loopback / Localhost）<code>127.0.0.1</code>； - <strong>端口（Port）</strong>：在 TCP 中是一个 16 位无符号整数（Zig 中的 <code>u16</code>），取值范围在 0 ~ 65535 <span class="citation" data-cites="wikipedia_port">(<a href="references.html#ref-wikipedia_port" role="doc-biblioref">Wikipedia 2024</a>)</span>。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 <code>3490</code>。</p>
 <p>看下面封装的 <code>Server</code> 结构体：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Socket <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>Socket;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Protocol <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>Protocol;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Socket = std.Io.net.Socket;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Protocol = std.Io.net.Protocol;</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="at">const</span> Server <span class="op">=</span> <span class="kw">struct</span> {</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    host<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    port<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    addr<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>IpAddress<span class="op">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Server = <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    host: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    port: <span class="dt">u16</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    addr: std.Io.net.IpAddress,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    io: std.Io,</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span>Server {</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> host<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span> <span class="op">=</span> <span class="st">"127.0.0.1"</span>;</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> port<span class="op">:</span> <span class="dt">u16</span> <span class="op">=</span> <span class="dv">3490</span>;</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> addr <span class="op">=</span> <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>IpAddress<span class="op">.</span>parseIp4(</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            host<span class="op">,</span> port</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(io: std.Io) !Server <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> host: []<span class="kw">const</span> <span class="dt">u8</span> = <span class="st">"127.0.0.1"</span>;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> port: <span class="dt">u16</span> = <span class="dv">3490</span>;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> addr = <span class="kw">try</span> std.Io.net.IpAddress.parseIp4(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            host, port</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        );</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">.</span>{<span class="op">.</span>host<span class="op">=</span>host<span class="op">,</span> <span class="op">.</span>port<span class="op">=</span>port<span class="op">,</span> <span class="op">.</span>addr<span class="op">=</span>addr<span class="op">,</span> <span class="op">.</span>io<span class="op">=</span>io};</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> .<span class="op">{</span>.host=host, .port=port, .addr=addr, .io=io<span class="op">}</span>;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> listen(<span class="va">self</span><span class="op">:</span> Server) <span class="op">!</span>std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>Server {</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Server Addr: {s}:{any}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{<span class="va">self</span><span class="op">.</span>host<span class="op">,</span> <span class="va">self</span><span class="op">.</span>port});</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="cf">try</span> <span class="va">self</span><span class="op">.</span>addr<span class="op">.</span>listen(</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>io<span class="op">,</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>{<span class="op">.</span>mode<span class="op">=</span>Socket<span class="op">.</span>Mode<span class="op">.</span>stream<span class="op">,</span> <span class="op">.</span>protocol<span class="op">=</span>Protocol<span class="op">.</span>tcp}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> listen(self: Server) !std.Io.net.Server <span class="op">{</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        std.debug.print(<span class="st">"Server Addr: {s}:{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>self.host, self.port<span class="op">}</span>);</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">try</span> self.addr.listen(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            self.io,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            .<span class="op">{</span>.mode=Socket.Mode.stream, .protocol=Protocol.tcp<span class="op">}</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="监听并接收客户端连接" class="level3" data-number="7.4.2">
 <h3 data-number="7.4.2" class="anchored" data-anchor-id="监听并接收客户端连接"><span class="header-section-number">7.4.2</span> 监听并接收客户端连接</h3>
-<p>在主程序 <code>main.zig</code> 中，我们引入刚才的 <code>server.zig</code>，开启监听并调用 <code>accept()</code> 等待连接：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Server <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"server.zig"</span>)<span class="op">.</span>Server;</span>
+<p>在主程序 <code>main.zig</code> 中，我们引入在 <a href="#sec-create-socket" class="quarto-xref"><span>Section 7.4.1</span></a> 中构建的 <code>server.zig</code> 模块，开启监听并调用 <code>accept()</code> 等待连接：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Server = <span class="bu">@import</span>(<span class="st">"server.zig"</span>).Server;</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> io <span class="op">=</span> init<span class="op">.</span>io;</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> server <span class="op">=</span> <span class="cf">try</span> Server<span class="op">.</span>init(io);</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> listening <span class="op">=</span> <span class="cf">try</span> server<span class="op">.</span>listen();</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> connection <span class="op">=</span> <span class="cf">try</span> listening<span class="op">.</span>accept(io);</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> connection<span class="op">.</span>close(io);</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> io = init.io;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> server = <span class="kw">try</span> Server.init(io);</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> listening = <span class="kw">try</span> server.listen();</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> connection = <span class="kw">try</span> listening.accept(io);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> connection.close(io);</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>如果此时跑这个程序，终端会挂起（阻塞）——因为它正在死等客户端向 <code>127.0.0.1:3490</code> 发起 TCP 握手。</p>
 <p><em>注意：在生产级 HTTP 服务中，通常会在一个无限 <code>while</code> 循环里不断 <code>accept</code>，并把每个新连接抛给一个独立的协程或线程处理，实现高并发并行吞吐。目前为了循序渐进，咱们先聚焦在处理单个连接上。</em></p>
 </section>
 <section id="sec-read-http-message" class="level3" data-number="7.4.3">
 <h3 data-number="7.4.3" class="anchored" data-anchor-id="sec-read-http-message"><span class="header-section-number">7.4.3</span> 读取来自客户端的 HTTP 请求报文</h3>
-<p>连接建立后，拿到的是一个双向的 <code>connection</code> 流对象： - 向流中<strong>写入（Write）</strong>数据 = 给客户端回送报文； - 从流中<strong>读取（Read）</strong>数据 = 接收客户端发送的报文。</p>
+<p>回顾 <a href="#sec-how-http-works" class="quarto-xref"><span>Section 7.2</span></a>，服务器接纳连接后的第一步就是读取客户端发来的 HTTP 请求报文。 连接建立后，拿到的是一个双向的 <code>connection</code> 流对象： - 向流中<strong>写入（Write）</strong>数据 = 给客户端回送报文； - 从流中<strong>读取（Read）</strong>数据 = 接收客户端发送的报文。</p>
 <p>我们新建一个 <code>request.zig</code> 模块，编写 <code>read_request()</code> 函数，从 Socket 流里提取客户端发过来的请求内容：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Stream <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>Stream;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stream = std.Io.net.Stream;</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> read_request(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> conn<span class="op">:</span> Stream<span class="op">,</span> buffer<span class="op">:</span> []<span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> recv_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> reader <span class="op">=</span> conn<span class="op">.</span>reader(io<span class="op">,</span> <span class="op">&amp;</span>recv_buffer);</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> reader_interface <span class="op">=</span> <span class="op">&amp;</span>reader<span class="op">.</span>interface;</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> start_index<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">5</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> len <span class="op">=</span> <span class="cf">try</span> read_next_line(reader_interface<span class="op">,</span> buffer<span class="op">,</span> start_index);</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        start_index <span class="op">+=</span> len;</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> read_request(io: std.Io, conn: Stream, buffer: []<span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> recv_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> reader = conn.reader(io, &amp;recv_buffer);</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> reader_interface = &amp;reader.interface;</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> start_index: <span class="dt">usize</span> = <span class="dv">0</span>;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> (<span class="dv">0</span>..<span class="dv">5</span>) |_| <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> len = <span class="kw">try</span> read_next_line(reader_interface, buffer, start_index);</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        start_index += len;</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> read_next_line(reader<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Io<span class="op">.</span>Reader<span class="op">,</span> buffer<span class="op">:</span> []<span class="dt">u8</span><span class="op">,</span> start_index<span class="op">:</span> <span class="dt">usize</span>) <span class="op">!</span><span class="dt">usize</span> {</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> next_line <span class="op">=</span> <span class="cf">try</span> reader<span class="op">.</span>takeDelimiterInclusive(<span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span>);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> read_next_line(reader: *std.Io.Reader, buffer: []<span class="dt">u8</span>, start_index: <span class="dt">usize</span>) !<span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> next_line = <span class="kw">try</span> reader.takeDelimiterInclusive(<span class="ch">'\n'</span>);</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memcpy</span>(</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        buffer[start_index<span class="op">..</span>(start_index <span class="op">+</span> next_line<span class="op">.</span>len)]<span class="op">,</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        next_line[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        buffer[start_index..(start_index + next_line.len)],</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        next_line[<span class="dv">0</span>..],</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> next_line<span class="op">.</span>len;</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> next_line.len;</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="检验阶段性成果捕捉真实浏览器请求" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="检验阶段性成果捕捉真实浏览器请求"><span class="header-section-number">7.5</span> 检验阶段性成果：捕捉真实浏览器请求</h2>
 <p>把 <code>read_request</code> 接入 <code>main.zig</code>，并把收到的原始请求打印到终端：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Request <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Server <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"server.zig"</span>)<span class="op">.</span>Server;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Server = <span class="bu">@import</span>(<span class="st">"server.zig"</span>).Server;</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> io <span class="op">=</span> init<span class="op">.</span>io;</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> server <span class="op">=</span> <span class="cf">try</span> Server<span class="op">.</span>init(io);</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> listening <span class="op">=</span> <span class="cf">try</span> server<span class="op">.</span>listen();</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> connection <span class="op">=</span> <span class="cf">try</span> listening<span class="op">.</span>accept(io);</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> connection<span class="op">.</span>close(io);</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> io = init.io;</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> server = <span class="kw">try</span> Server.init(io);</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> listening = <span class="kw">try</span> server.listen();</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> connection = <span class="kw">try</span> listening.accept(io);</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> connection.close(io);</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> request_buffer<span class="op">:</span> [<span class="dv">1000</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(request_buffer[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> Request<span class="op">.</span>read_request(</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        io<span class="op">,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        connection<span class="op">,</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        request_buffer[<span class="dv">0</span><span class="op">..</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> request_buffer: [<span class="dv">1000</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(request_buffer[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> Request.read_request(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        io,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        connection,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        request_buffer[<span class="dv">0</span>..]</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{request_buffer});</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>敲下 <code>zig run src/main.zig</code>，控制台打印出监听地址并就绪：</p>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>request_buffer<span class="op">}</span>);</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>现在用 <code>zig</code> 编译器的 <code>run</code> 命令执行这个程序。但请记住，正如前面所说，程序一启动就会无限期地挂起，因为它在等待客户端连接服务器。</p>
+<p>更具体地说，程序会停在调用 <code>accept()</code> 的那一行。一旦有客户端尝试连接服务器，程序就会”恢复”执行，<code>accept()</code> 函数最终完成调用，创建出我们需要的连接对象，然后程序的其余部分才会继续运行。</p>
+<p>如 <a href="#fig-print-zigrun1" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> 所示，控制台打印出了消息 <code>Server Addr: 127.0.0.1:3490</code>，程序正在等待传入的连接。</p>
 <div id="fig-print-zigrun1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-print-zigrun1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../../Figures/print-zigrun1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-print-zigrun1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: 终端执行并进入监听状态
+Figure&nbsp;7.1: 运行程序的截图
 </figcaption>
 </figure>
 </div>
-<p>打开浏览器访问 <code>http://localhost:3490</code>（或者跑一段简单的 Python 请求脚本）。此时浏览器会转圈，因为咱们还没写回传 Response 的逻辑； 但回头看终端控制台，<strong>浏览器亲手发送的真实 HTTP 请求报文已经被咱们抓个正着</strong>！</p>
+<p>现在终于可以尝试连接这个服务器了，方法有好几种。例如，可以使用下面这个 Python 脚本：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>requests.get(<span class="st">"http://127.0.0.1:3490"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>也可以打开你喜欢的任意一款浏览器，输入网址 <code>localhost:3490</code>。注意：<code>localhost</code> 与 IP <code>127.0.0.1</code> 是同一个地址。按下回车后，浏览器访问这个地址，一开始很可能会显示”该网页无法正常运作”（this page isn’t working），随后很可能又变成”无法访问此网站”（the site can’t be reached）。</p>
+<p>浏览器之所以显示这些”错误信息”，是因为它没有收到服务器的任何响应。换句话说，浏览器连接到我们的服务器时，确实通过已建立的连接发送了 HTTP 请求，然后它在等待一个 HTTP 响应，但服务器什么也没有返回（我们还没有实现 HTTP 响应的逻辑）。</p>
+<p>不过这没关系。我们已经达成了现阶段想要的结果：连接到服务器，并看到浏览器（或 Python 脚本）发给服务器的 HTTP 请求。</p>
+<p>回到你执行程序时留着的那个控制台，会看到程序已经结束运行，并且控制台上打印出了一条新消息，这正是浏览器发给服务器的 HTTP 请求消息。</p>
+<p>由于代码中只读取了 HTTP 请求的前 6 行，这个程序打印出来的可能不是完整的 HTTP 请求消息，这取决于 HTTP 请求消息有多大。（译注：代码中的循环是 <code>for (0..5)</code>，实际读取的是前 5 行。）打印出的 HTTP 请求如 <a href="#fig-print-zigrun2" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> 所示。</p>
 <div id="fig-print-zigrun2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-print-zigrun2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../../Figures/print-zigrun2.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-print-zigrun2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.2: 终端成功抓包并打印出浏览器发来的真实 HTTP Request 报文
+Figure&nbsp;7.2: 浏览器发送的 HTTP 请求的截图
 </figcaption>
 </figure>
 </div>
@@ -685,158 +717,250 @@ Figure&nbsp;7.2: 终端成功抓包并打印出浏览器发来的真实 HTTP Req
 <section id="sec-enum" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="sec-enum"><span class="header-section-number">7.6</span> 知识点加餐：Zig 枚举（Enums）</h2>
 <p>在解析报文之前，我们先插播一个必不可少的语言特性：<strong>枚举（Enums）</strong>。</p>
-<p>当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE…），用枚举是类型安全的最优解：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> PrimaryColorRGB <span class="op">=</span> <span class="kw">enum</span> {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    RED<span class="op">,</span> GREEN<span class="op">,</span> BLUE</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> acolor <span class="op">=</span> PrimaryColorRGB<span class="op">.</span>RED;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> acolor;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE…），可以考虑使用枚举：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> PrimaryColorRGB = <span class="kw">enum</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    RED, GREEN, BLUE</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> acolor = PrimaryColorRGB.RED;</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>_ = acolor;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>如果手滑传错了不存在的枚举项，编译器在编译期就会立刻拦截报错：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> acolor <span class="op">=</span> PrimaryColorRGB<span class="op">.</span>MAGENTA;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> acolor = PrimaryColorRGB.MAGENTA;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>e1.zig:5:36: error: enum 'PrimaryColorRGB' has
         no member named 'MAGENTA':
     const acolor = PrimaryColorRGB.MAGENTA;
                                    ^~~~~~~</code></pre>
 <p>而且在 Zig 里，<strong>枚举跟结构体一样，内部可以挂载自定义方法</strong>！</p>
 </section>
-<section id="动手实现服务器第二阶段请求解析与响应回传" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="动手实现服务器第二阶段请求解析与响应回传"><span class="header-section-number">7.7</span> 动手实现服务器：第二阶段（请求解析与响应回传）</h2>
-<p>HTTP 请求报文通常包含三部分： 1. <strong>起始行（Request Line）</strong>：包含方法（Method）、请求路径（URI）和协议版本（HTTP Version），例如 <code>GET /users/list HTTP/1.1</code>； 2. <strong>请求头（Headers）</strong>：由冒号分隔的键值对组成（如 <code>Host: localhost</code>、<code>Accept: text/html</code>）； 3. <strong>请求体（Body）</strong>：POST/PUT 时携带的载荷数据（GET 请求通常没有 Body）。</p>
-<p>在当前项目中，我们聚焦于解析最重要的<strong>起始行</strong>，并完整支持 <code>GET</code> 方法。</p>
-<section id="优雅的请求方法映射staticstringmap" class="level3" data-number="7.7.1">
-<h3 data-number="7.7.1" class="anchored" data-anchor-id="优雅的请求方法映射staticstringmap"><span class="header-section-number">7.7.1</span> 优雅的请求方法映射：<code>StaticStringMap</code></h3>
-<p>怎么把报文里的 <code>"GET"</code> 字符串快速转换成枚举呢？ Zig 标准库提供了一个极度强悍的工具：<code>std.static_string_map.StaticStringMap</code>！ 它能在<strong>编译期</strong>根据一组固定字符串键值构建高效的静态字典，查找极快且不需要任何堆内存分配：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="at">const</span> Method <span class="op">=</span> <span class="kw">enum</span> {</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    GET<span class="op">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(text<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span>Method {</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> MethodMap<span class="op">.</span>get(text)<span class="op">.?</span>;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> is_supported(m<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="dt">bool</span> {</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> method <span class="op">=</span> MethodMap<span class="op">.</span>get(m);</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (method) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="cn">true</span>;</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="cn">false</span>;</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Map <span class="op">=</span> std<span class="op">.</span>static_string_map<span class="op">.</span>StaticStringMap;</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> MethodMap <span class="op">=</span> Map(Method)<span class="op">.</span>initComptime(<span class="op">.</span>{</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{ <span class="st">"GET"</span><span class="op">,</span> Method<span class="op">.</span>GET }<span class="op">,</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>});</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="sec-impl-server-part2" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="sec-impl-server-part2"><span class="header-section-number">7.7</span> 动手实现服务器：第二阶段</h2>
+<p>一条 HTTP 请求是一段文本消息，分为三个部分： 1. <strong>顶层起始行（The top-level header / Request line）</strong>：指明请求方法、访问目标资源 URI 以及 HTTP 协议版本； 2. <strong>请求头列表（The list of HTTP headers）</strong>：以冒号分隔的键值对元数据集合； 3. <strong>请求体（The body）</strong>：紧随空行之后携带的业务载荷数据。</p>
+<section id="请求起始行the-top-level-header" class="level3" data-number="7.7.1">
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="请求起始行the-top-level-header"><span class="header-section-number">7.7.1</span> 请求起始行（The top-level header）</h3>
+<p>任何 HTTP 请求的第一行文本永远包含着该请求最核心的三大基石信息，各个属性之间在文本行中通过空格分隔： 第一项是请求所使用的 HTTP 方法（Method）； 第二项是请求送达的目标 URI 资源路径； 第三项是所遵循的 HTTP 协议版本。</p>
+<pre><code>GET /users/list HTTP/1.1</code></pre>
+<p>在上面的示例中，<code>GET</code> 是请求方法。许多开发者习惯把中间的 <code>/users/list</code> 称作“API 路由端点（Endpoint）”。在 GET 请求语境下，它本质上就是客户端希望从服务器索取的文档资源路径。末尾的 <code>HTTP/1.1</code> 则指明了协议版本，这也是目前全网最通用普及的 HTTP 规范。</p>
 </section>
-<section id="解析起始行parse_request" class="level3" data-number="7.7.2">
-<h3 data-number="7.7.2" class="anchored" data-anchor-id="解析起始行parse_request"><span class="header-section-number">7.7.2</span> 解析起始行：<code>parse_request()</code></h3>
-<p>我们定义一个 <code>Request</code> 结构体，并通过标准库切分函数拆解首行：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Request <span class="op">=</span> <span class="kw">struct</span> {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">:</span> Method<span class="op">,</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    version<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    uri<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(method<span class="op">:</span> Method<span class="op">,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                uri<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                version<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) Request {</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> Request{</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>method <span class="op">=</span> method<span class="op">,</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>uri <span class="op">=</span> uri<span class="op">,</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>version <span class="op">=</span> version<span class="op">,</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        };</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> parse_request(text<span class="op">:</span> []<span class="dt">u8</span>) Request {</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> line_index <span class="op">=</span> std<span class="op">.</span>mem<span class="op">.</span>indexOfScalar(</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u8</span><span class="op">,</span> text<span class="op">,</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">orelse</span> text<span class="op">.</span>len;</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> iterator <span class="op">=</span> std<span class="op">.</span>mem<span class="op">.</span>splitScalar(</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u8</span><span class="op">,</span> text[<span class="dv">0</span><span class="op">..</span>line_index]<span class="op">,</span> <span class="ch">' '</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> method <span class="op">=</span> <span class="cf">try</span> Method<span class="op">.</span>init(iterator<span class="op">.</span>next()<span class="op">.?</span>);</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> uri <span class="op">=</span> iterator<span class="op">.</span>next()<span class="op">.?</span>;</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> version <span class="op">=</span> iterator<span class="op">.</span>next()<span class="op">.?</span>;</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> request <span class="op">=</span> Request<span class="op">.</span>init(method<span class="op">,</span> uri<span class="op">,</span> version);</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> request;</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="请求头列表the-list-of-http-headers" class="level3" data-number="7.7.2">
+<h3 data-number="7.7.2" class="anchored" data-anchor-id="请求头列表the-list-of-http-headers"><span class="header-section-number">7.7.2</span> 请求头列表（The list of HTTP headers）</h3>
+<p>紧随起始行之后的是请求头列表。它由一组键值对组成，用于向服务器交代客户端的环境特征与交互偏好。</p>
+<p>在本章自制微型服务器的实现中，为了保持代码纯粹聚焦，我们暂不深入解析复杂的请求头。但现实中的大多数 HTTP 服务器都会读取并使用这些头部。 例如最常见的 <code>Accept</code> 头部，它列出了客户端所能解析的 <a href="https://en.wikipedia.org/wiki/Media_type">MIME 媒体类型</a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>（如 <code>text/html</code>、<code>application/json</code> 等）。这相当于客户端在向服务器打招呼：“我只能看懂 HTML 页面，请千万别给我发个二进制 PDF 过来！”服务器便能根据该头部动态挑选最优格式返回。</p>
 </section>
-<section id="编写-http-response-响应回传" class="level3" data-number="7.7.3">
-<h3 data-number="7.7.3" class="anchored" data-anchor-id="编写-http-response-响应回传"><span class="header-section-number">7.7.3</span> 编写 HTTP Response 响应回传</h3>
-<p>最后一步，给客户端回传 HTTP 报文。 新建 <code>response.zig</code>，分别实现 200 成功和 404 未找到两套标准响应：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Stream <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>net<span class="op">.</span>Stream;</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> send_200(conn<span class="op">:</span> Stream<span class="op">,</span> io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> message <span class="op">=</span> (</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HTTP/1.1 200 OK</span><span class="sc">\n</span><span class="st">Content-Length: 48"</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Content-Type: text/html</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"Connection: Closed</span><span class="sc">\n\n</span><span class="st">&lt;html&gt;&lt;body&gt;"</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"&lt;h1&gt;Hello, World!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stream_writer <span class="op">=</span> conn<span class="op">.</span>writer(io<span class="op">,</span> <span class="op">&amp;.</span>{});</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> <span class="cf">try</span> stream_writer<span class="op">.</span>interface<span class="op">.</span>write(message);</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> send_404(conn<span class="op">:</span> Stream<span class="op">,</span> io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> message <span class="op">=</span> (</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HTTP/1.1 404 Not Found</span><span class="sc">\n</span><span class="st">Content-Length: 50"</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Content-Type: text/html</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"Connection: Closed</span><span class="sc">\n\n</span><span class="st">&lt;html&gt;&lt;body&gt;"</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span> <span class="st">"&lt;h1&gt;File not found!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stream_writer <span class="op">=</span> conn<span class="op">.</span>writer(io<span class="op">,</span> <span class="op">&amp;.</span>{});</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> <span class="cf">try</span> stream_writer<span class="op">.</span>interface<span class="op">.</span>write(message);</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="请求体the-body" class="level3" data-number="7.7.3">
+<h3 data-number="7.7.3" class="anchored" data-anchor-id="请求体the-body"><span class="header-section-number">7.7.3</span> 请求体（The body）</h3>
+<p>请求体位于请求头与空行（<code>\r\n\r\n</code>）之后，它是一个可选区域。 例如对于所有的 GET 请求，由于其语义是“索取数据”而非“提交数据”，因此通常完全没有请求体。请求体主要活跃在 POST、PUT 等涉及向服务器提交表单或上传文件的请求中。 由于我们当前的微型服务器只专注于处理 GET 请求，因此无需处理请求体。</p>
+</section>
+<section id="定义-http-请求方法枚举creating-the-http-method-enum" class="level3" data-number="7.7.4">
+<h3 data-number="7.7.4" class="anchored" data-anchor-id="定义-http-请求方法枚举creating-the-http-method-enum"><span class="header-section-number">7.7.4</span> 定义 HTTP 请求方法枚举（Creating the HTTP Method enum）</h3>
+<p>每个合法的 HTTP 请求都有着明确的方法动作（如 <code>GET</code>、<code>POST</code>、<code>OPTIONS</code>、<code>PATCH</code>、<code>DELETE</code> 等）。 POST 负责提交数据供服务器处理和持久化；而 GET 则是向服务器请求分发资源。 当客户端发送 POST 请求时，服务器的响应通常只是告知“数据是否保存成功”；而面对 GET 请求时，服务器则必须在响应体中附带客户端想要的实体内容。</p>
+<p>由于 HTTP 请求的方法由这样一组数量很少、内容固定的单词来标识，用一个枚举（enum）结构来表示 HTTP 方法会很合适。这样一来，我们就能轻松检查从客户端收到的 HTTP 请求所使用的方法，是不是我们这个小型 HTTP 服务器当前支持的方法。</p>
+<p>下面的 <code>Method</code> 结构就表示这个枚举。注意，目前这个枚举里只有 GET 这一种 HTTP 方法，因为在本章中我只打算实现 GET 方法，所以没有把其他 HTTP 方法放进来。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Method = <span class="kw">enum</span> <span class="op">{</span> GET <span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>接下来，我想给这个枚举结构添加两个方法。一个是 <code>is_supported()</code>，它返回一个布尔值，表示输入的 HTTP 方法是否受我们的 HTTP 服务器支持。另一个是 <code>init()</code>，它是一个构造函数，接收一个字符串作为输入，并尝试把它转换为 <code>Method</code> 值。</p>
+<p>为了实现这两个函数，我会用到 Zig 标准库中的 <code>StaticStringMap()</code>。这个函数可以创建一个从字符串到枚举值的简单映射。换句话说，我们可以用这个映射结构把一个字符串映射到对应的枚举值。在某种程度上，标准库里的这个结构几乎就像一个”哈希表”，并且针对少量单词（即少量键）做了优化，正好符合我们这里的情况。我们会在 <a href="09-data-structures.html#sec-maps-hashtables" class="quarto-xref"><span>Section 11.2</span></a> 中进一步讨论 Zig 中的哈希表。</p>
+<p>要使用这个”静态字符串映射”结构，需要从 Zig 标准库的 <code>std.static_string_map</code> 模块中导入它。为了让代码更短、更好写，我会用一个更短的名字（<code>Map</code>）来导入这个函数。</p>
+<p>导入 <code>Map()</code> 之后，把它应用到映射结果要使用的枚举结构上即可。在这里就是上一个代码示例中声明的 <code>Method</code> 枚举结构。然后，我调用 <code>initComptime()</code> 方法并传入映射内容，即我们要用的键值对列表。</p>
+<p>在下面的例子中可以看到，我用多个匿名结构体字面量写出了这个映射。在第一个（也就是”顶层的”）结构体字面量里，有一个由结构体字面量组成的列表（或序列）。列表中的每个结构体字面量代表一个独立的键值对。每个键值对的第一个元素（即键）必须是字符串值，第二个元素则必须是你传给 <code>Map()</code> 函数的那个枚举结构中的值。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Method = <span class="kw">enum</span> <span class="op">{</span> GET <span class="op">}</span>;</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Map = std.static_string_map.StaticStringMap;</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> MethodMap = Map(Method).initComptime(.<span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span> <span class="st">"GET"</span>, Method.GET <span class="op">}</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>因此，<code>MethodMap</code> 对象基本上相当于 C++ 中的 <code>std::map</code> 对象，或者 Python 中的 <code>dict</code> 对象。你可以使用映射对象的 <code>get()</code> 方法，取得与某个键对应的枚举值。这个方法返回一个可选值，因此 <code>get()</code> 的结果可能是 null。</p>
+<p>我们可以利用这一点来检测某个 HTTP 方法是否受我们的 HTTP 服务器支持。如果 <code>get()</code> 方法返回 null，就说明它在 <code>MethodMap</code> 对象中没有找到我们提供的方法，也就是说我们的 HTTP 服务器不支持这个方法。</p>
+<p>下面的 <code>init()</code> 方法接收一个字符串值作为输入，然后直接把这个字符串传给 <code>MethodMap</code> 对象的 <code>get()</code> 方法。这样，我们就能得到与这个输入字符串对应的枚举值。</p>
+<p>注意，在下面的例子中，<code>init()</code> 方法的返回结果要么是一个错误（这可能在 <code>?</code> 方法返回 <code>unreachable</code> 时发生，详见 <a href="05-pointers.html#sec-null-handling" class="quarto-xref"><span>Section 6.4.3</span></a>），要么是一个 <code>Method</code> 对象。由于 <code>GET</code> 目前是 <code>Method</code> 枚举结构中唯一的值，<code>init()</code> 方法很可能会返回 <code>Method.GET</code>。（译注：严格来说，<code>.?</code> 解包到 null 时不会产生错误值，而是触发 <code>unreachable</code>：在 Debug 和 ReleaseSafe 模式下程序会 panic，在 ReleaseFast 和 ReleaseSmall 模式下则是未定义行为。因此这里的 <code>init()</code> 实际上不会返回错误。如果希望遇到不支持的方法时返回错误，可以改写为 <code>return MethodMap.get(text) orelse error.UnsupportedMethod;</code>。）</p>
+<p>还要注意，在 <code>is_supported()</code> 方法中，我们使用了 <code>MethodMap</code> 对象的 <code>get()</code> 方法所返回的可选值。<code>if</code> 语句会解包这个可选值，如果它不是 null，就返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Method = <span class="kw">enum</span> <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    GET,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(text: []<span class="kw">const</span> <span class="dt">u8</span>) !Method <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> MethodMap.get(text).?;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> is_supported(m: []<span class="kw">const</span> <span class="dt">u8</span>) <span class="dt">bool</span> <span class="op">{</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> method = MethodMap.get(m);</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (method) |_| <span class="op">{</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="cn">true</span>;</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="cn">false</span>;</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Map = std.static_string_map.StaticStringMap;</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> MethodMap = Map(Method).initComptime(.<span class="op">{</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span> <span class="st">"GET"</span>, Method.GET <span class="op">}</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="编写请求解析函数writing-the-parse-request-function" class="level3" data-number="7.7.5">
+<h3 data-number="7.7.5" class="anchored" data-anchor-id="编写请求解析函数writing-the-parse-request-function"><span class="header-section-number">7.7.5</span> 编写请求解析函数（Writing the parse request function）</h3>
+<p>在创建好表示 HTTP 方法的枚举之后，我们就可以开始编写真正负责解析 HTTP 请求的函数了。</p>
+<p>首先可以写一个结构体来表示 HTTP 请求。以下面的 <code>Request</code> 结构体为例，它包含 HTTP 请求”顶层”头部（即第一行）中的三项基本信息。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    method: Method,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    version: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    uri: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(method: Method,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                uri: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                version: []<span class="kw">const</span> <span class="dt">u8</span>) Request <span class="op">{</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Request<span class="op">{</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>            .method = method,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>            .uri = uri,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>            .version = version,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>;</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>parse_request()</code> 函数应当接收一个字符串作为输入。这个字符串包含 HTTP 请求消息，解析函数需要读取并理解这条消息的各个组成部分。</p>
+<p>请记住，就本章而言，我们只关心这条消息的第一行。这一行包含”顶层头部”，也就是 HTTP 请求的三项基本属性：所用的 HTTP 方法、URI 和 HTTP 版本。</p>
+<p>注意，我在 <code>parse_request()</code> 中使用了 <code>indexOfScalar()</code> 函数。Zig 标准库中的这个函数会返回我们提供的标量值在字符串中第一次出现的索引。这里我要找的是换行符（<code>\n</code>）第一次出现的位置，因为我们只关心 HTTP 请求消息的第一行。我们想要解析的三项信息（HTTP 版本、HTTP 方法和 URI）就在这一行。</p>
+<p>因此，我们用 <code>indexOfScalar()</code> 函数把解析过程限制在消息的第一行。还值得一提的是，<code>indexOfScalar()</code> 函数返回的是一个可选值，所以我用 <code>orelse</code> 关键字提供了一个备选值，以应对函数返回 null 的情况。</p>
+<p>由于这三项属性之间都用一个空格分隔，我们可以使用 Zig 标准库中的 <code>splitScalar()</code> 函数，在每个出现空格的位置把输入字符串切分成若干段。换句话说，<code>splitScalar()</code> 函数相当于 Python 中的 <code>split()</code> 方法、C++ 中的 <code>std::getline()</code> 函数，或者 C 中的 <code>strtok()</code> 函数。</p>
+<p>使用 <code>splitScalar()</code> 函数时，得到的结果是一个迭代器。这个迭代器有一个 <code>next()</code> 方法，可以把迭代器推进到下一个位置，也就是切分后字符串的下一段。注意，<code>next()</code> 不仅会推进迭代器，还会把指向当前这一段的切片作为结果返回。</p>
+<p>如果你想取得指向当前这一段的切片，但又不想把迭代器推进到下一个位置，可以使用 <code>peek()</code> 方法。<code>next()</code> 和 <code>peek()</code> 方法都返回可选值，所以我用 <code>?</code> 方法来解包这些可选值。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> parse_request(text: []<span class="dt">u8</span>) Request <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> line_index = std.mem.indexOfScalar(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u8</span>, text, <span class="ch">'\n'</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">orelse</span> text.len;</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> iterator = std.mem.splitScalar(</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u8</span>, text[<span class="dv">0</span>..line_index], <span class="ch">' '</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> method = <span class="kw">try</span> Method.init(iterator.next().?);</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> uri = iterator.next().?;</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> version = iterator.next().?;</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> request = Request.init(method, uri, version);</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> request;</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：<code>parse_request()</code> 的返回类型不是错误联合类型，函数体内却使用了 <code>try</code>。这段代码之所以能通过编译，是因为 <code>Method.init()</code> 推断出的错误集为空，<code>try</code> 不会真正返回任何错误。如果按前面译注的方式让 <code>init()</code> 返回 <code>error.UnsupportedMethod</code>，就需要把 <code>parse_request()</code> 的返回类型同步改为 <code>!Request</code>，并在调用处加上 <code>try</code>。）</p>
+<p>正如我在 <a href="01-zig-weird.html#sec-zig-strings" class="quarto-xref"><span>Section 1.8</span></a> 中所述，在 Zig 语言里，字符串就是字节数组。因此，你会在 Zig 标准库的 <code>mem</code> 模块中找到很多可以直接处理字符串的实用函数。我们已经在 <a href="01-zig-weird.html#sec-strings-useful-funs" class="quarto-xref"><span>Section 1.8.5</span></a> 中介绍过其中一部分。</p>
+</section>
+<section id="在主函数中使用解析函数using-the-parse-request-function" class="level3" data-number="7.7.6">
+<h3 data-number="7.7.6" class="anchored" data-anchor-id="在主函数中使用解析函数using-the-parse-request-function"><span class="header-section-number">7.7.6</span> 在主函数中使用解析函数（Using the parse request function）</h3>
+<p>现在我们在 <code>main.zig</code> 中正式串联起请求读取与解析流程：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Server = <span class="bu">@import</span>(<span class="st">"server.zig"</span>).Server;</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> io = init.io;</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> server = <span class="kw">try</span> Server.init(io);</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> listening = <span class="kw">try</span> server.listen();</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> connection = <span class="kw">try</span> listening.accept(io);</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> connection.close(io);</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> request_buffer: [<span class="dv">1000</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(request_buffer[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> Request.read_request(</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        io,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        connection,</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        request_buffer[<span class="dv">0</span>..]</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> request = Request.parse_request(request_buffer[<span class="dv">0</span>..]);</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>request<span class="op">}</span>);</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>重新运行程序并在浏览器中访问 <code>localhost:3490</code>，终端便会如期打印出解析好的 <code>Request</code> 结构体：</p>
+<pre><code>request.Request{
+    .method = request.Method.GET,
+    .version = {72, 84, 84, 80, 47, 49, 46, 49, 13},
+    .uri = {47}
+}</code></pre>
+<p><em>注：由于我们在打印时采用了 <code>any</code> 格式说明符，<code>version</code> 与 <code>uri</code> 以原始 ASCII 整数切片形式展现。其中 47 对应字符 <code>/</code>，而 72, 84, 84, 80… 对应的正是 <code>"HTTP/1.1"</code>。</em></p>
+</section>
+<section id="向客户端回发-http-响应sending-the-http-response-to-the-client" class="level3" data-number="7.7.7">
+<h3 data-number="7.7.7" class="anchored" data-anchor-id="向客户端回发-http-响应sending-the-http-response-to-the-client"><span class="header-section-number">7.7.7</span> 向客户端回发 HTTP 响应（Sending the HTTP Response to the client）</h3>
+<p>最后一步：我们要让服务器向浏览器正式回送合法的 HTTP 响应报文，将经典的 “Hello, World!” HTML 页面呈现在用户的浏览器屏幕上。</p>
+<p>我们新建一个 <code>response.zig</code> 模块，编写 <code>send_200()</code> 与 <code>send_404()</code> 两个应答函数： - <code>send_200()</code>：回发状态码为 200 OK 的响应报文，随附一段简短的 HTML 网页； - <code>send_404()</code>：当客户端请求了不存在的路径时，回发 404 Not Found 错误页面。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stream = std.Io.net.Stream;</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> send_200(conn: Stream, io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> message = (</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HTTP/1.1 200 OK</span><span class="sc">\n</span><span class="st">Content-Length: 48"</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"</span><span class="sc">\n</span><span class="st">Content-Type: text/html</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"Connection: Closed</span><span class="sc">\n\n</span><span class="st">&lt;html&gt;&lt;body&gt;"</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"&lt;h1&gt;Hello, World!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stream_writer = conn.writer(io, &amp;.<span class="op">{}</span>);</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> stream_writer.interface.write(message);</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> send_404(conn: Stream, io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> message = (</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HTTP/1.1 404 Not Found</span><span class="sc">\n</span><span class="st">Content-Length: 50"</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"</span><span class="sc">\n</span><span class="st">Content-Type: text/html</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"Connection: Closed</span><span class="sc">\n\n</span><span class="st">&lt;html&gt;&lt;body&gt;"</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>        ++ <span class="st">"&lt;h1&gt;File not found!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stream_writer = conn.writer(io, &amp;.<span class="op">{}</span>);</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> stream_writer.interface.write(message);</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>两个函数接收连接对象后，通过 <code>conn.writer()</code> 构造写入器，并将格式化好的完整 HTTP 响应报文字符串通过底层套接字直接投递给客户端。</p>
 </section>
 </section>
-<section id="完整串联真正的hello-world网页现身" class="level2" data-number="7.8">
-<h2 data-number="7.8" class="anchored" data-anchor-id="完整串联真正的hello-world网页现身"><span class="header-section-number">7.8</span> 完整串联：真正的“Hello, World!”网页现身</h2>
-<p>把全部模块在 <code>main.zig</code> 里大一统串联起来：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Method <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"request.zig"</span>)<span class="op">.</span>Method;</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Request <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Response <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"response.zig"</span>);</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Server <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"server.zig"</span>)<span class="op">.</span>Server;</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> io <span class="op">=</span> init<span class="op">.</span>io;</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> server <span class="op">=</span> <span class="cf">try</span> Server<span class="op">.</span>init(io);</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> listening <span class="op">=</span> <span class="cf">try</span> server<span class="op">.</span>listen();</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> connection <span class="op">=</span> <span class="cf">try</span> listening<span class="op">.</span>accept(io);</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> connection<span class="op">.</span>close(io);</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> request_buffer<span class="op">:</span> [<span class="dv">1000</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(request_buffer[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> Request<span class="op">.</span>read_request(</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        io<span class="op">,</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        connection<span class="op">,</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        request_buffer[<span class="dv">0</span><span class="op">..</span>]</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> request <span class="op">=</span> Request<span class="op">.</span>parse_request(request_buffer[<span class="dv">0</span><span class="op">..</span>]);</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (request<span class="op">.</span>method <span class="op">==</span> Method<span class="op">.</span>GET) {</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (std<span class="op">.</span>mem<span class="op">.</span>eql(<span class="dt">u8</span><span class="op">,</span> request<span class="op">.</span>uri<span class="op">,</span> <span class="st">"/"</span>)) {</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> Response<span class="op">.</span>send_200(connection<span class="op">,</span> io);</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> Response<span class="op">.</span>send_404(connection<span class="op">,</span> io);</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>再次敲下 <code>zig run</code> 并用浏览器刷新 <code>http://localhost:3490</code>！ 这一次，浏览器窗口里瞬间赫然弹出了大号加粗的 <strong>“Hello, World!”</strong> 网页！</p>
+<section id="sec-http-final" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="sec-http-final"><span class="header-section-number">7.8</span> 最终运行效果与浏览器验证</h2>
+<p>现在我们在 <code>main.zig</code> 中完成所有拼图的最终合龙： 导入 <code>response.zig</code>，并在解析完请求后通过 <code>if</code> 分支校验 URI：如果请求的是根路径 <code>"/"</code>（借助 <code>std.mem.eql</code> 比对），就调用 <code>send_200()</code> 发送问候网页；否则调用 <code>send_404()</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Method = <span class="bu">@import</span>(<span class="st">"request.zig"</span>).Method;</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Request = <span class="bu">@import</span>(<span class="st">"request.zig"</span>);</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Response = <span class="bu">@import</span>(<span class="st">"response.zig"</span>);</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Server = <span class="bu">@import</span>(<span class="st">"server.zig"</span>).Server;</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> io = init.io;</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> server = <span class="kw">try</span> Server.init(io);</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> listening = <span class="kw">try</span> server.listen();</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> connection = <span class="kw">try</span> listening.accept(io);</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> connection.close(io);</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> request_buffer: [<span class="dv">1000</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(request_buffer[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> Request.read_request(</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        io,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        connection,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        request_buffer[<span class="dv">0</span>..]</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> request = Request.parse_request(request_buffer[<span class="dv">0</span>..]);</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (request.method == Method.GET) <span class="op">{</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (std.mem.eql(<span class="dt">u8</span>, request.uri, <span class="st">"/"</span>)) <span class="op">{</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>            <span class="kw">try</span> Response.send_200(connection, io);</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>            <span class="kw">try</span> Response.send_404(connection, io);</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在终端敲下 <code>zig run src/main.zig</code>，打开浏览器访问 <code>http://localhost:3490</code>。如 <a href="#fig-print-zigrun3" class="quarto-xref">Figure&nbsp;<span>7.3</span></a> 所示，服务器成功将包含 <code>"Hello, World!"</code> 的 HTTP 响应发送给了浏览器并渲染展示：</p>
 <div id="fig-print-zigrun3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-print-zigrun3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../../Figures/print-zigrun3.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-print-zigrun3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.3: 浏览器成功收到我们亲手写的 HTTP 服务器响应并渲染出 HTML 网页
+Figure&nbsp;7.3: HTTP 响应中发送的 Hello World 页面
 </figcaption>
 </figure>
 </div>
-<p>从原始 TCP 监听，到逐行拆解 HTTP 请求，再到亲手拼接标准的 HTTP 状态行与 HTML 报文——不依赖任何现成 Web 框架，你亲手造出了一个货真价实跑在本地的 HTTP 服务！</p>
+<p>至此，一个从底层原始网络套接字监听、到原始字节流缓冲读取、再到协议解析与 HTTP 报文构造回发的完整微型 Web 服务器，便全部由我们用纯正的 Zig 语言亲手铸就完毕！</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-eric_http" class="csl-entry" role="listitem">
+Meehan, Eric. 2021. <em>Creating a Web Server from Scratch in c</em>. Youtube. <a href="https://www.youtube.com/watch?v=gk6NL1pZi1M&amp;ab_channel=EricOMeehan">https://www.youtube.com/watch?v=gk6NL1pZi1M&amp;ab_channel=EricOMeehan</a>.
+</div>
+<div id="ref-nipun_http" class="csl-entry" role="listitem">
+Weerasiri, Nipun Chamikara. 2023. <em>A Simple Web Server Written in c</em>. Medium. <a href="https://medium.com/@nipunweerasiri/a-simple-web-server-written-in-c-cf7445002e6">https://medium.com/@nipunweerasiri/a-simple-web-server-written-in-c-cf7445002e6</a>.
+</div>
+<div id="ref-wikipedia_port" class="csl-entry" role="listitem">
+Wikipedia. 2024. <em>Port (Computer Networking)</em>. Wikipedia. <a href="https://en.wikipedia.org/wiki/Port_(computer_networking)">https://en.wikipedia.org/wiki/Port_(computer_networking)</a>.
+</div>
+<div id="ref-jeffrey_http" class="csl-entry" role="listitem">
+Yu, Jeffrey. 2023. <em>How i Built a Simple HTTP Server from Scratch Using c</em>. DEV Community. <a href="https://dev.to/jeffreythecoder/how-i-built-a-simple-http-server-from-scratch-using-c-739">https://dev.to/jeffreythecoder/how-i-built-a-simple-http-server-from-scratch-using-c-739</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn1"><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview" class="uri">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://ziglang.org/documentation/master/std/#std.Io.net.IpAddress.listen" class="uri">https://ziglang.org/documentation/master/std/#std.Io.net.IpAddress.listen</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://en.wikipedia.org/wiki/Media_type" class="uri">https://en.wikipedia.org/wiki/Media_type</a>。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

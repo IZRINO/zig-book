@@ -1,51 +1,92 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
+# 文件系统与输入/输出（I/O） {#sec-filesystem}
+
+在本章中，我们将深入探讨如何在 Zig 中执行文件系统操作，并利用 Zig 标准库中跨平台的结构体与函数处理输入/输出（I/O）。其中涉及的大部分结构体与函数均来自 `std.Io` 模块。
 
 
+## 输入/输出基础概念 {#sec-io-basics}
+
+如果你曾接触过任何高级编程语言，你一定接触过某种形式的输入或输出功能。换句话说，你必然遇到过需要向用户输出信息、或者从程序用户那里接收输入数据的场景。
+
+例如在 Python 中，我们可以通过内置函数 `input()` 接收用户输入，也可以通过内置函数 `print()` 向用户打印（展示）输出。所以只要你写过 Python，肯定对这些函数毫不陌生。
+
+但你是否思考过：这些函数底层是如何与你的操作系统（OS）打交道的？它们究竟是如何调用操作系统的底层资源来完成输入输出交互的？
+本质上，高级语言提供的输入/输出函数，只不过是对操作系统内核的**标准输出（Standard Output）**与**标准输入（Standard Input）**通道的高层抽象封装。
+
+这意味着：任何输入接收或输出发送，都必须借由操作系统这道桥梁来完成。程序并不能直接触碰外部用户，操作系统充当了程序与用户之间每一条消息交互的唯一中介。
+
+操作系统的标准输出与标准输入通道，在业内通常分别被称为 `stdout` 与 `stdin`。在某些语境下，它们也被称作“标准输出设备”和“标准输入设备”。顾名思义，标准输出是数据流出的管道，而标准输入则是数据流入的管道。
+
+此外，操作系统通常还会为错误和告警信息开辟一条专用的交互通道，称为**标准错误（Standard Error）**通道，即 `stderr`。程序运行中产生的错误栈和警告信息通常都会发送到这里，终端里用红色或橙色高亮展示的往往就是这个通道的数据。
+
+通常情况下，各大操作系统（如 Windows、macOS、Linux 等）都会为计算机上运行的**每一个独立的程序（或进程）**创建一套专属的、相互独立的 `stdout`、`stdin` 和 `stderr` 通道。这意味着你编写的每个程序都有专属的 `stdin`、`stderr` 和 `stdout`，与当前正在运行的其他程序和进程的标准通道是分开的。
+
+这是操作系统层面的固有机制，并不取决于你使用的是哪门编程语言。正如此前所言，各语言中的 I/O 功能归根结底只是对当前操作系统 `stdin`、`stderr` 和 `stdout` 的一层抽象包装——无论使用什么编程语言，操作系统始终是你程序中一切 I/O 操作的枢纽。
 
 
-# 文件系统与输入输出（I/O） {#sec-filesystem}
+## Reader 与 Writer 模式 {#sec-writer-reader}
 
-在这章中，咱们来聊聊如何使用 Zig 标准库（尤其是 `std.Io` 模块）提供的跨平台工具链，来执行**文件系统操作**以及**底层输入输出（I/O）调度**。
+在 Zig 语言中，输入/输出（I/O）有一套非常鲜明的架构设计模式。虽然官方可能没有专门给它冠以正式名称，但在本书中，我们称之为“**Reader 与 Writer 模式**”。
+本质上，Zig 中几乎所有的 I/O 操作都是通过 `Reader` 或 `Writer` 对象来驱动完成的[^gen-zig]。
+
+[^gen-zig]: 在早期的 Zig 版本中，它们曾被称为 `GenericReader` 和 `GenericWriter`，但在 0.15 版本中这两种旧类型均已被废弃。
+
+这两个数据类型实质上是标准接口（Interfaces），定义在 Zig 标准库的 `std.Io` 模块中。正如名字所直观表达的：
+`Reader` 负责从“某个来源”读取数据，而 `Writer` 则负责将数据写入“某个目标”。这个“来源”或“目标”可以涵盖各种不同的实体：
+它可以是文件系统中的一个具体文件；
+也可以是操作系统创建的某个网络套接字（Socket）[^sock]；
+还可以是一个源源不断的数据流（Stream），比如不断接收敲击输入的终端标准输入设备，抑或是联机游戏中持续推送玩家聊天消息的连接通道。
+
+[^sock]: 我们在 @sec-create-socket 中创建的套接字对象就是网络套接字的典型示例。
+
+因此，只要你希望从某个地方**读取**数据，就应该使用 `Reader` 对象；反之，若要向某个地方**写入**数据，就需要使用 `Writer` 对象。
+在实际开发中，这两个对象通常是通过文件描述符对象的 `reader()` 和 `writer()` 方法实例化出来的。如果你对文件描述符还不熟悉，我们马上会在下一节详细剖析。
+
+每个 `Writer` 对象都配备了如 `print()` 这样的方法，允许你向目标写入格式化字符串（类似于 Python 的 f-string，或 C 语言的 `printf()`）；同时它还提供了 `writeAll()` 等方法，能够直接将原始字符串或字节切片一口气写入目标。
+
+类似地，每个 `Reader` 对象也拥有诸如 `readSliceAll()` 之类的方法，允许从源头持续读取数据直至填满你指定的缓冲区（Buffer）。换句话说，如果你给 `readSliceAll()` 传入一个包含 300 个 `u8` 的数组切片，该方法就会尝试从数据源中读取 300 字节并保存到该切片中。
+
+另一个极其好用的方法是 `takeDelimiterExclusive()`。在该方法中，你可以指定一个“分隔字符”（Delimiter Character）。它的作用是从数据源中连续读取字节，直到遇到该分隔符为止，然后把这部分内容作为一个切片返回给你。
+
+以上只是对这两类接口核心方法的快速概览。强烈建议你通读官方标准库文档中关于 [`Writer`](https://ziglang.org/documentation/master/std/#std.Io.Writer)[^gen-write] 与 [`Reader`](https://ziglang.org/documentation/master/std/#std.Io.Reader)[^gen-read] 的章节。
+同时，直接阅读 Zig 标准库中定义它们的源码也是绝佳的学习方式：[`Reader.zig`](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/Io/Reader.zig)[^mod-read] 与 [`Writer.zig`](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/Io/Writer.zig)[^mod-write]。
+
+[^gen-read]: <https://ziglang.org/documentation/master/std/#std.Io.Reader>。
+[^gen-write]: <https://ziglang.org/documentation/master/std/#std.Io.Writer>。
+[^mod-read]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/Io/Reader.zig>。
+[^mod-write]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/Io/Writer.zig>。
 
 
-## 输入与输出（I/O）底层本质 {#sec-io-basics}
+## 全新的 `io` 参数机制 {#sec-new-io-backend}
 
-平时在高级语言里写 `input()`、`print()`、`console.log()`，大家早已习以为常。
-但你有没有深究过：这些高级函数在底层到底是如何与操作系统（OS）打交道的？
+从 Zig 0.15 开始，Zig 核心团队启动了一项重构：彻底革新 Zig 中执行 I/O 操作的范式。
+在这轮演进中，官方先是引入了前文介绍的全新 `Reader` 与 `Writer` 接口；随后在 Zig 0.16 中更进一步，全面推行了显式的 `io` 参数机制——开发者可以自由挑选适配场景的底层“I/O 后端实现（IO backend implementation）”，例如基于线程池的 `std.Io.Threaded`、`std.Io.Evented` 等。
 
-归根结底，语言层面的输入输出，本质上都是操作系统提供的三大标准数据通道的浅层封装：
-- **`stdout`（标准输出）**：程序向控制台吐正常结果的数据通道；
-- **`stdin`（标准输入）**：程序从控制台键盘或上游管道吃输入的数据通道；
-- **`stderr`（标准错误）**：专门用来打印报错和警告日志的独立通道。
+我们可以把它与内存分配器做一个横向对比。在 @sec-memory-chap 中你已经发现，分配器（Allocator）是 Zig 编程的核心基石：它无处不在，任何涉及内存动态分配的操作都必须显式传入分配器。
+如今在新的 I/O 体系下，**挑选显式的 I/O 后端实现**也成为了与传递分配器同等重要的核心规范。
 
-现代操作系统会为每个正在运行的进程独立分配一套互不干扰的 `stdin`、`stdout` 和 `stderr` 文件描述符。
+现代 Zig 代码的标准起手方式，通常就是先显式确定好“内存分配器”以及“I/O 后端实现”。
+在下面的代码片段中，我们选用了一个基于线程池的 I/O 实现。当然，如果业务需要，我也可以改用 `std.Io.Evented`，它基于队列环（queue ring）。（译注：在 Zig 0.17.1 中，`std.Io.Evented` 在 Linux 上基于 io_uring，在 BSD 上基于 kqueue，在 macOS 上基于 Dispatch，在其他平台上不可用。）
 
+这段代码的核心对象就是 `allocator` 和 `io`：
 
-## Reader 与 Writer 统一设计模式 {#sec-writer-reader}
+```zig
+var gpa = std.heap.DebugAllocator(.{}){};
+const allocator = gpa.allocator();
 
-在 Zig 的 I/O 架构中，有一个贯穿始终的设计模式——**Reader 与 Writer 模式**。
-在 Zig 中，几乎所有的 I/O 操作最终都收敛到两个核心接口类型：
-- **`Reader`**：负责从“某个地方”读取字节流；
-- **`Writer`**：负责向“某个地方”写入字节流。
+var threaded: std.Io.Threaded = .init(allocator, .{});
+const io = threaded.io();
+defer threaded.deinit();
+_ = io;
+```
 
-这个“某个地方”可以是磁盘上的文件、网络 TCP Socket，也可以是控制台终端。
-无论底层硬件形态怎么变，只要拿到了对应的 `Reader` 或 `Writer`，上层调用的 API 始终高度一致：
-- `Writer` 拥有 `print()`（格式化写入）、`writeAll()`（整块刷入）等方法；
-- `Reader` 拥有 `readSliceAll()`（读满指定切片）、`takeDelimiterExclusive()`（按分隔符截取读取）等利器。
+因此，自 Zig 0.16 起，你会发现 Zig 标准库中凡是执行 I/O 操作的函数，绝大多数都会接收一个名为 `io`、类型为 `std.Io` 的显式入参。
+最典型的例子就是 `std.Io.File` 中的 `reader()` 方法——它负责生成用于从文件读取数据的 `Reader` 对象，而这个方法现在必须接收一个 `io` 参数，由你指定读取该文件时使用的 I/O 后端。
 
-
-## Zig 现代架构大革新：全新的 `io` 后端参数 {#sec-new-io-backend}
-
-随着 Zig 0.16 的推出，标准库对网络和文件 I/O 进行了划时代的重构：引入了**可插拔的 I/O 执行后端（I/O Backends）**！
-
-就像我们在 @sec-memory-chap 讲过的：写 Zig 代码第一件事是挑选合适的 Allocator；而在现代 Zig 中，做 I/O 操作前，你也需要指定一个 `io` 后端！
-不管是基于线程池调度的 `std.Io.Threaded`，还是基于事件驱动 Ring 的 `std.Io.Evented`，均可按需注入。
-
-在日常开发中，现代 Zig 的主函数支持接收 `init: std.process.Init` 形参，你可以直接拿开箱即用、已经按当前操作系统调优好的 `init.io` 后端：
+在下面的代码中，我们通过打开并读取本地文件来演示 `io` 参数的具体用法。注意看我们是如何将 I/O 后端实现（`init.io`）传递给 `openFile` 以及 `file.reader` 的。这套模式不仅适用于文件读写，在网络通信等各种 I/O 场景下也随处可见：
 
 ```zig
 const std = @import("std");
@@ -68,29 +109,95 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
+```
+This is a line from foo.txt
+```
 
-## 带缓冲的 I/O（Buffered I/O）：性能生死线 {#sec-buffered-io}
 
-系统调用（Syscall）是极度昂贵的。如果你的程序每读写 1 个字节，就傻乎乎地触发一次用户态到内核态的上下文切换，CPU 会被严重拖慢。
+## 使用默认的 IO 后端实现
 
-![无缓冲 I/O：频繁系统调用拖垮性能](../../Figures/unbuffered-io.png){#fig-unbuffered-io width=60%}
+在日常小工具开发或简单脚本编写中，每次都完整手动实例化一套复杂的 I/O 后端确实略显繁琐。很多时候我们并不苛求底层的极端定制，只想开箱即用默认配置的 I/O 后端。针对这种情况，Zig 当前提供了三种极其便捷的快速获取方式：
 
-![带缓冲 I/O：批量吞吐极大减少系统调用](../../Figures/buffered-io.png){#fig-buffered-io}
+- 使用针对当前目标平台（target）配置的默认 I/O 实现；
+- 使用默认配置的单线程 I/O 实现；
+- 使用 `std.testing` 模块专为单元测试提供的 I/O 实现。
 
-如 @fig-buffered-io 所示：带缓冲的 I/O（Buffered I/O）在用户态预留了一块内存缓冲区（通常为 4KB，对应 1 页内存）。
-读数据时，操作系统一次性把一整页字节捞进缓冲区，后续读取全部在用户内存里极速消耗；只有缓冲区耗尽时才发起下一次系统调用。
 
-### 显式掌控缓冲区（No Hidden Allocations）
+### 使用 `std.testing` 中的 IO 实现
 
-在 C 语言里，`FILE*` 背后会悄悄开辟缓冲，开发者无法直观感知；
-**而 Zig 践行绝对的透明可控原则：在构造 `reader` 或 `writer` 时，你必须显式提供一段缓冲区切片（比如 `[1024]u8`）！**
-缓冲区放栈上还是堆上、开 512 字节还是 8KB，完全由开发者自行敲定！
+顾名思义，`std.testing` 模块导出的 I/O 实现应当且仅应当在**单元测试上下文（Unit Tests）**中使用。若尝试在测试之外的普通上下文里调用它，通常会直接引发编译错误：
 
-### 敲黑板重点提醒：千万别忘了 `flush()`！
+```zig
+const io = std.testing.io;
+_ = io;
+```
 
-在带缓冲写入模式下，调用 `writeAll()` 只是把数据暂存到了内存缓冲区里，**并没有真正持久化写入磁盘或终端！**
-必须显式调用 **`writer.flush()`**，缓冲区里的字节才会真正刷到物理介质上！
-很多新手写代码发现控制台死活没输出，十有八九就是漏掉了最后这句 `flush()`！
+
+### 使用单线程 IO 实现
+
+如果你开发的是单线程程序，获取默认单线程 I/O 实现非常简单。只需将 `std.Io.Threaded` 实例化为 `.init_single_threaded`，然后直接调用其 `io()` 方法即可：
+
+```zig
+var threaded: std.Io.Threaded = .init_single_threaded;
+const io = threaded.io();
+_ = io;
+```
+
+
+### 使用针对目标平台的默认 IO 实现
+
+在近期的 Zig 版本中，程序的 `main` 入口函数引入了一个全新的默认参数——`init`。简单来说，你可以将 `main` 函数声明为接收一个类型为 `std.process.Init` 的对象。
+
+这个 `std.process.Init` 对象在程序启动时就已经封装好了针对当前操作系统与平台预先初始化好的一系列基础设施 API。你可以直接通过它的 `io` 属性，轻而易举地拿到开箱即用的 I/O 后端实现：
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);
+    const stdout = &stdout_writer.interface;
+    _ = stdout;
+}
+```
+
+
+## 深入理解文件描述符（File Descriptors） {#sec-file-descriptor}
+
+“文件描述符（File Descriptor）”是任何现代操作系统中所有 I/O 操作最核心的基础构件。它在操作系统内核层充当某一特定输入/输出（I/O）资源的唯一标识与访问句柄 [@wiki_file_descriptor]。
+所谓 I/O 资源，范围非常广泛：
+
+- 文件系统中真实存在的一个普通文件；
+- 操作系统中建立的一个网络套接字（Network Socket）；
+- 各种形态的数据流通道（Stream channels）；
+- 终端中用于进程间通信的管道（Pipeline / Pipe）[^pipes]。
+
+[^pipes]: 管道是进程间通信（IPC）或进程间 I/O 的核心机制。你可以将管道直观理解为“通过系统的标准输入/输出设备将多个独立进程串联起来”。例如在 Linux 终端中，我们通常用竖线符号（`|`）将多个终端命令连成一条流水线。
+
+从上面列出的资源种类可以看出，虽然名字里带个“文件（File）”，但文件描述符所涵盖的远不止磁盘文件这么简单。
+这一概念源自 POSIX（可移植操作系统接口）标准规范，旨在指导现代各大操作系统的统一设计与跨平台兼容。
+
+文件描述符不仅能够精准指代你正在用于读写数据的 I/O 资源，还能完整记录该资源在系统中的位置及其当前的打开模式（I/O Mode）。
+例如，某个 I/O 资源可能以“只读”模式打开，这意味着该资源只允许被读取，一切写入操作都会被内核当场拒绝拦截。这些模式本质上与 C 语言 `fopen()` 函数或 Python 内置 `open()` 函数接收的 `mode` 参数一脉相承。
+
+在 C 语言中，文件描述符通常被封装在 `FILE*` 结构体指针中；而在 Zig 里，它被直接抽象为 `File` 对象。
+这个数据类型（`File`）定义在 Zig 标准库的 `std.fs` 模块中。（译注：在 Zig 0.17.1 中，`File` 已移到 `std.Io.File`，`std.fs` 中只剩下 `path` 等少量内容。）在日常业务中，我们很少手动硬编码创建一个 `File` 对象，而是通过打开某个具体 I/O 资源来让操作系统分配并返回它。换言之，当我们请求操作系统打开某个 I/O 资源时，操作系统只要成功打开，就会把对应的文件描述符句柄交还给我们的程序。
+
+因此，你通常是通过调用标准库提供的系统级打开函数（如用于打开本地文件的 `openFile()`）来获取 `File` 对象的。我们在 @sec-create-socket 中创建的 `std.Io.net.Stream` 套接字流对象，本质上也属于一种特殊的文件描述符对象。
+
+
+### 标准输出（Standard Output） {#sec-standard-output}
+
+在整本书前面的无数示例中，大家都已经熟悉了在 Zig 中如何通过访问 `stdout` 向控制台输出内容。
+我们正是通过调用 `std.Io` 模块中的 `File.stdout()` 函数来实现的。该函数返回的正是代表当前操作系统 `stdout` 通道的文件描述符。通过这个描述符对象，我们既可以从程序的 `stdout` 读取数据，也可以向它写入数据。
+
+尽管技术上我们确实可以读取记录在标准输出通道里的数据，但在绝大多数实际场景下，我们几乎只会向其**写入（或称打印）**内容。这背后的原因与我们在 @sec-read-http-message 讨论微型 HTTP 服务器连接时如出一辙：
+
+向一个通道写入数据，本质上是把数据投递给该通道另一端的接收者；反之，从一个通道读取数据，则是接收外界向该通道推送过来的内容。由于 `stdout` 设立的初衷就是把程序的输出呈现给终端用户，这里的核心动作必然是**发送**。既然想向外界传达信息，自然就对应着向通道**写入**。
+
+这就是为什么每当我们拿到 `File.stdout()` 句柄后，绝大多数时候都会紧接着调用其 `writer()` 方法，从而获得一个专用的 `Writer` 对象来执行输出。
+正如 @sec-writer-reader 中介绍的，`writer()` 方法返回一个 `Writer` 实例，而该实例最核心的方法之一就是我们在全书中频繁用到的 `print()`，它负责将格式化字符串输出至 `stdout`。
+
+在下面的代码中请特别留意：为了实例化这个 `Writer` 对象，我们必须给 `writer()` 方法显式传入一块缓冲区对象作为入参（在此即 `stdout_buffer`）。正是这个缓冲区的存在，将 `Writer` 执行的写入转化为了高效的“缓冲式 I/O（Buffered IO）”。我们马上会在 @sec-buffered-io 深入剖析缓冲 I/O 的技术内幕，现在先对其用法建立直观印象：
 
 ```zig
 const std = @import("std");
@@ -101,24 +208,196 @@ pub fn main(init: std.process.Init) !void {
     try stdout.writeAll(
         "This message was written into stdout.\n"
     );
-    try stdout.flush(); // 关键动作：冲刷缓冲区！
+    try stdout.flush();
 }
 ```
 
+```
+This message was written into stdout.
+```
 
-## 文件系统实战：从 CWD 展开
+值得强调的是，这个 `Writer` 对象与你通常从文件描述符对象得到的其他 writer 对象一样。所以，比如在向文件系统写入文件时会用到的 writer 对象的方法，在这里也可以通过 `stdout` 的文件描述符对象使用，反之亦然。
 
-在 Zig 中，任何文件系统操作都必须从一个具体的**目录句柄（`std.Io.Dir`）**起步。
-最常用的起点就是程序的当前工作目录（CWD）：
+
+### 标准输入（Standard Input）
+
+在 Zig 中，你可以通过调用 `std.Io` 模块的 `File.stdin()` 函数来获取标准输入（`stdin`）。
+与标准输出类似，该函数返回代表操作系统当前 `stdin` 通道的文件描述符对象。
+
+由于标准输入的核心使命是从用户端获取输入，此时核心动词转变为**接收**。因此对于 `stdin`，我们几乎总是执行**读取**而非写入。通常我们会调用其 `reader()` 方法，获取一个专门用于从 `stdin` 读取数据的 `Reader` 对象。
+
+在下面的示例中，我们使用 `takeDelimiterExclusive()` 方法从标准输入流中连续读取字符，直到遇到换行符 `'\n'` 为止，并将读取到的内容存入 `name` 切片中。
+
+同样请注意：与 `writer()` 类似，在实例化 `Reader` 时我们也必须为其提供一个专门的输入缓冲区（`stdin_buffer`）。其设计初衷完全相同——利用缓冲机制将底层的 I/O 转化为高效的“缓冲式输入”。
+
+当你运行这个程序时，它会暂停执行并停在控制台中耐心等待用户输入。也就是说，你必须在终端敲入你的名字并按下回车键，才能将内容推入 `stdin`。一旦程序捕捉到回车输入，就会继续向下执行，并将你输入的内容打印到标准输出上：
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    var stdin_buffer: [1024]u8 = undefined;
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);
+    var stdin_reader = std.Io.File.stdin().reader(init.io, &stdin_buffer);
+    const stdin = &stdin_reader.interface;
+    const stdout = &stdout_writer.interface;
+    try stdout.writeAll("Type your name\n");
+    try stdout.flush();
+
+    const name = try stdin.takeDelimiterExclusive('\n');
+
+    try stdout.print("Your name is: {s}\n", .{name});
+    try stdout.flush();
+}
+```
+
+```
+Type your name
+Your name is: Pedro
+```
+
+
+### 标准错误（Standard Error）
+
+标准错误通道（`stderr`）的工作原理与 `stdout` 和 `stdin` 别无二致。只需调用 `std.Io.File.stderr()` 即可获得指向 `stderr` 的文件描述符。
+在工程规范中，你应当且仅应当向 `stderr` 写入错误告警或诊断日志，因为这才是该专属通道的设立初衷。
+
+
+## 缓冲式 I/O {#sec-buffered-io}
+
+正如我们在 @sec-io-basics 中所述，输入/输出（I/O）操作是直接由操作系统完成的。你想用来执行 I/O 操作的 I/O 资源由操作系统管理。由此带来的结果是，I/O 操作在很大程度上依赖系统调用（即直接调用操作系统）。
+
+需要说明的是，系统调用本身并没有什么特别的问题。在任何用低级编程语言编写的正经代码库中，我们都一直在使用系统调用。不过，系统调用总是比许多其他类型的操作慢几个数量级。
+
+所以偶尔使用一次系统调用完全没问题。但如果频繁使用系统调用，大多数时候你都能明显感觉到应用程序的性能下降。因此，一条不错的经验法则是：只在需要时使用系统调用，并且只在不频繁的场合使用，把系统调用的次数减到最少。
+
+
+### 理解缓冲 I/O 的工作原理
+
+缓冲 I/O 是一种获得更好性能的策略。它用于减少 I/O 操作所发起的系统调用次数，从而获得高得多的性能。在 @fig-unbuffered-io 和 @fig-buffered-io 中，你可以看到两张不同的示意图，它们展示了在无缓冲 I/O 环境与缓冲 I/O 环境中执行读操作的区别。
+
+为了更好地理解这两张图，假设文件系统中有一个文本文件，里面是著名的 Lorem ipsum 文本[^lorem]，再假设 @fig-unbuffered-io 和 @fig-buffered-io 这两张图展示的，就是我们为了从这个文本文件中读取 Lorem ipsum 文本而执行的读操作。看这两张图时，你首先会注意到，在无缓冲环境中，读操作会引发许多次系统调用。更确切地说，在 @fig-unbuffered-io 所示的图中，我们从文本文件中每读取一个字节，就会发起一次系统调用。而在 @fig-buffered-io 中，只在一开始发起了一次系统调用。
+
+使用缓冲 I/O 系统时，在我们执行第一次读操作时，操作系统并不是直接把一个字节发给程序，而是先把文件中的一块字节发送到一个缓冲区对象（即一个数组）中。这块字节被缓存（存储）在这个缓冲区对象里。
+
+因此，从这时起，你每执行一次新的读操作，都不必再发起新的系统调用向操作系统索要文件中的下一个字节，而是把这次读操作转到缓冲区对象上，下一个字节已经缓存在那里，可以直接取用。
+
+[^lorem]: <https://www.lipsum.com/>。
+
+![无缓冲 I/O](./../../Figures/unbuffered-io.png){#fig-unbuffered-io width=60%}
+
+![缓冲 I/O](./../../Figures/buffered-io.png){#fig-buffered-io}
+
+这就是缓冲 I/O 系统背后的基本逻辑。缓冲区对象的大小取决于多种因素，但通常等于一整页内存的大小（4096 字节）。按照这个逻辑，操作系统会读取文件的前 4096 个字节，并把它们缓存到缓冲区对象中。只要程序没有把缓冲区中的这 4096 个字节全部消耗掉，就不会发起新的系统调用。
+
+然而，一旦你消耗完缓冲区中的这 4096 个字节，缓冲区里就没有剩余的字节了。这时会发起一次新的系统调用，请操作系统发送文件中接下来的 4096 个字节，这些字节又会被缓存到缓冲区对象中，如此循环往复。
+
+::: {.callout-tip}
+一般来说，你应该始终在代码中使用带缓冲的 I/O reader 或 writer 对象，因为它们能为 I/O 操作带来更好的性能。
+:::
+
+
+### 在 Zig 中使用缓冲 I/O
+
+在以前的版本中，Zig 的 I/O 操作默认是不带缓冲的。但是，自从 Zig 0.15 引入新的 I/O 接口以来，`Reader` 和 `Writer` 接口在实例化时都要接收一个缓冲区对象作为输入，就像我们在 @sec-standard-output 中演示的那样。换句话说，在代码中实例化 `Reader` 或 `Writer` 对象时，必须提供一个缓冲区对象。正因如此，在较新版本的 Zig 中，I/O 操作默认就是带缓冲的。
+
+如果与其他语言比较，你会注意到 Zig 的"缓冲 I/O 策略"略有不同。以 C 为例，C 中通过 `FILE` 指针进行的 I/O 操作默认是带缓冲的。但在 C 中，实例化这样的 `FILE` 指针时不需要显式传入缓冲区对象，因为这个缓冲区对象是在背后为你创建的，所以对程序员来说是不可见的。而在 Zig 中，你必须自己手动创建这个缓冲区对象。
+
+所以，Zig 不仅选择使用缓冲 I/O，还选择把这类操作所用缓冲区的完全控制权交给程序员。你（作为程序员）可以直接控制这个缓冲区的大小，也可以直接控制这个缓冲区对象在代码中的分配方式（即可以把它分配在栈上，也可以用 `Allocator` 对象把它分配在堆上），这与 Zig"没有隐藏的内存分配"的信条非常契合。
+
+因此，如果你想在 Zig 中使用缓冲 I/O，只要确保把一个缓冲区对象的引用作为输入传给 `writer()` 或 `reader()` 方法即可，这样创建出的 `Writer` 或 `Reader` 对象默认就会执行带缓冲的 I/O 操作。（译注：如果传入的是空缓冲区，例如 `&.{}`，得到的就是不带缓冲的 `Writer` 或 `Reader`。）
+
+
+### 别忘了刷新缓冲区！
+
+在代码中使用缓冲 I/O 操作时，一定不要忘记刷新缓冲区，尤其是在写操作中。简单来说，在缓冲 I/O 的场景下，当我们尝试把数据写入"某个东西"时，这些数据会先写入我们作为输入提供给 `Writer` 对象的 I/O 缓冲区中，只有在我们"提交"之后，I/O 缓冲区中的数据才会真正写入那个"东西"。我们通过"刷新 I/O 缓冲区"，把写入 I/O 缓冲区的字节提交到目标输出。（译注：除了显式调用 `flush()`，缓冲区写满时 `Writer` 也会自动把数据写出。）
+
+所以，当我们刷新 I/O 缓冲区时，实际上就是把 I/O 缓冲区中现有的那块数据提交出去，写入文件描述符对象所描述的 I/O 资源。如果不刷新 I/O 缓冲区，这些数据就永远不会离开 I/O 缓冲区（也就是永远不会到达 I/O 资源）。因此，当你忘记刷新时，大多数情况下的结果是，在 I/O 资源中得不到任何输出。
+
+例如，如果你在向 `stdout` 写入数据时忘记了刷新，通常的结果就是终端上没有任何输出。程序看起来运行成功了，但终端上没有任何可见的输出来确认这一点，这会让你非常沮丧和困惑。
+
+因此，如果你在 Zig 中写入数据，不要忘记调用 `Writer` 对象的 `flush()` 方法来刷新 I/O 缓冲区。这样才能确保你写入的字节（数据）真正写入了文件描述符对象所描述的 I/O 资源。（译注：`flush()` 只是把数据交给操作系统，并不保证数据已经写到磁盘上。如果需要确保写入文件的数据持久化到磁盘，还需要调用 `File.sync()`。）
+
+::: {.callout-important}
+如果你在写入数据，不要忘记调用 `Writer` 对象的 `flush()` 方法来刷新 I/O 缓冲区。
+:::
+
+
+## 文件系统基础常识
+
+聊完了输入/输出的深层内幕，接下来我们把目光转向文件系统（Filesystem）。文件系统是所有主流操作系统的另一个基石支柱。
+同时正如 @sec-file-descriptor 中所指出的，在计算机底层，保存在磁盘上的每一个文件本质上也是一种非常标准的 I/O 资源，二者天然密不可分。
+
+
+### 当前工作目录（CWD）的概念
+
+“当前工作目录（Current Working Directory, 简称 CWD）”指的是程序当前在文件系统中所处的核心锚点目录。
+直白地说，它是程序运行时的“立足点”。无论何时运行程序，该程序都会绑定一个明确的基准文件夹。程序在未加特殊修饰的情况下查找输入文件、或者保存产物文件时，默认都会以这个目录为基点展开。
+
+程序的工作目录通常由你在终端中启动执行该程序时所在的目录直接决定。也就是说，如果你的终端正位于操作系统的某个特定文件夹下，那么只要从这个终端启动某个二进制程序，终端当前停留在哪个目录，那个目录就会成为该被执行程序默认的 CWD。
+
+在 @fig-cwd 中展示了一个在终端中启动程序的真实案例：我们正在运行由 `zig` 编译器编译 `hello.zig` 所生成的二进制程序。此时终端所在的目录是 `zig-book`。因此，`hello.zig` 在运行期间的当前工作目录就是 `zig-book` 文件夹，该程序内部执行的任何相对文件路径操作，都会将 `zig-book` 作为起点与中心基准。
+
+![在终端中执行程序时的当前工作目录](./../../Figures/cwd.png){#fig-cwd}
+
+当然，程序锚定在计算机的某个基准目录（例如上图的 `zig-book`）下，并不意味着它被画地为牢、无法碰触计算机其他位置的文件资源。
+CWD 机制只是界定了程序在寻找未限定路径时的“默认首选站”。若想操作 CWD 之外任意角落的文件或文件夹，只需向程序提供清晰的指向路径即可。
+
+
+### 路径（Paths）的概念
+
+所谓“路径（Path）”，本质上就是文件系统中的坐标定位标识，它指明了文件或文件夹在计算机磁盘树状结构中的确切方位。
+关于路径有一个基础认知：路径在代码中总是以文本字符串的形式呈现。
+
+在各大操作系统中，你可以给程序提供两种类型的路径：**相对路径（Relative path）**与**绝对路径（Absolute path）**：
+- **绝对路径**：从文件系统最顶层的“根节点（Root）”出发，层层递进直达目标文件或目录的完整路径。之所以称为绝对，是因为它在整台计算机中具备全域唯一确定性，绝无歧义。
+  - 在 Windows 系统中，绝对路径通常以硬盘盘符开头（如 `C:/Users/pedro`）；
+  - 在 Linux 和 macOS 中，绝对路径则以单斜杠根目录开头（如 `/usr/local/bin`）。
+  路径由多个层级的“路径段（Segments）”组合而成，各段之间通过路径分隔符相连。在 Windows 上原生常用反斜杠（`\`），而在 Linux 与 macOS 上则统一使用正斜杠（`/`）。
+- **相对路径**：以程序当前的当前工作目录（CWD）为原点出发推导出来的路径。在 @fig-cwd 的案例中，我们访问 `hello.zig` 所用的路径就是典型的相对路径。该路径以 CWD（即 `zig-book`）为基准，依次穿过 `ZigExamples` 目录、`zig-basics` 目录，最终定位到目标文件：
+
+```
+ZigExamples/zig-basics/hello_world.zig
+```
+
+
+### 路径通配符（Path Wildcards）
+
+在书写相对路径时，我们经常会用到“路径通配符”。在现代所有主流操作系统（Windows、macOS、Linux）中，有两个跨平台且约定俗成的核心通配符：
+- **单个英文句点（`.`）**：代表“当前目录本身”。
+  这意味着相对路径 `"./Course/Data/covid.csv"` 与 `"Course/Data/covid.csv"` 在语义上是完全等价的。
+- **连续两个英文句点（`..`）**：代表“上一级父目录”。
+  例如路径 `"Course/.."` 就等价于退回到 `Course` 的父级目录；如果以当前目录为基准，`"Course/.."` 最终指向的就是 `"."`。
+  再如相对路径 `"src/writexml/../xml.cpp"`，其含义是：从 `src` 进到 `writexml`，再立刻通过 `..` 退回其父级 `src` 目录，然后定位里面的 `xml.cpp`。因此该路径完全等价于 `"src/xml.cpp"`。
+
+
+## CWD 句柄（Current Working Directory Handler）
+
+在 Zig 中，所有的文件系统操作几乎都是通过“目录句柄对象（Directory handler object）”统一代理发起的。
+在 Zig 类型系统中，目录句柄属于 `std.Io.Dir` 类型，专门用于抽象表示文件系统中的某个特定文件夹。
+通常我们可以通过调用 `std.Io.Dir.cwd()` 函数来获取一个代表程序“当前工作目录（CWD）”的 `Dir` 句柄对象：
+
+通过这个 CWD 句柄，你可以创建新文件、修改已有文件、遍历目录内容或是进行权限配置。简而言之，`Dir` 句柄就是你在 Zig 中进行一切文件系统操作的总入口。
+在下面的示例中，我们创建并获取了该句柄并存入 `cwd` 变量中，在接下来的实战中它将大显身手：
 
 ```zig
 const cwd = std.Io.Dir.cwd();
+_ = cwd;
 ```
 
-![在终端启动程序时的当前工作目录 CWD 示意图](../../Figures/cwd.png){#fig-cwd}
 
+## 文件核心操作
 
-### 创建与写入文件：`createFile()` {#sec-creating-files}
+### 创建新文件 {#sec-creating-files}
+
+在 Zig 中创建新文件，可以通过调用 `Dir` 句柄的 `createFile()` 方法来实现。只需传入目标文件名，该方法就会替你完成底层操作系统的一系列繁琐调用。当然，你也可以直接传入相对路径，它就会严格以 CWD 为起点按路径层级进行创建。
+
+由于磁盘操作天然可能遭遇无权限、磁盘空间耗尽等意外状况，该方法返回的是一个可能报错的错误联合，你应该使用在 @sec-error-handling 中学到的 `try`、`catch` 等机制妥善处理。在一切顺利时，`createFile()` 会返回一个代表该新文件的文件描述符（即 `File` 对象），通过该描述符你就能直接调用前面介绍的 I/O 方法写入内容。
+
+看看下面这个示例：我们尝试创建名为 `foo.txt` 的文本文件。若创建成功，拿到的 `file` 句柄便可用于数据写入。
+
+这里必须插播一条系统底层开发的基准常识：在 C 语言中用 `fopen()` 打开文件后，在逻辑结束时必须显式调用 `fclose()` 关闭句柄；在 Zig 里完全一样！只要创建或打开了一个文件，操作系统就会为其保留专属的内核资源与句柄。因此每当我们操作完毕，**务必在第一时间显式关闭文件**，将资源安全归还给操作系统。
+在 Zig 中，我们利用现代化的 `defer file.close(init.io);` 语法即可保证句柄在作用域退出时自动关闭：
 
 ```zig
 const std = @import("std");
@@ -127,25 +406,76 @@ pub fn main(init: std.process.Init) !void {
     const file = try cwd.createFile(
         init.io, "foo.txt", .{}
     );
-    defer file.close(init.io); // 用完务必随手关闭！
-
+    // 退出作用域时务必显式关闭文件句柄
+    defer file.close(init.io);
+    // 向文件写入文本内容
     _ = try file.writePositionalAll(
         init.io, "Writing this line to the file\n", 0
     );
 }
 ```
 
-*注意：`createFile()` 默认会直接清空覆盖同名旧文件；若希望创建时就具备读权限，需传入 `.{ .read = true }`。*
+需要高度警惕的是：**如果准备创建的目标文件在磁盘上已经存在，`createFile()` 的默认行为是无情地直接覆盖旧文件！** 换句话说，旧文件里的原有数据会被瞬间全部抹除并清空。
+
+如果你不希望旧内容被抹除，而是想在现有文件的末尾接着追加新数据，那就千万别用 `createFile()`，而应该改用 `Dir` 对象的 `openFile()` 方法。
+
+关于 `createFile()` 的另一个关键细节是：**该方法创建的文件在默认情况下是禁止执行“读取操作”的！**
+这意味着如果你刚刚创建并写入了文件，随后在当前程序的后续逻辑中尝试立即把内容读取回来，操作系统会当场拒绝并抛出 `NotOpenForReading` 错误。
+
+怎样才能让新建的文件既能写入又允许就地读取？非常简单，只需在调用 `createFile()` 的第三个参数中将 `.read` 标志显式声明为 `true`：
+
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    const cwd = std.Io.Dir.cwd();
+    const file = try cwd.createFile(init.io, "foo.txt", .{ .read = true });
+    defer file.close(init.io);
+    _ = try file.writePositionalAll(
+        init.io, "We are going to read this line", 0
+    );
+
+    var buffer: [300]u8 = undefined;
+    @memset(buffer[0..], 0);
+
+    var read_buffer: [1024]u8 = undefined;
+    var fr = file.reader(init.io, &read_buffer);
+    var reader = &fr.interface;
+
+    _ = reader.readSliceAll(buffer[0..]) catch 0;
+
+    std.debug.print("What we read from the file: {s}\n", .{buffer});
+}
+```
+
+```
+What we read from the file: We are going to read this line
+```
 
 
-### 打开文件与追加写入：`openFile()`
+### 打开文件并追加数据
 
-打开现有文件用 `openFile()`，常用模式有：
-- `.read_only`：只读；
-- `.write_only`：只写；
-- `.read_write`：读写双全（在 Windows 系统下追加写入通常建议使用 `.read_write` 以保证权限兼容）。
+打开已有文件极其简单，只需把 `createFile()` 换成 `openFile()` 即可。
+`openFile()` 的第一个参数是 I/O 后端实现，第二个参数是要打开的目标文件路径，第三个参数则是一个配置选项结构体，用于精细控制文件的打开姿态。
 
-获取文件当前长度并从尾部追加内容：
+如果想了解 `openFile()` 支持的全部参数细节，可以查阅官方标准库文档关于 [`OpenFlags`](https://ziglang.org/documentation/master/std/#std.Io.File.OpenFlags)[^oflags] 的说明。而在日常开发中，使用最频繁的核心参数是 `mode`。
+该选项决定了文件被打开时的 I/O 权限模式，主要有三种取值：
+- `.read_only`：只读模式，只允许读取，禁止一切写入；
+- `.write_only`：只写模式，只允许写入，禁止一切读取；
+- `.read_write`：读写双全模式，既允许读取也允许写入。
+
+[^oflags]: <https://ziglang.org/documentation/master/std/#std.Io.File.OpenFlags>
+
+这些模式类似于 Python `open()` 函数[^py-open] 或 C 语言 `fopen()` 函数[^c-open] 中的访问模式。如果你以某个受限模式打开了文件，后续却尝试执行越权操作，操作系统就会毫不留情地甩出 `AccessDenied` 权限拒绝错误。
+
+这里给 **Windows 开发者** 特别提个醒：绝大多数情况下，在 Windows 上向已有文件追加或写入数据时，**强烈建议直接选用 `.read_write` 模式，而不是仅声明 `.write_only`**。
+这是因为 Windows 操作系统要向一个文件写入数据，也需要对该文件拥有读权限。在 Linux 类系统上通常没有这个隐式制约，纯写时用 `.write_only` 即可正常运行；但若要写出兼顾全平台的健壮代码，采用 `.read_write` 能让你避免在 Windows 上遇到权限报错。
+
+在下面的代码中，我们以 `.read_write` 模式打开 `foo.txt`[^windows-write]，并在其末尾追加一行文本。
+为了精准在文件末尾写入，我们先调用描述符的 `length()` 方法动态算出当前文件的总字节长度，然后把该数值作为偏移量传递给 `writePositionalAll()`：
+
+[^windows-write]: 由于上一段解释的原因，这样能让这个代码示例不仅兼容 Linux，也兼容 Windows。如果你只使用 Linux，可以用 `write_only` 模式代替 `read_write` 模式，代码同样能运行。
+[^py-open]: <https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files>
+[^c-open]: <https://www.tutorialspoint.com/c_standard_library/c_function_fopen.htm>
 
 ```zig
 const std = @import("std");
@@ -161,30 +491,60 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-### 拷贝与删除文件
 
-删除文件：
+### 删除文件
+
+在程序中删除/移除已有文件，只需调用 `Dir` 句柄的 `deleteFile()` 方法。
+向该方法传入当前 I/O 实现以及目标文件的相对路径即可，它会请求操作系统抹掉指定文件：
+
 ```zig
+const cwd = std.Io.Dir.cwd();
 try cwd.deleteFile(init.io, "foo.txt");
 ```
 
-拷贝文件：
+
+### 复制文件
+
+拷贝已有文件可以通过调用 `copyFile()` 方法完成。该方法的参数签名设计得很具工业美感：
+1. 第一个参数：要拷贝的源文件路径；
+2. 第二个参数：目标目录的 `Dir` 句柄（指明文件要拷贝到哪个文件夹）；
+3. 第三个参数：在新目录下的新文件路径或名称；
+4. 第四个参数：所使用的 I/O 实现；
+5. 第五个参数：复制操作的附加配置选项（Flags）。
+
+如果你打算把文件拷贝到系统里一个天差地远的全新深层目录下，可以提前为目标目录单独创建一个 `Dir` 句柄并传进去；如果只是在当前 CWD 的子目录下倒腾，直接把当前 `cwd` 句柄作为第二个参数传过去即可：
+
 ```zig
+const cwd = std.Io.Dir.cwd();
 try cwd.copyFile(
     "foo.txt",
     cwd,
-    "backup/foo.txt",
+    "ZigExamples/file-io/foo.txt",
     init.io,
     .{}
 );
 ```
 
 
-## 目录遍历与多级递归创建
+### 查阅官方文档
+
+除了上面介绍的核心基础方法外，`Dir` 结构体还提供了许多实用的文件级工具方法（比如快速覆盖写入整个小文件的 `writeFile()` 等）。建议大家在需要时多翻翻标准库官方文档对 [`Dir` 类型](https://ziglang.org/documentation/master/std/#std.fs.Dir)[^zig-dir] 的详细说明。
+
+[^zig-dir]: <https://ziglang.org/documentation/master/std/#std.fs.Dir>。
+
+
+## 目录核心操作
 
 ### 遍历目录下的所有文件
 
-打开目录时打上 `.{ .iterate = true }` 标记，即可使用 `dir.iterate()` 进行迭代遍历：
+在文件系统编程中，最经典、最常用的场景莫过于**遍历并迭代某个文件夹下的全部现有文件**。在 Zig 中要完成这项工作，首先需要借助目录句柄创建一个专用的迭代器（Iterator）对象。
+
+你可以通过调用 `Dir` 句柄的 `iterate()` 或 `walk()` 方法来获取该迭代器。两者的区别非常关键：
+- `iterate()`：返回**单层非递归迭代器**，仅遍历当前目录自身的直接子节点，遇到子目录不会自动深挖；
+- `walk()`：返回**全深度递归遍历迭代器**，不仅会遍历当前目录下的所有文件，还会自动递归下潜穿透所有的嵌套子文件夹，将整棵目录树翻个底朝天。
+
+在下面的代码中，我们尝试遍历展示 `ZigExamples/file-io` 目录下的所有文件。
+注意在调用 `openDir()` 打开该文件夹时，我们必须在第二个配置参数中明确将 `.iterate` 设置为 `true`；如果不加这个配置，该目录句柄将不具备迭代权限，我们就不被允许遍历这个目录中的文件：
 
 ```zig
 const cwd = std.Io.Dir.cwd();
@@ -203,16 +563,50 @@ while (try it.next(init.io)) |entry| {
 try stdout.flush();
 ```
 
-如果需要递归遍历所有子目录深度，改用 `dir.walk()`。
+```
+File name: create_file_and_write_toit.zig
+File name: create_file.zig
+File name: lorem.txt
+File name: iterate.zig
+File name: delete_file.zig
+File name: append_to_file.zig
+File name: user_input.zig
+File name: foo.txt
+File name: create_file_and_read.zig
+File name: buff_io.zig
+File name: copy_file.zig
+```
 
-### 创建与删除目录
 
-- **`createDir()`**：创建单级子目录；
-- **`createDirPath()`**：递归创建多级完整路径（类似 Linux 的 `mkdir -p`）：
+### 创建新目录
+
+涉及到目录创建时，有两个方法至关重要：`createDir()` 与 `createDirPath()`。
+它们的区别一目了然：
+- `createDir()`：**单级创建**，每次调用只能在当前目录下创建单个子目录，不能跨层；
+- `createDirPath()`：**多级递归创建**（相当于命令行里的 `mkdir -p`），可以在单次调用中一口气沿着路径连续创建深层多级子目录。
+
+正因如此，`createDirPath()` 的直译就是“创建整个目录路径”。
+只要你传入类似 `"sub1/sub2/sub3"` 这样的复合相对路径，它就会自动在内部递归补齐 `sub1`、`sub2`、`sub3` 三层文件夹。而如果你把这样一个深层路径丢给只能单级操作的 `createDir()`，操作系统就会因为父级尚不存在而立刻报错：
 
 ```zig
+const cwd = std.Io.Dir.cwd();
+try cwd.createDir(init.io, "src", .default_dir);
 try cwd.createDirPath(init.io, "src/decoders/jpg/");
+```
+
+
+### 删除目录
+
+想要删除现有的空目录，直接调用 `Dir` 句柄的 `deleteDir()` 方法并传入相对路径即可。
+在下面的代码中，我们把前一步刚创建的 `src` 目录从磁盘中清理掉：
+
+```zig
+const cwd = std.Io.Dir.cwd();
 try cwd.deleteDir(init.io, "src");
 ```
 
-掌握了统一的 Reader/Writer 模式、带缓冲机制以及可插拔的 `io` 架构，你在 Zig 里处理任何高频文件和数据流都能游刃有余！
+
+## 本章小结
+
+在这一章里，我们全面系统地梳理了在现代 Zig 中执行文件系统操作与标准 I/O 交互的标准范式与核心逻辑。
+当然，文件系统是一个庞大的领域，某些相对低频的操作（例如重命名文件、创建软链接/符号链接、调用 `access()` 校验特定路径是否存在等）我们并未在正文中一一穷尽展开。对于这些特殊任务，强烈建议读者查阅 Zig 标准库对 [`Dir` 类型](https://ziglang.org/documentation/master/std/#std.fs.Dir)[^zig-dir] 的官方 API 说明，里面包含了极为详尽的接口参考与行为规范。

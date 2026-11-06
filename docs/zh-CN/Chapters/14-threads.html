@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>16&nbsp; Zig 多线程与并发并行计算 – Zig 语言入门</title>
+<title>16&nbsp; Zig 多线程与并行计算 – Zig 语言入门</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -125,6 +144,35 @@ gtag('js', new Date());
 gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -344,7 +392,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/14-threads.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/14-threads.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></a></li></ol></nav>
         <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -440,7 +488,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -458,7 +506,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -483,21 +531,32 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-what-thread" id="toc-sec-what-thread" class="nav-link active" data-scroll-target="#sec-what-thread"><span class="header-section-number">16.1</span> 到底什么是线程？为什么需要它？</a></li>
-  <li><a href="#进程process与线程thread的区别" id="toc-进程process与线程thread的区别" class="nav-link" data-scroll-target="#进程process与线程thread的区别"><span class="header-section-number">16.2</span> 进程（Process）与线程（Thread）的区别</a></li>
-  <li><a href="#创建并启动一个线程thread.spawn" id="toc-创建并启动一个线程thread.spawn" class="nav-link" data-scroll-target="#创建并启动一个线程thread.spawn"><span class="header-section-number">16.3</span> 创建并启动一个线程：<code>Thread.spawn</code></a></li>
-  <li><a href="#线程的归宿join-与-detach-二选一不可漏调" id="toc-线程的归宿join-与-detach-二选一不可漏调" class="nav-link" data-scroll-target="#线程的归宿join-与-detach-二选一不可漏调"><span class="header-section-number">16.4</span> 线程的归宿：<code>join()</code> 与 <code>detach()</code> 二选一（不可漏调！）</a>
+  <li><a href="#sec-what-thread" id="toc-sec-what-thread" class="nav-link active" data-scroll-target="#sec-what-thread"><span class="header-section-number">16.1</span> 什么是线程？</a></li>
+  <li><a href="#线程与进程threads-versus-processes" id="toc-线程与进程threads-versus-processes" class="nav-link" data-scroll-target="#线程与进程threads-versus-processes"><span class="header-section-number">16.2</span> 线程与进程（Threads versus processes）</a></li>
+  <li><a href="#创建并启动一个线程creating-a-thread" id="toc-创建并启动一个线程creating-a-thread" class="nav-link" data-scroll-target="#创建并启动一个线程creating-a-thread"><span class="header-section-number">16.3</span> 创建并启动一个线程（Creating a thread）</a></li>
+  <li><a href="#线程的归宿join-与-detach" id="toc-线程的归宿join-与-detach" class="nav-link" data-scroll-target="#线程的归宿join-与-detach"><span class="header-section-number">16.4</span> 线程的归宿：join 与 detach</a>
   <ul class="collapse">
-  <li><a href="#姿势一thread.join等待收工" id="toc-姿势一thread.join等待收工" class="nav-link" data-scroll-target="#姿势一thread.join等待收工"><span class="header-section-number">16.4.1</span> 姿势一：<code>thread.join()</code>（等待收工）</a></li>
-  <li><a href="#姿势二thread.detach放飞自流" id="toc-姿势二thread.detach放飞自流" class="nav-link" data-scroll-target="#姿势二thread.detach放飞自流"><span class="header-section-number">16.4.2</span> 姿势二：<code>thread.detach()</code>（放飞自流）</a></li>
+  <li><a href="#汇合线程" id="toc-汇合线程" class="nav-link" data-scroll-target="#汇合线程"><span class="header-section-number">16.4.1</span> 汇合线程</a></li>
+  <li><a href="#分离线程thread.detach" id="toc-分离线程thread.detach" class="nav-link" data-scroll-target="#分离线程thread.detach"><span class="header-section-number">16.4.2</span> 分离线程：<code>thread.detach()</code></a></li>
   </ul></li>
-  <li><a href="#经典翻车现场数据竞争data-race" id="toc-经典翻车现场数据竞争data-race" class="nav-link" data-scroll-target="#经典翻车现场数据竞争data-race"><span class="header-section-number">16.5</span> 经典翻车现场：数据竞争（Data Race）</a></li>
-  <li><a href="#互斥锁mutex排队保平安" id="toc-互斥锁mutex排队保平安" class="nav-link" data-scroll-target="#互斥锁mutex排队保平安"><span class="header-section-number">16.6</span> 互斥锁（Mutex）：排队保平安</a></li>
-  <li><a href="#读写锁rwlock读共享写独占" id="toc-读写锁rwlock读共享写独占" class="nav-link" data-scroll-target="#读写锁rwlock读共享写独占"><span class="header-section-number">16.7</span> 读写锁（RwLock）：读共享、写独占</a></li>
-  <li><a href="#并发排坑与优雅退出graceful-shutdown" id="toc-并发排坑与优雅退出graceful-shutdown" class="nav-link" data-scroll-target="#并发排坑与优雅退出graceful-shutdown"><span class="header-section-number">16.8</span> 并发排坑与优雅退出（Graceful Shutdown）</a>
+  <li><a href="#互斥锁mutexes" id="toc-互斥锁mutexes" class="nav-link" data-scroll-target="#互斥锁mutexes"><span class="header-section-number">16.5</span> 互斥锁（Mutexes）</a>
   <ul class="collapse">
-  <li><a href="#死锁deadlock" id="toc-死锁deadlock" class="nav-link" data-scroll-target="#死锁deadlock"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlock）</a></li>
-  <li><a href="#优雅停机原子标志位控制" id="toc-优雅停机原子标志位控制" class="nav-link" data-scroll-target="#优雅停机原子标志位控制"><span class="header-section-number">16.8.2</span> 2. 优雅停机：原子标志位控制</a></li>
+  <li><a href="#sec-critical-section" id="toc-sec-critical-section" class="nav-link" data-scroll-target="#sec-critical-section"><span class="header-section-number">16.5.1</span> 临界区（Critical section）</a></li>
+  <li><a href="#sec-atomic-operation" id="toc-sec-atomic-operation" class="nav-link" data-scroll-target="#sec-atomic-operation"><span class="header-section-number">16.5.2</span> 原子操作（Atomic operations）</a></li>
+  <li><a href="#数据竞争与竞争态data-races-and-race-conditions" id="toc-数据竞争与竞争态data-races-and-race-conditions" class="nav-link" data-scroll-target="#数据竞争与竞争态data-races-and-race-conditions"><span class="header-section-number">16.5.3</span> 数据竞争与竞争态（Data races and race conditions）</a></li>
+  <li><a href="#在-zig-中使用互斥锁" id="toc-在-zig-中使用互斥锁" class="nav-link" data-scroll-target="#在-zig-中使用互斥锁"><span class="header-section-number">16.5.4</span> 在 Zig 中使用互斥锁</a></li>
+  </ul></li>
+  <li><a href="#读写锁readwrite-locks" id="toc-读写锁readwrite-locks" class="nav-link" data-scroll-target="#读写锁readwrite-locks"><span class="header-section-number">16.6</span> 读写锁（Read/Write locks）</a>
+  <ul class="collapse">
+  <li><a href="#独占锁-vs-共享锁" id="toc-独占锁-vs-共享锁" class="nav-link" data-scroll-target="#独占锁-vs-共享锁"><span class="header-section-number">16.6.1</span> 独占锁 vs 共享锁</a></li>
+  <li><a href="#在-zig-中使用读写锁" id="toc-在-zig-中使用读写锁" class="nav-link" data-scroll-target="#在-zig-中使用读写锁"><span class="header-section-number">16.6.2</span> 在 Zig 中使用读写锁</a></li>
+  </ul></li>
+  <li><a href="#让出-cpu-时间片yield" id="toc-让出-cpu-时间片yield" class="nav-link" data-scroll-target="#让出-cpu-时间片yield"><span class="header-section-number">16.7</span> 让出 CPU 时间片：<code>yield()</code></a></li>
+  <li><a href="#多线程常见问题与防范" id="toc-多线程常见问题与防范" class="nav-link" data-scroll-target="#多线程常见问题与防范"><span class="header-section-number">16.8</span> 多线程常见问题与防范</a>
+  <ul class="collapse">
+  <li><a href="#死锁deadlocks" id="toc-死锁deadlocks" class="nav-link" data-scroll-target="#死锁deadlocks"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlocks）</a></li>
+  <li><a href="#sec-not-call-join-detach" id="toc-sec-not-call-join-detach" class="nav-link" data-scroll-target="#sec-not-call-join-detach"><span class="header-section-number">16.8.2</span> 2. 漏调 join 或 detach 的后果</a></li>
+  <li><a href="#优雅停机与安全取消线程" id="toc-优雅停机与安全取消线程" class="nav-link" data-scroll-target="#优雅停机与安全取消线程"><span class="header-section-number">16.8.3</span> 3. 优雅停机与安全取消线程</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -508,7 +567,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-thread" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></h1>
+<h1 class="title"><span id="sec-thread" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></h1>
 </div>
 
 
@@ -525,206 +584,511 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
-<p>在这一章中，咱们来聊聊现代高性能系统级开发的重头戏——<strong>多线程与并发并行计算（Concurrency &amp; Parallelism）</strong>。 Zig 标准库在 <code>std.Thread</code> 模块中提供了开箱即用的原生内核级线程抽象，其底层规范严格遵循 POSIX 线程（<code>pthread</code>）模式，跨平台性能极佳。</p>
+<p>在现代软件工程中，充分榨干多核 CPU 的计算潜能已是高性能架构的标配。 在本章中，我们将系统探讨操作系统线程的核心本质，以及如何在 Zig 中利用标准库提供的跨平台原语启动线程、实现并行加速、协调资源同步，并规避死锁与数据竞争等经典并发陷阱。</p>
 <section id="sec-what-thread" class="level2" data-number="16.1">
-<h2 data-number="16.1" class="anchored" data-anchor-id="sec-what-thread"><span class="header-section-number">16.1</span> 到底什么是线程？为什么需要它？</h2>
-<p>简单来说，线程就是一段独立的执行上下文。 默认情况下，普通程序都是<strong>单线程（Single-threaded）</strong>的：指令只能按先后顺序一条一条排队执行。 如果遇上耗时操作（比如读大文件、等网络响应、算复杂图形），整个程序就会被彻底卡死，无法同时响应其他任务。</p>
-<p>最直观的生活例子就像餐厅服务员： 如果是个单线程服务员：他给一号桌点完单送到后厨，然后就傻傻站在出餐口前等厨师把菜炒好，期间既不给二号桌点单，也不给三号桌结账。这餐厅非倒闭不可！ 而多线程的做法是：服务员把订单往后厨一塞（派发一个异步线程去炒菜），自己立刻转身去接待其他桌的客人；后厨菜好了直接端走上桌。</p>
-<p>现代 Web 浏览器（Chrome、Edge 等）的多标签页、修图软件（Photoshop）以及大型 3D 游戏，底层全靠多线程把多核 CPU 算力拉满。</p>
+<h2 data-number="16.1" class="anchored" data-anchor-id="sec-what-thread"><span class="header-section-number">16.1</span> 什么是线程？</h2>
+<p>简单来说，<strong>线程（Thread）是操作系统内核能够独立调度的最小执行上下文（Context of execution）</strong>。 在程序中引入线程的核心目的，就是实现<strong>并行计算（Parallelism）</strong>——让计算机在同一时刻并行处理多项不同任务，从而大幅缩短整体运行耗时、成倍提升处理吞吐。</p>
+<p>默认情况下，绝大多数常规程序都是<strong>单线程（Single-threaded）</strong>的。这意味着整个程序内部只有一个唯一的执行上下文。当仅有一条线程在跑时，程序根本不具备并行能力，所有指令与函数调用只能按部就班地<strong>串行执行（Sequential execution）</strong>——上一条指令没跑完，下一条指令就必须原地苦苦等待。而一旦我们在程序内部开辟出多个并发线程，计算机便能真正调动多颗 CPU 核心同时执行多条不同的指令流。</p>
+<p>在真实软件工业界中，多线程技术的应用几乎无处不在。许多大型复杂软件天生就是为并行计算量身定制的：例如视频剪辑与图像渲染软件（如 Adobe Photoshop、DaVinci Resolve）、3A 级大型游戏（如《巫师 3》），以及我们每天都在使用的现代网页浏览器（Google Chrome、Firefox、Microsoft Edge 等）。</p>
+<p>以网页浏览器为例：浏览器中每一个打开的标签页（Tab），通常作为浏览器主进程中的独立线程运行。（译注：这是原文的说法。Chrome、Firefox 等现代浏览器实际上采用多进程架构，标签页通常运行在独立的渲染进程中。） 将各个标签页放进独立线程中并发调度，才使得所有打开的页面能够彼此独立、互不干扰地同时运行： 比如你可以在一个标签页里打开 YouTube 或 Spotify 播放播客音乐，同时在另一个标签页里打开 Google Docs 撰写技术报告。即便你的视线和鼠标焦点完全停留在 Google Docs 的标签页上，耳朵里依然能流畅听到背景音乐——这完全得益于 YouTube 播放线程与你的文档编辑线程正在底层 CPU 上齐头并进地并行运转！</p>
+<p>设想一下：如果没有多线程机制，浏览器唯一的替代方案就是为每一个新标签页都启动一个完整独立的操作系统新进程。但这将带来极其灾难性的资源负担——创建和维护进程的开销远比线程昂贵数倍，随便开几个网页整台电脑的物理内存和 CPU 就会被消耗殆尽，用户会遭遇严重的卡顿与掉帧。相比之下，线程创建极其迅速，且与宿主进程共享大部分底层资源，系统开销极其轻微。现代浏览器多标签页流畅并发的体验，正是建立在多线程基石之上的。</p>
+<p>此外，多线程架构在<strong>服务请求处理（Serving requests or orders）</strong>场景下也有着不可替代的优势。 因为处理一项外部请求往往需要消耗漫长的等待时间（例如等待网络 I/O、磁盘读写或第三方响应），程序在大部分时间里其实处于无所事事的空转（Idle）状态。</p>
+<p>我们可以用一家餐厅的日常点单出餐流程来打个形象的比方： 在一家餐厅里，服务一桌顾客通常包含以下环节： 1. 餐厅服务员接收顾客的点单； 2. 服务员把菜单送进后厨，等待厨师把菜烹饪做好； 3. 后厨厨师开始起火做菜； 4. 菜肴彻底做好后，服务员端菜上桌交付给顾客。</p>
+<p>细品上述流程你会发现：在第 2 步中存在着一段巨大的“空闲等待期”——在厨师切菜掌勺的这段时间里，如果服务员啥也不干、原地傻站着干等饭菜出锅，这无疑是极大的资源浪费。</p>
+<p>如果我们用单线程程序来模拟这家餐厅，代码就会显得极其低效。因为程序在“轮询检查饭菜是否出锅”的步骤上会被迫陷入长时间的空转阻塞：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> order = Order.init(<span class="st">"Pizza Margherita"</span>, n = <span class="dv">1</span>);</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> waiter = Waiter.init();</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>waiter.receive_order(order);</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>waiter.ask_kitchen_to_cook();</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> food_not_ready = <span class="cn">true</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 单线程下被死循环检查活活卡死！</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> (food_not_ready) <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    food_not_ready = waiter.is_food_ready();</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> food = waiter.get_food_from_kitchen();</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>waiter.send_food_to_client(food);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>这段单线程代码的致命硬伤就在于那个 <code>while</code> 循环。服务员被死死绑在厨房门口寸步难行，既不能接待新进门的客人，也不能处理其他桌的催单。 更合理的做法显然是：服务员把点菜单交到后厨后，便立刻转身去前厅接待其他客人、记录新的订单！</p>
+<p>这正是多线程的用武之地！我们可以开辟一条专门的后台线程把做菜和送餐任务剥离出去，让主线程上的服务员彻底从无休止的“等待苦差”中解脱出来：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> cook_and_deliver_order(order: *Order) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> chef = Chef.init();</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> food = chef.cook(order.*);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    chef.deliver_food(food);</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> send_order(order: Order) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 为后厨做菜专门派生一条独立的后台线程并将其分离（detach）</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cook_thread = Thread.spawn(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        .<span class="op">{}</span>, cook_and_deliver_order, .<span class="op">{</span>&amp;order<span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    cook_thread.detach();</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> waiter = Waiter.init();</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> (<span class="cn">true</span>) <span class="op">{</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> order = waiter.get_new_order();</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (order) <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 瞬间派发，主线程立刻继续向下接客，绝不阻塞！</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        send_order(order);</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在多线程版本中，服务员每收到一张订单就调用 <code>send_order()</code>。该函数仅仅是在后台派生一条新线程并使其分离自理，创建线程只需几微秒，函数瞬间返回。服务员完全无需为后厨做菜的漫长耗时操心，主循环片刻不停地接着接待下一波客人。而后台新线程中，厨师有条不紊地炒菜出餐，端上餐桌，整个餐厅的周转吞吐量提升了数倍！</p>
 </section>
-<section id="进程process与线程thread的区别" class="level2" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="进程process与线程thread的区别"><span class="header-section-number">16.2</span> 进程（Process）与线程（Thread）的区别</h2>
-<p>经常有初学者搞混这两个概念，记住以下核心分工：</p>
+<section id="线程与进程threads-versus-processes" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="线程与进程threads-versus-processes"><span class="header-section-number">16.2</span> 线程与进程（Threads versus processes）</h2>
+<p>当我们在操作系统中运行一个可执行程序时，操作系统内核会为其创建一个独立的<strong>进程（Process）</strong>。 程序与进程是一对一的关系——每一个被启动的应用程序在操作系统内部都是一个独立的进程实例。 但与此同时，正如我们在 <a href="#sec-what-thread" class="quarto-xref"><span>Section 16.1</span></a> 中所述，每一个进程内部又可以自由创建并容纳多条并发线程。因此，<strong>进程与线程呈现出一对多的关系</strong>。</p>
+<p>这也意味着：你在代码中创建的任何一条线程，在生命周期上都严格隶属于宿主进程。线程是宿主进程的子集与派生单元。 所有同属于一个进程的各条线程，都会<strong>共享该进程所持有的绝大部分底层系统资源</strong>。正因如此，同进程内各线程之间的通信与数据交换，远比两个独立进程之间轻量得多。</p>
+<p>设想一下：当你开发一个庞大复杂的应用系统时，有时会发现将其拆解为两个模块协同推进心智负担会小很多。 在传统架构下，部分架构师会选择将它们彻底拆写为两个互不相干的独立二进制程序，然后架设复杂的<strong>进程间通信（IPC, Inter-Process Communication）</strong>机制（如管道、消息队列、共享内存段或本地 Socket）让它们彼此对话。 然而 IPC 的编写、编解码与同步协议往往极其繁琐晦涩。</p>
+<p>此时，基于多线程的设计便展现出无与伦比的优雅：主逻辑作为主线程驻留进程，后台任务则通过 <code>Thread.spawn</code> 派生独立线程执行。 由于处于同一个进程地址空间内，各线程天生共享着同一张操作系统文件描述符表（<code>stdout</code>、<code>stdin</code>、<code>stderr</code>）、完全共享着进程的<strong>堆内存空间（Heap）</strong>以及<strong>全局数据段（Global Data Section）</strong>，因此进程和线程之间可以很方便地通过控制流和数据相互通信。</p>
+<p>深入到内存微观布局，每个线程在创建时，操作系统都会为其专门开辟一块<strong>专属独立的调用栈帧空间（Stack frame）</strong>。 这意味着： - 你在线程内部创建的每个局部对象，都局限于这个线程，也就是说其他线程看不到这个局部对象； - 除非你创建的对象位于堆上。换句话说，如果这个对象所关联的内存在堆上，其他线程就有可能访问它。</p>
+<p>（译注：同一进程中的所有线程共享同一个地址空间，栈本身并没有隔离。如果把栈上对象的指针传给另一个线程，比如后文示例中把 <code>&amp;id1</code> 传给新线程，另一个线程同样可以访问它。所以更准确的说法是：其他线程通常不会引用栈上的局部对象，除非你把它的指针传出去。）</p>
+<p>总结一下：<strong>各线程拥有各自独立的栈，但齐心共享同一个堆、同一批标准 I/O 描述符以及同一套全局静态变量。</strong></p>
+</section>
+<section id="创建并启动一个线程creating-a-thread" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="创建并启动一个线程creating-a-thread"><span class="header-section-number">16.3</span> 创建并启动一个线程（Creating a thread）</h2>
+<p>在 Zig 中创建新线程，首先引入 <code>std.Thread</code> 结构体，随后调用其核心方法 <strong><code>spawn()</code></strong> 即可从当前进程派生出一条全新的执行线程。 该方法接收三个核心参数，依次为：</p>
+<ol type="1">
+<li><strong><code>SpawnConfig</code> 配置对象</strong>：用于精细定制线程创建细节（如栈空间大小、内存分配器等）；</li>
+<li><strong>目标工作函数指针</strong>：即新线程启动后所要调用的业务函数名；</li>
+<li><strong>函数实参元组</strong>：以匿名元组结构体的形式，提供给第二个参数中目标函数的入参列表。</li>
+</ol>
+<p>通过这三个参数，你可以全权掌控线程的启动姿态与工作内容。线程创建后，你传给 <code>spawn()</code> 的函数会被调用，从而在这个新线程上开始执行，第三个参数中的各个实参会按顺序传给该函数。</p>
+<p>关于第一个配置参数 <code>SpawnConfig</code>，它是一个包含两个可选字段的配置结构体： - <strong><code>stack_size</code></strong>：传入一个 <code>usize</code> 数值，显式限定该线程私有调用栈的大小（以字节为单位）。默认情况下，标准库设定的缺省值为 <span class="math inline">\(16 \times 1024 \times 1024\)</span>（即 16MB）； - <strong><code>allocator</code></strong>：传入一个分配器实例，专门用于为该线程结构体内部开辟底层管理数据。</p>
+<p>如果你的业务场景不需要特殊定制、完全满意默认配置，直接传入一个空匿名结构体 <strong><code>.{}</code></strong> 即可。</p>
+<p>下面看一个最基础但完整的单线程派生实例：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> duration = std.Io.Duration.fromSeconds(<span class="dv">1</span>);</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> clock: std.Io.Clock = .awake;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_some_work(io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Starting the work.</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Finishing the work.</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, do_some_work, .<span class="op">{</span>init.io<span class="op">}</span>);</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    thread.join();</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Starting the work.
+Finishing the work.</code></pre>
+<p>注意在调用 <code>Thread.spawn()</code> 时必须搭配 <code>try</code> 关键字——因为创建线程属于操作系统内核调度，如果当前系统并发线程数超出了操作系统的限额配额（Quota），或者内存空间告罄，内核就会拒绝并返回错误。</p>
+<p>一旦线程派生成功，<code>spawn()</code> 会返回一个代表该线程的句柄对象（类型为 <code>std.Thread</code>）。 同时请注意：<strong>新线程一旦生成，其内部的工作函数便会立即开始后台并发执行！</strong> 它不需要你再手动调用什么 <code>start()</code> 按钮。这与 C 语言 <code>pthreads</code> 库中的 <code>pthread_create()</code> 类似，它同样会在线程创建后立即开始执行。</p>
+</section>
+<section id="线程的归宿join-与-detach" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="线程的归宿join-与-detach"><span class="header-section-number">16.4</span> 线程的归宿：join 与 detach</h2>
+<p>既然线程一经创建便立即开始执行，那么主线程该如何与它协调收尾？ 在系统底层多线程体系中，控制线程向主进程/主线程同步收尾的核心操作只有两个：<strong><code>join()</code></strong> 与 <strong><code>detach()</code></strong>。</p>
+<p>每一个被创建出来的线程，最终都必须且只能被归类为以下两种状态之一：<strong>可汇合的（Joinable）</strong> 或 <strong>已分离的（Detached）</strong>： - 调用 <code>join()</code>：将该线程置为汇合状态； - 调用 <code>detach()</code>：将该线程置为分离状态。</p>
+<p>需要特别注意：<strong>一条线程绝不能既被 join 又被 detach！</strong> 换言之，你绝不能对同一个线程句柄既调用 <code>join()</code> 又调用 <code>detach()</code>。 但反过来，<strong>你又必须在两者中二选一显式调用其一！</strong> 如果在代码中创建了线程，却既不 join 也不 detach，就会直接诱发未定义行为与底层资源泄漏，导致所谓的僵尸线程（后文 <a href="#sec-not-call-join-detach" class="quarto-xref"><span>Section 16.8.2</span></a> 会对此专门展开分析）。</p>
+<section id="汇合线程" class="level3" data-number="16.4.1">
+<h3 data-number="16.4.1" class="anchored" data-anchor-id="汇合线程"><span class="header-section-number">16.4.1</span> 汇合线程</h3>
+<p>汇合（join）一个线程，本质上就是在说：“嘿！能不能先等这个线程执行完，你再继续往下执行？”例如，回到我们在 Zig 中创建线程的第一个、也是最简单的例子：我们在程序的 <code>main()</code> 函数中创建了一个线程，并在最后对它调用了 <code>join()</code>。下面复现了这部分代码。</p>
+<p>因为我们是在 <code>main()</code> 的作用域中汇合这个新线程，这意味着 <code>main()</code> 函数的执行会暂时停下来，等待这个线程执行完毕。也就是说，<code>main()</code> 的执行会暂时停在调用 <code>join()</code> 的那一行，直到这个线程完成它的任务之后才会继续。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, do_some_work, .<span class="op">{}</span>);</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    thread.join();</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>因为我们在 <code>main()</code> 的作用域中汇合了这个新线程，所以可以保证这个新线程会在 <code>main()</code> 执行结束之前完成，因为 <code>main()</code> 一定会等待这个线程完成它的任务。</p>
+<p>在上面的例子中，<code>join()</code> 调用之后没有其他表达式了，接下来就是 <code>main()</code> 作用域的结尾。因此，线程完成任务之后，程序就直接结束了，因为已经没有别的事情要做。但如果在 <code>join()</code> 调用之后还有其他事情要做呢？</p>
+<p>为了演示这种情况，看下面这个例子。这里我们创建了一个 <code>print_id()</code> 函数，它接收一个 id 作为输入，并把它打印到 <code>stdout</code>。在这个例子中，我们先后创建了两个新线程。然后先汇合第一个线程，接着等待整整两秒，最后再汇合第二个线程。</p>
+<p>这个例子想说明的是，最后一次 <code>join()</code> 调用要等到第一个线程完成任务（即第一次 <code>join()</code> 调用）并且经过两秒的延迟之后才会执行。如果你编译并运行这个例子，会发现大部分消息都很快被打印到 <code>stdout</code>，也就是说，它们几乎是立即出现在屏幕上的。但是最后一条消息（“Joining thread 2”）要过大约 2 秒才会出现在屏幕上。（译注：下面代码中的睡眠时长写的是 <code>fromNanoseconds(1000)</code>，即 1 微秒，而不是 2 秒，所以实际运行时看不到明显的停顿。要观察到正文描述的效果，可以把这一行改为 <code>std.Io.Duration.fromSeconds(2)</code>。）</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> clock: std.Io.Clock = .awake;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_id(id: *<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Thread ID: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>id.*<span class="op">}</span>);</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> id1: <span class="dt">u8</span> = <span class="dv">1</span>;</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> id2: <span class="dt">u8</span> = <span class="dv">2</span>;</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, print_id, .<span class="op">{</span>&amp;id1<span class="op">}</span>);</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread2 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, print_id, .<span class="op">{</span>&amp;id2<span class="op">}</span>);</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Joining thread 1</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    thread1.join();</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> duration = std.Io.Duration.fromNanoseconds(<span class="dv">1000</span>);</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.Io.sleep(init.io, duration, clock);</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Joining thread 2</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    thread2.join();</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Thread ID: Joining thread 1
+1
+Thread ID: 2
+Joining thread 2</code></pre>
+<p>这说明两个线程都很快就完成了它们的工作（即打印 ID），早于两秒的延迟结束。因此，最后一次 <code>join()</code> 调用几乎是立即返回的，因为在调用最后一次 <code>join()</code> 时，第二个线程已经完成了它的任务。</p>
+<p>如果你编译并运行这个例子，还会注意到，在某些情况下，消息会相互交织在一起。换句话说，你可能会看到消息 “Joining thread 1” 插在了消息 “Thread 1” 中间，或者反过来。这是因为：</p>
 <ul>
-<li><strong>进程（Process）</strong>：操作系统分配资源的独立基本单位（你在任务管理器里看到的每个软件实例都是一个进程）。每个进程有自己完全隔离的虚拟内存空间；</li>
-<li><strong>线程（Thread）</strong>：CPU 调度的基本单位，依附于进程而存在（一个进程可以孵化出多个线程）。</li>
+<li>这些线程基本上与程序的主进程（即 <code>main()</code> 函数）同时执行。</li>
+<li>这些线程与程序的主进程共享同一个 <code>stdout</code>，这意味着线程产生的消息与主进程产生的消息被发送到完全相同的地方。</li>
 </ul>
-<p><strong>关键共享机制</strong>： - <strong>独立部分</strong>：每个线程拥有自己专属独立的<strong>栈帧（Stack Frame）</strong>，栈上的局部变量互不打扰； - <strong>共享部分</strong>：同一个进程下的所有线程，<strong>共享同一片堆内存（Heap）、全局静态数据段，以及标准 I/O 文件描述符（<code>stdout</code>/<code>stdin</code>/<code>stderr</code>）</strong>！</p>
-<p>正因为堆内存完全共享，多线程之间传递数据速度极快（传个指针即可），但随之而来的也是最凶险的技术深水区——<strong>数据竞争（Data Race）</strong>。</p>
+<p>这两点在前面的 <a href="#sec-what-thread" class="quarto-xref"><span>Section 16.1</span></a> 中都讲过。所以，由于这些消息大致在同一时间产生并发送到同一个 <code>stdout</code>，它们可能会交织在一起。总之，当你对一个线程调用 <code>join()</code> 时，当前进程会等待这个线程完成之后再继续；当线程完成任务时，与这个线程相关的资源会被自动释放。（译注：<code>std.debug.print()</code> 实际输出到的是 stderr 而不是 stdout。）</p>
 </section>
-<section id="创建并启动一个线程thread.spawn" class="level2" data-number="16.3">
-<h2 data-number="16.3" class="anchored" data-anchor-id="创建并启动一个线程thread.spawn"><span class="header-section-number">16.3</span> 创建并启动一个线程：<code>Thread.spawn</code></h2>
-<p>在 Zig 中创建新线程，直接调用 <code>std.Thread.spawn()</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> spawn(config<span class="op">:</span> SpawnConfig<span class="op">,</span> <span class="at">comptime</span> function<span class="op">:</span> <span class="kw">anytype</span><span class="op">,</span> args<span class="op">:</span> <span class="kw">anytype</span>) <span class="op">!</span>Thread</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>它接收三个核心参数： 1. <strong><code>SpawnConfig</code></strong>：配置项（可指定专属栈大小 <code>stack_size</code>，默认给足 16MB；传 <code>.{}</code> 走默认配置）； 2. <strong><code>function</code></strong>：要在新线程里执行的入口函数； 3. <strong><code>args</code></strong>：传给该函数的参数元组（如 <code>.{init.io}</code>）。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">1</span>);</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_some_work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Starting the work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Finishing the work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> do_some_work<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io});</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join();</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="分离线程thread.detach" class="level3" data-number="16.4.2">
+<h3 data-number="16.4.2" class="anchored" data-anchor-id="分离线程thread.detach"><span class="header-section-number">16.4.2</span> 分离线程：<code>thread.detach()</code></h3>
+<p>与 <code>join()</code> 紧密等候相反，<code>thread.detach()</code> 的语义好比“孩子长大成人、彻底独立门户”。 一旦调用了 <code>detach()</code>，<strong>该线程在运行完毕后会自动向操作系统自行交还全部资源，完全不需要任何其他线程前去汇合认领</strong>。</p>
+<p>因此，当你完全不在乎该后台线程具体的结束时刻、也不需要获取它的任何返回值时，直接对其调用 <code>detach()</code> 放飞自流是最佳选择。 看看下面这个分离线程的代码片段：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_id(id: *<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Thread ID: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>id.*<span class="op">}</span>);</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> id1: <span class="dt">u8</span> = <span class="dv">1</span>;</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, print_id, .<span class="op">{</span>&amp;id1<span class="op">}</span>);</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    thread1.detach();</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Finish main</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Finish main</code></pre>
+<p>细心的同学在运行此代码时会惊讶地发现：控制台上仅仅打印了主函数的 <code>"Finish main"</code>，而子线程中原本应该打印的 <code>"Thread ID: 1"</code> 居然凭空消失了！ 这是为什么？ 原因非常简单：因为线程被 <code>detach</code> 分离后，主线程根本不会停下来等它。主进程在微秒级时间内光速跑完了全部代码并直接退出，操作系统随之销毁了整个进程的内存空间，而彼时被分离的子线程甚至都还没来得及向控制台发起系统调用！ 如果给 <code>main</code> 稍加一点点延迟（例如睡眠几毫秒），你就能顺利看到子线程的输出了。</p>
 </section>
-<section id="线程的归宿join-与-detach-二选一不可漏调" class="level2" data-number="16.4">
-<h2 data-number="16.4" class="anchored" data-anchor-id="线程的归宿join-与-detach-二选一不可漏调"><span class="header-section-number">16.4</span> 线程的归宿：<code>join()</code> 与 <code>detach()</code> 二选一（不可漏调！）</h2>
-<p>新线程创建后，主线程对它必须给出明确的态度，<strong>必须在 <code>join()</code> 与 <code>detach()</code> 中严格二选一</strong>：</p>
-<section id="姿势一thread.join等待收工" class="level3" data-number="16.4.1">
-<h3 data-number="16.4.1" class="anchored" data-anchor-id="姿势一thread.join等待收工"><span class="header-section-number">16.4.1</span> 姿势一：<code>thread.join()</code>（等待收工）</h3>
-<p>调用 <code>join()</code> 会让当前主线程陷入阻塞等待，直到该子线程把活全干完退出为止，顺带安全回收线程分配的底层系统资源。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> do_some_work<span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join(); <span class="co">// 主线程在此等子线程完事</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="姿势二thread.detach放飞自流" class="level3" data-number="16.4.2">
-<h3 data-number="16.4.2" class="anchored" data-anchor-id="姿势二thread.detach放飞自流"><span class="header-section-number">16.4.2</span> 姿势二：<code>thread.detach()</code>（放飞自流）</h3>
-<p>如果你压根不在乎子线程啥时候完工，也不需要拿它的返回值，调用 <code>detach()</code> 把线程分离出去。分离后的线程成了“自由人”，跑完会自动向操作系统销毁释放，主线程扭头就走：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_id(id<span class="op">:</span> <span class="op">*</span><span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Thread ID: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{id<span class="op">.*</span>});</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> id1<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">1</span>;</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> print_id<span class="op">,</span> <span class="op">.</span>{<span class="op">&amp;</span>id1});</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    thread1<span class="op">.</span>detach(); <span class="co">// 放飞它，主线程直接退出</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Finish main</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout-danger">
-<p><strong>避坑保命铁律</strong>：创建出来的线程，<strong>绝对不能既不 join 也不 detach</strong>！否则该线程会沦为游离在系统内核里的“僵尸句柄”，引发严重的操作系统句柄泄漏！</p>
+<section id="互斥锁mutexes" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="互斥锁mutexes"><span class="header-section-number">16.5</span> 互斥锁（Mutexes）</h2>
+<p>在所有的多线程工具箱中，“互斥锁（Mutex，即 Mutually Exclusive Lock）”都是最核心的经典守卫机制。 互斥锁充当着特定临界代码区域的“看门人”，它与线程同步有关，更具体地说，它能防止程序中出现一些经典的竞态条件，进而防止那些通常难以追踪和理解的严重 bug 与未定义行为。</p>
+<p>形象地说，互斥锁好比一间<strong>带单人安全插销的洗手间</strong>： 当某条线程成功上锁（<code>lock()</code>）后，洗手间的门就被反锁了；其他想要进入洗手间的线程必须在门外耐心排队等候，直到里面的人出来并打开插销（<code>unlock()</code>），下一条线程才能进入。</p>
+<p>另一个经典比喻是会议室里的“发言接力牌”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>：主持人手里有一块发言牌，拿到牌子的人才有权开麦说话，其余所有人必须闭嘴倾听；当发言完毕把牌子交还主持人，主持人再转交给下一位申请发言的人。</p>
+<p>互斥锁的核心使命，就是<strong>保证在任何给定的微秒时刻，被其守护的代码段绝对只能有一条线程独占执行</strong>！ 它专门用于保护跨线程共享的内存数据（例如全局变量或堆上共享对象）。访问或修改线程局部对象的代码区域，通常不需要使用互斥锁。</p>
+<section id="sec-critical-section" class="level3" data-number="16.5.1">
+<h3 data-number="16.5.1" class="anchored" data-anchor-id="sec-critical-section"><span class="header-section-number">16.5.1</span> 临界区（Critical section）</h3>
+<p>与互斥锁紧密相伴的概念是“<strong>临界区（Critical section）</strong>”。 所谓临界区，指的就是<strong>代码中访问或修改多线程共享资源（共享变量、文件句柄等）的那一段核心代码片段</strong>。如果不对这段区域施加保护，多条并发线程就会在此正面相撞引发竞争态 <span class="citation" data-cites="geeks_critical_section">(<a href="references.html#ref-geeks_critical_section" role="doc-biblioref">Geeks for Geeks 2024</a>)</span>。</p>
+<p>在程序中使用互斥锁时，临界区就定义了我们想要加锁的代码区域。所以我们通常在临界区的开头锁定互斥锁对象，在临界区的结尾解锁。下面两条要点出自 GeeksforGeeks 的文章《Critical Section》，很好地概括了临界区在线程同步问题中所起的作用 <span class="citation" data-cites="geeks_critical_section">(<a href="references.html#ref-geeks_critical_section" role="doc-biblioref">Geeks for Geeks 2024</a>)</span>：</p>
+<ol type="1">
+<li>临界区必须作为一个原子操作来执行。这意味着一旦某个线程或进程进入了临界区，其他所有线程或进程都必须等待，直到正在执行的线程或进程退出临界区。同步机制的目的就是确保同一时刻只有一个线程或进程能够执行临界区。</li>
+<li>临界区的概念是计算机系统中同步问题的核心，因为必须确保多个线程或进程能够并发执行而互不干扰。信号量、互斥锁、监视器、条件变量等各种同步机制都被用来实现临界区，确保共享资源以互斥的方式被访问。</li>
+</ol>
+</section>
+<section id="sec-atomic-operation" class="level3" data-number="16.5.2">
+<h3 data-number="16.5.2" class="anchored" data-anchor-id="sec-atomic-operation"><span class="header-section-number">16.5.2</span> 原子操作（Atomic operations）</h3>
+<p>在并发领域，另一个高频出现的词汇是“<strong>原子操作（Atomic operation）</strong>”。 所谓原子，取其“不可再分”之意。<strong>如果一项操作在执行过程中绝对不可能被操作系统的线程上下文切换打断，那它就是原子操作</strong>。它要么完整执行完毕，要么根本没发生，绝不存在“执行到一半被打断挂起”的中间态。</p>
+<p>原子操作天然免疫任何数据竞争！ 在现代多核 CPU 体系下，单条汇编指令由于微架构的微任务拆解，在默认情况下并不天然等同于物理原子操作。 Zig 标准库在 <code>std.atomic</code> 模块中提供了原生的原子包装类型 <code>std.atomic.Value(T)</code>，它封装了硬件底层的原子加载（<code>load</code>）、原子写入（<code>store</code>）以及原子加法（<code>fetchAdd</code>）等指令。其定位对标 C++ 标准库的 <code>std::atomic&lt;T&gt;</code>，需要强调的是，在 Zig 中，只有基础数据类型（即 <a href="01-zig-weird.html#sec-primitive-data-types" class="quarto-xref"><span>Section 1.5</span></a> 中介绍的那些类型）支持这些原子操作。</p>
+</section>
+<section id="数据竞争与竞争态data-races-and-race-conditions" class="level3" data-number="16.5.3">
+<h3 data-number="16.5.3" class="anchored" data-anchor-id="数据竞争与竞争态data-races-and-race-conditions"><span class="header-section-number">16.5.3</span> 数据竞争与竞争态（Data races and race conditions）</h3>
+<p>为了看清互斥锁的救命价值，我们必须亲手解剖并发领域的头号杀手——<strong>数据竞争（Data race）</strong>。 所谓数据竞争，是指<strong>两条或多条并发线程在同一物理时刻，对同一块内存地址同时执行读写操作，且其中至少有一个操作是写入</strong>。 当程序存在数据竞争时，最终的运算结果完全取决于谁的 CPU 核心抢先跑快了几纳秒（“看谁跑得快”的竞争态），导致程序每次运行得出的答案千奇百怪、不可捉摸。</p>
+<p>看看下面这个典型的反例：我们定义了一个全局计数器 <code>counter</code>，在两个线程里各自执行一个 10 万次的累加循环：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> counter: <span class="dt">usize</span> = <span class="dv">0</span>;</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment() <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> (<span class="dv">0</span>..<span class="dv">100000</span>) |_| <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        counter += <span class="dv">1</span>;</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, increment, .<span class="op">{}</span>);</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr2 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, increment, .<span class="op">{}</span>);</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    thr1.join();</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    thr2.join();</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Counter value: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>counter<span class="op">}</span>);</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Counter value: 117254</code></pre>
+<p>（译注：英文原文的代码与输出中把 <code>Counter</code> 误拼为 <code>Couter</code>，译文已更正，本章后续示例同。）</p>
+<p>为什么会这样？答案是：这个程序存在数据竞争问题。只有当第一个线程在第二个线程开始执行之前就完成它的任务时，这个程序才会打印出正确的数字 200000。但这种情况不太可能发生，因为创建线程的过程非常快，所以两个线程几乎是同时开始执行的。如果你修改这段代码，在第一次和第二次调用 <code>spawn()</code> 之间加上几纳秒的睡眠，就会提高程序得到”正确结果”的概率。</p>
+<p>所以，数据竞争问题的发生，是因为两个线程几乎在同一时间读写同一个内存位置。在这个例子中，每个线程在 for 循环的每次迭代中，本质上都在执行三个基本操作：</p>
+<ol type="1">
+<li>读取 <code>count</code> 的当前值。</li>
+<li>把这个值加 1。</li>
+<li>把结果写回 <code>count</code>。</li>
+</ol>
+<p>在理想的同步状态下（如 <a href="#tbl-data-race-ideal" class="quarto-xref">Table&nbsp;<span>16.1</span></a> 所示），线程 1 的这三步连贯完成，随后线程 2 再读写，双方和谐递增：</p>
+<div id="tbl-data-race-ideal" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-race-ideal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;16.1: 理想串行状态下两条线程对同一整数执行自增
+</figcaption>
+<div aria-describedby="tbl-data-race-ideal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">线程 1 动作</th>
+<th style="text-align: left;">线程 2 动作</th>
+<th style="text-align: left;">内存实际数值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">读取当前值</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">加 1 运算</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">写回内存</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">读取当前值</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">加 1 运算</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">写回内存</td>
+<td style="text-align: left;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>然而在真实并发场景下（如 <a href="#tbl-data-race-not" class="quarto-xref">Table&nbsp;<span>16.2</span></a> 所示），线程 2 往往在线程 1 <strong>还没来得及把新值写回内存的微小间隙里</strong>，就提前抢读了内存里的旧值 <code>0</code>！ 双方各自加 1 后，先后向内存写入 <code>1</code>。两次累加操作在物理上互相覆盖冲刷，导致其中一次累加被彻底吞噬抹杀：</p>
+<div id="tbl-data-race-not" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-data-race-not-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;16.2: 数据竞争交织导致的数据写入覆盖灾难
+</figcaption>
+<div aria-describedby="tbl-data-race-not-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">线程 1 动作</th>
+<th style="text-align: left;">线程 2 动作</th>
+<th style="text-align: left;">内存实际数值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">读取当前值</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">读取当前值</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">加 1 运算</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">加 1 运算</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">写回内存</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">写回内存</td>
+<td style="text-align: left;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="在-zig-中使用互斥锁" class="level3" data-number="16.5.4">
+<h3 data-number="16.5.4" class="anchored" data-anchor-id="在-zig-中使用互斥锁"><span class="header-section-number">16.5.4</span> 在 Zig 中使用互斥锁</h3>
+<p>结合我们在 <a href="#sec-critical-section" class="quarto-xref"><span>Section 16.5.1</span></a> 中关于临界区的讨论，解决方法非常明确：<strong>将 <code>counter += 1</code> 这一行临界区代码用互斥锁保护起来！</strong> 在 Zig 标准库中，互斥锁通过 <code>std.Io.Mutex</code> 提供。</p>
+<p>我们将 <code>increment()</code> 改造为接收互斥锁指针，并在累加前后分别调用 <code>mutex.lock()</code> 与 <code>mutex.unlock()</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Mutex = std.Io.Mutex;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> State = Mutex.State;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> counter: <span class="dt">usize</span> = <span class="dv">0</span>;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment(io: std.Io, mutex: *Mutex) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> (<span class="dv">0</span>..<span class="dv">100000</span>) |_| <span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">try</span> mutex.lock(io);</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        counter += <span class="dv">1</span>;</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        mutex.unlock(io);</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> mutex: Mutex = .<span class="op">{</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        .state = std.atomic.Value(State).init(.unlocked)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, increment, .<span class="op">{</span>init.io, &amp;mutex<span class="op">}</span>);</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr2 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, increment, .<span class="op">{</span>init.io, &amp;mutex<span class="op">}</span>);</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    thr1.join();</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    thr2.join();</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Counter value: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>counter<span class="op">}</span>);</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Counter value: 200000</code></pre>
+</section>
+</section>
+<section id="读写锁readwrite-locks" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="读写锁readwrite-locks"><span class="header-section-number">16.6</span> 读写锁（Read/Write locks）</h2>
+<p>虽然互斥锁威力强大，但在某些高频场景下，全局一刀切的互斥锁会成为严重的性能瓶颈。 例如：假设有一个系统配置缓存文件，有 100 条线程频繁从里面<strong>读取</strong>参数，只有偶尔 1 条线程会向里面<strong>写入</strong>新配置。 如果 100 条线程纯粹只是并发读取数据，彼此之间根本不会发生任何冲突与破坏，这种场景完全可以安全地全速并行！ 但如果强行套用互斥锁，这 100 条读取线程就只能极其憋屈地一个接一个单行排队，系统吞吐量呈断崖式下跌。</p>
+<p>针对这种“读多写少”的经典混合场景，<strong>读写锁（Read/Write Lock, 简称 RwLock）</strong>应运而生！</p>
+<section id="独占锁-vs-共享锁" class="level3" data-number="16.6.1">
+<h3 data-number="16.6.1" class="anchored" data-anchor-id="独占锁-vs-共享锁"><span class="header-section-number">16.6.1</span> 独占锁 vs 共享锁</h3>
+<p>读写锁之所以比普通互斥锁更加灵活高效，关键在于它细分了两种维度的锁权限：<strong>独占锁（Exclusive Lock）</strong> 与 <strong>共享锁（Shared Lock）</strong>： - <strong>独占锁（写锁）</strong>：其行为与常规互斥锁完全一致。一旦某条线程获取了写锁，其他任何线程（无论想读还是想写）都必须全部被排除在门外等候； - <strong>共享锁（读锁）</strong>：是一种包容性锁。只要当前没有任何线程持有写锁、且没有等待写锁的排队线程，多条希望获取读锁的线程就可以<strong>同时携手进入临界区，全速并行读取</strong>！</p>
+<p>当某个线程尝试获取读锁（即共享锁）时，当且仅当没有其他线程持有写锁、并且没有其他线程正在排队等待获取写锁时，它才能拿到共享锁。如果拿不到读锁，这个线程的执行会立即被阻塞，直到成功获取读锁后才会恢复执行。从这个角度看，读锁本质上是一种安全机制：只有在安全的时候，它才允许一个线程与其他线程一起运行。 但一旦有某条线程准备执行写入并申请了独占写锁，后续的所有读取请求都会被暂时拦截排队，直到写操作稳妥提交完毕。 通过这种“<strong>读共享、写独占</strong>”的精细分流，我们既守住了并发写时的数据安全底线，又最大限度释放了多核并发读取的极限性能。</p>
+</section>
+<section id="在-zig-中使用读写锁" class="level3" data-number="16.6.2">
+<h3 data-number="16.6.2" class="anchored" data-anchor-id="在-zig-中使用读写锁"><span class="header-section-number">16.6.2</span> 在 Zig 中使用读写锁</h3>
+<p>Zig 标准库通过 <code>std.Thread.RwLock</code> 模块支持读写锁。（译注：在 Zig 0.17.1 中，<code>std.Thread</code> 下已经没有 <code>RwLock</code>，读写锁位于 <code>std.Io.RwLock</code>，本章示例代码使用的也是它。）其核心 API 规范如下： - <strong>申请读锁</strong>：调用 <code>lockShared()</code> 或非阻塞的 <code>tryLockShared()</code>； - <strong>释放读锁</strong>：调用 <code>unlockShared()</code>； - <strong>申请写锁</strong>：调用 <code>lock()</code> 或非阻塞的 <code>tryLock()</code>； - <strong>释放写锁</strong>：调用 <code>unlock()</code>。</p>
+<p>看下面这个 3 读 1 写的实战代码：三个 <code>reader</code> 线程高频共享读取计数器，一个 <code>writer</code> 线程独占自增计数器：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> RwLock = std.Io.RwLock;</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> duration = std.Io.Duration.fromSeconds(<span class="dv">2</span>);</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> clock: std.Io.Clock = .awake;</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> counter: <span class="dt">u32</span> = <span class="dv">0</span>;</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> reader(io: std.Io, id: <span class="dt">u32</span>, lock: *RwLock) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (<span class="cn">true</span>) <span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (lock.tryLockShared(io)) <span class="op">{</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            std.debug.print(<span class="st">"Thread {d}: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>id, counter<span class="op">}</span>);</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            _ = lock.unlockShared(io);</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>            <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> writer(io: std.Io, lock: *RwLock) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (<span class="cn">true</span>) <span class="op">{</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (lock.tryLock(io)) <span class="op">{</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>            counter += <span class="dv">1</span>;</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>            _ = lock.unlock(io);</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>            <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> lock: RwLock = .init;</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, reader, .<span class="op">{</span>init.io, <span class="dv">1</span>, &amp;lock<span class="op">}</span>);</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr2 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, reader, .<span class="op">{</span>init.io, <span class="dv">2</span>, &amp;lock<span class="op">}</span>);</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr3 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, reader, .<span class="op">{</span>init.io, <span class="dv">3</span>, &amp;lock<span class="op">}</span>);</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> wthread = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, writer, .<span class="op">{</span>init.io, &amp;lock<span class="op">}</span>);</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    thr1.join();</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    thr2.join();</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    thr3.join();</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    wthread.join();</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="让出-cpu-时间片yield" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="让出-cpu-时间片yield"><span class="header-section-number">16.7</span> 让出 CPU 时间片：<code>yield()</code></h2>
+<p><code>Thread</code> 结构体还提供了一个特殊的控制原语：<strong><code>yield()</code></strong>。 调用 <code>yield()</code> 的物理含义是：<strong>当前线程主动提出放弃 CPU 本轮剩余的时间片配额，请求操作系统调度器把 CPU 算力优先腾给其他就绪线程去跑</strong>。</p>
+<p>需要说明的是，让出线程是如今”不太常见”的线程操作。换句话说，在生产环境中使用让出操作的程序员并不多，原因很简单：这个操作很难用好，而且还有更好的替代方案。大多数程序员更倾向于使用 <code>join()</code>。实际上，大多数时候，当你在某个代码示例中看到有人使用这种”让出”操作时，他们通常是为了帮助调试应用中的竞态条件。也就是说，如今这种”让出”操作主要被当作一种调试工具。</p>
+<p>总之，如果你想让出一个线程，只需调用 <code>yield()</code> 方法，像这样：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> Thread.yield();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：英文原文写作 <code>thread.yield();</code>。在 Zig 0.17.1 中，<code>yield()</code> 是 <code>std.Thread</code> 上不接收实例参数的函数，返回类型为 <code>YieldError!void</code>，所以需要写成 <code>try Thread.yield();</code> 才能通过编译。）</p>
+</section>
+<section id="多线程常见问题与防范" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="多线程常见问题与防范"><span class="header-section-number">16.8</span> 多线程常见问题与防范</h2>
+<section id="死锁deadlocks" class="level3" data-number="16.8.1">
+<h3 data-number="16.8.1" class="anchored" data-anchor-id="死锁deadlocks"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlocks）</h3>
+<p>所谓死锁，是指<strong>两条或多条线程各自捏着对方梦寐以求的锁资源，同时原地死等对方松手，最终陷入全员永久僵死、程序直接卡死的僵局</strong>。</p>
+<p>看看下面这个典型的死锁示例：线程 1 先锁住了 <code>mut1</code>，随后试图获取 <code>mut2</code>；而线程 2 恰好先锁住了 <code>mut2</code>，转头去申请 <code>mut1</code>。双方互相等待，程序将永久挂起：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> clock: std.Io.Clock = .awake;</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> duration = std.Io.Duration.fromSeconds(<span class="dv">1</span>);</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> State = std.Io.Mutex.State;</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> mut1: std.Io.Mutex = .<span class="op">{</span> .state = std.atomic.Value(State).init(.unlocked) <span class="op">}</span>;</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> mut2: std.Io.Mutex = .<span class="op">{</span> .state = std.atomic.Value(State).init(.unlocked) <span class="op">}</span>;</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_some_work1(io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> mut1.lock(io);</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> mut2.lock(io); <span class="co">// 试图拿 mut2，却被线程 2 死死占着</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Doing some work 1</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    mut2.unlock(io);</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    mut1.unlock(io);</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_some_work2(io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> mut2.lock(io);</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> mut1.lock(io); <span class="co">// 试图拿 mut1，却被线程 1 死死占着</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Doing some work 2</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    mut1.unlock(io);</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    mut2.unlock(io);</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr1 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, do_some_work1, .<span class="op">{</span>init.io<span class="op">}</span>);</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thr2 = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, do_some_work2, .<span class="op">{</span>init.io<span class="op">}</span>);</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    thr1.join();</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    thr2.join();</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>规避死锁的黄金法则：<strong>在全工程范围内，凡涉及多个互斥锁嵌套锁定时，必须严格保证所有线程均按全局完全一致的固定顺序进行加锁（例如一律先锁 mut1 再锁 mut2）！</strong></p>
+</section>
+<section id="sec-not-call-join-detach" class="level3" data-number="16.8.2">
+<h3 data-number="16.8.2" class="anchored" data-anchor-id="sec-not-call-join-detach"><span class="header-section-number">16.8.2</span> 2. 漏调 join 或 detach 的后果</h3>
+<p>如果你创建了一条线程，却在代码逻辑里既没有调用 <code>join()</code>、也没有调用 <code>detach()</code>，那么这条线程就会沦落为“<strong>僵尸线程（Zombie thread）</strong>”。 由于无人接管其生命周期终点，操作系统为其开辟的栈空间与内核控制块将永远无法得到释放，从而造成严重的系统级资源泄漏。切记：<code>join()</code> 或 <code>detach()</code> 必须择其一显式调用！</p>
+</section>
+<section id="优雅停机与安全取消线程" class="level3" data-number="16.8.3">
+<h3 data-number="16.8.3" class="anchored" data-anchor-id="优雅停机与安全取消线程"><span class="header-section-number">16.8.3</span> 3. 优雅停机与安全取消线程</h3>
+<p>在 C 语言的 <code>pthreads</code> 库中，可以通过 <code>pthread_kill()</code> 函数向线程发送 <code>SIGTERM</code> 信号，以异步方式杀死或取消一个线程。 但这种粗暴的暴力终止是极其危险的反模式！因为你根本无法预料线程被击杀的那一瞬间手头捏着哪些没来得及释放的互斥锁与文件句柄，极易诱发整个进程的资源死锁与数据结构腐化。 因此，Zig 的线程实现没有类似的函数，也没有类似的方式来异步取消或杀死线程。</p>
+<p>所以，如果你想在 Zig 中让一个线程在执行中途取消，一个不错的策略是结合使用控制流和 <code>join()</code>。 通过结合我们在 <a href="#sec-atomic-operation" class="quarto-xref"><span>Section 16.5.2</span></a> 学到的原子布尔标志位 <code>std.atomic.Value(bool)</code>，可以把线程设计成一个不断检查自己是否应该继续运行的 while 循环；到了该取消线程的时候，就让 while 循环跳出，再通过调用 <code>join()</code> 让线程与主线程汇合。下面的代码在一定程度上演示了这种策略：这里我们用控制流跳出 while 循环，让线程比原计划更早退出。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Thread = std.Thread;</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> clock: std.Io.Clock = .awake;</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> duration = std.Io.Duration.fromSeconds(<span class="dv">2</span>);</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> running = std.atomic.Value(<span class="dt">bool</span>).init(<span class="cn">true</span>);</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> counter: <span class="dt">u64</span> = <span class="dv">0</span>;</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_more_work(io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.Io.sleep(io, duration, clock);</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> work(io: std.Io) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (running.load(.monotonic)) <span class="op">{</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">for</span> (<span class="dv">0</span>..<span class="dv">10000</span>) |_| <span class="op">{</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>            counter += <span class="dv">1</span>;</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (counter &gt; <span class="dv">15000</span>) <span class="op">{</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            std.debug.print(<span class="st">"Time to cancel the thread.</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 线程主动感知条件并下发停机通知</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>            running.store(<span class="cn">false</span>, .monotonic);</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>            std.debug.print(<span class="st">"Time to do more work.</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{}</span>);</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>            <span class="kw">try</span> do_more_work(io);</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> thread = <span class="kw">try</span> Thread.spawn(.<span class="op">{}</span>, work, .<span class="op">{</span>init.io<span class="op">}</span>);</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    thread.join();</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Time to do more work.
+Time to cancel the thread.</code></pre>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-geeks_critical_section" class="csl-entry" role="listitem">
+Geeks for Geeks. 2024. <em>Critical Section</em>. <span>Geeks for Geeks</span>. <a href="https://www.geeksforgeeks.org/g-fact-70/">https://www.geeksforgeeks.org/g-fact-70/</a>.
+</div>
 </div>
 </section>
 </section>
-<section id="经典翻车现场数据竞争data-race" class="level2" data-number="16.5">
-<h2 data-number="16.5" class="anchored" data-anchor-id="经典翻车现场数据竞争data-race"><span class="header-section-number">16.5</span> 经典翻车现场：数据竞争（Data Race）</h2>
-<p>来看一段典型的多线程翻车代码：两个线程同时对全局共享变量 <code>counter</code> 各自累加 10 万次，理论上最终结果应该是 200,000：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment() <span class="dt">void</span> {</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">100000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        counter <span class="op">+=</span> <span class="dv">1</span>; <span class="co">// 两个线程无保护并发写同一个变量！</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr2 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    thr1<span class="op">.</span>join();</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    thr2<span class="op">.</span>join();</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Couter value: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{counter});</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>跑出来的结果让人大跌眼镜：</p>
-<pre><code>Couter value: 117254</code></pre>
-<p>为什么严重缩水？ 因为在硬件 CPU 层面，<code>counter += 1</code> 根本不是一步到位的，而是拆解成了三个步骤： 1. 从内存把值读进 CPU 寄存器； 2. 寄存器做加 1 计算； 3. 把新值写回内存。</p>
-<p>当两个线程并发跑时，线程 B 经常在线程 A 还没写回内存之前就把老值读走了，导致两个线程的自增互相覆盖（撕裂），大量计数白白丢失！这片争抢写共享变量的代码区，在计算机理论中就叫<strong>临界区（Critical Section）</strong>。</p>
-</section>
-<section id="互斥锁mutex排队保平安" class="level2" data-number="16.6">
-<h2 data-number="16.6" class="anchored" data-anchor-id="互斥锁mutex排队保平安"><span class="header-section-number">16.6</span> 互斥锁（Mutex）：排队保平安</h2>
-<p>解决数据竞争的标配武器就是<strong>互斥锁（Mutex - Mutually Exclusive）</strong>。 它就像洗手间的门锁：同一时刻只允许一个人拿钥匙进门（<code>lock</code>）；其他人必须在门外老实排队；里面的人办完事开锁出来（<code>unlock</code>），排在队首的下一位才能进去。</p>
-<p>在 Zig 中使用 <code>std.Io.Mutex</code>（或 <code>std.Thread.Mutex</code>）保护临界区：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Mutex <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Mutex;</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> State <span class="op">=</span> Mutex<span class="op">.</span>State;</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> increment(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> mutex<span class="op">:</span> <span class="op">*</span>Mutex) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">100000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> mutex<span class="op">.</span>lock(io);   <span class="co">// 上锁</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        counter <span class="op">+=</span> <span class="dv">1</span>;         <span class="co">// 安全独占临界区</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        mutex<span class="op">.</span>unlock(io);     <span class="co">// 释放锁</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> mutex<span class="op">:</span> Mutex <span class="op">=</span> <span class="op">.</span>{</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>state<span class="op">=</span>std<span class="op">.</span>atomic<span class="op">.</span>Value(State)<span class="op">.</span>init(<span class="op">.</span>unlocked)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    };</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr1 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>mutex});</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thr2 <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> increment<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>mutex});</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    thr1<span class="op">.</span>join();</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    thr2<span class="op">.</span>join();</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Couter value: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{counter});</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>加上锁之后，跑出来稳如泰山的 <code>200000</code>！</p>
-</section>
-<section id="读写锁rwlock读共享写独占" class="level2" data-number="16.7">
-<h2 data-number="16.7" class="anchored" data-anchor-id="读写锁rwlock读共享写独占"><span class="header-section-number">16.7</span> 读写锁（RwLock）：读共享、写独占</h2>
-<p>如果一个资源大部分时间都在被几百个线程并发读取、极少被修改（比如在线配置缓存），互斥锁会把所有读请求也强制排成单线，性能大打折扣。</p>
-<p>这时候<strong>读写锁（<code>std.Io.RwLock</code> / <code>std.Thread.RwLock</code>）</strong>便派上用场： - <strong>读锁（<code>lockShared</code>）</strong>：共享锁，允许多个读者同时并发读取； - <strong>写锁（<code>lock</code>）</strong>：排他独占锁，一旦有人要写，所有读者和写者全部停步等待。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> RwLock <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>RwLock;</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">2</span>);</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> reader(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> id<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> lock<span class="op">:</span> <span class="op">*</span>RwLock) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="cn">true</span>) {</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (lock<span class="op">.</span>tryLockShared(io)) {</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Thread {d}: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{id<span class="op">,</span> counter});</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=</span> lock<span class="op">.</span>unlockShared(io);</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> writer(io<span class="op">:</span> std<span class="op">.</span>Io<span class="op">,</span> lock<span class="op">:</span> <span class="op">*</span>RwLock) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="cn">true</span>) {</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (lock<span class="op">.</span>tryLock(io)) {</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            counter <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=</span> lock<span class="op">.</span>unlock(io);</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="并发排坑与优雅退出graceful-shutdown" class="level2" data-number="16.8">
-<h2 data-number="16.8" class="anchored" data-anchor-id="并发排坑与优雅退出graceful-shutdown"><span class="header-section-number">16.8</span> 并发排坑与优雅退出（Graceful Shutdown）</h2>
-<section id="死锁deadlock" class="level3" data-number="16.8.1">
-<h3 data-number="16.8.1" class="anchored" data-anchor-id="死锁deadlock"><span class="header-section-number">16.8.1</span> 1. 死锁（Deadlock）</h3>
-<p>当线程 1 拿着锁 A 等锁 B，而线程 2 拿着锁 B 等锁 A 时，双方都在死等对方松手，程序永久僵死。 <strong>避坑原则</strong>：在所有线程中，<strong>加锁顺序必须严格保持全局一致</strong>（永远先拿 A、再拿 B，绝不逆序）。</p>
-</section>
-<section id="优雅停机原子标志位控制" class="level3" data-number="16.8.2">
-<h3 data-number="16.8.2" class="anchored" data-anchor-id="优雅停机原子标志位控制"><span class="header-section-number">16.8.2</span> 2. 优雅停机：原子标志位控制</h3>
-<p>在 C 语言里经常有人动用 <code>pthread_kill</code> 暴力强杀线程，这是极其危险的违规操作（会导致资源悬挂在半空）。 <strong>Zig 崇尚纯粹的优雅退出</strong>：用 <code>std.atomic.Value(bool)</code> 原子布尔变量充当停机旗标，工作线程每次循环自行检查状态，安全从容退出：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Thread <span class="op">=</span> std<span class="op">.</span>Thread;</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> clock<span class="op">:</span> std<span class="op">.</span>Io<span class="op">.</span>Clock <span class="op">=</span> <span class="op">.</span>awake;</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> duration <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Duration<span class="op">.</span>fromSeconds(<span class="dv">2</span>);</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> running <span class="op">=</span> std<span class="op">.</span>atomic<span class="op">.</span>Value(<span class="dt">bool</span>)<span class="op">.</span>init(<span class="cn">true</span>);</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> counter<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> do_more_work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> std<span class="op">.</span>Io<span class="op">.</span>sleep(io<span class="op">,</span> duration<span class="op">,</span> clock);</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> work(io<span class="op">:</span> std<span class="op">.</span>Io) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (running<span class="op">.</span>load(<span class="op">.</span>monotonic)) {</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span><span class="dv">10000</span>) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            counter <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (counter <span class="op">&gt;</span> <span class="dv">15000</span>) {</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Time to cancel the thread.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            running<span class="op">.</span>store(<span class="cn">false</span><span class="op">,</span> <span class="op">.</span>monotonic); <span class="co">// 触发通知优雅退出</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Time to do more work.</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> do_more_work(io);</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> thread <span class="op">=</span> <span class="cf">try</span> Thread<span class="op">.</span>spawn(<span class="op">.</span>{}<span class="op">,</span> work<span class="op">,</span> <span class="op">.</span>{init<span class="op">.</span>io});</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    thread<span class="op">.</span>join();</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>理清了内核线程模型、临界区保护与原子调度，你在多核硬件上写并发服务器或高吞吐引擎时就能稳操胜券！</p>
-
-
-</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>计算机科普频道 Computerphile 在其经典视频 <a href="https://www.youtube.com/watch?v=7ENFeb-J75k"><em>Multithreading Code</em></a> 中生动运用了此比喻。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

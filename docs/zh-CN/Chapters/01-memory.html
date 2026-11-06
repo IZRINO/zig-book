@@ -459,7 +459,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -477,7 +477,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -502,7 +502,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#计算机的三大内存空间" id="toc-计算机的三大内存空间" class="nav-link active" data-scroll-target="#计算机的三大内存空间"><span class="header-section-number">3.1</span> 计算机的三大内存空间</a>
+  <li><a href="#内存空间memory-spaces" id="toc-内存空间memory-spaces" class="nav-link active" data-scroll-target="#内存空间memory-spaces"><span class="header-section-number">3.1</span> 内存空间（Memory spaces）</a>
   <ul class="collapse">
   <li><a href="#sec-compile-time" id="toc-sec-compile-time" class="nav-link" data-scroll-target="#sec-compile-time"><span class="header-section-number">3.1.1</span> 编译期已知 vs 运行时已知</a></li>
   <li><a href="#全局数据段global-data-register-section" id="toc-全局数据段global-data-register-section" class="nav-link" data-scroll-target="#全局数据段global-data-register-section"><span class="header-section-number">3.1.2</span> 全局数据段（Global Data Register / Section）</a></li>
@@ -515,12 +515,14 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
   <li><a href="#sec-allocators" id="toc-sec-allocators" class="nav-link" data-scroll-target="#sec-allocators"><span class="header-section-number">3.3</span> 分配器（Allocators）：Zig 的灵魂基石</a>
   <ul class="collapse">
   <li><a href="#什么是-allocator" id="toc-什么是-allocator" class="nav-link" data-scroll-target="#什么是-allocator"><span class="header-section-number">3.3.1</span> 什么是 Allocator？</a></li>
-  <li><a href="#常用分配器家族大盘点" id="toc-常用分配器家族大盘点" class="nav-link" data-scroll-target="#常用分配器家族大盘点"><span class="header-section-number">3.3.2</span> 常用分配器家族大盘点</a></li>
-  <li><a href="#实战debugallocator通用分配器" id="toc-实战debugallocator通用分配器" class="nav-link" data-scroll-target="#实战debugallocator通用分配器"><span class="header-section-number">3.3.3</span> 实战：DebugAllocator（通用分配器）</a></li>
-  <li><a href="#实战fixedbufferallocator定长缓冲区分配" id="toc-实战fixedbufferallocator定长缓冲区分配" class="nav-link" data-scroll-target="#实战fixedbufferallocator定长缓冲区分配"><span class="header-section-number">3.3.4</span> 实战：FixedBufferAllocator（定长缓冲区分配）</a></li>
-  <li><a href="#sec-arena-allocator" id="toc-sec-arena-allocator" class="nav-link" data-scroll-target="#sec-arena-allocator"><span class="header-section-number">3.3.5</span> 神器：ArenaAllocator（一键批量释放）</a></li>
-  <li><a href="#动态切片分配alloc-与-free" id="toc-动态切片分配alloc-与-free" class="nav-link" data-scroll-target="#动态切片分配alloc-与-free"><span class="header-section-number">3.3.6</span> 动态切片分配：<code>alloc()</code> 与 <code>free()</code></a></li>
-  <li><a href="#单对象专属分配create-与-destroy" id="toc-单对象专属分配create-与-destroy" class="nav-link" data-scroll-target="#单对象专属分配create-与-destroy"><span class="header-section-number">3.3.7</span> 单对象专属分配：<code>create()</code> 与 <code>destroy()</code></a></li>
+  <li><a href="#为什么我们需要分配器" id="toc-为什么我们需要分配器" class="nav-link" data-scroll-target="#为什么我们需要分配器"><span class="header-section-number">3.3.2</span> 为什么我们需要分配器？</a></li>
+  <li><a href="#不同类型的分配器the-different-types-of-allocators" id="toc-不同类型的分配器the-different-types-of-allocators" class="nav-link" data-scroll-target="#不同类型的分配器the-different-types-of-allocators"><span class="header-section-number">3.3.3</span> 不同类型的分配器（The different types of allocators）</a></li>
+  <li><a href="#通用分配器general-purpose-allocators" id="toc-通用分配器general-purpose-allocators" class="nav-link" data-scroll-target="#通用分配器general-purpose-allocators"><span class="header-section-number">3.3.4</span> 通用分配器（General-purpose allocators）</a></li>
+  <li><a href="#页分配器page-allocator" id="toc-页分配器page-allocator" class="nav-link" data-scroll-target="#页分配器page-allocator"><span class="header-section-number">3.3.5</span> 页分配器（Page allocator）</a></li>
+  <li><a href="#缓冲区分配器buffer-allocators" id="toc-缓冲区分配器buffer-allocators" class="nav-link" data-scroll-target="#缓冲区分配器buffer-allocators"><span class="header-section-number">3.3.6</span> 缓冲区分配器（Buffer allocators）</a></li>
+  <li><a href="#sec-arena-allocator" id="toc-sec-arena-allocator" class="nav-link" data-scroll-target="#sec-arena-allocator"><span class="header-section-number">3.3.7</span> 竞技场分配器（Arena allocator）</a></li>
+  <li><a href="#alloc-与-free-方法" id="toc-alloc-与-free-方法" class="nav-link" data-scroll-target="#alloc-与-free-方法"><span class="header-section-number">3.3.8</span> <code>alloc()</code> 与 <code>free()</code> 方法</a></li>
+  <li><a href="#create-与-destroy-方法" id="toc-create-与-destroy-方法" class="nav-link" data-scroll-target="#create-与-destroy-方法"><span class="header-section-number">3.3.9</span> <code>create()</code> 与 <code>destroy()</code> 方法</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -548,12 +550,11 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
-<p>在这一章中，咱们来死磕底层开发最核心的话题——<strong>内存</strong>。 Zig 究竟是如何管理与调度内存的？日常开发中有哪些顺手的工具？又有哪些独特设计让 Zig 的内存模型与众不同？看完本章，你心中就会有清晰的答案。</p>
+<p>在本章中，我们将深入探讨<strong>内存（Memory）</strong>。Zig 是如何管理内存的？日常开发中使用哪些常用工具？有哪些关键特性让 Zig 的内存管理与众不同？你都将在本章中找到答案。</p>
 <p>计算机的一切运算都建立在内存基础之上。内存就像一张临时工作台，用来安放计算过程中产生的所有临时数据。没有内存，编程语言里的“变量”与“对象”就成了无源之水。</p>
-<section id="计算机的三大内存空间" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="计算机的三大内存空间"><span class="header-section-number">3.1</span> 计算机的三大内存空间</h2>
-<p>在 Zig 源码中定义的每一个对象，在底层硬件中都必须有一块安身立命的物理内存。 根据定义位置和方式的不同，Zig 会把对象分配到不同的“内存区域”中。</p>
+<section id="内存空间memory-spaces" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="内存空间memory-spaces"><span class="header-section-number">3.1</span> 内存空间（Memory spaces）</h2>
+<p>你在 Zig 源码中创建的每一个对象，都需要存放在计算机内存中的某个地方。根据你在哪里、以何种方式定义对象，Zig 会使用不同的”内存空间”（即不同类型的内存）来存放这个对象。 根据定义位置和方式的不同，Zig 会把对象分配到不同的“内存区域”中。</p>
 <p>在 Zig 里，我们最关心的内存区域主要有 3 个：</p>
 <ol type="1">
 <li><strong>全局数据段（Global Data Section）</strong>；</li>
@@ -563,51 +564,53 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <section id="sec-compile-time" class="level3" data-number="3.1.1">
 <h3 data-number="3.1.1" class="anchored" data-anchor-id="sec-compile-time"><span class="header-section-number">3.1.1</span> 编译期已知 vs 运行时已知</h3>
 <p>Zig 在决定把一个对象塞到哪个内存空间时，核心评判标准之一就是：<strong>这个值到底是在“编译期”就已知，还是必须等“运行时”才能算出来？</strong></p>
-<p>如果一个对象的值在编译阶段就已经白纸黑字写死在源码里，编译器在编译时就能把它的具体数值和字节大小算得一清二楚，这就是<strong>编译期已知（Compile-time known）</strong>。</p>
+<p>在用 Zig 编写程序时，程序中某些对象的值是<strong>编译期已知（compile-time known）</strong>的。也就是说，在编译 Zig 源码的过程中，<code>zig</code> 编译器能够推算出源码中某个对象的确切值。</p>
 <p>对 <code>zig</code> 编译器来说，它其实最在乎的是<strong>对象的长度/占用空间大小（Size）</strong>，其次才是具体的数值。当然，如果值已知，那大小自然水落石出。</p>
 <p>因此，编译器的首要任务是摸清每个对象到底占多少字节： - 如果值在编译期已知，那大小自动敲定； - 如果值要在运行时才能算出，那么只有当<strong>该对象的类型具备固定的物理尺寸</strong>时，其大小才算编译期已知。</p>
 <p>什么叫“具有固定的物理尺寸”？比如 <code>u32</code> 占 4 字节、<code>[10]u8</code> 占 10 字节。 反过来，如果类型里包含一个长度不定的切片 <code>[]const u8</code>，那它在编译期就属于“尺寸不固定”。因为在运行时这个切片可能装 2 个元素，也可能装 1000 个元素，编译器根本没法未卜先知。</p>
-<p>举个日常开发的场景：一个接受用户名字符串的函数，可能收到 3 个字符的短名字，也可能收到 100 个字符的长名字。这种入参切片的实际长度，显然只能留到程序跑起来（运行时）由外部输入决定。</p>
+<p>例如，正如在 <a href="01-zig-weird.html#sec-zig-strings" class="quarto-xref"><span>Section 1.8</span></a> 中所述，Zig 中的字符串对象在底层是任意字节组成的数组；而正如在 <a href="01-zig-weird.html#sec-string-slice-versus-array" class="quarto-xref"><span>Section 1.8.1</span></a> 中所讨论的，这个字节数组通常以字节切片（<code>[]const u8</code>）的形式被访问。如果某个函数接收一个字符串作为输入（比如要在数据库中创建的用户名，或者要搜索的商品名称），我们在编写函数时是无法提前预知输入字符串的确切长度的——它可能只有 10 个字符，也可能有 100 个字符。</p>
+<p>因此，任何包含“无显式固定大小数据成员”的类型或结构体声明，都会使该类型或结构体在编译期不具备已知固定大小。相反，如果你声明的结构体包含的是固定长度的数组成员（例如 <code>[60]u8</code>，即包含 60 个 <code>u8</code> 元素的数组），那么该结构体类型在编译期就具有已知的固定大小；此时编译器无需在编译期知道该类型对象的具体数值，仅凭类型本身就能算出存储该对象所需的空间。</p>
 <p>看下面这个例子：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> input_length(input<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="dt">usize</span> {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n <span class="op">=</span> input<span class="op">.</span>len;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n;</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> input_length(input: []<span class="kw">const</span> <span class="dt">u8</span>) <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n = input.len;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> name <span class="op">=</span> <span class="st">"Pedro"</span>;</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> array <span class="op">=</span> [_]<span class="dt">u8</span>{<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span>};</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> name; _ <span class="op">=</span> array;</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> name = <span class="st">"Pedro"</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> array = [_]<span class="dt">u8</span><span class="op">{</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">}</span>;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    _ = name; _ = array;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>在 <code>main()</code> 函数里，常量 <code>name</code> 和 <code>array</code> 的内容直接硬编码在源码中，编译器一眼就能把它们算出来，这就是典型的编译期已知。</p>
-<p>而在 <code>input_length()</code> 函数里，形参 <code>input</code> 是一个动态切片 <code>[]const u8</code>。在编译时，编译器根本猜不到谁会调它、会传多长的串进来。所以 <code>input</code> 的内容和长度都属于“运行时已知”。</p>
+<p>而在 <code>input_length()</code> 函数里，形参 <code>input</code> 是一个 <code>[]const u8</code> 切片。在编译时不可能知道这个参数的值，也不可能知道它的长度，因为它是一个在参数类型注解中没有显式指定固定长度的切片。所以 <code>input</code> 的值和长度都只有在运行时才知道，表达式 <code>input.len</code> 的值也是如此。这是所有函数共有的特性：请记住，函数参数的值通常不是”编译期已知”的。</p>
 <p>不过请注意：虽然 <code>input.len</code> 的具体数值是运行时才能拿到的，但承接结果的变量 <code>n</code> 的类型是 <code>usize</code>，而 <code>usize</code> 本身的内存占用在当前平台上是完全固定的（64 位系统上就是 8 字节）。所以 <code>n</code> 所需的内存空间在编译期依然是确定的。</p>
 </section>
 <section id="全局数据段global-data-register-section" class="level3" data-number="3.1.2">
 <h3 data-number="3.1.2" class="anchored" data-anchor-id="全局数据段global-data-register-section"><span class="header-section-number">3.1.2</span> 全局数据段（Global Data Register / Section）</h3>
 <p>全局数据段是最终编译出来的二进制可执行文件中的一个静态区域，专门存放所有在编译期就彻底确定下来的数据。</p>
 <p>你在源码里写的所有字面量（比如字符串字面量 <code>"this is a string"</code>、整数 <code>10</code>、布尔值 <code>true</code>），以及所有在编译期已知且不可变的常量，统统被烘焙到了二进制文件的全局数据段里。</p>
-<p>日常写代码时大家基本不需要特意操心这个区域，它是只读且随程序载入自动存在的，开发者既不用手动申请，也不用手动释放。</p>
+<p>说实话，你不需要太关心这块内存空间。因为你无法控制它，也不能有意地访问它或把它用于自己的目的。另外，这块内存空间也不会影响程序的逻辑，它只是存在于你的程序中而已。</p>
 </section>
 <section id="栈内存-vs-堆内存" class="level3" data-number="3.1.3">
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="栈内存-vs-堆内存"><span class="header-section-number">3.1.3</span> 栈内存 vs 堆内存</h3>
 <p>在系统级开发圈子里，“栈（Stack）还是堆（Heap）”永远是绕不开的经典话题。 初学者经常容易被“Stack vs Heap”这种字眼误导，以为它俩是非此即彼的对立关系。其实不然！在真实项目中，<strong>栈和堆是紧密互补的搭档</strong>，几乎每一个像样的 Zig 程序都在同时结合使用两者。</p>
-<p>先一句话概括它俩的核心分工： - <strong>栈（Stack）</strong>：速度极快，用于存放<strong>生命周期跟随代码块、且尺寸在编译期固定已知</strong>的局部数据； - <strong>堆（Heap）</strong>：容量极大、灵活多变，专门用于存放<strong>尺寸动态变化、或者生命周期需要跨越作用域</strong>的动态数据 <span class="citation" data-cites="jenny2022">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>)</span>。</p>
+<p>本质上，栈内存通常用于存放长度固定且在编译期已知的值；相比之下，堆内存是一种<em>动态</em>的内存空间，用于存放在程序执行（运行时）期间长度可能增长的值 <span class="citation" data-cites="jenny2022">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>)</span>。</p>
+<p>运行时会增长的长度，本质上与”运行时已知”的值相关联。换句话说，如果一个对象的长度可能在运行时增长，那么这个对象的长度在编译期就是未知的；长度在编译期未知，这个对象的值在编译期也就未知。这类对象应当存放在堆内存空间中，堆是一块动态的内存空间，可以增长或收缩以适应对象的大小。</p>
 </section>
 <section id="sec-stack" class="level3" data-number="3.1.4">
 <h3 data-number="3.1.4" class="anchored" data-anchor-id="sec-stack"><span class="header-section-number">3.1.4</span> 深入剖析栈内存（Stack）</h3>
-<p>栈内存之所以叫“栈”，是因为它在底层的管理方式完全遵循数据结构里的<strong>后进先出（LIFO - Last In, First Out）</strong>机制。</p>
-<p>在 Zig 中，每次发生函数调用，操作系统就会在栈顶为该函数切出一块专属的<strong>栈帧（Stack Frame）</strong> <span class="citation" data-cites="jenny2022 zigdocs">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>; <a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024</a>)</span>。 函数的所有形参、以及在函数体大括号内声明的局部变量，通通存放在这个专属栈帧里。</p>
+<p>栈内存之所以叫“栈”，是因为它在底层的管理方式采用了<strong>栈数据结构（Stack Data Structure）</strong>的<strong>后进先出（LIFO - Last In, First Out）</strong>机制。相信你对这种数据结构并不陌生；如果想温习其原理，可以参考 <a href="https://en.wikipedia.org/wiki/Stack_(abstract_data_type)">Wikipedia 页面</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>或 <a href="https://www.geeksforgeeks.org/stack-data-structure/">Geeks For Geeks 教程</a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>在 Zig 中，每次进行函数调用时，都会在栈上为这次函数调用预留一块空间，即<strong>栈帧（stack frame）</strong> <span class="citation" data-cites="jenny2022 zigdocs">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>; <a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024</a>)</span>。这次调用中传给函数的每个参数的值，都存放在这块栈空间中；你在函数作用域内声明的每个局部对象，通常也存放在这块栈空间中。 函数的所有形参、以及在函数体大括号内声明的局部变量，通通存放在这个专属栈帧里。</p>
 <p>看下面这个例子：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add(x<span class="op">:</span> <span class="dt">u8</span><span class="op">,</span> y<span class="op">:</span> <span class="dt">u8</span>) <span class="dt">u8</span> {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> result <span class="op">=</span> x <span class="op">+</span> y;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result;</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add(x: <span class="dt">u8</span>, y: <span class="dt">u8</span>) <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result = x + y;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> result;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> r <span class="op">=</span> add(<span class="dv">5</span><span class="op">,</span> <span class="dv">27</span>);</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> r;</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> r = add(<span class="dv">5</span>, <span class="dv">27</span>);</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    _ = r;</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>在上面的代码里，<code>result</code> 是 <code>add()</code> 内部的局部变量，存放在 <code>add</code> 的栈帧里；而 <code>main()</code> 里的 <code>r</code> 则存放在 <code>main</code> 的栈帧里。</p>
 <p><strong>栈内存最大的杀手级特性是：全自动释放！</strong> 只要函数执行完毕 return 返回，它对应的整个栈帧会被瞬间弹出并销毁，里面的所有局部变量灰飞烟灭。开发者完全不需要写一行代码去释放栈上的局部变量。</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -625,29 +628,41 @@ Important
 </div>
 <p>不仅是函数，<code>for</code> 循环、<code>if</code> 分支等任何用花括号 <code>{}</code> 圈出来的作用域也是同样的道理。出了大括号，里面的局部变量就彻底失效了：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 这段代码根本编译不过！</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> a <span class="op">=</span> [_]<span class="dt">u8</span>{<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span>};</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span>a<span class="op">.</span>len) <span class="op">|</span>i<span class="op">|</span> {</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> index <span class="op">=</span> i;</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> index;</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> a = [_]<span class="dt">u8</span><span class="op">{</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">}</span>;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (<span class="dv">0</span>..a.len) |i| <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> index = i;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    _ = index;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 试图在循环体外面访问 index，直接报错，因为栈变量早随着作用域销毁了</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{index});</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="绝对不要返回指向栈上局部变量的指针" class="level4" data-number="3.1.4.1">
-<h4 data-number="3.1.4.1" class="anchored" data-anchor-id="绝对不要返回指向栈上局部变量的指针"><span class="header-section-number">3.1.4.1</span> 绝对不要返回指向栈上局部变量的指针！</h4>
-<p>正因为栈内存在函数退出时会自动销毁，所以衍生出一条系统编程里的保命铁律：<strong>千！万！不！要！在函数里返回指向自身栈局部变量的指针！</strong></p>
-<p>想想看：函数一返回，栈帧瞬间被覆写回收，你手里拿到的那个指针指向的就是一块已经作废的内存废墟。如果你拿着这个悬垂指针去解引用读写，就会引发灾难级的未定义行为（Undefined Behavior, UB）！</p>
-<p>看下面这段毒代码：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add(x<span class="op">:</span> <span class="dt">u8</span><span class="op">,</span> y<span class="op">:</span> <span class="dt">u8</span>) <span class="op">*</span><span class="at">const</span> <span class="dt">u8</span> {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> result <span class="op">=</span> x <span class="op">+</span> y;</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">&amp;</span>result; <span class="co">// 极其危险！返回了局部栈变量的指针！</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>index<span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>这一机制带来了一个极其重要的推论：一旦函数返回，你就再也不能访问该函数在栈上预留空间内的任何内存地址，因为这片栈空间已经被销毁了。这意味着：<strong>如果局部对象存储在栈上，你绝对不能编写一个返回指向该局部对象指针的函数</strong>。</p>
+<p>不妨想一想：既然栈上的所有局部对象在函数作用域结束时都会被销毁，返回指向它们的指针又有什么意义呢？这个指针指向的地址已经不存在了。如果函数直接返回局部对象本身（即按值返回），那是完全合法的；但绝不能返回指向栈上局部对象的指针。</p>
+<p>再以 <code>add()</code> 函数为例，如果你将其改写为返回指向局部对象 <code>result</code> 的指针，<code>zig</code> 编译器实际上会通过编译，不会报任何警告或错误。表面上看代码似乎没问题，但一旦你尝试读取返回值 <code>r</code> 中的内容，或在后续表达式中使用它，就会触发未定义行为（Undefined Behavior）并引发严重的程序 Bug <span class="citation" data-cites="zigdocs">(<a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024</a>, 参见 “Lifetime and Ownership”<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 与 “Undefined Behaviour”<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> 章节)</span>。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add(x: <span class="dt">u8</span>, y: <span class="dt">u8</span>) *<span class="kw">const</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result = x + y;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> &amp;result;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 编译虽然勉强能过，但跑起来就是纯纯的未定义行为（UB），绝对严禁这么写！</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> r <span class="op">=</span> add(<span class="dv">5</span><span class="op">,</span> <span class="dv">27</span>); _ <span class="op">=</span> r;</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在 C/C++ 社区，这个天坑让无数人交过血泪学费。在 Zig 里也一样：如果函数只是返回<strong>计算结果的值拷贝</strong>（比如直接返回 <code>u8</code>），那一点毛病没有；但如果想把一个对象持久化并把指针交出去，唯一的正道就是——<strong>把数据分配到堆上</strong>！</p>
-</section>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 这段代码能编译通过，但存在未定义行为（UB）！</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 切勿这样写！对象 `r` 的值是未定义的！</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> r = add(<span class="dv">5</span>, <span class="dv">27</span>); _ = r;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>这种“指向栈变量的无效指针（悬垂指针）”问题在许多编程语言社区中都广为人知（在 C 或 C++ 中返回局部栈变量的地址同样会导致未定义行为）。</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如果函数内的局部对象存储在栈上，切勿从函数中返回指向该局部对象的指针。因为函数栈空间会在作用域结束时被销毁，该指针在函数返回后必然处于未定义状态。</p>
+</div>
+</div>
+<p>那么，如果确实需要在函数返回后继续通过指针使用该对象，应该怎么做呢？答案与 C/C++ 一样：<strong>将对象存储在堆（Heap）上，并返回指向堆内存的地址</strong>。堆内存具有灵活得多的生命周期，允许你在函数返回后依然持有指向该对象的有效指针。</p>
 </section>
 <section id="sec-heap" class="level3" data-number="3.1.5">
 <h3 data-number="3.1.5" class="anchored" data-anchor-id="sec-heap"><span class="header-section-number">3.1.5</span> 深入剖析堆内存（Heap）</h3>
@@ -656,9 +671,9 @@ Important
 <p>典型的例子是网络服务器（HTTP 服务、RPC 网关等）：服务器在启动前根本无法预估今天会涌进来 1 个请求还是 10 万个请求，每个请求上传的报文到底有多大。这种动态伸缩的业务场景，只能由堆内存来承载。</p>
 <p>但世界上没有免费的午餐：<strong>堆内存带来了极致的自由度，代价是所有权与生命周期的管控责任完全落在了程序员的肩上！</strong></p>
 <blockquote class="blockquote">
-<p>与全自动回收的栈不同，堆上的每一寸内存，都必须由开发者显式申请，且在用完后显式释放 <span class="citation" data-cites="jenny2022">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>)</span>。</p>
+<p>与栈内存不同，堆内存由程序员显式分配，并且在被显式释放之前不会被回收 <span class="citation" data-cites="jenny2022">(<a href="references.html#ref-jenny2022" role="doc-biblioref">Chen and Guo 2022</a>)</span>。</p>
 </blockquote>
-<p>在 Zig 里，你想动用堆内存，唯一合法的手段就是通过<strong>分配器（Allocator）</strong>去 <code>alloc()</code> 或 <code>create()</code>。</p>
+<p>在 Zig 中，若要将对象存储在堆上，程序员必须显式使用<strong>分配器（Allocator）</strong>在堆上开辟空间。在 <a href="#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 中，我将详细介绍如何使用分配器在 Zig 中分配内存。</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -672,6 +687,7 @@ Important
 <p><strong>底层铁律</strong>：在堆上申请的每一片内存，都必须在用完后由你亲手释放！绝不能有头无尾。</p>
 </div>
 </div>
+<p>Zig 中的大多数分配器确实是在堆上分配内存，但也有例外，比如 <code>ArenaAllocator()</code> 和 <code>FixedBufferAllocator()</code>：<code>ArenaAllocator()</code> 是一种配合底层子分配器协同工作的特殊分配器；而 <code>FixedBufferAllocator()</code> 则基于预先创建的固定缓冲区对象工作（如果该缓冲区创建在栈上，那么它实际上只在栈上分配空间）。</p>
 </section>
 <section id="内存空间决策速查表" class="level3" data-number="3.1.6">
 <h3 data-number="3.1.6" class="anchored" data-anchor-id="内存空间决策速查表"><span class="header-section-number">3.1.6</span> 内存空间决策速查表</h3>
@@ -681,141 +697,175 @@ Important
 <li><strong>编译期已知常量的 <code>const</code> 对象</strong>：存放于全局数据段；</li>
 <li><strong>长度在编译期固定的局部变量/常量</strong>：存放于当前栈帧；</li>
 <li><strong>通过分配器的 <code>alloc()</code> 或 <code>create()</code> 申请的对象</strong>：存放于该分配器管辖的内存池中（除固定栈缓冲区等特殊类型外，通常为堆内存）；</li>
-<li><strong>堆内存唯一的合法访问入口是 Allocator</strong>。如果不经 Allocator，你绝不可能凭空拿到堆内存。</li>
+<li>堆只能通过分配器访问。如果你的对象不是通过分配器对象的 <code>alloc()</code> 或 <code>create()</code> 方法创建的，那么几乎可以肯定它不是存放在堆上的对象。</li>
 </ol>
 </section>
 </section>
 <section id="sec-stack-overflow" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="sec-stack-overflow"><span class="header-section-number">3.2</span> 栈溢出（Stack Overflow）</h2>
-<p>栈分配快归快，但容量非常有限（通常只有几兆字节）。 如果你试图在栈上申请一个巨大无比的数组，或者写了个死递归把调用栈堆穿，就会瞬间触发<strong>栈溢出（Stack Overflow）</strong>，操作系统会立刻强行掐死程序（抛出经典的 Segmentation Fault / 段错误）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> very_big_alloc<span class="op">:</span> [<span class="dv">1000</span> <span class="op">*</span> <span class="dv">1000</span> <span class="op">*</span> <span class="dv">24</span>]<span class="dt">u64</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">@memset</span>(very_big_alloc[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在栈上分配内存通常比在堆上更快，但这种性能优势伴随着诸多限制。除了我们在 <a href="#sec-stack" class="quarto-xref"><span>Section 3.1.4</span></a> 中讨论过的生命周期和固定大小限制外，栈本身的<strong>容量上限</strong>也是一个重要限制。</p>
+<p>栈的容量是有限的（具体大小因硬件架构和操作系统而异，但通常都不大），因此栈一般只用来存放体积较小的临时对象。如果你试图在栈上进行超过栈容量上限的大规模分配，就会发生<strong>栈溢出（Stack Overflow）</strong>，并直接导致程序崩溃（抛出 <code>Segmentation fault</code> 段错误）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> very_big_alloc: [<span class="dv">1000</span> * <span class="dv">1000</span> * <span class="dv">24</span>]<span class="dt">u64</span> = <span class="cn">undefined</span>;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">@memset</span>(very_big_alloc[<span class="dv">0</span>..], <span class="dv">0</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Segmentation fault (core dumped)</code></pre>
 <p>所以，大号数据和超长缓冲区千万别硬塞在栈上，老老实实用堆！</p>
 </section>
 <section id="sec-allocators" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="sec-allocators"><span class="header-section-number">3.3</span> 分配器（Allocators）：Zig 的灵魂基石</h2>
 <p>在 Zig 的设计哲学里，有一条震撼整个系统开发圈的原则：<strong>“在 Zig 里，标准库绝不存在任何暗中瞒着你的隐藏内存分配！”</strong> <span class="citation" data-cites="zigguide">(<a href="references.html#ref-zigguide" role="doc-biblioref">Sobeston 2024</a>)</span>。</p>
-<p>写过 C++ 的朋友对此肯定深恶痛绝：很多 STL 容器和操作符会在背后偷偷调用全局 <code>malloc</code> 分配堆内存，表面看人畜无害，底层却频频引发内存碎片和偶发卡顿，不深扒源码根本抓不出是谁干的。</p>
-<p><strong>而在 Zig 里，规则透明到了极致：如果一个标准库函数或第三方库在执行过程中需要开辟内存，它就必须显式要求调用者在入参里传一个 <code>Allocator</code> 进来！</strong></p>
-<p>这就形成了一条一目了然的判别法则： <strong>看一个函数的入参列表，只要里面没有带 Allocator，你就敢 100% 拍胸脯保证：它绝不会私自在堆上偷偷申请任何内存！</strong></p>
+<p>这是一个众所周知的问题，尤其是在 C++ 中。因为在 C++ 里，有些运算符会在背后分配内存，而在真正去读这些运算符的源码、找到其中的内存分配调用之前，你根本无从得知。许多程序员觉得这种行为很烦人，而且难以追踪。</p>
+<p><strong>而在 Zig 里，规则透明到了极致：如果标准库中的某个函数、运算符或其他任何东西在执行过程中需要分配内存，它就必须接收一个由用户提供的分配器作为输入，才能真正分配所需的内存。</strong></p>
+<p>这就形成了一条一目了然的判别法则： <strong>只要看一下函数的参数就能区分：如果一个函数或运算符的输入（参数）中有一个分配器对象，你就可以确定这个函数（运算符）在执行过程中会分配内存。</strong></p>
 <p>以标准库的 <code>std.fmt.allocPrint()</code> 为例（它类似 C 的 <code>sprintf</code>，用于动态拼装格式化字符串）：因为需要根据格式化结果动态申请内存，它的第一个形参就是 <code>allocator</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> allocator <span class="op">=</span> gpa<span class="op">.</span>allocator();</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> name <span class="op">=</span> <span class="st">"Pedro"</span>;</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> output <span class="op">=</span> <span class="cf">try</span> std<span class="op">.</span>fmt<span class="op">.</span>allocPrint(</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    allocator<span class="op">,</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hello {s}!!!"</span><span class="op">,</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{name}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> name = <span class="st">"Pedro"</span>;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> output = <span class="kw">try</span> std.fmt.allocPrint(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    allocator,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hello {s}!!!"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span>name<span class="op">}</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{output});</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>output<span class="op">}</span>);</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>Hello Pedro!!!</code></pre>
 <p>由调用者来掌控“用哪种分配器、分配到哪里”，这才是真正的“内存全权掌控”。</p>
 <section id="什么是-allocator" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="什么是-allocator"><span class="header-section-number">3.3.1</span> 什么是 Allocator？</h3>
-<p>在 Zig 中，Allocator 是所有动态内存分配策略的通用抽象接口（类似于 C 里的 <code>malloc</code>/<code>free</code> 套件，但更加模块化）。 Zig 标准库在 <code>std.heap</code> 模块下预置了多种专精于不同场景的现成分配器。</p>
-<p>无论底层是哪种具体分配器，它们对外都实现了统一的 <code>Allocator</code> 接口，标配提供以下核心方法： - <code>alloc()</code> / <code>free()</code>：用于申请和释放一组连续元素的切片（动态数组）； - <code>create()</code> / <code>destroy()</code>：用于申请和释放单个独立对象。</p>
-<p>这就意味着你的业务代码可以无缝切换不同的底层分配器，而上层业务调用的 API 签名完全不需要变动。</p>
+<p>在 Zig 中，Allocator（分配器）是供你在程序运行期间动态申请内存的对象，作用类似于 C 语言中的 <code>malloc()</code> 和 <code>calloc()</code>。它们通常位于标准库的 <code>std.heap</code> 模块下，只需 <code>@import("std")</code> 即可使用。</p>
+<p>更重要的是，Zig 中的每一个分配器对象都建立在统一的 <code>Allocator</code> 接口之上。这意味着无论你使用哪种分配器，它都必定提供 <code>alloc()</code>、<code>create()</code>、<code>free()</code> 和 <code>destroy()</code> 方法——你可以随时更换底层分配器的类型，而无需改动业务代码中调用内存分配与释放的函数签名。</p>
 </section>
-<section id="常用分配器家族大盘点" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="常用分配器家族大盘点"><span class="header-section-number">3.3.2</span> 常用分配器家族大盘点</h3>
+<section id="为什么我们需要分配器" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="为什么我们需要分配器"><span class="header-section-number">3.3.2</span> 为什么我们需要分配器？</h3>
+<p>正如在 <a href="#sec-stack" class="quarto-xref"><span>Section 3.1.4</span></a> 中所述，每次在 Zig 中调用函数时，系统都会在栈上预留一段固定空间。但栈有着一条致命的物理局限：<strong>存放在栈上的任何对象，在编译期都必须具有固定已知的尺寸</strong>。</p>
+<p>然而在真实的工程开发中，有两个最常见的场景直接击碎了这一局限： 1. <strong>函数内部创建的对象，其体积在执行过程中可能会不断动态膨胀</strong>； 2. <strong>很多时候我们根本无法提前预知会接收到多少外部输入、或者输入数据究竟有多大</strong>。</p>
+<p>此外还有一个极为核心的动机：<strong>从函数中向外部调用方返回一个指向新创建对象的指针</strong>。 正如我们在 <a href="#sec-stack" class="quarto-xref"><span>Section 3.1.4</span></a> 强调的，如果这个对象存放在栈上，函数一退出栈帧即被销毁，返回该指针就会导致严重悬垂指针 Bug。但如果该对象存放在堆上，它的生命周期就完全由程序员本人掌控，你可以随心所欲决定何时销毁释放它。</p>
+<p>正是为了应对这些栈无法胜任的场景，我们必须借助堆内存与<strong>分配器（Allocator）</strong>对象来实现动态内存管理。</p>
+</section>
+<section id="不同类型的分配器the-different-types-of-allocators" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="不同类型的分配器the-different-types-of-allocators"><span class="header-section-number">3.3.3</span> 不同类型的分配器（The different types of allocators）</h3>
 <p>目前 Zig 标准库最常用的几种分配器包括：</p>
-<ol type="1">
-<li><strong><code>DebugAllocator()</code>（通用调试分配器 / GPA）</strong>： 日常开发和单测的首选！它不仅能分配内存，更重要的是<strong>自带内存泄漏检测与非法指针检测</strong>！只要代码跑完忘了释放，它会把泄漏发生的行号清清楚楚打印出来。</li>
-<li><strong><code>page_allocator</code>（页分配器）</strong>： 直接向操作系统请求整页内存（通常一页是 4KB）。速度飞快，但如果只存几个字节会造成极大的内存浪费。一般用来做底层大块内存的初始背书。</li>
-<li><strong><code>FixedBufferAllocator()</code>（固定缓冲区分配器 / FBA）</strong>： 由你预先提供一段固定大小的 buffer（可以放在栈上也可以放在堆上），它在这个限定的圈子里划分内存。绝无动态扩容开销，嵌入式和极致高性能场景神器。</li>
-<li><strong><code>ArenaAllocator()</code>（竞技场分配器 / 区域分配器）</strong>： 开发效率天花板！它包裹另一个底层分配器，允许你在业务里放肆 <code>alloc()</code> 几十上百次，用完之后只需调用一次 <code>arena.deinit()</code>，整块内存<strong>一键打包全部销毁</strong>！彻底告别写满屏幕 <code>defer free()</code> 的繁琐。</li>
-<li><strong><code>c_allocator</code>（C 标库分配器）</strong>： 底层直接桥接 C 标准库的 <code>malloc()</code> 和 <code>free()</code>。需要编译时开启 <code>-lc</code> 链接 C 运行时。</li>
-</ol>
+<ul>
+<li><code>DebugAllocator()</code></li>
+<li><code>page_allocator()</code></li>
+<li><code>FixedBufferAllocator()</code> 与 <code>ThreadSafeFixedBufferAllocator()</code></li>
+<li><code>ArenaAllocator()</code></li>
+<li><code>c_allocator()</code>（需要链接 libc）</li>
+</ul>
+<p>每种分配器都有各自的优势与适用边界。除 <code>FixedBufferAllocator()</code> 和 <code>ArenaAllocator()</code> 外，其余分配器都直接在堆上分配内存。</p>
 </section>
-<section id="实战debugallocator通用分配器" class="level3" data-number="3.3.3">
-<h3 data-number="3.3.3" class="anchored" data-anchor-id="实战debugallocator通用分配器"><span class="header-section-number">3.3.3</span> 实战：DebugAllocator（通用分配器）</h3>
-<p>先看最经典的用法：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> allocator <span class="op">=</span> gpa<span class="op">.</span>allocator();</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> some_number <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>create(<span class="dt">u32</span>);</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> allocator<span class="op">.</span>destroy(some_number);</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    some_number<span class="op">.*</span> <span class="op">=</span> <span class="bu">@as</span>(<span class="dt">u32</span><span class="op">,</span> <span class="dv">45</span>);</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="通用分配器general-purpose-allocators" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="通用分配器general-purpose-allocators"><span class="header-section-number">3.3.4</span> 通用分配器（General-purpose allocators）</h3>
+<p><code>DebugAllocator()</code> 是一款通用型分配器，适用于各类常规开发场景。在下面的示例中，我们使用它为对象 <code>some_number</code> 分配足以存储单个整数的空间：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> allocator = gpa.allocator();</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> some_number = <span class="kw">try</span> allocator.create(<span class="dt">u32</span>);</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> allocator.destroy(some_number);</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    some_number.* = <span class="bu">@as</span>(<span class="dt">u32</span>, <span class="dv">45</span>);</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>此外，你也可以使用 <code>c_allocator()</code>，它是对 C 标准库分配器 <code>malloc()</code> 的封装。如果你选择使用 <code>c_allocator()</code>，在使用 <code>zig</code> 编译器编译源码时必须加上 <code>-lc</code> 标志以链接 Libc，否则 Zig 将无法在系统中找到 <code>malloc()</code> 的实现。</p>
 </section>
-<section id="实战fixedbufferallocator定长缓冲区分配" class="level3" data-number="3.3.4">
-<h3 data-number="3.3.4" class="anchored" data-anchor-id="实战fixedbufferallocator定长缓冲区分配"><span class="header-section-number">3.3.4</span> 实战：FixedBufferAllocator（定长缓冲区分配）</h3>
-<p>看下面这段代码：我们预先在栈上准备了一个仅有 10 字节的 <code>buffer</code> 数组，然后用它初始化一个 <code>FixedBufferAllocator</code>。后续所有的 <code>alloc</code> 都在这 10 个字节里瓜分。如果超额申请，会直接干净利落地返回 <code>OutOfMemory</code> 错误：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> buffer<span class="op">:</span> [<span class="dv">10</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span>buffer<span class="op">.</span>len) <span class="op">|</span>i<span class="op">|</span> {</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    buffer[i] <span class="op">=</span> <span class="dv">0</span>; <span class="co">// 初始化清零</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> fba <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>FixedBufferAllocator<span class="op">.</span>init(<span class="op">&amp;</span>buffer);</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> allocator <span class="op">=</span> fba<span class="op">.</span>allocator();</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> input <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> <span class="dv">5</span>);</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="cf">defer</span> allocator<span class="op">.</span>free(input);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="页分配器page-allocator" class="level3" data-number="3.3.5">
+<h3 data-number="3.3.5" class="anchored" data-anchor-id="页分配器page-allocator"><span class="header-section-number">3.3.5</span> 页分配器（Page allocator）</h3>
+<p><code>page_allocator()</code> 每次都会在堆上按完整的内存页（Page）进行分配，而不是只切分一小块内存。</p>
+<p>内存页的大小取决于具体操作系统，大多数系统的堆内存页大小为 4KB，因此每次调用 <code>page_allocator()</code> 通常都会直接申请 4KB 内存。这使得 <code>page_allocator()</code> 分配速度很快，但也比较“浪费”空间——如果你只需要存几个字节，整页分配会造成明显的空间闲置。</p>
 </section>
-<section id="sec-arena-allocator" class="level3" data-number="3.3.5">
-<h3 data-number="3.3.5" class="anchored" data-anchor-id="sec-arena-allocator"><span class="header-section-number">3.3.5</span> 神器：ArenaAllocator（一键批量释放）</h3>
-<p>写底层代码最怕的就是申请了十几个复杂结构体，每个都得小心翼翼写 <code>defer free</code>，万一漏一个就发生内存泄漏。 这时候 <code>ArenaAllocator</code> 就是救星！</p>
-<p>它采用类似“包工头”的思路：底层对接一个真实分配器（比如 GPA），在上层只管疯狂申请；当这批业务搞定后，只要调用一次 <code>aa.deinit()</code>，前面申请的所有小内存块被瞬间一锅端回收：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> aa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>ArenaAllocator<span class="op">.</span>init(gpa<span class="op">.</span>allocator());</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">defer</span> aa<span class="op">.</span>deinit(); <span class="co">// 离开作用域时，aa 内部申请的所有内存一键全部释放！</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> allocator <span class="op">=</span> aa<span class="op">.</span>allocator();</span>
+<section id="缓冲区分配器buffer-allocators" class="level3" data-number="3.3.6">
+<h3 data-number="3.3.6" class="anchored" data-anchor-id="缓冲区分配器buffer-allocators"><span class="header-section-number">3.3.6</span> 缓冲区分配器（Buffer allocators）</h3>
+<p><code>FixedBufferAllocator()</code> 和 <code>ThreadSafeFixedBufferAllocator()</code> 以一个固定大小的缓冲区（Buffer）对象作为底层内存池。当你请求分配内存时，它们实际上是在你预先提供的这块固定缓冲区内划分空间。</p>
+<p>这意味着：使用这类分配器前，你必须先在代码中创建一个缓冲区对象并将其传入；同时也意味着它们既可以在栈上分配内存，也可以在堆上分配内存——完全取决于你提供的底层缓冲区位于栈上还是堆上。</p>
+<p>在下面的示例中，我们在栈上创建了一个长度为 10 的 <code>buffer</code> 数组，并将其传给 <code>FixedBufferAllocator.init()</code>。由于 <code>buffer</code> 只有 10 个元素的空间，我们最多只能从中分配 10 个元素；一旦超额申请，<code>alloc()</code> 方法就会返回 <code>OutOfMemory</code> 错误：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer: [<span class="dv">10</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (<span class="dv">0</span>..buffer.len) |i| <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    buffer[i] = <span class="dv">0</span>; <span class="co">// Initialize to zero</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> in1 <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> <span class="dv">5</span>);</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> in2 <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> <span class="dv">10</span>);</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> in3 <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> <span class="dv">15</span>);</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> in1; _ <span class="op">=</span> in2; _ <span class="op">=</span> in3;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在写编译器、解释器、CLI 脚本、或者单次 HTTP 请求处理流程中，Arena 模式是极其推崇的工业级最佳实践。</p>
-</section>
-<section id="动态切片分配alloc-与-free" class="level3" data-number="3.3.6">
-<h3 data-number="3.3.6" class="anchored" data-anchor-id="动态切片分配alloc-与-free"><span class="header-section-number">3.3.6</span> 动态切片分配：<code>alloc()</code> 与 <code>free()</code></h3>
-<p>当需要开辟一块能装多个元素的连续缓冲区时，用 <code>alloc(Type, count)</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdin_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdin_reader <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>File<span class="op">.</span>stdin()<span class="op">.</span>reader(init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>stdin_buffer);</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stdin <span class="op">=</span> <span class="op">&amp;</span>stdin_reader<span class="op">.</span>interface;</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> allocator <span class="op">=</span> gpa<span class="op">.</span>allocator();</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> fba = std.heap.FixedBufferAllocator.init(&amp;buffer);</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = fba.allocator();</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> input = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">5</span>);</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> allocator.free(input);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>那么，如果底层缓冲区位于堆上呢？正如我们在 <a href="#sec-stack-overflow" class="quarto-xref"><span>Section 3.2</span></a> 中所述，使用堆而非栈的主要原因之一就是开辟超大容量来存放巨型对象。假如你想拿一块非常大的缓冲区（例如 100 MB）作为 <code>FixedBufferAllocator</code> 的底层空间，就应当先在堆上分配这块大缓冲区，如下例所示：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> heap = std.heap.page_allocator;</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> memory_buffer = <span class="kw">try</span> heap.alloc(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">u8</span>, <span class="dv">100</span> * <span class="dv">1024</span> * <span class="dv">1024</span> <span class="co">// 100 MB memory</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> heap.free(memory_buffer);</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> fba = std.heap.FixedBufferAllocator.init(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    memory_buffer</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = fba.allocator();</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 在堆上开辟能放 50 个 u8 的缓冲区</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> input <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> <span class="dv">50</span>);</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> allocator<span class="op">.</span>free(input);</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(input[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 读取用户输入直到遇到换行符</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stream <span class="op">=</span> <span class="cf">try</span> stdin<span class="op">.</span>takeDelimiterExclusive(<span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span>);</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memcpy</span>(input[<span class="dv">0</span><span class="op">..</span>stream<span class="op">.</span>len]<span class="op">,</span> stream[<span class="dv">0</span><span class="op">..</span>]);</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{input});</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>配合 <code>defer allocator.free(input)</code> 贴身释放，代码整洁且绝无泄漏可能。</p>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> input = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">1000</span>);</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> allocator.free(input);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="单对象专属分配create-与-destroy" class="level3" data-number="3.3.7">
-<h3 data-number="3.3.7" class="anchored" data-anchor-id="单对象专属分配create-与-destroy"><span class="header-section-number">3.3.7</span> 单对象专属分配：<code>create()</code> 与 <code>destroy()</code></h3>
-<p>如果只需要存<strong>单个独立对象</strong>（比如一个单独的结构体实例），不要滥用 <code>alloc</code> 去搞个长度为 1 的数组切片，正规军是用 <code>create()</code> 和 <code>destroy()</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> User <span class="op">=</span> <span class="kw">struct</span> {</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
+<section id="sec-arena-allocator" class="level3" data-number="3.3.7">
+<h3 data-number="3.3.7" class="anchored" data-anchor-id="sec-arena-allocator"><span class="header-section-number">3.3.7</span> 竞技场分配器（Arena allocator）</h3>
+<p><code>ArenaAllocator()</code> 接收一个子分配器（Child Allocator）作为输入。它的设计理念类似于 Go 语言中的“Arena（区域内存管理）”概念<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>：<strong>允许你按需调用任意多次内存分配，但最后只需调用一次 <code>deinit()</code> 即可将所有已分配的内存一次性全部释放</strong>。</p>
+<p>例如在下面的代码中，我们将 <code>DebugAllocator()</code> 实例传给 <code>ArenaAllocator.init()</code>，后续每次调用 <code>alloc()</code> 实际上都是由底层的 <code>DebugAllocator()</code> 完成分配。我们连续调用了 3 次 <code>alloc()</code>，如果不用 <code>ArenaAllocator</code>，就需要分别调用 3 次 <code>free()</code>；而借助 <code>ArenaAllocator</code>，只需在作用域结束时调用一次 <code>aa.deinit()</code> 即可统一回收：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> aa = std.heap.ArenaAllocator.init(gpa.allocator());</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> aa.deinit();</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = aa.allocator();</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(id<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span> name<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) User {</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">.</span>{ <span class="op">.</span>id <span class="op">=</span> id<span class="op">,</span> <span class="op">.</span>name <span class="op">=</span> name };</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> allocator <span class="op">=</span> gpa<span class="op">.</span>allocator();</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> user <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>create(User);</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> allocator<span class="op">.</span>destroy(user);</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    user<span class="op">.*</span> <span class="op">=</span> User<span class="op">.</span>init(<span class="dv">0</span><span class="op">,</span> <span class="st">"Pedro"</span>);</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> in1 = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">5</span>);</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> in2 = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">10</span>);</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> in3 = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">15</span>);</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>_ = in1; _ = in2; _ = in3;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="alloc-与-free-方法" class="level3" data-number="3.3.8">
+<h3 data-number="3.3.8" class="anchored" data-anchor-id="alloc-与-free-方法"><span class="header-section-number">3.3.8</span> <code>alloc()</code> 与 <code>free()</code> 方法</h3>
+<p>在下面的代码示例中，我们访问标准输入通道 <code>stdin</code> 并通过 <code>takeDelimiterExclusive()</code> 方法读取用户输入的一行文本。为了在程序中保存这段输入，我们使用分配器的 <code>alloc()</code> 方法在堆上开辟了一个足以存放 50 个 <code>u8</code> 元素的数组。</p>
+<p>注意 <code>alloc()</code> 方法接收两个参数：第一个参数是元素的数据类型（此处为 <code>u8</code>），第二个参数是数组的元素个数（此处为 50）。正如我们在 <a href="01-zig-weird.html#sec-zig-strings" class="quarto-xref"><span>Section 1.8</span></a> 中所述，Zig 中的字符串本质上是字节数组，每个 ASCII 字符由一个 <code>u8</code> 值表示<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>，因此 <code>input</code> 数组可以存储 50 个字节的字符串。换言之，<code>var input: [50]u8 = undefined</code> 会在当前栈帧上创建 50 字节的数组，而 <code>var input = try allocator.alloc(u8, 50)</code> 则会在堆上分配同样的数组：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdin_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdin_reader = std.Io.File.stdin().reader(init.io, &amp;stdin_buffer);</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdin = &amp;stdin_reader.interface;</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> allocator = gpa.allocator();</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> input = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, <span class="dv">50</span>);</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> allocator.free(input);</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(input[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Read user input until a line break is found.</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stream = <span class="kw">try</span> stdin.takeDelimiterExclusive(<span class="ch">'\n'</span>);</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Store the input into our heap memory.</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memcpy</span>(input[<span class="dv">0</span>..stream.len], stream[<span class="dv">0</span>..]);</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Print our heap memory, so that we can see what</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// was stored in it.</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"{s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>input<span class="op">}</span>);</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>同时注意，我们在示例中使用了 <code>defer</code> 关键字（详见 <a href="03-structs.html#sec-defer" class="quarto-xref"><span>Section 2.1.3</span></a>），以便在当前作用域结束时自动执行 <code>allocator.free(input)</code> 释放为 <code>input</code> 分配的堆内存。正如在 <a href="#sec-heap" class="quarto-xref"><span>Section 3.1.5</span></a> 中强调的，任何通过分配器申请的内存都必须使用同一个分配器的 <code>free()</code> 方法显式释放。</p>
+</section>
+<section id="create-与-destroy-方法" class="level3" data-number="3.3.9">
+<h3 data-number="3.3.9" class="anchored" data-anchor-id="create-与-destroy-方法"><span class="header-section-number">3.3.9</span> <code>create()</code> 与 <code>destroy()</code> 方法</h3>
+<p>借助 <code>alloc()</code> 和 <code>free()</code>，我们可以一次性分配用于存储多个元素的数组切片。但如果你只需要存储<strong>单个独立元素</strong>（例如单个结构体实例），应该用 <code>alloc()</code> 分配一个长度为 1 的数组吗？答案是否定的！</p>
+<p>针对单个对象的分配与释放，每个分配器对象都专门提供了 <code>create()</code> 和 <code>destroy()</code> 方法。简而言之：需要分配元素数组时使用 <code>alloc()</code> 和 <code>free()</code>；需要存储单个独立对象时，则使用 <code>create()</code> 和 <code>destroy()</code>。</p>
+<p>在下面的示例中，我们定义了一个表示用户的 <code>User</code> 结构体，通过 <code>allocator.create(User)</code> 在堆上为单个 <code>User</code> 对象分配空间，并在作用域结束时通过 <code>allocator.destroy(user)</code> 将其释放：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> User = <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    id: <span class="dt">usize</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    name: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(id: <span class="dt">usize</span>, name: []<span class="kw">const</span> <span class="dt">u8</span>) User <span class="op">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> .<span class="op">{</span> .id = id, .name = name <span class="op">}</span>;</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main() !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> allocator = gpa.allocator();</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> user = <span class="kw">try</span> allocator.create(User);</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> allocator.destroy(user);</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    user.* = User.init(<span class="dv">0</span>, <span class="st">"Pedro"</span>);</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>记住这组搭档关系： - 数组切片批量存：<code>alloc</code> 对应 <code>free</code>； - 单个实体单独存：<code>create</code> 对应 <code>destroy</code>。</p>
 
 
@@ -831,6 +881,17 @@ Zig Software Foundation. 2024. <em>Language Reference</em>. Zig Software Foundat
 </div>
 </div>
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Stack_(abstract_data_type)" class="uri">https://en.wikipedia.org/wiki/Stack_(abstract_data_type)</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://www.geeksforgeeks.org/stack-data-structure/" class="uri">https://www.geeksforgeeks.org/stack-data-structure/</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://ziglang.org/documentation/master/#Lifetime-and-Ownership" class="uri">https://ziglang.org/documentation/master/#Lifetime-and-Ownership</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://ziglang.org/documentation/master/#Undefined-Behavior" class="uri">https://ziglang.org/documentation/master/#Undefined-Behavior</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://go.dev/src/arena/arena.go" class="uri">https://go.dev/src/arena/arena.go</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>请注意这是一种简化说法。如果仅讨论纯 ASCII 字符串，确实每个 <code>u8</code> 值对应字符串中的一个独立字符；但在 UTF-8 编码的多语言字符串中，一个字符可能由多个 <code>u8</code> 字节共同表示。<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

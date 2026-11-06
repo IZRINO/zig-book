@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -440,7 +459,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -458,7 +477,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -483,20 +502,26 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-comptime" id="toc-sec-comptime" class="nav-link active" data-scroll-target="#sec-comptime"><span class="header-section-number">12.1</span> 深入理解 Zig 的杀手锏：<code>comptime</code></a>
+  <li><a href="#sec-comptime" id="toc-sec-comptime" class="nav-link active" data-scroll-target="#sec-comptime"><span class="header-section-number">12.1</span> 深入理解 Zig 中的 <code>comptime</code></a>
   <ul class="collapse">
-  <li><a href="#姿势一修饰函数形参编译期参数" id="toc-姿势一修饰函数形参编译期参数" class="nav-link" data-scroll-target="#姿势一修饰函数形参编译期参数"><span class="header-section-number">12.1.1</span> 姿势一：修饰函数形参（编译期参数）</a></li>
-  <li><a href="#姿势二修饰表达式与代码块编译期算力" id="toc-姿势二修饰表达式与代码块编译期算力" class="nav-link" data-scroll-target="#姿势二修饰表达式与代码块编译期算力"><span class="header-section-number">12.1.2</span> 姿势二：修饰表达式与代码块（编译期算力）</a></li>
+  <li><a href="#作用于函数形参applying-over-a-function-argument" id="toc-作用于函数形参applying-over-a-function-argument" class="nav-link" data-scroll-target="#作用于函数形参applying-over-a-function-argument"><span class="header-section-number">12.1.1</span> 作用于函数形参（Applying over a function argument）</a></li>
+  <li><a href="#作用于表达式applying-over-an-expression" id="toc-作用于表达式applying-over-an-expression" class="nav-link" data-scroll-target="#作用于表达式applying-over-an-expression"><span class="header-section-number">12.1.2</span> 作用于表达式（Applying over an expression）</a></li>
+  <li><a href="#作用于代码块applying-over-a-block" id="toc-作用于代码块applying-over-a-block" class="nav-link" data-scroll-target="#作用于代码块applying-over-a-block"><span class="header-section-number">12.1.3</span> 作用于代码块（Applying over a block）</a></li>
   </ul></li>
-  <li><a href="#sec-generics" id="toc-sec-generics" class="nav-link" data-scroll-target="#sec-generics"><span class="header-section-number">12.2</span> Zig 的极简泛型哲学：类型即普通参数</a></li>
-  <li><a href="#sec-what-stack" id="toc-sec-what-stack" class="nav-link" data-scroll-target="#sec-what-stack"><span class="header-section-number">12.3</span> 栈的核心机制回顾</a></li>
-  <li><a href="#编写栈结构先从具体类型开始" id="toc-编写栈结构先从具体类型开始" class="nav-link" data-scroll-target="#编写栈结构先从具体类型开始"><span class="header-section-number">12.4</span> 编写栈结构：先从具体类型开始</a>
+  <li><a href="#sec-generics" id="toc-sec-generics" class="nav-link" data-scroll-target="#sec-generics"><span class="header-section-number">12.2</span> 认识泛型（Generics）</a>
+  <ul class="collapse">
+  <li><a href="#sec-generic-fun" id="toc-sec-generic-fun" class="nav-link" data-scroll-target="#sec-generic-fun"><span class="header-section-number">12.2.1</span> 泛型函数（A generic function）</a></li>
+  <li><a href="#sec-generic-struct" id="toc-sec-generic-struct" class="nav-link" data-scroll-target="#sec-generic-struct"><span class="header-section-number">12.2.2</span> 泛型数据结构（A generic data structure）</a></li>
+  </ul></li>
+  <li><a href="#sec-what-stack" id="toc-sec-what-stack" class="nav-link" data-scroll-target="#sec-what-stack"><span class="header-section-number">12.3</span> 什么是栈（Stack）？</a></li>
+  <li><a href="#编写栈数据结构先从具体类型开始" id="toc-编写栈数据结构先从具体类型开始" class="nav-link" data-scroll-target="#编写栈数据结构先从具体类型开始"><span class="header-section-number">12.4</span> 编写栈数据结构：先从具体类型开始</a>
   <ul class="collapse">
   <li><a href="#实现压栈push-与动态扩容" id="toc-实现压栈push-与动态扩容" class="nav-link" data-scroll-target="#实现压栈push-与动态扩容"><span class="header-section-number">12.4.1</span> 实现压栈：<code>push()</code> 与动态扩容</a></li>
-  <li><a href="#实现出栈与析构pop-和-deinit" id="toc-实现出栈与析构pop-和-deinit" class="nav-link" data-scroll-target="#实现出栈与析构pop-和-deinit"><span class="header-section-number">12.4.2</span> 实现出栈与析构：<code>pop()</code> 和 <code>deinit()</code></a></li>
+  <li><a href="#实现出栈pop" id="toc-实现出栈pop" class="nav-link" data-scroll-target="#实现出栈pop"><span class="header-section-number">12.4.2</span> 实现出栈：<code>pop()</code></a></li>
+  <li><a href="#实现析构deinit" id="toc-实现析构deinit" class="nav-link" data-scroll-target="#实现析构deinit"><span class="header-section-number">12.4.3</span> 实现析构：<code>deinit()</code></a></li>
   </ul></li>
-  <li><a href="#终极升维将栈改造为工业级通用泛型" id="toc-终极升维将栈改造为工业级通用泛型" class="nav-link" data-scroll-target="#终极升维将栈改造为工业级通用泛型"><span class="header-section-number">12.5</span> 终极升维：将栈改造为工业级通用泛型！</a></li>
-  <li><a href="#跑通泛型栈测试" id="toc-跑通泛型栈测试" class="nav-link" data-scroll-target="#跑通泛型栈测试"><span class="header-section-number">12.6</span> 跑通泛型栈测试！</a></li>
+  <li><a href="#改造为泛型" id="toc-改造为泛型" class="nav-link" data-scroll-target="#改造为泛型"><span class="header-section-number">12.5</span> 改造为泛型</a></li>
+  <li><a href="#总结" id="toc-总结" class="nav-link" data-scroll-target="#总结"><span class="header-section-number">12.6</span> 总结</a></li>
   </ul>
 </nav>
     </div>
@@ -523,223 +548,313 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
-<p>在这章中，咱们来开启全书的第三个实战小项目：<strong>亲手实现一个工业级通用栈（Stack）数据结构</strong>。 在计算机科班体系里，手写栈、队列往往是刚入门时的大作业； 但千万别小瞧它！正因为栈本身的业务逻辑极度纯粹清晰，它成了我们彻底搞懂 Zig 最具杀伤力的核心特性——<strong>编译期计算（<code>comptime</code>）与泛型（Generics）</strong>的最佳实战训练场！</p>
+<p>在熟悉了栈（Stack）的基本数据结构之后，本章我们将把重心聚焦在真正核心的技术命题上：<strong>深入搞懂 Zig 的“编译期计算（<code>comptime</code>）”机制，并以此掌握 Zig 独特而极简的“泛型（Generics）”编程范式</strong>。我们将亲手从零构建一个能够动态扩容的通用泛型栈容器，以此将这些概念融会贯通。</p>
+<p>在动手编写栈之前，我们必须先彻底理清 <code>comptime</code> 关键字对代码产生的神奇魔力，以及 Zig 是如何看待泛型的。</p>
 <section id="sec-comptime" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="sec-comptime"><span class="header-section-number">12.1</span> 深入理解 Zig 的杀手锏：<code>comptime</code></h2>
-<p>如果说 Zig 有什么特性让 Rust 和 C++ 开发者都为之惊艳，那绝对是 <strong><code>comptime</code>（编译期执行）</strong>！ 在 <a href="01-memory.html#sec-compile-time" class="quarto-xref"><span>Section 3.1.1</span></a> 中我们聊过编译期已知与运行时已知的界限。而 <code>comptime</code> 关键字直接赋予了开发者在编译阶段执行任意 Zig 代码的无上权力！</p>
-<p>在日常编码中，<code>comptime</code> 主要有三大使用姿势：</p>
-<ol type="1">
-<li><strong>修饰函数形参</strong>（要求调用方传进来的实参必须在编译期板上钉钉）；</li>
-<li><strong>修饰单条表达式</strong>（强制该表达式在编译时计算出常量结果）；</li>
-<li><strong>修饰代码块</strong>（让整段逻辑在编译期求值跑通）。</li>
-</ol>
-<section id="姿势一修饰函数形参编译期参数" class="level3" data-number="12.1.1">
-<h3 data-number="12.1.1" class="anchored" data-anchor-id="姿势一修饰函数形参编译期参数"><span class="header-section-number">12.1.1</span> 姿势一：修饰函数形参（编译期参数）</h3>
-<p>当给形参加上 <code>comptime</code> 时，编译器会死死卡住校验：传入的值必须在编译阶段就能算出来。如果传入运行时才能决定的动态变量（比如控制台用户输入），编译器当场拒绝编译：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> twice(<span class="at">comptime</span> num<span class="op">:</span> <span class="dt">u32</span>) <span class="dt">u32</span> {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> num <span class="op">*</span> <span class="dv">2</span>;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"test comptime"</span> {</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> twice(<span class="dv">5678</span>); <span class="co">// 合法！5678 是编译期常数</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>如果传了来自 <code>stdin</code> 的运行时数据，编译器会直接甩出报错：<code>unable to resolve comptime value</code>。</p>
+<h2 data-number="12.1" class="anchored" data-anchor-id="sec-comptime"><span class="header-section-number">12.1</span> 深入理解 Zig 中的 <code>comptime</code></h2>
+<p><code>comptime</code> 是 Zig 最核心、最具代表性的语言特性之一。它引入了一套与编译构建过程紧密交织的编程范式。 在前面的 <a href="01-memory.html#sec-compile-time" class="quarto-xref"><span>Section 3.1.1</span></a> 中，我们曾深入剖析过“编译期已知”与“运行时已知”的分野：一个对象或数值究竟是在编译期就已尘埃落定，还是必须等到程序跑起来才能计算得出，直接决定了编译器对它的处理法则。</p>
+<p><code>comptime</code> 关键字正是游走在<strong>编译期（Compile-time）</strong>与<strong>运行时（Runtime）</strong>这两个时间维度之间的法宝： - <strong>编译期</strong>：指 <code>zig</code> 编译器读取你的源码、进行语法类型分析并生成机器码的时段； - <strong>运行时</strong>：指编译完成后，你直接执行二进制程序跑业务的时段。</p>
+<p>在 Zig 中，<code>comptime</code> 关键字主要有三种应用方式： 1. <strong>修饰函数形参（编译期形参）</strong>； 2. <strong>修饰表达式（强制编译期求值）</strong>； 3. <strong>修饰代码块（编译期代码块）</strong>。</p>
+<section id="作用于函数形参applying-over-a-function-argument" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="作用于函数形参applying-over-a-function-argument"><span class="header-section-number">12.1.1</span> 作用于函数形参（Applying over a function argument）</h3>
+<p>当你在函数的某个形参前面加上 <code>comptime</code> 关键字时，就是在向 <code>zig</code> 编译器郑重立下誓言：<strong>传递给这个形参的实参值，在编译期必须百分之百板上钉钉、完全已知！</strong></p>
+<p>这样做的直接影响是：你为该参数设立了一条硬性铁律。一旦调用方在调用该函数时，不小心传入了一个只有在程序运行起来后才能算出来的动态变量，<code>zig</code> 编译器就会当场严词拒绝，并甩出编译错误。因为你给一个要求“编译期已知”的参数塞进了一个“运行时已知”的变量。</p>
+<p>看下面这个极简的加倍函数 <code>twice()</code>：形参 <code>num</code> 前面带有 <code>comptime</code>，这表示它是一个“编译期参数”。当我们调用 <code>twice(5678)</code> 时，由于字面量常数 <code>5678</code> 在编译期一清二楚，代码完全能够合法通过编译并顺利通过测试：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> twice(<span class="kw">comptime</span> num: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> num * <span class="dv">2</span>;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"test comptime"</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    _ = twice(<span class="dv">5678</span>);</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>1/1 file56403a427818.test.test comptime...OK
+All 1 tests passed.</code></pre>
+<p>但如果我们试图把一个运行时的动态输入喂给它呢？ 例如程序在启动后，通过 <code>stdin</code> 标准输入读取用户在键盘上敲入的数字。用户敲什么天王老子也无法在编译期提前预判，这使得从终端读取到的数字是一个纯粹的<strong>运行时已知值</strong>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> twice(<span class="kw">comptime</span> num: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> num * <span class="dv">2</span>;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_writer = std.Io.File.stdout().writer(init.io, &amp;stdout_buffer);</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdout = &amp;stdout_writer.interface;</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdin_buffer: [<span class="dv">10</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(stdin_buffer[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdin_reader = std.Io.File.stdin().reader(init.io, &amp;stdin_buffer);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdin = &amp;stdin_reader.interface;</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> stdout.write(<span class="st">"Please write a 4-digit integer number</span><span class="sc">\n</span><span class="st">"</span>);</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> buffer = <span class="kw">try</span> stdin.takeDelimiterExclusive(<span class="ch">'\n'</span>);</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"Input: {s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>buffer[<span class="dv">0</span>..<span class="dv">4</span>]<span class="op">}</span>);</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n: <span class="dt">u32</span> = <span class="kw">try</span> std.fmt.parseInt(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="dt">u32</span>, buffer[<span class="dv">0</span>..<span class="dv">4</span>], <span class="dv">10</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 试图把运行时动态解析出的变量 n 传给 comptime 参数：</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> twice_result = twice(n);</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"Result: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>twice_result<span class="op">}</span>);</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>此时编译器会无情报错并直接终止编译：</p>
+<pre><code>t.zig:12:16: error: unable to resolve comptime value
+    const twice_result = twice(n);
+                               ^</code></pre>
+<p>编译期参数经常用在返回某种泛型结构的函数上。实际上，<code>comptime</code> 是 Zig 实现泛型的核心（或者说基础）。我们会在 <a href="#sec-generics" class="quarto-xref"><span>Section 12.2</span></a> 中进一步讨论泛型。</p>
+<p>先看一段来自 Karl Seguin 的经典示范代码 <span class="citation" data-cites="karlseguin_generics">(<a href="references.html#ref-karlseguin_generics" role="doc-biblioref">Seguin 2024</a>)</span>：函数 <code>IntArray()</code> 接收一个被标记为 <code>comptime</code> 的 <code>length: usize</code> 参数，并返回一个静态数组类型 <code>[length]i64</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> IntArray(<span class="kw">comptime</span> length: <span class="dt">usize</span>) <span class="dt">type</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> [length]<span class="dt">i64</span>;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>注意该函数最神奇的地方：数组的长度直接取决于传入的 <code>length</code> 参数。这也意味着：<strong>该函数返回值的具体数据类型，完全由入参 <code>length</code> 的值决定！</strong> 如果 <code>length</code> 是 3，返回的类型就是 <code>[3]i64</code>；如果 <code>length</code> 是 40，返回的类型就是 <code>[40]i64</code>。 正如我们在 <a href="01-zig-weird.html#sec-root-file" class="quarto-xref"><span>Section 1.2.2</span></a> 中所述，Zig 是一门强类型语言，函数声明必须明确标注返回类型。当返回的具体类型取决于 <code>comptime</code> 参数时，我们就可以使用 <strong><code>type</code></strong> 关键字作为返回类型，告诉编译器该函数将返回一个数据类型！</p>
 </section>
-<section id="姿势二修饰表达式与代码块编译期算力" class="level3" data-number="12.1.2">
-<h3 data-number="12.1.2" class="anchored" data-anchor-id="姿势二修饰表达式与代码块编译期算力"><span class="header-section-number">12.1.2</span> 姿势二：修饰表达式与代码块（编译期算力）</h3>
-<p>很多复杂的数学计算、常量查表甚至阶乘递归，根本不需要留到运行时白白消耗用户的 CPU！ 直接在前面加上 <code>comptime</code>，编译器在编译你的代码时就会把结果算好并烘焙进二进制：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> expect <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>)<span class="op">.</span>testing<span class="op">.</span>expect;</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> fibonacci(index<span class="op">:</span> <span class="dt">u32</span>) <span class="dt">u32</span> {</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (index <span class="op">&lt;</span> <span class="dv">2</span>) <span class="cf">return</span> index;</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fibonacci(index <span class="op">-</span> <span class="dv">1</span>) <span class="op">+</span> fibonacci(index <span class="op">-</span> <span class="dv">2</span>);</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"fibonacci"</span> {</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 运行时计算</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> expect(fibonacci(<span class="dv">7</span>) <span class="op">==</span> <span class="dv">13</span>);</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 编译期直接算完，二进制里直接拿着 13 跑！</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="at">comptime</span> expect(fibonacci(<span class="dv">7</span>) <span class="op">==</span> <span class="dv">13</span>);</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="作用于表达式applying-over-an-expression" class="level3" data-number="12.1.2">
+<h3 data-number="12.1.2" class="anchored" data-anchor-id="作用于表达式applying-over-an-expression"><span class="header-section-number">12.1.2</span> 作用于表达式（Applying over an expression）</h3>
+<p>当你在某条具体表达式前加上 <code>comptime</code> 关键字时，就意味着你给编译器下达了最高指令：<strong>该表达式必须在编译阶段由编译器就地直接运算出最终结果！</strong> 若该表达式因依赖运行时外部状态而无法在编译期计算完毕，编译器就会直接报错。</p>
+<p>看下面这个来自官方文档的经典斐波那契求值用例 <span class="citation" data-cites="zigdocs">(<a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024</a>)</span>： 普通函数调用 <code>fibonacci(7)</code> 默认是在程序运行时跑递归计算的；但因为我们在第二个 <code>try</code> 表达式中使用了 <code>comptime</code> 关键字，这个表达式会在编译期执行。这可能会让一些人感到困惑。没错！我说这个表达式在编译期执行，意思是 <code>zig</code> 编译器在编译你的 Zig 源码时，就会编译并执行这个表达式：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> expect = <span class="bu">@import</span>(<span class="st">"std"</span>).testing.expect;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> fibonacci(index: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (index &lt; <span class="dv">2</span>) <span class="kw">return</span> index;</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> fibonacci(index - <span class="dv">1</span>) + fibonacci(index - <span class="dv">2</span>);</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"fibonacci"</span> <span class="op">{</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 运行时测试执行斐波那契计算</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> expect(fibonacci(<span class="dv">7</span>) == <span class="dv">13</span>);</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 强制指示编译器在编译期完成计算并完成断言校验！</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> <span class="kw">comptime</span> expect(fibonacci(<span class="dv">7</span>) == <span class="dv">13</span>);</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>1/1 file564068ac68dd.test.fibonacci...OK
+All 1 tests passed.</code></pre>
+</section>
+<section id="作用于代码块applying-over-a-block" class="level3" data-number="12.1.3">
+<h3 data-number="12.1.3" class="anchored" data-anchor-id="作用于代码块applying-over-a-block"><span class="header-section-number">12.1.3</span> 作用于代码块（Applying over a block）</h3>
+<p>在 <a href="01-zig-weird.html#sec-blocks" class="quarto-xref"><span>Section 1.7</span></a> 中我们介绍过带标签的代码块。同理，当把 <code>comptime</code> 施加在一个代码块前面时，整个代码块内部的全部运算都将被推入编译期执行：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> expect = <span class="bu">@import</span>(<span class="st">"std"</span>).testing.expect;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> fibonacci(index: <span class="dt">u32</span>) <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (index &lt; <span class="dv">2</span>) <span class="kw">return</span> index;</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> fibonacci(index - <span class="dv">1</span>) + fibonacci(index - <span class="dv">2</span>);</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"fibonacci in a block"</span> <span class="op">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> x = <span class="kw">comptime</span> blk: <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> n1 = <span class="dv">5</span>;</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> n2 = <span class="dv">2</span>;</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> n3 = n1 + n2;</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">try</span> expect(fibonacci(n3) == <span class="dv">13</span>);</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">break</span> :blk n3;</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    _ = x;</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>1/1 file564041f27b68.test.fibonacci in a block...OK
+All 1 tests passed.</code></pre>
 </section>
 </section>
 <section id="sec-generics" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="sec-generics"><span class="header-section-number">12.2</span> Zig 的极简泛型哲学：类型即普通参数</h2>
-<p>写过 C++ 的同学一定被复杂的模板元编程（Template Metaprogramming）和几百行的编译报错折磨过； Java 和 Rust 则引入了专门的尖括号语法 <code>&lt;T&gt;</code>。</p>
-<p><strong>而 Zig 的泛型设计极具大师级的极简美感：在 Zig 里，根本没有引入任何晦涩的专门泛型 DSL，泛型本质上就是一个接收“类型（<code>type</code>）”作为编译期入参的普通函数！</strong></p>
-<p>在 Zig 中，<code>type</code> 本身是一等公民。 看下面这个极简的泛型最大值比较函数：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="at">comptime</span> T<span class="op">:</span> <span class="dt">type</span><span class="op">,</span> a<span class="op">:</span> T<span class="op">,</span> b<span class="op">:</span> T) T {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="cf">if</span> (a <span class="op">&gt;</span> b) a <span class="cf">else</span> b;</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>入参 <code>T</code> 的类型就是 <code>type</code>！调用时传 <code>u8</code>，它就为你特化生成 <code>u8</code> 版本；传 <code>f64</code>，就自动生成 <code>f64</code> 版本：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="at">comptime</span> T<span class="op">:</span> <span class="dt">type</span><span class="op">,</span> a<span class="op">:</span> T<span class="op">,</span> b<span class="op">:</span> T) T {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="cf">if</span> (a <span class="op">&gt;</span> b) a <span class="cf">else</span> b;</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"test max"</span> {</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n1 <span class="op">=</span> max(<span class="dt">u8</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">10</span>);</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Max n1: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{n1});</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n2 <span class="op">=</span> max(<span class="dt">f64</span><span class="op">,</span> <span class="fl">89.24</span><span class="op">,</span> <span class="fl">64.001</span>);</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Max n2: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{n2});</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 data-number="12.2" class="anchored" data-anchor-id="sec-generics"><span class="header-section-number">12.2</span> 认识泛型（Generics）</h2>
+<p>到底什么是“泛型（Generic）”？ 简单来说，泛型就是允许将<strong>数据类型本身（如 <code>f64</code>、<code>u8</code>、<code>u32</code>、<code>bool</code> 乃至我们在 <a href="03-structs.html#sec-structs-and-oop" class="quarto-xref"><span>Section 2.3</span></a> 中定义的 <code>User</code> 结构体等用户自定义类型）作为参数传递给函数或容器</strong>的思想 <span class="citation" data-cites="geeks_generics">(<a href="references.html#ref-geeks_generics" role="doc-biblioref">Geeks for Geeks 2024</a>)</span>。换言之，一个泛型组件能够自如适配并操控多种不同的具体数据类型。</p>
+<p>在 Java 中，泛型通常通过尖括号 <code>&lt;T&gt;</code> 声明；在 C++ 中，泛型则是由模板体系（Templates）来承担。 而在 Zig 中，官方没有设计任何复杂晦涩的尖括号语法或专用模板语法糖！<strong>Zig 的泛型完全是由普通的函数调用与 <code>comptime</code> 自然催生出来的！</strong></p>
+<section id="sec-generic-fun" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="sec-generic-fun"><span class="header-section-number">12.2.1</span> 泛型函数（A generic function）</h3>
+<p>看下面这个极简的 <code>max()</code> 比较函数：它就是一个地道的泛型函数。 注意看形参列表里的第一个参数：<code>comptime T: type</code>。 这里的 <code>type</code> 关键字在 Zig 中是“所有数据类型的类型”（即元类型）。正如我们在 <a href="#sec-comptime" class="quarto-xref"><span>Section 12.1</span></a> 中所述，所有数据类型在编译期都是已知的，因此通过将参数声明为接收一个 <code>type</code> 并加上 <code>comptime</code> 标记，我们就可以在调用该函数时把任意具体类型作为实参传给它：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="kw">comptime</span> T: <span class="dt">type</span>, a: T, b: T) T <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">if</span> (a &gt; b) a <span class="kw">else</span> b;</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>紧接着看后续参数：形参 <code>a</code> 和 <code>b</code> 的类型、以及函数的返回值类型，全部绑定为了 <code>T</code>！ 这意味着：当你在调用时传入 <code>u8</code>，该函数就会在编译期特化为一个比较两个 <code>u8</code> 的函数；当你传入 <code>f64</code> 时，它就会自动特化为比较两个 <code>f64</code> 的函数！</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> max(<span class="kw">comptime</span> T: <span class="dt">type</span>, a: T, b: T) T <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">if</span> (a &gt; b) a <span class="kw">else</span> b;</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"test max"</span> <span class="op">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n1 = max(<span class="dt">u8</span>, <span class="dv">4</span>, <span class="dv">10</span>);</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Max n1: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>n1<span class="op">}</span>);</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n2 = max(<span class="dt">f64</span>, <span class="fl">89.24</span>, <span class="fl">64.001</span>);</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Max n2: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>n2<span class="op">}</span>);</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Max n1: 10
 Max n2: 89.24</code></pre>
-<p>同理，<strong>泛型数据结构本质上就是一个以 <code>comptime T: type</code> 为形参、返回值类型为 <code>type</code> 的“结构体工厂函数”</strong>！ 接下来咱们就用这个原理亲手造一个泛型栈！</p>
+</section>
+<section id="sec-generic-struct" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="sec-generic-struct"><span class="header-section-number">12.2.2</span> 泛型数据结构（A generic data structure）</h3>
+<p>你在 Zig 标准库中见到的所有容器（如 <code>std.ArrayList</code>、<code>std.AutoHashMap</code> 等），在本质上全部是泛型数据结构。 既然没有尖括号语法，Zig 是怎么构建泛型容器的呢？ 其核心思路一脉相承：利用我们在上一节（<a href="#sec-generic-fun" class="quarto-xref"><span>Section 12.2.1</span></a>）中学到的泛型函数机制，<strong>编写一个接收 <code>comptime T: type</code> 作为参数、并直接在函数体内返回一个 <code>struct</code> 类型定义的函数</strong>！</p>
+<p>也就是说，在 Zig 里，泛型容器工厂本质上就是一个“结构体生成器函数”。 接下来，我们就通过亲自动手实现一个通用泛型栈，来彻底玩转这一核心机制！</p>
+</section>
 </section>
 <section id="sec-what-stack" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="sec-what-stack"><span class="header-section-number">12.3</span> 栈的核心机制回顾</h2>
-<p>栈是典型的后进先出（LIFO - Last In, First Out）结构，就像一叠盘子： - <strong><code>push</code></strong>：把新盘子压在最顶上； - <strong><code>pop</code></strong>：把最顶上的盘子拿走。</p>
+<h2 data-number="12.3" class="anchored" data-anchor-id="sec-what-stack"><span class="header-section-number">12.3</span> 什么是栈（Stack）？</h2>
+<p>栈（Stack）是一种严格遵循<strong>后进先出（LIFO, Last In First Out）</strong>原则的经典线性数据结构。 在标准规范中，栈核心仅支持两大基础操作： - <strong><code>push</code>（压栈）</strong>：向栈顶压入一个新元素； - <strong><code>pop</code>（出栈）</strong>：从栈顶弹出一个已有元素。</p>
+<p>关于栈最经典的现实类比，莫过于食堂洗水池边<strong>一摞摞叠在一起的餐盘</strong>： 洗碗工每洗好一个盘子，就会把它叠放在最上面的盘子顶端（压栈 <code>push</code>）； 而打饭人员取用盘子时，也只能从最顶上拿走最新洗好的那个盘子（出栈 <code>pop</code>）。 最先被洗好垫在最底下的盘子，反而会是全场最后一个被拿走的。</p>
+<p>因此，栈上的每一个操作，无论是插入还是删除，总是在栈顶进行。下面的 <a href="#fig-stack" class="quarto-xref">Figure&nbsp;<span>12.1</span></a> 直观地展示了这一逻辑：</p>
 <div id="fig-stack" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../../Figures/lifo-stack.svg" class="img-fluid figure-img">
+<img src="./../../Figures/lifo-stack.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stack-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12.1: 栈的压栈（Push）与出栈（Pop）示意图
+Figure&nbsp;12.1: 栈结构示意图（来源：维基百科）
 </figcaption>
 </figure>
 </div>
 </section>
-<section id="编写栈结构先从具体类型开始" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="编写栈结构先从具体类型开始"><span class="header-section-number">12.4</span> 编写栈结构：先从具体类型开始</h2>
-<p>为了不一下子引入过多复杂度，咱们先写一个专门存 <code>u32</code> 的版本：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Allocator <span class="op">=</span> std<span class="op">.</span>mem<span class="op">.</span>Allocator;</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Stack <span class="op">=</span> <span class="kw">struct</span> {</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    items<span class="op">:</span> []<span class="dt">u32</span><span class="op">,</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    capacity<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    length<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    allocator<span class="op">:</span> Allocator<span class="op">,</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(allocator<span class="op">:</span> Allocator<span class="op">,</span> capacity<span class="op">:</span> <span class="dt">usize</span>) <span class="op">!</span>Stack {</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">var</span> buf <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u32</span><span class="op">,</span> capacity);</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">.</span>{</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>items <span class="op">=</span> buf[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>capacity <span class="op">=</span> capacity<span class="op">,</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>length <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>allocator <span class="op">=</span> allocator<span class="op">,</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        };</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="编写栈数据结构先从具体类型开始" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="编写栈数据结构先从具体类型开始"><span class="header-section-number">12.4</span> 编写栈数据结构：先从具体类型开始</h2>
+<p>我们采用循序渐进的工程策略： 第一阶段：先为特定的 <code>u32</code> 类型编写一个具备动态自动扩容能力的具体栈； 第二阶段：在验证无误后，将其一举升维抽象为真正的通用泛型栈。</p>
+<p>首先，我们需要决定值在栈中如何存储。实现栈结构背后的存储有多种方式，有人喜欢用双向链表，有人喜欢用动态数组，等等。在这个例子中，我们在底层使用一个数组来存储栈中的值，也就是 <code>Stack</code> 结构体定义中的 <code>items</code> 数据成员。 除了底层数组，我们的栈结构还需要维护三个核心要素： - <code>capacity</code>：存储栈中值的底层数组的容量； - <code>length</code>：当前栈内实际存放的有效元素个数（同时充当栈顶游标）； - <code>allocator</code>：用于后续自动翻倍扩容的内存分配器句柄。</p>
+<p>首先编写初始化构造方法 <code>init()</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Allocator = std.mem.Allocator;</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stack = <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    items: []<span class="dt">u32</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    capacity: <span class="dt">usize</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    length: <span class="dt">usize</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    allocator: Allocator,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init(allocator: Allocator, capacity: <span class="dt">usize</span>) !Stack <span class="op">{</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> buf = <span class="kw">try</span> allocator.alloc(<span class="dt">u32</span>, capacity);</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> .<span class="op">{</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>            .items = buf[<span class="dv">0</span>..],</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>            .capacity = capacity,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>            .length = <span class="dv">0</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>            .allocator = allocator,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>;</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="实现压栈push-与动态扩容" class="level3" data-number="12.4.1">
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="实现压栈push-与动态扩容"><span class="header-section-number">12.4.1</span> 实现压栈：<code>push()</code> 与动态扩容</h3>
-<p>当 <code>length + 1 &gt; capacity</code> 时，池子满了。我们申请原容量 2 倍的新内存，用 <code>@memcpy</code> 将老数据整体平移，再释放老内存：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> push(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Stack<span class="op">,</span> val<span class="op">:</span> <span class="dt">u32</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((<span class="va">self</span><span class="op">.</span>length <span class="op">+</span> <span class="dv">1</span>) <span class="op">&gt;</span> <span class="va">self</span><span class="op">.</span>capacity) {</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">var</span> new_buf <span class="op">=</span> <span class="cf">try</span> <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>alloc(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            <span class="dt">u32</span><span class="op">,</span> <span class="va">self</span><span class="op">.</span>capacity <span class="op">*</span> <span class="dv">2</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">@memcpy</span>(</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>            new_buf[<span class="dv">0</span><span class="op">..</span><span class="va">self</span><span class="op">.</span>capacity]<span class="op">,</span> <span class="va">self</span><span class="op">.</span>items</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>free(<span class="va">self</span><span class="op">.</span>items);</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>items <span class="op">=</span> new_buf;</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span><span class="op">.</span>capacity <span class="op">=</span> <span class="va">self</span><span class="op">.</span>capacity <span class="op">*</span> <span class="dv">2</span>;</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span><span class="op">.</span>items[<span class="va">self</span><span class="op">.</span>length] <span class="op">=</span> val;</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span><span class="op">.</span>length <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在压栈时，新元素永远塞在当前的栈顶位置（即 <code>items[length]</code>）。 但在此之前，必须检查当前容量是否已满：若 <code>(length + 1) &gt; capacity</code>，说明现有容量触顶，必须执行自动扩容！</p>
+<p>扩容逻辑清晰严谨： 1. 向分配器申请一块容量为原先 <strong>2 倍</strong> 的全新连续内存空间； 2. 使用内置函数 <code>@memcpy()</code>（等价于 C 语言标准库的 <code>memcpy()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>），将旧数组内的数据全量迁移至新数组中； 3. 释放旧数组内存，将指针指向新数组，并更新容量标记； 4. 将新元素存入栈顶，并将长度递增 1。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> push(self: *Stack, val: <span class="dt">u32</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> ((self.length + <span class="dv">1</span>) &gt; self.capacity) <span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> new_buf = <span class="kw">try</span> self.allocator.alloc(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                <span class="dt">u32</span>, self.capacity * <span class="dv">2</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            );</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="bu">@memcpy</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                new_buf[<span class="dv">0</span>..self.capacity], self.items</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            );</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            self.allocator.free(self.items);</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            self.items = new_buf;</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            self.capacity = self.capacity * <span class="dv">2</span>;</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        self.items[self.length] = val;</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        self.length += <span class="dv">1</span>;</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="实现出栈与析构pop-和-deinit" class="level3" data-number="12.4.2">
-<h3 data-number="12.4.2" class="anchored" data-anchor-id="实现出栈与析构pop-和-deinit"><span class="header-section-number">12.4.2</span> 实现出栈与析构：<code>pop()</code> 和 <code>deinit()</code></h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> pop(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Stack) <span class="dt">void</span> {</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="va">self</span><span class="op">.</span>length <span class="op">==</span> <span class="dv">0</span>) <span class="cf">return</span>;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span><span class="op">.</span>items[<span class="va">self</span><span class="op">.</span>length <span class="op">-</span> <span class="dv">1</span>] <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span><span class="op">.</span>length <span class="op">-=</span> <span class="dv">1</span>;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> deinit(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Stack) <span class="dt">void</span> {</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>free(<span class="va">self</span><span class="op">.</span>items);</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="实现出栈pop" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="实现出栈pop"><span class="header-section-number">12.4.2</span> 实现出栈：<code>pop()</code></h3>
+<p>出栈操作轻快得多：只需将当前栈顶元素标记为未初始化的 <code>undefined</code>，并将 <code>length</code> 计数递减 1 即可。若当前栈本身为空（<code>length == 0</code>），则直接返回空操作：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> pop(self: *Stack) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (self.length == <span class="dv">0</span>) <span class="kw">return</span>;</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        self.items[self.length - <span class="dv">1</span>] = <span class="cn">undefined</span>;</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        self.length -= <span class="dv">1</span>;</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="实现析构deinit" class="level3" data-number="12.4.3">
+<h3 data-number="12.4.3" class="anchored" data-anchor-id="实现析构deinit"><span class="header-section-number">12.4.3</span> 实现析构：<code>deinit()</code></h3>
+<p>现在，我们已经实现了栈数据结构的两个核心操作 <code>pop()</code> 和 <code>push()</code>，也实现了负责创建新 <code>Stack</code> 对象的 <code>init()</code> 方法。</p>
+<p>接下来，我们还需要实现负责销毁 <code>Stack</code> 对象的方法。在 Zig 中，这项任务通常由名为 <code>deinit()</code> 的方法承担。Zig 中的大多数结构体都有这样一个方法，它通常被称为”析构方法”。</p>
+<p>理论上，要销毁 <code>Stack</code> 对象，我们只需确保用 <code>Stack</code> 对象中存储的分配器对象，释放为底层数组分配的内存。下面的 <code>deinit()</code> 方法做的正是这件事。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> deinit(self: *Stack) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    self.allocator.free(self.items);</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="终极升维将栈改造为工业级通用泛型" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="终极升维将栈改造为工业级通用泛型"><span class="header-section-number">12.5</span> 终极升维：将栈改造为工业级通用泛型！</h2>
-<p>现在，见证奇迹的时刻到了！ 怎么把上面只支持 <code>u32</code> 的栈，改造成能装任意类型（<code>u8</code>、<code>f64</code>、甚至自定义的 <code>User</code> 结构体）的泛型栈？</p>
-<p>只需要给外层包一个函数 <code>fn Stack(comptime T: type) type</code>，并将内部所有的 <code>u32</code> 换成泛型参数 <code>T</code>！</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> Stack(<span class="at">comptime</span> T<span class="op">:</span> <span class="dt">type</span>) <span class="dt">type</span> {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">struct</span> {</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        items<span class="op">:</span> []T<span class="op">,</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        capacity<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        length<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        allocator<span class="op">:</span> Allocator<span class="op">,</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> Self <span class="op">=</span> <span class="bu">@This</span>();</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> init(allocator<span class="op">:</span> Allocator<span class="op">,</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                    capacity<span class="op">:</span> <span class="dt">usize</span>) <span class="op">!</span>Stack(T) {</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">var</span> buf <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(T<span class="op">,</span> capacity);</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="op">.</span>{</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span>items <span class="op">=</span> buf[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span>capacity <span class="op">=</span> capacity<span class="op">,</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span>length <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span>allocator <span class="op">=</span> allocator<span class="op">,</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>            };</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> push(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Self<span class="op">,</span> val<span class="op">:</span> T) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> ((<span class="va">self</span><span class="op">.</span>length <span class="op">+</span> <span class="dv">1</span>) <span class="op">&gt;</span> <span class="va">self</span><span class="op">.</span>capacity) {</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                <span class="at">var</span> new_buf <span class="op">=</span> <span class="cf">try</span> <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>alloc(</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                    T<span class="op">,</span> <span class="va">self</span><span class="op">.</span>capacity <span class="op">*</span> <span class="dv">2</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                );</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>                <span class="bu">@memcpy</span>(</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>                    new_buf[<span class="dv">0</span><span class="op">..</span><span class="va">self</span><span class="op">.</span>capacity]<span class="op">,</span> <span class="va">self</span><span class="op">.</span>items</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>                );</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>free(<span class="va">self</span><span class="op">.</span>items);</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span><span class="op">.</span>items <span class="op">=</span> new_buf;</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span><span class="op">.</span>capacity <span class="op">=</span> <span class="va">self</span><span class="op">.</span>capacity <span class="op">*</span> <span class="dv">2</span>;</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            }</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>items[<span class="va">self</span><span class="op">.</span>length] <span class="op">=</span> val;</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>length <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> pop(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Self) <span class="dt">void</span> {</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="va">self</span><span class="op">.</span>length <span class="op">==</span> <span class="dv">0</span>) <span class="cf">return</span>;</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>items[<span class="va">self</span><span class="op">.</span>length <span class="op">-</span> <span class="dv">1</span>] <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>length <span class="op">-=</span> <span class="dv">1</span>;</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> deinit(<span class="va">self</span><span class="op">:</span> <span class="op">*</span>Self) <span class="dt">void</span> {</span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span><span class="op">.</span>allocator<span class="op">.</span>free(<span class="va">self</span><span class="op">.</span>items);</span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    };</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="跑通泛型栈测试" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="跑通泛型栈测试"><span class="header-section-number">12.6</span> 跑通泛型栈测试！</h2>
-<p>想要一个装 <code>u8</code> 的栈？直接 <code>Stack(u8)</code>；想要存字符串？直接 <code>Stack([]const u8)</code>！</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> gpa <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>DebugAllocator(<span class="op">.</span>{}){};</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> allocator <span class="op">=</span> gpa<span class="op">.</span>allocator();</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Stacku8 <span class="op">=</span> Stack(<span class="dt">u8</span>);</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> stack <span class="op">=</span> <span class="cf">try</span> Stacku8<span class="op">.</span>init(allocator<span class="op">,</span> <span class="dv">10</span>);</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">defer</span> stack<span class="op">.</span>deinit();</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">1</span>);</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">2</span>);</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">3</span>);</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">4</span>);</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">5</span>);</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stack<span class="op">.</span>push(<span class="dv">6</span>);</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{stack<span class="op">.</span>length});</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Stack capacity: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{stack<span class="op">.</span>capacity});</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>stack<span class="op">.</span>pop();</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{stack<span class="op">.</span>length});</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>stack<span class="op">.</span>pop();</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{stack<span class="op">.</span>length});</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stack state: {any}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{stack<span class="op">.</span>items[<span class="dv">0</span><span class="op">..</span>stack<span class="op">.</span>length]}</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="改造为泛型" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="改造为泛型"><span class="header-section-number">12.5</span> 改造为泛型</h2>
+<p>实现了栈数据结构的基本骨架之后，我们就可以着手讨论如何让它变成泛型的。怎样才能让这个基本骨架不仅能处理 <code>u32</code> 值，还能处理我们想要的任何其他数据类型？例如，我们可能需要创建一个栈对象来存储 <code>User</code> 值。怎样才能做到这一点？答案在于使用泛型和 <code>comptime</code>。</p>
+<p>正如我在 <a href="#sec-generic-struct" class="quarto-xref"><span>Section 12.2.2</span></a> 中所述，基本思路是编写一个泛型函数，让它返回一个结构体定义作为输出。理论上，把 <code>Stack</code> 结构体改造成泛型数据结构并不需要太多工作，我们只需要把栈的底层数组改造成泛型数组。</p>
+<p>换句话说，这个底层数组需要像一只”变色龙”，能够根据需要变成任意数据类型的数组。例如，如果要创建一个存储 <code>u8</code> 值的栈，底层数组就需要是一个 <code>u8</code> 数组（即 <code>[]u8</code>）；如果要存储 <code>User</code> 值，这个数组就需要是一个 <code>User</code> 数组（即 <code>[]User</code>），依此类推。</p>
+<p>我们通过泛型函数来做到这一点。因为泛型函数可以接收一个数据类型作为输入，我们可以把这个数据类型传给 <code>Stack</code> 对象的结构体定义。这样，就能用这个泛型函数创建能够存储我们所需数据类型的 <code>Stack</code> 对象。如果我们想创建一个存储 <code>User</code> 值的栈结构，就把 <code>User</code> 数据类型传给这个泛型函数，它会为我们创建出描述能存储 <code>User</code> 值的 <code>Stack</code> 对象的结构体定义。</p>
+<p>看下面的代码示例。为了简洁，我省略了 <code>Stack</code> 结构体定义中的某些部分。如果 <code>Stack</code> 结构体的某个部分没有在这个例子中展示，那是因为这部分与上一个例子相比没有变化。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> Stack(<span class="kw">comptime</span> T: <span class="dt">type</span>) <span class="dt">type</span> <span class="op">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        items: []T,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        capacity: <span class="dt">usize</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        length: <span class="dt">usize</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        allocator: Allocator,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> Self = <span class="bu">@This</span>();</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> init(allocator: Allocator,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                    capacity: <span class="dt">usize</span>) !Stack(T) <span class="op">{</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> buf = <span class="kw">try</span> allocator.alloc(T, capacity);</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> .<span class="op">{</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>                .items = buf[<span class="dv">0</span>..],</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>                .capacity = capacity,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>                .length = <span class="dv">0</span>,</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>                .allocator = allocator,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span>;</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pub</span> <span class="kw">fn</span> push(self: *Self, val: T) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Truncate the rest of the struct</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>注意，在这个例子中我们创建了一个名为 <code>Stack()</code> 的函数。这个函数接收一个类型作为输入，并把这个类型传给 <code>Stack</code> 对象的结构体定义。数据成员 <code>items</code> 现在是一个类型为 <code>T</code> 的数组，<code>T</code> 就是我们作为输入传给这个函数的数据类型。<code>push()</code> 函数的参数 <code>val</code> 现在也是一个类型为 <code>T</code> 的值。</p>
+<p>我们只需给这个函数提供一个数据类型，它就会创建出一个 <code>Stack</code> 对象的定义，这个对象能够存储我们所提供的数据类型的值。在下面的例子中，我们创建了一个能够存储 <code>u8</code> 值的 <code>Stack</code> 对象的定义，这个定义存放在 <code>Stacku8</code> 对象中。这个 <code>Stacku8</code> 对象就成为我们的新结构体，我们将用它来创建 <code>Stack</code> 对象。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Stacku8 = Stack(<span class="dt">u8</span>);</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stack = <span class="kw">try</span> Stacku8.init(allocator, <span class="dv">10</span>);</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> stack.deinit();</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">1</span>);</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">2</span>);</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">3</span>);</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">4</span>);</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">5</span>);</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stack.push(<span class="dv">6</span>);</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>stack.length<span class="op">}</span>);</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"Stack capacity: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>stack.capacity<span class="op">}</span>);</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>stack.pop();</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>stack.length<span class="op">}</span>);</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>stack.pop();</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"Stack len: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>stack.length<span class="op">}</span>);</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>std.debug.print(</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stack state: {any}</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span>stack.items[<span class="dv">0</span>..stack.length]<span class="op">}</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Stack len: 6
 Stack capacity: 10
 Stack len: 5
 Stack len: 4
-Stack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }</code></pre>
-<p>弄懂了这套模式，你就彻底参透了 Zig 标准库里 <code>std.ArrayList(T)</code>、<code>std.AutoHashMap(K, V)</code> 等所有容器的核心源码实现！</p>
+Stack state: { 1, 2, 3, 4 }</code></pre>
+<p>（译注：英文原文此处的最后一行输出为 <code>{ 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }</code>，与代码打印的切片 <code>stack.items[0..stack.length]</code> 不符，译文已改为与代码一致的输出。）</p>
+<p>Zig 标准库中的每一个泛型数据结构（<code>ArrayList</code>、<code>HashMap</code>、<code>SinglyLinkedList</code> 等）都是按照这种逻辑实现的：它们用一个泛型函数来创建结构体定义，使其能够处理你作为输入提供的数据类型。（译注：在 Zig 0.17.1 中，<code>SinglyLinkedList</code> 已改为非泛型的实现，见 <a href="09-data-structures.html" class="quarto-xref"><span>Chapter 11</span></a> 中的链表一节。）</p>
+</section>
+<section id="总结" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="总结"><span class="header-section-number">12.6</span> 总结</h2>
+<p>本章讨论的栈结构的完整源码可以在本书官方仓库中免费获取。在仓库的 <code>ZigExamples</code> 文件夹中，<a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig"><code>stack.zig</code></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 是 <code>u32</code> 版本的栈，<a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig"><code>generic_stack.zig</code></a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 是泛型版本。</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-geeks_generics" class="csl-entry" role="listitem">
+Geeks for Geeks. 2024. <em>Generics in c++</em>. <span>Geeks for Geeks</span>. <a href="https://www.geeksforgeeks.org/generics-in-c/">https://www.geeksforgeeks.org/generics-in-c/</a>.
+</div>
+<div id="ref-karlseguin_generics" class="csl-entry" role="listitem">
+Seguin, Karl. 2024. <em>Generics</em>. <a href="https://www.openmymind.net/learning_zig/generics/">https://www.openmymind.net/learning_zig/generics/</a>.
+</div>
+<div id="ref-zigdocs" class="csl-entry" role="listitem">
+Zig Software Foundation. 2024. <em>Language Reference</em>. Zig Software Foundation. <a href="https://ziglang.org/documentation/master/">https://ziglang.org/documentation/master/</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm" class="uri">https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig" class="uri">https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig" class="uri">https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig</a>。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -1298,8 +1413,8 @@ document.addEventListener('DOMContentLoaded', function() {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Chapters/12-file-op.html" class="pagination-link" aria-label="文件系统与输入输出（I/O）">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Chapters/12-file-op.html" class="pagination-link" aria-label="文件系统与输入/输出（I/O）">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

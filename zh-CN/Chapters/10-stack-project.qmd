@@ -1,75 +1,185 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
-
-
 # 实战项目 3：手写泛型栈数据结构 {#sec-stack-project}
 
-在这章中，咱们来开启全书的第三个实战小项目：**亲手实现一个工业级通用栈（Stack）数据结构**。
-在计算机科班体系里，手写栈、队列往往是刚入门时的大作业；
-但千万别小瞧它！正因为栈本身的业务逻辑极度纯粹清晰，它成了我们彻底搞懂 Zig 最具杀伤力的核心特性——**编译期计算（`comptime`）与泛型（Generics）**的最佳实战训练场！
+在熟悉了栈（Stack）的基本数据结构之后，本章我们将把重心聚焦在真正核心的技术命题上：**深入搞懂 Zig 的“编译期计算（`comptime`）”机制，并以此掌握 Zig 独特而极简的“泛型（Generics）”编程范式**。我们将亲手从零构建一个能够动态扩容的通用泛型栈容器，以此将这些概念融会贯通。
+
+在动手编写栈之前，我们必须先彻底理清 `comptime` 关键字对代码产生的神奇魔力，以及 Zig 是如何看待泛型的。
 
 
-## 深入理解 Zig 的杀手锏：`comptime` {#sec-comptime}
+## 深入理解 Zig 中的 `comptime` {#sec-comptime}
 
-如果说 Zig 有什么特性让 Rust 和 C++ 开发者都为之惊艳，那绝对是 **`comptime`（编译期执行）**！
-在 @sec-compile-time 中我们聊过编译期已知与运行时已知的界限。而 `comptime` 关键字直接赋予了开发者在编译阶段执行任意 Zig 代码的无上权力！
+`comptime` 是 Zig 最核心、最具代表性的语言特性之一。它引入了一套与编译构建过程紧密交织的编程范式。
+在前面的 @sec-compile-time 中，我们曾深入剖析过“编译期已知”与“运行时已知”的分野：一个对象或数值究竟是在编译期就已尘埃落定，还是必须等到程序跑起来才能计算得出，直接决定了编译器对它的处理法则。
 
-在日常编码中，`comptime` 主要有三大使用姿势：
+`comptime` 关键字正是游走在**编译期（Compile-time）**与**运行时（Runtime）**这两个时间维度之间的法宝：
+- **编译期**：指 `zig` 编译器读取你的源码、进行语法类型分析并生成机器码的时段；
+- **运行时**：指编译完成后，你直接执行二进制程序跑业务的时段。
 
-1. **修饰函数形参**（要求调用方传进来的实参必须在编译期板上钉钉）；
-2. **修饰单条表达式**（强制该表达式在编译时计算出常量结果）；
-3. **修饰代码块**（让整段逻辑在编译期求值跑通）。
+在 Zig 中，`comptime` 关键字主要有三种应用方式：
+1. **修饰函数形参（编译期形参）**；
+2. **修饰表达式（强制编译期求值）**；
+3. **修饰代码块（编译期代码块）**。
 
 
-### 姿势一：修饰函数形参（编译期参数）
+### 作用于函数形参（Applying over a function argument）
 
-当给形参加上 `comptime` 时，编译器会死死卡住校验：传入的值必须在编译阶段就能算出来。如果传入运行时才能决定的动态变量（比如控制台用户输入），编译器当场拒绝编译：
+当你在函数的某个形参前面加上 `comptime` 关键字时，就是在向 `zig` 编译器郑重立下誓言：**传递给这个形参的实参值，在编译期必须百分之百板上钉钉、完全已知！**
+
+这样做的直接影响是：你为该参数设立了一条硬性铁律。一旦调用方在调用该函数时，不小心传入了一个只有在程序运行起来后才能算出来的动态变量，`zig` 编译器就会当场严词拒绝，并甩出编译错误。因为你给一个要求“编译期已知”的参数塞进了一个“运行时已知”的变量。
+
+看下面这个极简的加倍函数 `twice()`：形参 `num` 前面带有 `comptime`，这表示它是一个“编译期参数”。当我们调用 `twice(5678)` 时，由于字面量常数 `5678` 在编译期一清二楚，代码完全能够合法通过编译并顺利通过测试：
 
 ```zig
 fn twice(comptime num: u32) u32 {
     return num * 2;
 }
+
 test "test comptime" {
-    _ = twice(5678); // 合法！5678 是编译期常数
+    _ = twice(5678);
 }
 ```
 
-如果传了来自 `stdin` 的运行时数据，编译器会直接甩出报错：`unable to resolve comptime value`。
+```
+1/1 file56403a427818.test.test comptime...OK
+All 1 tests passed.
+```
+
+但如果我们试图把一个运行时的动态输入喂给它呢？
+例如程序在启动后，通过 `stdin` 标准输入读取用户在键盘上敲入的数字。用户敲什么天王老子也无法在编译期提前预判，这使得从终端读取到的数字是一个纯粹的**运行时已知值**：
+
+```zig
+const std = @import("std");
+
+fn twice(comptime num: u32) u32 {
+    return num * 2;
+}
+
+pub fn main(init: std.process.Init) !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.Io.File.stdout().writer(init.io, &stdout_buffer);
+    const stdout = &stdout_writer.interface;
+
+    var stdin_buffer: [10]u8 = undefined;
+    @memset(stdin_buffer[0..], 0);
+    var stdin_reader = std.Io.File.stdin().reader(init.io, &stdin_buffer);
+    const stdin = &stdin_reader.interface;
+
+    _ = try stdout.write("Please write a 4-digit integer number\n");
+    try stdout.flush();
+    const buffer = try stdin.takeDelimiterExclusive('\n');
+
+    try stdout.print("Input: {s}\n", .{buffer[0..4]});
+    try stdout.flush();
+    const n: u32 = try std.fmt.parseInt(
+        u32, buffer[0..4], 10
+    );
+    // 试图把运行时动态解析出的变量 n 传给 comptime 参数：
+    const twice_result = twice(n);
+    try stdout.print("Result: {d}\n", .{twice_result});
+    try stdout.flush();
+}
+```
+
+此时编译器会无情报错并直接终止编译：
+
+```
+t.zig:12:16: error: unable to resolve comptime value
+    const twice_result = twice(n);
+                               ^
+```
+
+编译期参数经常用在返回某种泛型结构的函数上。实际上，`comptime` 是 Zig 实现泛型的核心（或者说基础）。我们会在 @sec-generics 中进一步讨论泛型。
+
+先看一段来自 Karl Seguin 的经典示范代码 [@karlseguin_generics]：函数 `IntArray()` 接收一个被标记为 `comptime` 的 `length: usize` 参数，并返回一个静态数组类型 `[length]i64`：
+
+```zig
+fn IntArray(comptime length: usize) type {
+    return [length]i64;
+}
+```
+
+注意该函数最神奇的地方：数组的长度直接取决于传入的 `length` 参数。这也意味着：**该函数返回值的具体数据类型，完全由入参 `length` 的值决定！**
+如果 `length` 是 3，返回的类型就是 `[3]i64`；如果 `length` 是 40，返回的类型就是 `[40]i64`。
+正如我们在 @sec-root-file 中所述，Zig 是一门强类型语言，函数声明必须明确标注返回类型。当返回的具体类型取决于 `comptime` 参数时，我们就可以使用 **`type`** 关键字作为返回类型，告诉编译器该函数将返回一个数据类型！
 
 
-### 姿势二：修饰表达式与代码块（编译期算力）
+### 作用于表达式（Applying over an expression）
 
-很多复杂的数学计算、常量查表甚至阶乘递归，根本不需要留到运行时白白消耗用户的 CPU！
-直接在前面加上 `comptime`，编译器在编译你的代码时就会把结果算好并烘焙进二进制：
+当你在某条具体表达式前加上 `comptime` 关键字时，就意味着你给编译器下达了最高指令：**该表达式必须在编译阶段由编译器就地直接运算出最终结果！**
+若该表达式因依赖运行时外部状态而无法在编译期计算完毕，编译器就会直接报错。
+
+看下面这个来自官方文档的经典斐波那契求值用例 [@zigdocs]：
+普通函数调用 `fibonacci(7)` 默认是在程序运行时跑递归计算的；但因为我们在第二个 `try` 表达式中使用了 `comptime` 关键字，这个表达式会在编译期执行。这可能会让一些人感到困惑。没错！我说这个表达式在编译期执行，意思是 `zig` 编译器在编译你的 Zig 源码时，就会编译并执行这个表达式：
 
 ```zig
 const expect = @import("std").testing.expect;
+
 fn fibonacci(index: u32) u32 {
     if (index < 2) return index;
     return fibonacci(index - 1) + fibonacci(index - 2);
 }
 
 test "fibonacci" {
-    // 运行时计算
+    // 运行时测试执行斐波那契计算
     try expect(fibonacci(7) == 13);
-    // 编译期直接算完，二进制里直接拿着 13 跑！
+    // 强制指示编译器在编译期完成计算并完成断言校验！
     try comptime expect(fibonacci(7) == 13);
 }
 ```
 
+```
+1/1 file564068ac68dd.test.fibonacci...OK
+All 1 tests passed.
+```
 
-## Zig 的极简泛型哲学：类型即普通参数 {#sec-generics}
 
-写过 C++ 的同学一定被复杂的模板元编程（Template Metaprogramming）和几百行的编译报错折磨过；
-Java 和 Rust 则引入了专门的尖括号语法 `<T>`。
+### 作用于代码块（Applying over a block）
 
-**而 Zig 的泛型设计极具大师级的极简美感：在 Zig 里，根本没有引入任何晦涩的专门泛型 DSL，泛型本质上就是一个接收“类型（`type`）”作为编译期入参的普通函数！**
+在 @sec-blocks 中我们介绍过带标签的代码块。同理，当把 `comptime` 施加在一个代码块前面时，整个代码块内部的全部运算都将被推入编译期执行：
 
-在 Zig 中，`type` 本身是一等公民。
-看下面这个极简的泛型最大值比较函数：
+```zig
+const expect = @import("std").testing.expect;
+
+fn fibonacci(index: u32) u32 {
+    if (index < 2) return index;
+    return fibonacci(index - 1) + fibonacci(index - 2);
+}
+
+test "fibonacci in a block" {
+    const x = comptime blk: {
+        const n1 = 5;
+        const n2 = 2;
+        const n3 = n1 + n2;
+        try expect(fibonacci(n3) == 13);
+        break :blk n3;
+    };
+    _ = x;
+}
+```
+
+```
+1/1 file564041f27b68.test.fibonacci in a block...OK
+All 1 tests passed.
+```
+
+
+## 认识泛型（Generics） {#sec-generics}
+
+到底什么是“泛型（Generic）”？
+简单来说，泛型就是允许将**数据类型本身（如 `f64`、`u8`、`u32`、`bool` 乃至我们在 @sec-structs-and-oop 中定义的 `User` 结构体等用户自定义类型）作为参数传递给函数或容器**的思想 [@geeks_generics]。换言之，一个泛型组件能够自如适配并操控多种不同的具体数据类型。
+
+在 Java 中，泛型通常通过尖括号 `<T>` 声明；在 C++ 中，泛型则是由模板体系（Templates）来承担。
+而在 Zig 中，官方没有设计任何复杂晦涩的尖括号语法或专用模板语法糖！**Zig 的泛型完全是由普通的函数调用与 `comptime` 自然催生出来的！**
+
+
+### 泛型函数（A generic function） {#sec-generic-fun}
+
+看下面这个极简的 `max()` 比较函数：它就是一个地道的泛型函数。
+注意看形参列表里的第一个参数：`comptime T: type`。
+这里的 `type` 关键字在 Zig 中是“所有数据类型的类型”（即元类型）。正如我们在 @sec-comptime 中所述，所有数据类型在编译期都是已知的，因此通过将参数声明为接收一个 `type` 并加上 `comptime` 标记，我们就可以在调用该函数时把任意具体类型作为实参传给它：
 
 ```zig
 fn max(comptime T: type, a: T, b: T) T {
@@ -77,13 +187,16 @@ fn max(comptime T: type, a: T, b: T) T {
 }
 ```
 
-入参 `T` 的类型就是 `type`！调用时传 `u8`，它就为你特化生成 `u8` 版本；传 `f64`，就自动生成 `f64` 版本：
+紧接着看后续参数：形参 `a` 和 `b` 的类型、以及函数的返回值类型，全部绑定为了 `T`！
+这意味着：当你在调用时传入 `u8`，该函数就会在编译期特化为一个比较两个 `u8` 的函数；当你传入 `f64` 时，它就会自动特化为比较两个 `f64` 的函数！
 
 ```zig
 const std = @import("std");
+
 fn max(comptime T: type, a: T, b: T) T {
     return if (a > b) a else b;
 }
+
 test "test max" {
     const n1 = max(u8, 4, 10);
     std.debug.print("Max n1: {d}\n", .{n1});
@@ -97,26 +210,52 @@ Max n1: 10
 Max n2: 89.24
 ```
 
-同理，**泛型数据结构本质上就是一个以 `comptime T: type` 为形参、返回值类型为 `type` 的“结构体工厂函数”**！
-接下来咱们就用这个原理亲手造一个泛型栈！
+
+### 泛型数据结构（A generic data structure） {#sec-generic-struct}
+
+你在 Zig 标准库中见到的所有容器（如 `std.ArrayList`、`std.AutoHashMap` 等），在本质上全部是泛型数据结构。
+既然没有尖括号语法，Zig 是怎么构建泛型容器的呢？
+其核心思路一脉相承：利用我们在上一节（@sec-generic-fun）中学到的泛型函数机制，**编写一个接收 `comptime T: type` 作为参数、并直接在函数体内返回一个 `struct` 类型定义的函数**！
+
+也就是说，在 Zig 里，泛型容器工厂本质上就是一个“结构体生成器函数”。
+接下来，我们就通过亲自动手实现一个通用泛型栈，来彻底玩转这一核心机制！
 
 
-## 栈的核心机制回顾 {#sec-what-stack}
+## 什么是栈（Stack）？ {#sec-what-stack}
 
-栈是典型的后进先出（LIFO - Last In, First Out）结构，就像一叠盘子：
-- **`push`**：把新盘子压在最顶上；
-- **`pop`**：把最顶上的盘子拿走。
+栈（Stack）是一种严格遵循**后进先出（LIFO, Last In First Out）**原则的经典线性数据结构。
+在标准规范中，栈核心仅支持两大基础操作：
+- **`push`（压栈）**：向栈顶压入一个新元素；
+- **`pop`（出栈）**：从栈顶弹出一个已有元素。
 
-![栈的压栈（Push）与出栈（Pop）示意图](../../Figures/lifo-stack.svg){#fig-stack}
+关于栈最经典的现实类比，莫过于食堂洗水池边**一摞摞叠在一起的餐盘**：
+洗碗工每洗好一个盘子，就会把它叠放在最上面的盘子顶端（压栈 `push`）；
+而打饭人员取用盘子时，也只能从最顶上拿走最新洗好的那个盘子（出栈 `pop`）。
+最先被洗好垫在最底下的盘子，反而会是全场最后一个被拿走的。
+
+因此，栈上的每一个操作，无论是插入还是删除，总是在栈顶进行。下面的 @fig-stack 直观地展示了这一逻辑：
+
+![栈结构示意图（来源：维基百科）](./../../Figures/lifo-stack.svg){#fig-stack}
 
 
-## 编写栈结构：先从具体类型开始
+## 编写栈数据结构：先从具体类型开始
 
-为了不一下子引入过多复杂度，咱们先写一个专门存 `u32` 的版本：
+我们采用循序渐进的工程策略：
+第一阶段：先为特定的 `u32` 类型编写一个具备动态自动扩容能力的具体栈；
+第二阶段：在验证无误后，将其一举升维抽象为真正的通用泛型栈。
+
+首先，我们需要决定值在栈中如何存储。实现栈结构背后的存储有多种方式，有人喜欢用双向链表，有人喜欢用动态数组，等等。在这个例子中，我们在底层使用一个数组来存储栈中的值，也就是 `Stack` 结构体定义中的 `items` 数据成员。
+除了底层数组，我们的栈结构还需要维护三个核心要素：
+- `capacity`：存储栈中值的底层数组的容量；
+- `length`：当前栈内实际存放的有效元素个数（同时充当栈顶游标）；
+- `allocator`：用于后续自动翻倍扩容的内存分配器句柄。
+
+首先编写初始化构造方法 `init()`：
 
 ```zig
 const std = @import("std");
 const Allocator = std.mem.Allocator;
+
 const Stack = struct {
     items: []u32,
     capacity: usize,
@@ -135,50 +274,80 @@ const Stack = struct {
 };
 ```
 
+
 ### 实现压栈：`push()` 与动态扩容
 
-当 `length + 1 > capacity` 时，池子满了。我们申请原容量 2 倍的新内存，用 `@memcpy` 将老数据整体平移，再释放老内存：
+在压栈时，新元素永远塞在当前的栈顶位置（即 `items[length]`）。
+但在此之前，必须检查当前容量是否已满：若 `(length + 1) > capacity`，说明现有容量触顶，必须执行自动扩容！
+
+扩容逻辑清晰严谨：
+1. 向分配器申请一块容量为原先 **2 倍** 的全新连续内存空间；
+2. 使用内置函数 `@memcpy()`（等价于 C 语言标准库的 `memcpy()`[^cmemcpy]），将旧数组内的数据全量迁移至新数组中；
+3. 释放旧数组内存，将指针指向新数组，并更新容量标记；
+4. 将新元素存入栈顶，并将长度递增 1。
+
+[^cmemcpy]: <https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm>。
 
 ```zig
-pub fn push(self: *Stack, val: u32) !void {
-    if ((self.length + 1) > self.capacity) {
-        var new_buf = try self.allocator.alloc(
-            u32, self.capacity * 2
-        );
-        @memcpy(
-            new_buf[0..self.capacity], self.items
-        );
-        self.allocator.free(self.items);
-        self.items = new_buf;
-        self.capacity = self.capacity * 2;
+    pub fn push(self: *Stack, val: u32) !void {
+        if ((self.length + 1) > self.capacity) {
+            var new_buf = try self.allocator.alloc(
+                u32, self.capacity * 2
+            );
+            @memcpy(
+                new_buf[0..self.capacity], self.items
+            );
+            self.allocator.free(self.items);
+            self.items = new_buf;
+            self.capacity = self.capacity * 2;
+        }
+
+        self.items[self.length] = val;
+        self.length += 1;
     }
-    self.items[self.length] = val;
-    self.length += 1;
-}
 ```
 
-### 实现出栈与析构：`pop()` 和 `deinit()`
+
+### 实现出栈：`pop()`
+
+出栈操作轻快得多：只需将当前栈顶元素标记为未初始化的 `undefined`，并将 `length` 计数递减 1 即可。若当前栈本身为空（`length == 0`），则直接返回空操作：
 
 ```zig
-pub fn pop(self: *Stack) void {
-    if (self.length == 0) return;
+    pub fn pop(self: *Stack) void {
+        if (self.length == 0) return;
 
-    self.items[self.length - 1] = undefined;
-    self.length -= 1;
-}
+        self.items[self.length - 1] = undefined;
+        self.length -= 1;
+    }
+```
 
+
+### 实现析构：`deinit()`
+
+现在，我们已经实现了栈数据结构的两个核心操作 `pop()` 和 `push()`，也实现了负责创建新 `Stack` 对象的 `init()` 方法。
+
+接下来，我们还需要实现负责销毁 `Stack` 对象的方法。在 Zig 中，这项任务通常由名为 `deinit()` 的方法承担。Zig 中的大多数结构体都有这样一个方法，它通常被称为"析构方法"。
+
+理论上，要销毁 `Stack` 对象，我们只需确保用 `Stack` 对象中存储的分配器对象，释放为底层数组分配的内存。下面的 `deinit()` 方法做的正是这件事。
+
+```zig
 pub fn deinit(self: *Stack) void {
     self.allocator.free(self.items);
 }
 ```
 
 
-## 终极升维：将栈改造为工业级通用泛型！
+## 改造为泛型
 
-现在，见证奇迹的时刻到了！
-怎么把上面只支持 `u32` 的栈，改造成能装任意类型（`u8`、`f64`、甚至自定义的 `User` 结构体）的泛型栈？
+实现了栈数据结构的基本骨架之后，我们就可以着手讨论如何让它变成泛型的。怎样才能让这个基本骨架不仅能处理 `u32` 值，还能处理我们想要的任何其他数据类型？例如，我们可能需要创建一个栈对象来存储 `User` 值。怎样才能做到这一点？答案在于使用泛型和 `comptime`。
 
-只需要给外层包一个函数 `fn Stack(comptime T: type) type`，并将内部所有的 `u32` 换成泛型参数 `T`！
+正如我在 @sec-generic-struct 中所述，基本思路是编写一个泛型函数，让它返回一个结构体定义作为输出。理论上，把 `Stack` 结构体改造成泛型数据结构并不需要太多工作，我们只需要把栈的底层数组改造成泛型数组。
+
+换句话说，这个底层数组需要像一只"变色龙"，能够根据需要变成任意数据类型的数组。例如，如果要创建一个存储 `u8` 值的栈，底层数组就需要是一个 `u8` 数组（即 `[]u8`）；如果要存储 `User` 值，这个数组就需要是一个 `User` 数组（即 `[]User`），依此类推。
+
+我们通过泛型函数来做到这一点。因为泛型函数可以接收一个数据类型作为输入，我们可以把这个数据类型传给 `Stack` 对象的结构体定义。这样，就能用这个泛型函数创建能够存储我们所需数据类型的 `Stack` 对象。如果我们想创建一个存储 `User` 值的栈结构，就把 `User` 数据类型传给这个泛型函数，它会为我们创建出描述能存储 `User` 值的 `Stack` 对象的结构体定义。
+
+看下面的代码示例。为了简洁，我省略了 `Stack` 结构体定义中的某些部分。如果 `Stack` 结构体的某个部分没有在这个例子中展示，那是因为这部分与上一个例子相比没有变化。
 
 ```zig
 fn Stack(comptime T: type) type {
@@ -201,39 +370,14 @@ fn Stack(comptime T: type) type {
         }
 
         pub fn push(self: *Self, val: T) !void {
-            if ((self.length + 1) > self.capacity) {
-                var new_buf = try self.allocator.alloc(
-                    T, self.capacity * 2
-                );
-                @memcpy(
-                    new_buf[0..self.capacity], self.items
-                );
-                self.allocator.free(self.items);
-                self.items = new_buf;
-                self.capacity = self.capacity * 2;
-            }
-
-            self.items[self.length] = val;
-            self.length += 1;
-        }
-
-        pub fn pop(self: *Self) void {
-            if (self.length == 0) return;
-            self.items[self.length - 1] = undefined;
-            self.length -= 1;
-        }
-
-        pub fn deinit(self: *Self) void {
-            self.allocator.free(self.items);
-        }
+        // Truncate the rest of the struct
     };
 }
 ```
 
+注意，在这个例子中我们创建了一个名为 `Stack()` 的函数。这个函数接收一个类型作为输入，并把这个类型传给 `Stack` 对象的结构体定义。数据成员 `items` 现在是一个类型为 `T` 的数组，`T` 就是我们作为输入传给这个函数的数据类型。`push()` 函数的参数 `val` 现在也是一个类型为 `T` 的值。
 
-## 跑通泛型栈测试！
-
-想要一个装 `u8` 的栈？直接 `Stack(u8)`；想要存字符串？直接 `Stack([]const u8)`！
+我们只需给这个函数提供一个数据类型，它就会创建出一个 `Stack` 对象的定义，这个对象能够存储我们所提供的数据类型的值。在下面的例子中，我们创建了一个能够存储 `u8` 值的 `Stack` 对象的定义，这个定义存放在 `Stacku8` 对象中。这个 `Stacku8` 对象就成为我们的新结构体，我们将用它来创建 `Stack` 对象。
 
 ```zig
 var gpa = std.heap.DebugAllocator(.{}){};
@@ -241,7 +385,6 @@ const allocator = gpa.allocator();
 const Stacku8 = Stack(u8);
 var stack = try Stacku8.init(allocator, 10);
 defer stack.deinit();
-
 try stack.push(1);
 try stack.push(2);
 try stack.push(3);
@@ -267,7 +410,17 @@ Stack len: 6
 Stack capacity: 10
 Stack len: 5
 Stack len: 4
-Stack state: { 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }
+Stack state: { 1, 2, 3, 4 }
 ```
 
-弄懂了这套模式，你就彻底参透了 Zig 标准库里 `std.ArrayList(T)`、`std.AutoHashMap(K, V)` 等所有容器的核心源码实现！
+（译注：英文原文此处的最后一行输出为 `{ 1, 2, 3, 4, 0, 0, 0, 0, 0, 0 }`，与代码打印的切片 `stack.items[0..stack.length]` 不符，译文已改为与代码一致的输出。）
+
+Zig 标准库中的每一个泛型数据结构（`ArrayList`、`HashMap`、`SinglyLinkedList` 等）都是按照这种逻辑实现的：它们用一个泛型函数来创建结构体定义，使其能够处理你作为输入提供的数据类型。（译注：在 Zig 0.17.1 中，`SinglyLinkedList` 已改为非泛型的实现，见 @sec-data-structures 中的链表一节。）
+
+
+## 总结
+
+本章讨论的栈结构的完整源码可以在本书官方仓库中免费获取。在仓库的 `ZigExamples` 文件夹中，[`stack.zig`](https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig)[^zig-stack] 是 `u32` 版本的栈，[`generic_stack.zig`](https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig)[^zig-stack2] 是泛型版本。
+
+[^zig-stack]: <https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/stack.zig>。
+[^zig-stack2]: <https://github.com/pedropark99/zig-book/tree/main/ZigExamples/data-structures/generic_stack.zig>。

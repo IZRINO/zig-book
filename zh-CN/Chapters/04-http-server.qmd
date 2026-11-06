@@ -1,8 +1,7 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
 
 
 # 实战项目 2：从零手写 HTTP 服务器 {#sec-http-server-project}
@@ -14,12 +13,12 @@ syntax-definition: "../../Assets/zig.xml"
 
 ## 到底什么是 HTTP 服务器？
 
-剥开所有花哨的框架包装，任何服务器本质上都是一个**常驻后台的死循环程序**：它静静监听着某个端口，等待客户端（比如浏览器、手机 App、命令行 curl）发起连接。
+剥开所有花哨的框架包装，HTTP 服务器本质上是一个无限期等待客户端连接的程序，就像酒店前台等待新客人到来一样。
 一旦有连接握手成功，服务器接纳（Accept）该连接，双方就通过这个双向字节流通道互发消息。
 
-而双方在通道里往来的文本报文，必须严格遵从一套约定俗成的通用格式规范——这就是统治现代万维网的 **HTTP 协议（超文本传输协议）**。没有它，我们今天熟悉的 Web 世界根本无从谈起。
+而双方在通道里往来的文本报文，必须遵循特定的格式，即 **HTTP 协议（超文本传输协议）** 所规定的格式。
 
-简单总结：所谓的 Web 服务器，就是守着端口、用 HTTP 协议规范跟客户端互通有无的 TCP 守护进程。
+简单来说，HTTP 服务器就是通过 HTTP 协议与客户端交换消息的服务器。
 如果想重温 HTTP 协议的官方规范概览，非常推荐阅读 [Mozilla MDN 上的 HTTP 概述文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview)[^mdn-http]。
 
 [^mdn-http]: <https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Overview>。
@@ -43,8 +42,9 @@ syntax-definition: "../../Assets/zig.xml"
 6. **关闭连接**，重回等待状态。
 
 
-## 工业级底层服务是怎么实现的？ {#sec-http-how-impl}
+## HTTP 服务器通常是怎么实现的？ {#sec-http-how-impl}
 
+以 C 语言为例，技术社区中有许多优秀的教程与视频演示了如何用 C 语言从零实现简易 HTTP 服务器（例如 @jeffrey_http、@nipun_http 以及 @eric_http）。
 在底层（比如 C 语言世界），实现一个基础 HTTP 服务必须走完标准的 BSD/POSIX 套接字流程：
 
 1. **创建 Socket**：申请一个 TCP 套接字描述符（代表通讯管道）；
@@ -61,11 +61,15 @@ syntax-definition: "../../Assets/zig.xml"
 
 咱们先单独建一个 Zig 模块 `server.zig`，专门用来负责端口绑定和监听。
 
-随着 Zig 0.16 引入全新的统一网络 I/O 体系，我们直接基于现代化的 `std.Io.net` API 展开：通过 `std.Io.net.IpAddress` 解析 IP 端口并调用 `.listen()` 开启 TCP 监听。
+现在，我们需要在代码中创建一个 TCP 套接字对象。在本书之前的版本中，我们通过 Zig 标准库的 `std.posix.socket()` 函数来创建 TCP 套接字。但 Zig 0.16 引入了新的 IO 接口，这个函数和新的 `std.Io.net.Stream` API 搭配起来很别扭。
 
-网络通信需要 IP 和端口：
+因此，这次我换一种做法。简单来说，我们通过 [`std.Io.net.IpAddress` 的 `listen()` 方法](https://ziglang.org/documentation/master/std/#std.Io.net.IpAddress.listen)[^listen-ipaddress]创建 TCP 套接字。然后，对于这个由 `std.Io.net.Server` 类型表示的 TCP 套接字，我们使用 `accept()` 方法在服务器与客户端之间建立连接。通过 `accept()` 得到的这个"连接对象"，我们可以访问一个流，服务器和客户端借助它交换消息。
+
+[^listen-ipaddress]: <https://ziglang.org/documentation/master/std/#std.Io.net.IpAddress.listen>
+
+正如我们在 @sec-http-how-impl 中提到的，每个服务端套接字都需要绑定具体的 IP 地址与端口号：
 - **IP**：这里选用本机的回环地址（Loopback / Localhost）`127.0.0.1`；
-- **端口（Port）**：在 TCP 中是一个 16 位无符号整数（Zig 中的 `u16`），范围是 0 ~ 65535。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 `3490`。
+- **端口（Port）**：在 TCP 中是一个 16 位无符号整数（Zig 中的 `u16`），取值范围在 0 ~ 65535 [@wikipedia_port]。我们避开 80、443 等特权端口，随手挑一个顺眼的自定义端口 `3490`。
 
 看下面封装的 `Server` 结构体：
 
@@ -103,7 +107,7 @@ pub const Server = struct {
 
 ### 监听并接收客户端连接
 
-在主程序 `main.zig` 中，我们引入刚才的 `server.zig`，开启监听并调用 `accept()` 等待连接：
+在主程序 `main.zig` 中，我们引入在 @sec-create-socket 中构建的 `server.zig` 模块，开启监听并调用 `accept()` 等待连接：
 
 ```zig
 const std = @import("std");
@@ -125,6 +129,7 @@ pub fn main(init: std.process.Init) !void {
 
 ### 读取来自客户端的 HTTP 请求报文 {#sec-read-http-message}
 
+回顾 @sec-how-http-works，服务器接纳连接后的第一步就是读取客户端发来的 HTTP 请求报文。
 连接建立后，拿到的是一个双向的 `connection` 流对象：
 - 向流中**写入（Write）**数据 = 给客户端回送报文；
 - 从流中**读取（Read）**数据 = 接收客户端发送的报文。
@@ -185,21 +190,39 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-敲下 `zig run src/main.zig`，控制台打印出监听地址并就绪：
+现在用 `zig` 编译器的 `run` 命令执行这个程序。但请记住，正如前面所说，程序一启动就会无限期地挂起，因为它在等待客户端连接服务器。
 
-![终端执行并进入监听状态](../../Figures/print-zigrun1.png){#fig-print-zigrun1}
+更具体地说，程序会停在调用 `accept()` 的那一行。一旦有客户端尝试连接服务器，程序就会"恢复"执行，`accept()` 函数最终完成调用，创建出我们需要的连接对象，然后程序的其余部分才会继续运行。
 
-打开浏览器访问 `http://localhost:3490`（或者跑一段简单的 Python 请求脚本）。此时浏览器会转圈，因为咱们还没写回传 Response 的逻辑；
-但回头看终端控制台，**浏览器亲手发送的真实 HTTP 请求报文已经被咱们抓个正着**！
+如 @fig-print-zigrun1 所示，控制台打印出了消息 `Server Addr: 127.0.0.1:3490`，程序正在等待传入的连接。
 
-![终端成功抓包并打印出浏览器发来的真实 HTTP Request 报文](../../Figures/print-zigrun2.png){#fig-print-zigrun2}
+![运行程序的截图](../../Figures/print-zigrun1.png){#fig-print-zigrun1}
+
+现在终于可以尝试连接这个服务器了，方法有好几种。例如，可以使用下面这个 Python 脚本：
+
+```python
+import requests
+requests.get("http://127.0.0.1:3490")
+```
+
+也可以打开你喜欢的任意一款浏览器，输入网址 `localhost:3490`。注意：`localhost` 与 IP `127.0.0.1` 是同一个地址。按下回车后，浏览器访问这个地址，一开始很可能会显示"该网页无法正常运作"（this page isn't working），随后很可能又变成"无法访问此网站"（the site can't be reached）。
+
+浏览器之所以显示这些"错误信息"，是因为它没有收到服务器的任何响应。换句话说，浏览器连接到我们的服务器时，确实通过已建立的连接发送了 HTTP 请求，然后它在等待一个 HTTP 响应，但服务器什么也没有返回（我们还没有实现 HTTP 响应的逻辑）。
+
+不过这没关系。我们已经达成了现阶段想要的结果：连接到服务器，并看到浏览器（或 Python 脚本）发给服务器的 HTTP 请求。
+
+回到你执行程序时留着的那个控制台，会看到程序已经结束运行，并且控制台上打印出了一条新消息，这正是浏览器发给服务器的 HTTP 请求消息。
+
+由于代码中只读取了 HTTP 请求的前 6 行，这个程序打印出来的可能不是完整的 HTTP 请求消息，这取决于 HTTP 请求消息有多大。（译注：代码中的循环是 `for (0..5)`，实际读取的是前 5 行。）打印出的 HTTP 请求如 @fig-print-zigrun2 所示。
+
+![浏览器发送的 HTTP 请求的截图](../../Figures/print-zigrun2.png){#fig-print-zigrun2}
 
 
 ## 知识点加餐：Zig 枚举（Enums） {#sec-enum}
 
 在解析报文之前，我们先插播一个必不可少的语言特性：**枚举（Enums）**。
 
-当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE...），用枚举是类型安全的最优解：
+当一个变量的取值范围是已知、有限的几种固定状态时（比如 HTTP 方法：GET、POST、DELETE...），可以考虑使用枚举：
 
 ```zig
 const PrimaryColorRGB = enum {
@@ -225,21 +248,87 @@ e1.zig:5:36: error: enum 'PrimaryColorRGB' has
 而且在 Zig 里，**枚举跟结构体一样，内部可以挂载自定义方法**！
 
 
-## 动手实现服务器：第二阶段（请求解析与响应回传）
+## 动手实现服务器：第二阶段 {#sec-impl-server-part2}
 
-HTTP 请求报文通常包含三部分：
-1. **起始行（Request Line）**：包含方法（Method）、请求路径（URI）和协议版本（HTTP Version），例如 `GET /users/list HTTP/1.1`；
-2. **请求头（Headers）**：由冒号分隔的键值对组成（如 `Host: localhost`、`Accept: text/html`）；
-3. **请求体（Body）**：POST/PUT 时携带的载荷数据（GET 请求通常没有 Body）。
-
-在当前项目中，我们聚焦于解析最重要的**起始行**，并完整支持 `GET` 方法。
+一条 HTTP 请求是一段文本消息，分为三个部分：
+1. **顶层起始行（The top-level header / Request line）**：指明请求方法、访问目标资源 URI 以及 HTTP 协议版本；
+2. **请求头列表（The list of HTTP headers）**：以冒号分隔的键值对元数据集合；
+3. **请求体（The body）**：紧随空行之后携带的业务载荷数据。
 
 
-### 优雅的请求方法映射：`StaticStringMap`
+### 请求起始行（The top-level header）
 
-怎么把报文里的 `"GET"` 字符串快速转换成枚举呢？
-Zig 标准库提供了一个极度强悍的工具：`std.static_string_map.StaticStringMap`！
-它能在**编译期**根据一组固定字符串键值构建高效的静态字典，查找极快且不需要任何堆内存分配：
+任何 HTTP 请求的第一行文本永远包含着该请求最核心的三大基石信息，各个属性之间在文本行中通过空格分隔：
+第一项是请求所使用的 HTTP 方法（Method）；
+第二项是请求送达的目标 URI 资源路径；
+第三项是所遵循的 HTTP 协议版本。
+
+```
+GET /users/list HTTP/1.1
+```
+
+在上面的示例中，`GET` 是请求方法。许多开发者习惯把中间的 `/users/list` 称作“API 路由端点（Endpoint）”。在 GET 请求语境下，它本质上就是客户端希望从服务器索取的文档资源路径。末尾的 `HTTP/1.1` 则指明了协议版本，这也是目前全网最通用普及的 HTTP 规范。
+
+
+### 请求头列表（The list of HTTP headers）
+
+紧随起始行之后的是请求头列表。它由一组键值对组成，用于向服务器交代客户端的环境特征与交互偏好。
+
+在本章自制微型服务器的实现中，为了保持代码纯粹聚焦，我们暂不深入解析复杂的请求头。但现实中的大多数 HTTP 服务器都会读取并使用这些头部。
+例如最常见的 `Accept` 头部，它列出了客户端所能解析的 [MIME 媒体类型](https://en.wikipedia.org/wiki/Media_type)[^mime]（如 `text/html`、`application/json` 等）。这相当于客户端在向服务器打招呼：“我只能看懂 HTML 页面，请千万别给我发个二进制 PDF 过来！”服务器便能根据该头部动态挑选最优格式返回。
+
+[^mime]: <https://en.wikipedia.org/wiki/Media_type>。
+
+
+### 请求体（The body）
+
+请求体位于请求头与空行（`\r\n\r\n`）之后，它是一个可选区域。
+例如对于所有的 GET 请求，由于其语义是“索取数据”而非“提交数据”，因此通常完全没有请求体。请求体主要活跃在 POST、PUT 等涉及向服务器提交表单或上传文件的请求中。
+由于我们当前的微型服务器只专注于处理 GET 请求，因此无需处理请求体。
+
+
+### 定义 HTTP 请求方法枚举（Creating the HTTP Method enum）
+
+每个合法的 HTTP 请求都有着明确的方法动作（如 `GET`、`POST`、`OPTIONS`、`PATCH`、`DELETE` 等）。
+POST 负责提交数据供服务器处理和持久化；而 GET 则是向服务器请求分发资源。
+当客户端发送 POST 请求时，服务器的响应通常只是告知“数据是否保存成功”；而面对 GET 请求时，服务器则必须在响应体中附带客户端想要的实体内容。
+
+由于 HTTP 请求的方法由这样一组数量很少、内容固定的单词来标识，用一个枚举（enum）结构来表示 HTTP 方法会很合适。这样一来，我们就能轻松检查从客户端收到的 HTTP 请求所使用的方法，是不是我们这个小型 HTTP 服务器当前支持的方法。
+
+下面的 `Method` 结构就表示这个枚举。注意，目前这个枚举里只有 GET 这一种 HTTP 方法，因为在本章中我只打算实现 GET 方法，所以没有把其他 HTTP 方法放进来。
+
+```zig
+pub const Method = enum { GET };
+```
+
+接下来，我想给这个枚举结构添加两个方法。一个是 `is_supported()`，它返回一个布尔值，表示输入的 HTTP 方法是否受我们的 HTTP 服务器支持。另一个是 `init()`，它是一个构造函数，接收一个字符串作为输入，并尝试把它转换为 `Method` 值。
+
+为了实现这两个函数，我会用到 Zig 标准库中的 `StaticStringMap()`。这个函数可以创建一个从字符串到枚举值的简单映射。换句话说，我们可以用这个映射结构把一个字符串映射到对应的枚举值。在某种程度上，标准库里的这个结构几乎就像一个"哈希表"，并且针对少量单词（即少量键）做了优化，正好符合我们这里的情况。我们会在 @sec-maps-hashtables 中进一步讨论 Zig 中的哈希表。
+
+要使用这个"静态字符串映射"结构，需要从 Zig 标准库的 `std.static_string_map` 模块中导入它。为了让代码更短、更好写，我会用一个更短的名字（`Map`）来导入这个函数。
+
+导入 `Map()` 之后，把它应用到映射结果要使用的枚举结构上即可。在这里就是上一个代码示例中声明的 `Method` 枚举结构。然后，我调用 `initComptime()` 方法并传入映射内容，即我们要用的键值对列表。
+
+在下面的例子中可以看到，我用多个匿名结构体字面量写出了这个映射。在第一个（也就是"顶层的"）结构体字面量里，有一个由结构体字面量组成的列表（或序列）。列表中的每个结构体字面量代表一个独立的键值对。每个键值对的第一个元素（即键）必须是字符串值，第二个元素则必须是你传给 `Map()` 函数的那个枚举结构中的值。
+
+```zig
+const std = @import("std");
+pub const Method = enum { GET };
+const Map = std.static_string_map.StaticStringMap;
+const MethodMap = Map(Method).initComptime(.{
+    .{ "GET", Method.GET },
+});
+```
+
+因此，`MethodMap` 对象基本上相当于 C++ 中的 `std::map` 对象，或者 Python 中的 `dict` 对象。你可以使用映射对象的 `get()` 方法，取得与某个键对应的枚举值。这个方法返回一个可选值，因此 `get()` 的结果可能是 null。
+
+我们可以利用这一点来检测某个 HTTP 方法是否受我们的 HTTP 服务器支持。如果 `get()` 方法返回 null，就说明它在 `MethodMap` 对象中没有找到我们提供的方法，也就是说我们的 HTTP 服务器不支持这个方法。
+
+下面的 `init()` 方法接收一个字符串值作为输入，然后直接把这个字符串传给 `MethodMap` 对象的 `get()` 方法。这样，我们就能得到与这个输入字符串对应的枚举值。
+
+注意，在下面的例子中，`init()` 方法的返回结果要么是一个错误（这可能在 `?` 方法返回 `unreachable` 时发生，详见 @sec-null-handling），要么是一个 `Method` 对象。由于 `GET` 目前是 `Method` 枚举结构中唯一的值，`init()` 方法很可能会返回 `Method.GET`。（译注：严格来说，`.?` 解包到 null 时不会产生错误值，而是触发 `unreachable`：在 Debug 和 ReleaseSafe 模式下程序会 panic，在 ReleaseFast 和 ReleaseSmall 模式下则是未定义行为。因此这里的 `init()` 实际上不会返回错误。如果希望遇到不支持的方法时返回错误，可以改写为 `return MethodMap.get(text) orelse error.UnsupportedMethod;`。）
+
+还要注意，在 `is_supported()` 方法中，我们使用了 `MethodMap` 对象的 `get()` 方法所返回的可选值。`if` 语句会解包这个可选值，如果它不是 null，就返回 `true`，否则返回 `false`。
 
 ```zig
 const std = @import("std");
@@ -263,9 +352,11 @@ const MethodMap = Map(Method).initComptime(.{
 ```
 
 
-### 解析起始行：`parse_request()`
+### 编写请求解析函数（Writing the parse request function）
 
-我们定义一个 `Request` 结构体，并通过标准库切分函数拆解首行：
+在创建好表示 HTTP 方法的枚举之后，我们就可以开始编写真正负责解析 HTTP 请求的函数了。
+
+首先可以写一个结构体来表示 HTTP 请求。以下面的 `Request` 结构体为例，它包含 HTTP 请求"顶层"头部（即第一行）中的三项基本信息。
 
 ```zig
 const Request = struct {
@@ -282,7 +373,23 @@ const Request = struct {
         };
     }
 };
+```
 
+`parse_request()` 函数应当接收一个字符串作为输入。这个字符串包含 HTTP 请求消息，解析函数需要读取并理解这条消息的各个组成部分。
+
+请记住，就本章而言，我们只关心这条消息的第一行。这一行包含"顶层头部"，也就是 HTTP 请求的三项基本属性：所用的 HTTP 方法、URI 和 HTTP 版本。
+
+注意，我在 `parse_request()` 中使用了 `indexOfScalar()` 函数。Zig 标准库中的这个函数会返回我们提供的标量值在字符串中第一次出现的索引。这里我要找的是换行符（`\n`）第一次出现的位置，因为我们只关心 HTTP 请求消息的第一行。我们想要解析的三项信息（HTTP 版本、HTTP 方法和 URI）就在这一行。
+
+因此，我们用 `indexOfScalar()` 函数把解析过程限制在消息的第一行。还值得一提的是，`indexOfScalar()` 函数返回的是一个可选值，所以我用 `orelse` 关键字提供了一个备选值，以应对函数返回 null 的情况。
+
+由于这三项属性之间都用一个空格分隔，我们可以使用 Zig 标准库中的 `splitScalar()` 函数，在每个出现空格的位置把输入字符串切分成若干段。换句话说，`splitScalar()` 函数相当于 Python 中的 `split()` 方法、C++ 中的 `std::getline()` 函数，或者 C 中的 `strtok()` 函数。
+
+使用 `splitScalar()` 函数时，得到的结果是一个迭代器。这个迭代器有一个 `next()` 方法，可以把迭代器推进到下一个位置，也就是切分后字符串的下一段。注意，`next()` 不仅会推进迭代器，还会把指向当前这一段的切片作为结果返回。
+
+如果你想取得指向当前这一段的切片，但又不想把迭代器推进到下一个位置，可以使用 `peek()` 方法。`next()` 和 `peek()` 方法都返回可选值，所以我用 `?` 方法来解包这些可选值。
+
+```zig
 pub fn parse_request(text: []u8) Request {
     const line_index = std.mem.indexOfScalar(
         u8, text, '\n'
@@ -298,11 +405,59 @@ pub fn parse_request(text: []u8) Request {
 }
 ```
 
+（译注：`parse_request()` 的返回类型不是错误联合类型，函数体内却使用了 `try`。这段代码之所以能通过编译，是因为 `Method.init()` 推断出的错误集为空，`try` 不会真正返回任何错误。如果按前面译注的方式让 `init()` 返回 `error.UnsupportedMethod`，就需要把 `parse_request()` 的返回类型同步改为 `!Request`，并在调用处加上 `try`。）
 
-### 编写 HTTP Response 响应回传
+正如我在 @sec-zig-strings 中所述，在 Zig 语言里，字符串就是字节数组。因此，你会在 Zig 标准库的 `mem` 模块中找到很多可以直接处理字符串的实用函数。我们已经在 @sec-strings-useful-funs 中介绍过其中一部分。
 
-最后一步，给客户端回传 HTTP 报文。
-新建 `response.zig`，分别实现 200 成功和 404 未找到两套标准响应：
+
+### 在主函数中使用解析函数（Using the parse request function）
+
+现在我们在 `main.zig` 中正式串联起请求读取与解析流程：
+
+```zig
+const std = @import("std");
+const Request = @import("request.zig");
+const Server = @import("server.zig").Server;
+
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const server = try Server.init(io);
+    var listening = try server.listen();
+    const connection = try listening.accept(io);
+    defer connection.close(io);
+
+    var request_buffer: [1000]u8 = undefined;
+    @memset(request_buffer[0..], 0);
+    try Request.read_request(
+        io,
+        connection,
+        request_buffer[0..]
+    );
+    const request = Request.parse_request(request_buffer[0..]);
+    std.debug.print("{any}\n", .{request});
+}
+```
+
+重新运行程序并在浏览器中访问 `localhost:3490`，终端便会如期打印出解析好的 `Request` 结构体：
+
+```
+request.Request{
+    .method = request.Method.GET,
+    .version = {72, 84, 84, 80, 47, 49, 46, 49, 13},
+    .uri = {47}
+}
+```
+
+*注：由于我们在打印时采用了 `any` 格式说明符，`version` 与 `uri` 以原始 ASCII 整数切片形式展现。其中 47 对应字符 `/`，而 72, 84, 84, 80... 对应的正是 `"HTTP/1.1"`。*
+
+
+### 向客户端回发 HTTP 响应（Sending the HTTP Response to the client）
+
+最后一步：我们要让服务器向浏览器正式回送合法的 HTTP 响应报文，将经典的 "Hello, World!" HTML 页面呈现在用户的浏览器屏幕上。
+
+我们新建一个 `response.zig` 模块，编写 `send_200()` 与 `send_404()` 两个应答函数：
+- `send_200()`：回发状态码为 200 OK 的响应报文，随附一段简短的 HTML 网页；
+- `send_404()`：当客户端请求了不存在的路径时，回发 404 Not Found 错误页面。
 
 ```zig
 const std = @import("std");
@@ -331,10 +486,13 @@ pub fn send_404(conn: Stream, io: std.Io) !void {
 }
 ```
 
+两个函数接收连接对象后，通过 `conn.writer()` 构造写入器，并将格式化好的完整 HTTP 响应报文字符串通过底层套接字直接投递给客户端。
 
-## 完整串联：真正的“Hello, World!”网页现身
 
-把全部模块在 `main.zig` 里大一统串联起来：
+## 最终运行效果与浏览器验证 {#sec-http-final}
+
+现在我们在 `main.zig` 中完成所有拼图的最终合龙：
+导入 `response.zig`，并在解析完请求后通过 `if` 分支校验 URI：如果请求的是根路径 `"/"`（借助 `std.mem.eql` 比对），就调用 `send_200()` 发送问候网页；否则调用 `send_404()`：
 
 ```zig
 const std = @import("std");
@@ -368,9 +526,8 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-再次敲下 `zig run` 并用浏览器刷新 `http://localhost:3490`！
-这一次，浏览器窗口里瞬间赫然弹出了大号加粗的 **"Hello, World!"** 网页！
+在终端敲下 `zig run src/main.zig`，打开浏览器访问 `http://localhost:3490`。如 @fig-print-zigrun3 所示，服务器成功将包含 `"Hello, World!"` 的 HTTP 响应发送给了浏览器并渲染展示：
 
-![浏览器成功收到我们亲手写的 HTTP 服务器响应并渲染出 HTML 网页](../../Figures/print-zigrun3.png){#fig-print-zigrun3}
+![HTTP 响应中发送的 Hello World 页面](../../Figures/print-zigrun3.png){#fig-print-zigrun3}
 
-从原始 TCP 监听，到逐行拆解 HTTP 请求，再到亲手拼接标准的 HTTP 状态行与 HTML 报文——不依赖任何现成 Web 框架，你亲手造出了一个货真价实跑在本地的 HTTP 服务！
+至此，一个从底层原始网络套接字监听、到原始字节流缓冲读取、再到协议解析与 HTTP 报文构造回发的完整微型 Web 服务器，便全部由我们用纯正的 Zig 语言亲手铸就完毕！

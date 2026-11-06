@@ -459,7 +459,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -477,7 +477,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -502,17 +502,14 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-pointer-var" id="toc-sec-pointer-var" class="nav-link active" data-scroll-target="#sec-pointer-var"><span class="header-section-number">6.1</span> 常量对象 vs 变量对象下的指针规则</a>
-  <ul class="collapse">
-  <li><a href="#厘清指针本身可变与指向的数据可变" id="toc-厘清指针本身可变与指向的数据可变" class="nav-link" data-scroll-target="#厘清指针本身可变与指向的数据可变"><span class="header-section-number">6.1.1</span> 厘清“指针本身可变”与“指向的数据可变”</a></li>
-  </ul></li>
+  <li><a href="#sec-pointer-var" id="toc-sec-pointer-var" class="nav-link active" data-scroll-target="#sec-pointer-var"><span class="header-section-number">6.1</span> 常量对象 vs 变量对象下的指针规则</a></li>
   <li><a href="#指针分类单项指针与多项指针" id="toc-指针分类单项指针与多项指针" class="nav-link" data-scroll-target="#指针分类单项指针与多项指针"><span class="header-section-number">6.2</span> 指针分类：单项指针与多项指针</a></li>
   <li><a href="#指针算术运算pointer-arithmetic" id="toc-指针算术运算pointer-arithmetic" class="nav-link" data-scroll-target="#指针算术运算pointer-arithmetic"><span class="header-section-number">6.3</span> 指针算术运算（Pointer Arithmetic）</a></li>
   <li><a href="#可选类型optionals与告别十亿美元错误" id="toc-可选类型optionals与告别十亿美元错误" class="nav-link" data-scroll-target="#可选类型optionals与告别十亿美元错误"><span class="header-section-number">6.4</span> 可选类型（Optionals）与告别“十亿美元错误”</a>
   <ul class="collapse">
   <li><a href="#显式标记可能为空可选类型-t" id="toc-显式标记可能为空可选类型-t" class="nav-link" data-scroll-target="#显式标记可能为空可选类型-t"><span class="header-section-number">6.4.1</span> 显式标记可能为空：可选类型 <code>?T</code></a></li>
   <li><a href="#可选指针optional-pointers" id="toc-可选指针optional-pointers" class="nav-link" data-scroll-target="#可选指针optional-pointers"><span class="header-section-number">6.4.2</span> 可选指针（Optional Pointers）</a></li>
-  <li><a href="#sec-null-handling" id="toc-sec-null-handling" class="nav-link" data-scroll-target="#sec-null-handling"><span class="header-section-number">6.4.3</span> 优雅处理 null 的三大法宝</a></li>
+  <li><a href="#sec-null-handling" id="toc-sec-null-handling" class="nav-link" data-scroll-target="#sec-null-handling"><span class="header-section-number">6.4.3</span> 显式处理 null 的三种方式</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -540,61 +537,60 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
-<p>在紧接着的下一个实战项目中，咱们要手写一个属于自己的轻量 HTTP 服务器。 不过在动手造服务器之前，有一门系统底层开发的硬功夫必须拿下——<strong>指针（Pointers）与可选类型（Optionals）</strong>。 Zig 的指针继承了 C 指针的纯粹与极致性能，但在安全性上做出了脱胎换骨的升级。</p>
-<p>说白了，指针就是一个装了内存物理地址的对象。这个地址指向物理内存中某块具体的数据。</p>
+<p>在紧接着的下一个实战项目中，咱们要手写一个属于自己的轻量 HTTP 服务器。 不过在动手造服务器之前，有一门系统底层开发的硬功夫必须拿下——<strong>指针（Pointers）与可选类型（Optionals）</strong>。 Zig 的指针和 C 的指针很像，但多了一些额外的好处。</p>
+<p>说白了，指针就是一个存放内存地址的对象。这个地址就是某个值在内存中的存放位置。这个值可以是任何值，大多数时候来自代码里的另一个对象（或变量）。</p>
 <p>看下面这个简单直观的例子：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> number<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>number;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pointer;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;number;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>_ = pointer;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>在 Zig 里取对象地址用经典的取地址符 <code>&amp;</code>。把 <code>number</code> 的地址取出来赋给 <code>pointer</code>，<code>pointer</code> 就成了一个指针。</p>
 <p>拿到指针后，怎么顺藤摸瓜拿到（或者修改）它指向的真实数据呢？这个动作叫做<strong>解引用（Dereferencing）</strong>。 在 Zig 里，解引用的语法是在指针后面加 <code>.*</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> number<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>number;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> doubled <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> pointer<span class="op">.*</span>;</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>std<span class="op">.</span>debug<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{doubled});</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;number;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> doubled = <span class="dv">2</span> * pointer.*;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>std.debug.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>doubled<span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>10</code></pre>
 <p>这套 <code>.*</code> 语法非常舒服，因为它能极其自然地和方法调用链连在一起。还记得在 <a href="03-structs.html#sec-structs-and-oop" class="quarto-xref"><span>Section 2.3</span></a> 中写的 <code>User</code> 结构体和它的 <code>print_name()</code> 方法吗？ 拿到了指向某个用户的指针，直接 <code>pointer.*.print_name()</code> 即可流畅链式调用：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> u <span class="op">=</span> User<span class="op">.</span>init(<span class="dv">1</span><span class="op">,</span> <span class="st">"pedro"</span><span class="op">,</span> <span class="st">"email@gmail.com"</span>);</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>u;</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> pointer<span class="op">.*.</span>print_name();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> u = User.init(<span class="dv">1</span>, <span class="st">"pedro"</span>, <span class="st">"email@gmail.com"</span>);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;u;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> pointer.*.print_name();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>pedro</code></pre>
 <p>如果底层对象是可变的，我们也可以通过指针原地更新它的值：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> number<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>number;</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pointer<span class="op">.*</span> <span class="op">=</span> <span class="dv">6</span>;</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{number});</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>我们在开发中之所以如此青睐指针，核心目的是<strong>避免昂贵的数据内存拷贝（Copy / Move）</strong>。 如果一个结构体体量很大，在函数调用或跨作用域传递时如果按值拷贝，CPU 得老老实实搬运大量字节；而如果传一个轻巧的指针过去，开销仅仅是传一个 8 字节的内存地址，性能差距立竿见影。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> number: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;number;</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pointer.* = <span class="dv">6</span>;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>number<span class="op">}</span>);</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>6</code></pre>
+<p>我们在开发中之所以如此青睐指针，核心目的是<strong>避免昂贵的数据内存拷贝（Copy / Move）</strong>。 如果一个结构体体量很大，在函数调用或跨作用域传递时如果按值拷贝，CPU 得老老实实搬运大量字节；而如果传一个指针过去，只需要传递一个内存地址（在 64 位平台上是 8 字节），开销小得多。</p>
 <section id="sec-pointer-var" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="sec-pointer-var"><span class="header-section-number">6.1</span> 常量对象 vs 变量对象下的指针规则</h2>
-<p>指针可以指向常量，也可以指向变量。 但请记住一条铁律：<strong>指针必须绝对尊重被指向目标的原生可变性！</strong></p>
-<p>如果指针指向的是一个 <code>const</code> 常量对象，那你妄图通过指针修改它的值就是痴人说梦，编译器会当场翻脸报错：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> number <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>number;</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pointer<span class="op">.*</span> <span class="op">=</span> <span class="dv">6</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>指针可以指向常量，也可以指向变量。 但请记住一条基本原则：<strong>指针必须始终尊重其所指向对象的可变性特征</strong>。因此，如果指针指向的是一个常量对象，你就不能通过该指针去修改它指向的值——正如我们在 <a href="01-zig-weird.html#sec-assignments" class="quarto-xref"><span>Section 1.4</span></a> 中所讨论的，常量对象的值是不可修改的。</p>
+<p>例如，如果 <code>number</code> 是一个 <code>const</code> 常量对象，尝试通过 <code>pointer</code> 将其值修改为 6 会触发编译期错误：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number = <span class="dv">5</span>;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;number;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>pointer.* = <span class="dv">6</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>p.zig:6:12: error: cannot assign to constant
     pointer.* = 6;</code></pre>
 <p>把 <code>number</code> 声明为 <code>var</code> 变量后，通过指针写值才能畅通无阻：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> number<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> pointer <span class="op">=</span> <span class="op">&amp;</span>number;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>pointer<span class="op">.*</span> <span class="op">=</span> <span class="dv">6</span>;</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{number});</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> number: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> pointer = &amp;number;</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pointer.* = <span class="dv">6</span>;</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>number<span class="op">}</span>);</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>6</code></pre>
 <p>在类型签名上区分得一清二楚： - 指向常量的指针，类型是 <strong><code>*const T</code></strong>（只读，无法通过它修改数据）； - 指向变量的指针，类型是 <strong><code>*T</code></strong>（可读可写）。</p>
-<section id="厘清指针本身可变与指向的数据可变" class="level3" data-number="6.1.1">
-<h3 data-number="6.1.1" class="anchored" data-anchor-id="厘清指针本身可变与指向的数据可变"><span class="header-section-number">6.1.1</span> 厘清“指针本身可变”与“指向的数据可变”</h3>
-<p>初学者经常容易把“指针自身”和“指针指向的值”搞混： - <strong>数据不可变，但指针自身可变</strong>：比如 <code>var p = &amp;c1;</code>，随后 <code>p = &amp;c2;</code>。指针里存的内存门牌号变了，但被指向的数据不能篡改：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> c1<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> c2<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">6</span>;</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> pointer <span class="op">=</span> <span class="op">&amp;</span>c1;</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{pointer<span class="op">.*</span>});</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>pointer <span class="op">=</span> <span class="op">&amp;</span>c2;</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{pointer<span class="op">.*</span>});</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>上面讨论的是“被指针指向的值”是否为常量；那么<strong>指针对象自身</strong>呢？如果把指针对象本身声明为 <code>const</code>（如前面的例子），我们就不能修改指针对象内部存储的内存地址；而如果将 <code>pointer</code> 声明为 <code>var</code> 变量对象，我们就可以随时改变它所指向的目标地址（例如从指向 <code>c1</code> 改为指向 <code>c2</code>）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c1: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c2: <span class="dt">u8</span> = <span class="dv">6</span>;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> pointer = &amp;c1;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>pointer.*<span class="op">}</span>);</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>pointer = &amp;c2;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>pointer.*<span class="op">}</span>);</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>5
 6</code></pre>
 <p>一句话理清： - <code>const ptr: *T</code>：指针自身固定（不能换指向），但指向的数据可改； - <code>var ptr: *const T</code>：指针自身可以随时换指向，但指向的数据是只读的。</p>
-</section>
 </section>
 <section id="指针分类单项指针与多项指针" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="指针分类单项指针与多项指针"><span class="header-section-number">6.2</span> 指针分类：单项指针与多项指针</h2>
@@ -606,96 +602,96 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </section>
 <section id="指针算术运算pointer-arithmetic" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="指针算术运算pointer-arithmetic"><span class="header-section-number">6.3</span> 指针算术运算（Pointer Arithmetic）</h2>
-<p>在 Zig 里，多项指针支持经典的指针算术加减：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ar <span class="op">=</span> [_]<span class="dt">i32</span>{ <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span> };</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> ptr<span class="op">:</span> [<span class="op">*</span>]<span class="at">const</span> <span class="dt">i32</span> <span class="op">=</span> <span class="op">&amp;</span>ar;</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{ptr[<span class="dv">0</span>]});</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ptr <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{ptr[<span class="dv">0</span>]});</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ptr <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{ptr[<span class="dv">0</span>]});</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Zig 同样支持指针算术运算（Pointer Arithmetic），其工作方式与 C 语言一致。当指针指向一个数组时，它起初指向数组的首个元素，你可以通过对指针进行加减偏移来顺序访问数组中的其余元素：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ar = [_]<span class="dt">i32</span><span class="op">{</span> <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span> <span class="op">}</span>;</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ptr: [*]<span class="kw">const</span> <span class="dt">i32</span> = &amp;ar;</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>ptr[<span class="dv">0</span>]<span class="op">}</span>);</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>ptr += <span class="dv">1</span>;</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>ptr[<span class="dv">0</span>]<span class="op">}</span>);</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>ptr += <span class="dv">1</span>;</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>ptr[<span class="dv">0</span>]<span class="op">}</span>);</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>1
 2
 3</code></pre>
-<p>不过必须提醒的是：在纯正的 Zig 开发中，<strong>官方强烈建议优先使用切片（Slice）而不是裸的多项指针</strong>！ 因为切片自带长度信息，能享受编译期和运行时的防越界安全保护，完全不需要靠肉眼算指针偏移。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ar <span class="op">=</span> [_]<span class="dt">i32</span>{<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span><span class="op">,</span><span class="dv">4</span>};</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> sl <span class="op">=</span> ar[<span class="dv">0</span><span class="op">..</span>ar<span class="op">.</span>len];</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sl;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>尽管你可以像上面这样创建指向数组的指针并通过指针算术遍历数组，但在 Zig 中，我们更推荐使用在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中介绍过的<strong>切片（Slices）</strong>。切片在底层本身就是指针，同时还附带了记录元素个数的 <code>len</code> 属性，便于 <code>zig</code> 编译器自动检查潜在的缓冲区溢出等越界问题。此外，你无需使用指针算术，直接通过 <code>slice[index]</code> 语法即可访问任意元素。正如在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中提到的，只需在方括号中使用范围选择器即可从数组获取切片：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ar = [_]<span class="dt">i32</span><span class="op">{</span><span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span><span class="op">}</span>;</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> sl = ar[<span class="dv">0</span>..ar.len];</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>_ = sl;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="可选类型optionals与告别十亿美元错误" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="可选类型optionals与告别十亿美元错误"><span class="header-section-number">6.4</span> 可选类型（Optionals）与告别“十亿美元错误”</h2>
-<p>写过 C 语言的朋友都知道，最恶心、最难排查的 Bug 往往是<strong>空指针异常（Null Pointer Dereference）</strong>。由于 C 里任何指针都可能偷偷是 <code>NULL</code>，开发者不得不精神紧张地到处写防御性判空代码。</p>
-<p><strong>而在 Zig 里，所有普通对象和指针默认全部是非空的（Non-nullable）！</strong> 你不需要也不可能在普通类型里藏一个 <code>null</code>。如果你敢给普通类型塞 <code>null</code>，编译器当场教做人：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> number<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>number <span class="op">=</span> <span class="cn">null</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在 C 里，任何指针都可能是 <code>NULL</code>，解引用空指针是未定义行为（UB）的常见来源，而且出了问题往往只看到一个含义模糊的段错误（segmentation fault）。所以写 C 的程序员不得不时刻检查指针是不是空的。</p>
+<p><strong>而在 Zig 里，所有普通对象和指针默认全部是非空的（Non-nullable）！</strong> 你不需要也不可能在普通类型里藏一个 <code>null</code>。如果你尝试把 <code>null</code> 赋给普通类型，编译器会立即报错拦截：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> number: <span class="dt">u8</span> = <span class="dv">5</span>;</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>number = <span class="cn">null</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>p5.zig:5:14: error: expected type 'u8',
         found '@TypeOf(null)'
     number = null;
              ^~~~</code></pre>
-<p>普通指针也是同样的规则：<strong>在 Zig 里，普通的 <code>*T</code> 指针绝对不可能为 null</strong>！你可以彻底丢掉心智包袱，闭着眼睛安全解引用。</p>
+<p>普通指针也是同样的规则：<strong>在 Zig 里，普通的 <code>*T</code> 指针不可能为 null</strong>。所以你可以假设自己创建的指针都指向非空的值，不必再到处检查它是不是 null。</p>
+<p>（译注：非空不等于一定有效。指针仍然可能是悬垂指针，比如指向已经释放的堆内存，或者指向已经返回的函数里的局部变量，解引用这类指针同样是未定义行为。）</p>
 <section id="显式标记可能为空可选类型-t" class="level3" data-number="6.4.1">
 <h3 data-number="6.4.1" class="anchored" data-anchor-id="显式标记可能为空可选类型-t"><span class="header-section-number">6.4.1</span> 显式标记可能为空：可选类型 <code>?T</code></h3>
-<p>但在实际业务中，我们难免会遇到“某个值可能存在、也可能不存在（为空）”的合理需求。 这时候就要用到<strong>可选类型（Optionals）</strong>。</p>
+<p>但在实际业务中，我们难免会遇到“某个值可能存在、也可能不存在（为空）”的合理需求。 这时候就要用到<strong>可选类型（Optionals）</strong>。Zig 中的可选对象非常类似于 C++ 中的 <a href="https://en.cppreference.com/w/cpp/utility/optional.html"><code>std::optional</code> 对象</a>，它可以包含一个有效值，也可以什么都不包含（即 <code>null</code>）。</p>
 <p>在任何类型前面加一个问号 <code>?</code>，就能把它升级为可选类型：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> num<span class="op">:</span> <span class="op">?</span><span class="dt">i32</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> <span class="cn">null</span>; <span class="co">// 合法！因为它是可选类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> num: ?<span class="dt">i32</span> = <span class="dv">5</span>;</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>num = <span class="cn">null</span>; <span class="co">// 合法！因为它是可选类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="可选指针optional-pointers" class="level3" data-number="6.4.2">
 <h3 data-number="6.4.2" class="anchored" data-anchor-id="可选指针optional-pointers"><span class="header-section-number">6.4.2</span> 可选指针（Optional Pointers）</h3>
 <p>同理，如果你需要一个在特殊情况下可以为 null 的指针，类型前面同样加问号 <code>?*T</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> num<span class="op">:</span> <span class="dt">i32</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> ptr<span class="op">:</span> <span class="op">?*</span><span class="dt">i32</span> <span class="op">=</span> <span class="op">&amp;</span>num;</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>ptr <span class="op">=</span> <span class="cn">null</span>; <span class="co">// 合法！</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> <span class="dv">6</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> num: <span class="dt">i32</span> = <span class="dv">5</span>;</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ptr: ?*<span class="dt">i32</span> = &amp;num;</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ptr = <span class="cn">null</span>; <span class="co">// 合法！</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>num = <span class="dv">6</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>细看对比： - <strong><code>?*i32</code></strong>：可选指针（指针本身可能是 null，如果不为 null 则指向一个实在的 <code>i32</code>）； - <strong><code>*?i32</code></strong>：指向可选值的指针（指针本身绝对不为 null，但它指向的那个槽位里装的可能是 null）。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> num<span class="op">:</span> <span class="op">?</span><span class="dt">i32</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 此时 ptr 类型是 *?i32</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ptr <span class="op">=</span> <span class="op">&amp;</span>num;</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> ptr;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> num: ?<span class="dt">i32</span> = <span class="dv">5</span>;</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 此时 ptr 类型是 *?i32</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ptr = &amp;num;</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>_ = ptr;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-null-handling" class="level3" data-number="6.4.3">
-<h3 data-number="6.4.3" class="anchored" data-anchor-id="sec-null-handling"><span class="header-section-number">6.4.3</span> 优雅处理 null 的三大法宝</h3>
-<p>既然一个变量被标成了 <code>?T</code>，那你在读取它之前，Zig 就会逼着你必须对 <code>null</code> 可能性进行显式处理。主要有以下三种姿势：</p>
-<section id="姿势一if-模式匹配解包" class="level4" data-number="6.4.3.1">
-<h4 data-number="6.4.3.1" class="anchored" data-anchor-id="姿势一if-模式匹配解包"><span class="header-section-number">6.4.3.1</span> 姿势一：<code>if</code> 模式匹配解包</h4>
-<p>如果非空就顺势拆包，在竖线 <code>|val|</code> 里拿到的就是绝对安全的非空变量：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> num<span class="op">:</span> <span class="op">?</span><span class="dt">i32</span> <span class="op">=</span> <span class="dv">5</span>;</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (num) <span class="op">|</span>not_null_num<span class="op">|</span> {</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{not_null_num});</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="姿势二orelse-兜底表达式最常用" class="level4" data-number="6.4.3.2">
-<h4 data-number="6.4.3.2" class="anchored" data-anchor-id="姿势二orelse-兜底表达式最常用"><span class="header-section-number">6.4.3.2</span> 姿势二：<code>orelse</code> 兜底表达式（最常用！）</h4>
-<p><code>orelse</code> 就像二元操作符：左边是非空就用左边，如果是 null 就自动回落到右边的默认值，写起来一气呵成：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> x<span class="op">:</span> <span class="op">?</span><span class="dt">i32</span> <span class="op">=</span> <span class="cn">null</span>;</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> dbl <span class="op">=</span> (x <span class="kw">orelse</span> <span class="dv">15</span>) <span class="op">*</span> <span class="dv">2</span>;</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{dbl});</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="姿势三opt.-强拆包断言非空" class="level4" data-number="6.4.3.3">
-<h4 data-number="6.4.3.3" class="anchored" data-anchor-id="姿势三opt.-强拆包断言非空"><span class="header-section-number">6.4.3.3</span> 姿势三：<code>opt.?</code> 强拆包（断言非空）</h4>
-<p>如果你在逻辑上 100% 确定它此时绝不可能是 null，可以用 <code>.?</code> 强行拆包。 但请切记：一旦猜错撞上了 null，程序会在运行时直接触发 panic 崩溃报错：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> return_null(n<span class="op">:</span> <span class="dt">i32</span>) <span class="op">?</span><span class="dt">i32</span> {</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="op">==</span> <span class="dv">5</span>) <span class="cf">return</span> <span class="cn">null</span>;</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n;</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_buffer<span class="op">:</span> [<span class="dv">1024</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> stdout_writer <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>File<span class="op">.</span>stdout()<span class="op">.</span>writer(init<span class="op">.</span>io<span class="op">,</span> <span class="op">&amp;</span>stdout_buffer);</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> stdout <span class="op">=</span> <span class="op">&amp;</span>stdout_writer<span class="op">.</span>interface;</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> y<span class="op">:</span> <span class="op">?</span><span class="dt">i32</span> <span class="op">=</span> return_null(<span class="dv">5</span>);</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{y<span class="op">.?</span>});</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="sec-null-handling"><span class="header-section-number">6.4.3</span> 显式处理 null 的三种方式</h3>
+<p>当你的 Zig 代码中存在可选对象时，你必须显式处理它可能为 <code>null</code> 的情况（就像使用 <code>try</code> 和 <code>catch</code> 处理错误一样）。主要有以下三种方式：</p>
+<ul>
+<li>使用 <code>if</code> 语句（类似 C 语言中的判空检查，并配合 <code>|val|</code> 解包）；</li>
+<li>使用 <code>orelse</code> 关键字；</li>
+<li>使用 <code>.?</code> 方法直接解包可选值。</li>
+</ul>
+<p><strong>方式一：<code>if</code> 语句解包</strong>。使用 <code>if</code> 语句时，可以通过一对竖线 <code>|not_null_num|</code> 将可选值解包。如果 <code>num</code> 为 <code>null</code>，<code>if</code> 代码块不会执行；否则 <code>num</code> 会被安全解包到保证非空的 <code>not_null_num</code> 对象中：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> num: ?<span class="dt">i32</span> = <span class="dv">5</span>;</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (num) |not_null_num| <span class="op">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>not_null_num<span class="op">}</span>);</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>5</code></pre>
+<p><strong>方式二：<code>orelse</code> 默认值表达式</strong>。<code>orelse</code> 关键字类似于二元运算符：左侧是可能为 <code>null</code> 的可选表达式，右侧是兜底的非空表达式。如果左侧求值非空则使用左侧的值，若左侧为 <code>null</code> 则采用右侧的替代值（下例中 <code>x</code> 为 <code>null</code>，因此采用了替代值 <code>15</code>）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> x: ?<span class="dt">i32</span> = <span class="cn">null</span>;</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> dbl = (x <span class="kw">orelse</span> <span class="dv">15</span>) * <span class="dv">2</span>;</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>dbl<span class="op">}</span>);</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>30</code></pre>
+<p><strong>方式三：<code>opt.?</code> 解包（等价于 <code>orelse unreachable</code>）</strong>。如果在特定上下文中无法给出合理的替代值，且遇到 <code>null</code> 时最合理的处理方式就是直接触发 panic 报错终止，可以使用可选对象的 <code>.?</code> 方法。 本质上，<code>opt.?</code> 等价于 <code>opt orelse unreachable</code>（详见官方文档中的 <a href="https://ziglang.org/documentation/master/#unreachable"><code>unreachable</code> 关键字说明</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>）。当在 <code>Debug</code> 或 <code>ReleaseSafe</code> 模式下编译时，一旦运行时遇到 <code>null</code> 走到 <code>unreachable</code> 分支，程序就会立即触发 panic 并打印错误栈：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> return_null(n: <span class="dt">i32</span>) ?<span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (n == <span class="dv">5</span>) <span class="kw">return</span> <span class="cn">null</span>;</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n;</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_writer = std.Io.File.stdout().writer(init.io, &amp;stdout_buffer);</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdout = &amp;stdout_writer.interface;</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> y: ?<span class="dt">i32</span> = return_null(<span class="dv">5</span>);</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>y.?<span class="op">}</span>);</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>thread 12767 panic: attempt to use null value
 p7.zig:12:34: 0x103419d in main (p7):
     try stdout.print("{d}\n", .{y.?});
                                  ^</code></pre>
-<p>掌握了指针和 <code>?</code> 可选类型，接下来迎接咱们的，就是高并发、高吞吐的实战项目——手写 HTTP 服务器！</p>
+<p>掌握了指针和 <code>?</code> 可选类型，下一章我们就动手写 HTTP 服务器。</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -705,6 +701,11 @@ Zig Software Foundation. 2024. <em>Language Reference</em>. Zig Software Foundat
 </div>
 </section>
 </section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://ziglang.org/documentation/master/#unreachable" class="uri">https://ziglang.org/documentation/master/#unreachable</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

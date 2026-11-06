@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -469,7 +488,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -487,7 +506,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -522,8 +541,9 @@ window.Quarto = {
   <li><a href="#第一阶段读取并解码-png-像素" id="toc-第一阶段读取并解码-png-像素" class="nav-link" data-scroll-target="#第一阶段读取并解码-png-像素"><span class="header-section-number">15.4</span> 第一阶段：读取并解码 PNG 像素</a>
   <ul class="collapse">
   <li><a href="#读取-png-头信息ihdr" id="toc-读取-png-头信息ihdr" class="nav-link" data-scroll-target="#读取-png-头信息ihdr"><span class="header-section-number">15.4.1</span> 1. 读取 PNG 头信息（IHDR）</a></li>
-  <li><a href="#计算缓冲区大小并开辟内存" id="toc-计算缓冲区大小并开辟内存" class="nav-link" data-scroll-target="#计算缓冲区大小并开辟内存"><span class="header-section-number">15.4.2</span> 2. 计算缓冲区大小并开辟内存</a></li>
-  <li><a href="#解码并提取原始像素" id="toc-解码并提取原始像素" class="nav-link" data-scroll-target="#解码并提取原始像素"><span class="header-section-number">15.4.3</span> 3. 解码并提取原始像素</a></li>
+  <li><a href="#为像素数据分配空间" id="toc-为像素数据分配空间" class="nav-link" data-scroll-target="#为像素数据分配空间"><span class="header-section-number">15.4.2</span> 2. 为像素数据分配空间</a></li>
+  <li><a href="#解码图像数据" id="toc-解码图像数据" class="nav-link" data-scroll-target="#解码图像数据"><span class="header-section-number">15.4.3</span> 3. 解码图像数据</a></li>
+  <li><a href="#查看像素数据" id="toc-查看像素数据" class="nav-link" data-scroll-target="#查看像素数据"><span class="header-section-number">15.4.4</span> 查看像素数据</a></li>
   </ul></li>
   <li><a href="#第二阶段施加经典人眼灰度滤镜算法" id="toc-第二阶段施加经典人眼灰度滤镜算法" class="nav-link" data-scroll-target="#第二阶段施加经典人眼灰度滤镜算法"><span class="header-section-number">15.5</span> 第二阶段：施加经典人眼灰度滤镜算法</a></li>
   <li><a href="#第三阶段将处理后的图片重新打包写盘" id="toc-第三阶段将处理后的图片重新打包写盘" class="nav-link" data-scroll-target="#第三阶段将处理后的图片重新打包写盘"><span class="header-section-number">15.6</span> 第三阶段：将处理后的图片重新打包写盘</a></li>
@@ -554,7 +574,6 @@ window.Quarto = {
 </header>
 
 
-<p>``</p>
 <p>在这章中，咱们来搞第四个趣味与硬核兼备的实战项目：<strong>开发一个给图片加滤镜的程序</strong>。 具体来说，我们要亲手实现一个<strong>灰度滤镜（Grayscale Filter）</strong>，把任意一张彩色照片变成极具质感的黑白复古大片。</p>
 <p>作为试验素材，我们使用智利裔美国知名演员 Pedro Pascal（佩德罗·帕斯卡）的照片（见 <a href="#fig-pascal" class="quarto-xref">Figure&nbsp;<span>15.1</span></a>）：</p>
 <div id="fig-pascal" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -581,7 +600,7 @@ Figure&nbsp;15.2: 程序处理后生成的黑白灰度版本
 </div>
 <section id="sec-eyes" class="level2" data-number="15.1">
 <h2 data-number="15.1" class="anchored" data-anchor-id="sec-eyes"><span class="header-section-number">15.1</span> 人眼究竟是如何感知颜色的？</h2>
-<p>聊计算机图形学，必须先聊聊人眼的生理构造。因为现代数字图像的所有技术标准，全都是像素级模拟人类眼球感知机理而设计的。</p>
+<p>聊计算机图形学，必须先聊聊人眼的生理构造。因为数字图像背后的技术在很大程度上借鉴了人眼的工作方式。</p>
 <p>你可以把人眼看成一个高精度的光学传感器： 我们看到的五彩斑斓，本质上都是物体表面对入射光线的反射。<strong>光是所有色彩的物理源头！</strong> 正如艾萨克·牛顿在 1660 年代著名的三棱镜分光实验中所证实的<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>：白光其实是由各种单色光混合而成的。</p>
 <p>而在人类视网膜里，分布着感知颜色的功臣——<strong>视锥细胞（Cone cells）</strong>。 人眼一共有 3 种不同的视锥细胞，它们分别对<strong>红（Red）</strong>、<strong>绿（Green）</strong>、<strong>蓝（Blue）</strong>三个波段的光谱最为敏感。</p>
 <p>视锥细胞捕获到不同比例的红绿蓝光强后，转换成微弱的电信号顺着视神经传给大脑皮层。大脑将这三路电信号融合，最终在我们的脑海里呈现出千变万化的色彩世界！</p>
@@ -589,7 +608,7 @@ Figure&nbsp;15.2: 程序处理后生成的黑白灰度版本
 <section id="sec-digital-img" class="level2" data-number="15.2">
 <h2 data-number="15.2" class="anchored" data-anchor-id="sec-digital-img"><span class="header-section-number">15.2</span> 计算机数字图像底层原理</h2>
 <p>在计算机图形学中，图像主要分为矢量图（Vector）和位图（光栅图 Raster）。我们日常处理的照片绝大多数都是<strong>位图（Raster Images）</strong>（如 JPEG、PNG）。</p>
-<p>位图在本质上就是一个由像素点整齐排布构成的 <strong>2D 像素矩阵</strong>。 把任何一张数字图片无限放大，你会看到一个个排列整齐的单色马赛克小方块——这就是像素（Pixel）：</p>
+<p>位图在本质上就是一个由像素点整齐排布构成的 <strong>2D 像素矩阵</strong>。 如 <a href="#fig-raster" class="quarto-xref">Figure&nbsp;<span>15.3</span></a> 所示，把任何一张位图无限放大，你会看到一个个排列整齐的单色小方块——这就是像素（Pixel）：</p>
 <div id="fig-raster" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-raster-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -618,180 +637,210 @@ Figure&nbsp;15.4: 位图像素在屏幕上的排列与扫描顺序
 </section>
 <section id="sec-pixel-repr" class="level3" data-number="15.2.2">
 <h3 data-number="15.2.2" class="anchored" data-anchor-id="sec-pixel-repr"><span class="header-section-number">15.2.2</span> 在代码中如何表示像素矩阵？</h3>
-<p>在系统级语言（Zig、C 等）里，为了保证 CPU 缓存的极致命中和内存连续性，<strong>我们一律将 2D 像素矩阵拍平成一维连续连续数组（1D Array）来存储！</strong></p>
-<p>因为红、绿、蓝三个通道的取值范围是 <span class="math inline">\(0 \sim 255\)</span>，正好用 1 个无符号 8 位整数（<code>u8</code>，1 字节）就能分毫不差地装下。</p>
+<p>我们已经知道，光栅图像表示为二维像素矩阵。但 Zig 中并没有二维矩阵这个概念。实际上，大多数低级语言（Zig、C、Rust 等）都没有这个概念。那么，在 Zig 或其他低级语言中，怎样表示这样的像素矩阵呢？在这种情况下，大多数程序员选择的策略是直接用一个普通的一维数组来存储这个二维矩阵的值。换句话说，就是创建一个普通的一维数组，把两个维度上的所有值都存进这个一维数组。</p>
+<p>之所以用无符号 8 位整数（<code>u8</code>）而不是其他整数类型来表示每种颜色的量，是因为它们占用的空间（即位数）尽可能少，这有助于减小图像（即二维矩阵）的二进制体积。同时，尽管它们能表示的”颜色量”范围相对较小（0 到 255），却能传达相当多的颜色精度和细节。 例如，假设有一张尺寸为 <span class="math inline">\(4 \times 3\)</span> 的微型 RGB 图像（共 12 个像素，每个像素由 3 个 <code>u8</code> 整数表示，共计 <span class="math inline">\(3 \times 12 = 36\)</span> 个整数），我们可以用如下包含 36 个 <code>u8</code> 元素的一维数组 <code>matrix</code> 来存储它：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> matrix = [_]<span class="dt">u8</span><span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">201</span>, <span class="dv">10</span>, <span class="dv">25</span>, <span class="dv">185</span>, <span class="dv">65</span>, <span class="dv">70</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">65</span>, <span class="dv">120</span>, <span class="dv">110</span>, <span class="dv">65</span>, <span class="dv">120</span>, <span class="dv">117</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">98</span>, <span class="dv">95</span>, <span class="dv">12</span>, <span class="dv">213</span>, <span class="dv">26</span>, <span class="dv">88</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">143</span>, <span class="dv">112</span>, <span class="dv">65</span>, <span class="dv">97</span>, <span class="dv">99</span>, <span class="dv">205</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">234</span>, <span class="dv">105</span>, <span class="dv">56</span>, <span class="dv">43</span>, <span class="dv">44</span>, <span class="dv">216</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">45</span>, <span class="dv">59</span>, <span class="dv">243</span>, <span class="dv">211</span>, <span class="dv">209</span>, <span class="dv">54</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>对于 RGB 图像，连续 3 个 <code>u8</code> 代表一个像素（<span class="math inline">\([R_0, G_0, B_0, R_1, G_1, B_1...]\)</span>）； 而对于带 Alpha 透明度通道的 <strong>RGBA 图像</strong>（例如本例中的 PNG），<strong>连续 4 个 <code>u8</code> 代表一个像素</strong>：<span class="math inline">\([R, G, B, A]\)</span>。</p>
 </section>
 </section>
 <section id="引入极速轻量的现代-c-语言库libspng" class="level2" data-number="15.3">
 <h2 data-number="15.3" class="anchored" data-anchor-id="引入极速轻量的现代-c-语言库libspng"><span class="header-section-number">15.3</span> 引入极速轻量的现代 C 语言库：<code>libspng</code></h2>
-<p>PNG 文件不是裸数据，它内部经过了复杂的 Deflate 压缩与滤波。 要解压和编码 PNG，老牌官方库 <code>libpng</code> 代码繁重且 API 晦涩； 在这里我们选用目前工业界极受好评的现代化轻量级替代方案——<strong><code>libspng</code></strong><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。它极其小巧、速度极快，而且 API 极其亲民！</p>
+<p>正如我们在 <a href="#sec-pixel-repr" class="quarto-xref"><span>Section 15.2.2</span></a> 中所讨论的，本项目使用的示例图像是一个采用 RGBA 颜色模型的 PNG 文件。 PNG 文件不是裸数据，它内部经过了复杂的 Deflate 压缩与滤波。 要解压和编码 PNG，老牌官方库 <code>libpng</code> 代码繁重且 API 晦涩； 因此，在这个项目中我会使用一个更现代的替代方案，即 <strong><code>libspng</code></strong> 库<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。我选择这个 C 库，是因为它比 <code>libpng</code> 简单得多，而且各项操作的性能都很好。</p>
 <p>本地编译本项目前，请确保系统中已经安装了 <code>libspng</code> 开发包（可参考官方构建指南<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>）。</p>
 </section>
 <section id="第一阶段读取并解码-png-像素" class="level2" data-number="15.4">
 <h2 data-number="15.4" class="anchored" data-anchor-id="第一阶段读取并解码-png-像素"><span class="header-section-number">15.4</span> 第一阶段：读取并解码 PNG 像素</h2>
-<p>利用上一章学到的 <code>@cImport</code>，直接引入 <code>stdio.h</code> 和 <code>spng.h</code>：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> c <span class="op">=</span> <span class="bu">@cImport</span>({</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cDefine</span>(<span class="st">"_NO_CRT_STDIO_INLINE"</span><span class="op">,</span> <span class="st">"1"</span>);</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cInclude</span>(<span class="st">"stdio.h"</span>);</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cInclude</span>(<span class="st">"spng.h"</span>);</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> path <span class="op">=</span> <span class="st">"pedro_pascal.png"</span>;</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> file_descriptor <span class="op">=</span> c<span class="op">.</span>fopen(path<span class="op">,</span> <span class="st">"rb"</span>);</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (file_descriptor <span class="op">==</span> <span class="cn">null</span>) {</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@panic</span>(<span class="st">"Could not open file!"</span>);</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> ctx <span class="op">=</span> c<span class="op">.</span>spng_ctx_new(<span class="dv">0</span>) <span class="kw">orelse</span> <span class="kw">unreachable</span>;</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> c<span class="op">.</span>spng_set_png_file(</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">,</span> <span class="bu">@ptrCast</span>(file_descriptor)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>由于 <code>libspng</code> 是一个 C 语言库，其文件与 I/O 操作主要基于 C 语言的 <code>FILE</code> 指针。因此，这里我们使用 C 标准库 <code>stdio.h</code> 中的 <code>fopen()</code> 函数来打开 PNG 文件，而不是使用我们在 <a href="12-file-op.html" class="quarto-xref"><span>Chapter 13</span></a> 中介绍的 Zig 原生 <code>openFile()</code> 方法。利用 <code>@cImport</code>，我们直接引入 <code>stdio.h</code> 和 <code>spng.h</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c = <span class="bu">@cImport</span>(<span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cDefine</span>(<span class="st">"_NO_CRT_STDIO_INLINE"</span>, <span class="st">"1"</span>);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cInclude</span>(<span class="st">"stdio.h"</span>);</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@cInclude</span>(<span class="st">"spng.h"</span>);</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> path = <span class="st">"pedro_pascal.png"</span>;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> file_descriptor = c.fopen(path, <span class="st">"rb"</span>);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (file_descriptor == <span class="cn">null</span>) <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@panic</span>(<span class="st">"Could not open file!"</span>);</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ctx = c.spng_ctx_new(<span class="dv">0</span>) <span class="kw">orelse</span> <span class="kw">unreachable</span>;</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>_ = c.spng_set_png_file(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    ctx, <span class="bu">@ptrCast</span>(file_descriptor)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>别忘了用完关闭文件句柄：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (c<span class="op">.</span>fclose(file_descriptor) <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotCloseFileDescriptor;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (c.fclose(file_descriptor) != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">error</span>.CouldNotCloseFileDescriptor;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="读取-png-头信息ihdr" class="level3" data-number="15.4.1">
 <h3 data-number="15.4.1" class="anchored" data-anchor-id="读取-png-头信息ihdr"><span class="header-section-number">15.4.1</span> 1. 读取 PNG 头信息（IHDR）</h3>
-<p>获取宽高、位宽和颜色模式：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> get_image_header(ctx<span class="op">:</span> <span class="op">*</span>c<span class="op">.</span>spng_ctx) <span class="op">!</span>c<span class="op">.</span>spng_ihdr {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> image_header<span class="op">:</span> c<span class="op">.</span>spng_ihdr <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (c<span class="op">.</span>spng_get_ihdr(ctx<span class="op">,</span> <span class="op">&amp;</span>image_header) <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotGetImageHeader;</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> image_header;</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> image_header <span class="op">=</span> <span class="cf">try</span> get_image_header(ctx);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>现在，上下文对象 <code>ctx</code> 已经知道我们的 PNG 文件 <code>pedro_pascal.png</code>，因为它可以访问这个文件的文件描述符对象。我们要做的第一件事是读取 PNG 文件的”图像头部分”。这一部分包含关于 PNG 文件的一些基本信息，比如图像像素数据的位深、文件所用的颜色模型、图像的尺寸（以像素数表示的高度和宽度）等。</p>
+<p>为了方便，我会把这个”读取图像头”的操作封装成一个名为 <code>get_image_header()</code> 的小函数。这个函数只需调用 <code>spng_get_ihdr()</code> 函数即可。<code>libspng</code> 中的这个函数负责读取图像头数据，并把它存入一个名为 <code>spng_ihdr</code> 的 C 结构体。因此，<code>spng_ihdr</code> 类型的对象是一个包含 PNG 文件图像头部分数据的 C 结构体。</p>
+<p>由于这个 Zig 函数接收一个 C 对象（<code>libspng</code> 的上下文对象）作为输入，我按照 <a href="14-zig-c-interop.html#sec-pass-c-structs" class="quarto-xref"><span>Section 14.5</span></a> 中讨论的建议，把函数参数 <code>ctx</code> 标注为”指向上下文对象的指针”（<code>*c.spng_ctx</code>）。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> get_image_header(ctx: *c.spng_ctx) !c.spng_ihdr <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> image_header: c.spng_ihdr = <span class="cn">undefined</span>;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (c.spng_get_ihdr(ctx, &amp;image_header) != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotGetImageHeader;</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> image_header;</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> image_header = <span class="kw">try</span> get_image_header(ctx);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>还要注意，在这个函数中，我检查了 <code>spng_get_ihdr()</code> 函数调用是否返回了一个非零的整数值。<code>libspng</code> 库中的大多数函数都返回一个状态码作为结果，状态码”零”表示”成功”。所以任何非零的状态码都表示在运行 <code>spng_get_ihdr()</code> 时发生了错误。这就是为什么当函数返回的状态码不为零时，我会从函数中返回一个错误值。</p>
 </section>
-<section id="计算缓冲区大小并开辟内存" class="level3" data-number="15.4.2">
-<h3 data-number="15.4.2" class="anchored" data-anchor-id="计算缓冲区大小并开辟内存"><span class="header-section-number">15.4.2</span> 2. 计算缓冲区大小并开辟内存</h3>
-<p>调用 <code>spng_decoded_image_size</code> 算出解压全部像素到底需要多少字节，并用 Allocator 在堆上开辟连续缓冲区：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> calc_output_size(ctx<span class="op">:</span> <span class="op">*</span>c<span class="op">.</span>spng_ctx) <span class="op">!</span><span class="dt">u64</span> {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> output_size<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> status <span class="op">=</span> c<span class="op">.</span>spng_decoded_image_size(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        ctx<span class="op">,</span> c<span class="op">.</span>SPNG_FMT_RGBA8<span class="op">,</span> <span class="op">&amp;</span>output_size</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (status <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotCalcOutputSize;</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output_size;</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> output_size <span class="op">=</span> <span class="cf">try</span> calc_output_size(ctx);</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> buffer <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> output_size);</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="bu">@memset</span>(buffer[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="为像素数据分配空间" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="为像素数据分配空间"><span class="header-section-number">15.4.2</span> 2. 为像素数据分配空间</h3>
+<p>在从 PNG 文件中读取像素数据之前，我们需要分配足够的空间来存放这些数据。但为了分配这样的空间，首先需要知道要分配多少空间。计算这个空间的大小显然需要用到图像的尺寸，但还有其他因素也会影响这个数字，比如图像所用的颜色模型、位深等。</p>
+<p>总之，这一切都意味着计算所需空间的大小并不是一件简单的事。这就是为什么 <code>libspng</code> 库提供了一个名为 <code>spng_decoded_image_size()</code> 的工具函数来替我们计算这个大小。同样，我会把围绕这个 C 函数的逻辑封装成一个名为 <code>calc_output_size()</code> 的小 Zig 函数。可以看到，这个函数返回一个整数值，表示需要分配的空间大小。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> calc_output_size(ctx: *c.spng_ctx) !<span class="dt">u64</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> output_size: <span class="dt">u64</span> = <span class="dv">0</span>;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> status = c.spng_decoded_image_size(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        ctx, c.SPNG_FMT_RGBA8, &amp;output_size</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (status != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotCalcOutputSize;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> output_size;</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>你可能会问自己，<code>SPNG_FMT_RGBA8</code> 这个值是什么意思。这个值实际上是 C 头文件 <code>spng.h</code> 中定义的一个枚举值，这个枚举用于标识一种”PNG 格式”。更确切地说，它标识的是使用 RGBA 颜色模型、位深为 8 位的 PNG 文件。所以，把这个枚举值作为输入传给 <code>spng_decoded_image_size()</code> 函数，就是在告诉这个函数，按照遵循”RGBA 颜色模型、8 位位深”格式的 PNG 文件来计算解码后像素数据的大小。</p>
+<p>有了这个函数，我们就可以配合分配器对象，分配一个足够大的字节（<code>u8</code> 值）数组来存放图像解码后的像素数据。注意，我用 <code>@memset()</code> 把整个数组初始化为零。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> output_size = <span class="kw">try</span> calc_output_size(ctx);</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, output_size);</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">@memset</span>(buffer[<span class="dv">0</span>..], <span class="dv">0</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="解码并提取原始像素" class="level3" data-number="15.4.3">
-<h3 data-number="15.4.3" class="anchored" data-anchor-id="解码并提取原始像素"><span class="header-section-number">15.4.3</span> 3. 解码并提取原始像素</h3>
-<p>一键将压缩数据解压灌入内存：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> read_data_to_buffer(ctx<span class="op">:</span> <span class="op">*</span>c<span class="op">.</span>spng_ctx<span class="op">,</span> buffer<span class="op">:</span> []<span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> status <span class="op">=</span> c<span class="op">.</span>spng_decode_image(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        ctx<span class="op">,</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        buffer<span class="op">.</span>ptr<span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        buffer<span class="op">.</span>len<span class="op">,</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        c<span class="op">.</span>SPNG_FMT_RGBA8<span class="op">,</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (status <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotDecodeImage;</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> read_data_to_buffer(ctx<span class="op">,</span> buffer[<span class="dv">0</span><span class="op">..</span>]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>此时随手打印前 12 个字节：</p>
+<section id="解码图像数据" class="level3" data-number="15.4.3">
+<h3 data-number="15.4.3" class="anchored" data-anchor-id="解码图像数据"><span class="header-section-number">15.4.3</span> 3. 解码图像数据</h3>
+<p>现在我们有了存放图像解码后像素数据所需的空间，可以开始用 C 函数 <code>spng_decode_image()</code> 真正地解码并从图像中提取像素数据了。</p>
+<p>下面的 Zig 函数 <code>read_data_to_buffer()</code> 概括了读取解码后像素数据并把它存入输入缓冲区所需的步骤。注意，这个函数封装了围绕 <code>spng_decode_image()</code> 函数的逻辑。此外，我们再次使用 <code>SPNG_FMT_RGBA8</code> 枚举值，告诉相应的函数，正在解码的 PNG 图像使用 RGBA 颜色模型和 8 位位深。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> read_data_to_buffer(ctx: *c.spng_ctx, buffer: []<span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> status = c.spng_decode_image(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        ctx,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        buffer.ptr,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        buffer.len,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        c.SPNG_FMT_RGBA8,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (status != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotDecodeImage;</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>有了这个函数，就可以把它应用到上下文对象，以及上一节为存放图像解码后像素数据而分配的缓冲区对象上：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> read_data_to_buffer(ctx, buffer[<span class="dv">0</span>..]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="查看像素数据" class="level3" data-number="15.4.4">
+<h3 data-number="15.4.4" class="anchored" data-anchor-id="查看像素数据"><span class="header-section-number">15.4.4</span> 查看像素数据</h3>
+<p>现在像素数据已经存放在我们的”缓冲区对象”中，可以快速看一下这些字节。在下面的例子中，我们查看解码后像素数据的前 12 个字节。</p>
+<p>如果仔细看这些值，你可能会注意到，序列中每隔 4 个字节就有一个 255。碰巧的是，这正是 <code>u8</code> 值所能表示的最大整数值。所以，如果把 0 到 255 这个 <code>u8</code> 值所能表示的整数范围看作一个从 0% 到 100% 的刻度，这些 255 值在这个刻度上实际上就是 100%。</p>
+<p>回顾 <a href="#sec-pixel-repr" class="quarto-xref"><span>Section 15.2.2</span></a>，我在那一节中说过，我们的 PNG 文件 <code>pedro_pascal.png</code> 使用 RGBA 颜色模型，它会给图像中的每个像素添加一个 alpha（即透明度）字节。因此，图像中的每个像素由 4 个字节表示。由于这里查看的是图像的前 12 个字节，这意味着我们看到的是图像中前 <span class="math inline">\(12 / 4 = 3\)</span> 个像素的数据。</p>
+<p>所以，从这前 12 个字节（即这 3 个像素）每隔 4 个字节出现一个 255 的情况来看，可以说图像中的每个像素的 alpha（即透明度）很可能都被设为 100%。这不一定成立，但是可能性最大的情况。另外，如果看一下图像本身（回顾 <a href="#fig-pascal" class="quarto-xref">Figure&nbsp;<span>15.1</span></a>），可以看到整幅图像的透明度没有变化，这也支持了这一推测。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>buffer[<span class="dv">0</span>..<span class="dv">12</span>]<span class="op">}</span>);</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>{
     200, 194, 216, 255, 203, 197,
     219, 255, 206, 200, 223, 255
 }</code></pre>
-<p>能清晰看到每隔 4 个字节就是透明度 255（完全不透明），前三个数值分别是 R、G、B。</p>
+<p>从上面的结果可以看到，这幅图像的第一个像素的红色为 200、绿色为 194、蓝色为 216。我怎么知道颜色在序列中出现的顺序？如果你还没猜到，答案就在缩写 RGB 中：先是红色（RED），然后是绿色（GREEN），最后是蓝色（BLUE）。如果按照 0% 到 100%（0 到 255）的刻度换算这些整数值，就得到 78% 的红色、76% 的绿色和 85% 的蓝色。</p>
 </section>
 </section>
 <section id="第二阶段施加经典人眼灰度滤镜算法" class="level2" data-number="15.5">
 <h2 data-number="15.5" class="anchored" data-anchor-id="第二阶段施加经典人眼灰度滤镜算法"><span class="header-section-number">15.5</span> 第二阶段：施加经典人眼灰度滤镜算法</h2>
-<p>怎么把彩色变成黑白？ 新手常犯的一个错误是：直接把三者求平均值 <code>(R + G + B) / 3</code>。 千万别这么干！因为人类视网膜对不同波段的光敏感度差异极大：<strong>人眼对绿光极其敏感，对红光次之，对蓝光最钝！</strong> 如果简单平均，画面明暗对比会严重失真、发灰发脏。</p>
-<p>在国际标准 ITU-R BT.709（sRGB 色彩空间标配）中，人眼感知灰度的<strong>加权线性亮度公式</strong>如下：</p>
+<p>现在我们有了图像中每个像素的数据，可以专注于对这些像素应用图像滤镜了。请记住，我们的目标是对图像应用灰度滤镜。灰度滤镜是把彩色图像转换为灰度图像的滤镜。</p>
+<p>把彩色图像转换为灰度图像有多种不同的公式和策略，但这些策略通常都涉及对每个像素的颜色做一些数学运算。在这个项目中，我们将使用最通用的公式，如下所示。在这个公式中，<span class="math inline">\(r\)</span> 表示像素的红色，<span class="math inline">\(g\)</span> 表示绿色，<span class="math inline">\(b\)</span> 表示蓝色，<span class="math inline">\(p'\)</span> 表示像素的线性亮度。</p>
 <p><span id="eq-grayscale"><span class="math display">\[
     p' = (0.2126 \times r) + (0.7152 \times g) + (0.0722 \times b)
 \tag{15.1}\]</span></span></p>
-<p>绿色独占 71.5% 的权重！</p>
-<p>编写像素循环处理函数：每次跨越 4 字节（步长为 4），通过 <code>@floatFromInt</code> 转成浮点做加权融合，再用 <code>@intFromFloat</code> 强转回整型，写回当前像素的 R、G、B 通道（保持 Alpha 不变）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> apply_image_filter(buffer<span class="op">:</span> []<span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> len <span class="op">=</span> buffer<span class="op">.</span>len;</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> red_factor<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> <span class="fl">0.2126</span>;</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> green_factor<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> <span class="fl">0.7152</span>;</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> blue_factor<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> <span class="fl">0.0722</span>;</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> index<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (index <span class="op">&lt;</span> len) <span class="op">:</span> (index <span class="op">+=</span> <span class="dv">4</span>) {</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> rf<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> @floatFromInt(buffer[index]);</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> gf<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> @floatFromInt(buffer[index <span class="op">+</span> <span class="dv">1</span>]);</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> bf<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> @floatFromInt(buffer[index <span class="op">+</span> <span class="dv">2</span>]);</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> y_linear<span class="op">:</span> <span class="dt">f16</span> <span class="op">=</span> (</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>            (rf <span class="op">*</span> red_factor) <span class="op">+</span> (gf <span class="op">*</span> green_factor)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> (bf <span class="op">*</span> blue_factor)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        buffer[index] <span class="op">=</span> @intFromFloat(y_linear);</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        buffer[index <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> @intFromFloat(y_linear);</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        buffer[index <span class="op">+</span> <span class="dv">2</span>] <span class="op">=</span> @intFromFloat(y_linear);</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> apply_image_filter(buffer[<span class="dv">0</span><span class="op">..</span>]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><a href="#eq-grayscale" class="quarto-xref">Equation&nbsp;<span>15.1</span></a> 是计算像素线性亮度的公式。值得注意的是，这个公式只适用于像素使用 sRGB 色彩空间的图像，sRGB 是网络上的标准色彩空间，所以理想情况下，网络上的所有图像都应该使用这个色彩空间。幸运的是，我们这里的情况正是如此：<code>pedro_pascal.png</code> 这幅图像使用的就是 sRGB 色彩空间，因此我们可以使用 <a href="#eq-grayscale" class="quarto-xref">Equation&nbsp;<span>15.1</span></a>。你可以在维基百科的灰度（grayscale）词条中进一步了解这个公式 <span class="citation" data-cites="wiki_grayscale">(<a href="references.html#ref-wiki_grayscale" role="doc-biblioref">Wikipedia 2024</a>)</span>。</p>
+<p>下面的 <code>apply_image_filter()</code> 函数概括了将 <a href="#eq-grayscale" class="quarto-xref">Equation&nbsp;<span>15.1</span></a> 应用到图像像素上所需的步骤。我们只需把这个函数应用到包含像素数据的缓冲区对象上，这个缓冲区对象中存储的像素数据就会变成图像的灰度版本。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> apply_image_filter(buffer: []<span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> len = buffer.len;</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> red_factor: <span class="dt">f16</span> = <span class="fl">0.2126</span>;</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> green_factor: <span class="dt">f16</span> = <span class="fl">0.7152</span>;</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> blue_factor: <span class="dt">f16</span> = <span class="fl">0.0722</span>;</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> index: <span class="dt">u64</span> = <span class="dv">0</span>;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (index &lt; len) : (index += <span class="dv">4</span>) <span class="op">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> rf: <span class="dt">f16</span> = <span class="bu">@floatFromInt</span>(buffer[index]);</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> gf: <span class="dt">f16</span> = <span class="bu">@floatFromInt</span>(buffer[index + <span class="dv">1</span>]);</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> bf: <span class="dt">f16</span> = <span class="bu">@floatFromInt</span>(buffer[index + <span class="dv">2</span>]);</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> y_linear: <span class="dt">f16</span> = (</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            (rf * red_factor) + (gf * green_factor)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            + (bf * blue_factor)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        );</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        buffer[index] = <span class="bu">@intFromFloat</span>(y_linear);</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        buffer[index + <span class="dv">1</span>] = <span class="bu">@intFromFloat</span>(y_linear);</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        buffer[index + <span class="dv">2</span>] = <span class="bu">@intFromFloat</span>(y_linear);</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> apply_image_filter(buffer[<span class="dv">0</span>..]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="第三阶段将处理后的图片重新打包写盘" class="level2" data-number="15.6">
 <h2 data-number="15.6" class="anchored" data-anchor-id="第三阶段将处理后的图片重新打包写盘"><span class="header-section-number">15.6</span> 第三阶段：将处理后的图片重新打包写盘</h2>
 <p>将处理好的内存缓冲区重新编码成合规的 PNG 文件：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> save_png(image_header<span class="op">:</span> <span class="op">*</span>c<span class="op">.</span>spng_ihdr<span class="op">,</span> buffer<span class="op">:</span> []<span class="dt">u8</span>) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> path <span class="op">=</span> <span class="st">"pedro_pascal_filter.png"</span>;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> file_descriptor <span class="op">=</span> c<span class="op">.</span>fopen(path<span class="op">.</span>ptr<span class="op">,</span> <span class="st">"wb"</span>);</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (file_descriptor <span class="op">==</span> <span class="cn">null</span>) {</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotOpenFile;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> ctx <span class="op">=</span> (</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        c<span class="op">.</span>spng_ctx_new(c<span class="op">.</span>SPNG_CTX_ENCODER)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">orelse</span> <span class="kw">unreachable</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">defer</span> c<span class="op">.</span>spng_ctx_free(ctx);</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> c<span class="op">.</span>spng_set_png_file(ctx<span class="op">,</span> <span class="bu">@ptrCast</span>(file_descriptor));</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> c<span class="op">.</span>spng_set_ihdr(ctx<span class="op">,</span> image_header);</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> encode_status <span class="op">=</span> c<span class="op">.</span>spng_encode_image(</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        ctx<span class="op">,</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        buffer<span class="op">.</span>ptr<span class="op">,</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        buffer<span class="op">.</span>len<span class="op">,</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        c<span class="op">.</span>SPNG_FMT_PNG<span class="op">,</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        c<span class="op">.</span>SPNG_ENCODE_FINALIZE</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (encode_status <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotEncodeImage;</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (c<span class="op">.</span>fclose(file_descriptor) <span class="op">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">error</span><span class="op">.</span>CouldNotCloseFileDescriptor;</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> save_png(<span class="op">&amp;</span>image_header<span class="op">,</span> buffer[<span class="dv">0</span><span class="op">..</span>]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> save_png(image_header: *c.spng_ihdr, buffer: []<span class="dt">u8</span>) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> path = <span class="st">"pedro_pascal_filter.png"</span>;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> file_descriptor = c.fopen(path.ptr, <span class="st">"wb"</span>);</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (file_descriptor == <span class="cn">null</span>) <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotOpenFile;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ctx = (</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        c.spng_ctx_new(c.SPNG_CTX_ENCODER)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">orelse</span> <span class="kw">unreachable</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defer</span> c.spng_ctx_free(ctx);</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    _ = c.spng_set_png_file(ctx, <span class="bu">@ptrCast</span>(file_descriptor));</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    _ = c.spng_set_ihdr(ctx, image_header);</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> encode_status = c.spng_encode_image(</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        ctx,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        buffer.ptr,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        buffer.len,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        c.SPNG_FMT_PNG,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        c.SPNG_ENCODE_FINALIZE</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    );</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (encode_status != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotEncodeImage;</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (c.fclose(file_descriptor) != <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">error</span>.CouldNotCloseFileDescriptor;</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> save_png(&amp;image_header, buffer[<span class="dv">0</span>..]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="编写-build.zig-构建链接脚本" class="level2" data-number="15.7">
 <h2 data-number="15.7" class="anchored" data-anchor-id="编写-build.zig-构建链接脚本"><span class="header-section-number">15.7</span> 编写 <code>build.zig</code> 构建链接脚本</h2>
-<p>最后，用我们学过的 Zig 构建系统将代码和第三方库链接起来：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Build) <span class="dt">void</span> {</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>name <span class="op">=</span> <span class="st">"image_filter"</span><span class="op">,</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/image_filter.zig"</span>)<span class="op">,</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host<span class="op">,</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>link_libc <span class="op">=</span> <span class="cn">true</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    });</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 链接系统安装的 libspng 和数学库</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    exe<span class="op">.</span>root_module<span class="op">.</span>linkSystemLibrary(<span class="st">"spng"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    exe<span class="op">.</span>root_module<span class="op">.</span>linkSystemLibrary(<span class="st">"m"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>installArtifact(exe);</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>终端执行 <code>zig build run</code>，眨眼之间，一张带有电影质感的黑白灰度肖像（<a href="#fig-pascal-gray" class="quarto-xref">Figure&nbsp;<span>15.2</span></a>）已经在当前目录悄然出炉！</p>
+<p>最后，运用我们在 <a href="07-build-system.html" class="quarto-xref"><span>Chapter 9</span></a> 中学到的 Zig 构建系统知识，编写 <code>build.zig</code> 将代码与 C 标准库、<code>libspng</code> 以及数学库链接起来：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b: *std.Build) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        .name = <span class="st">"image_filter"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            .root_source_file = b.path(<span class="st">"src/image_filter.zig"</span>),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            .target = b.graph.host,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>            .link_libc = <span class="cn">true</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>);</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 链接系统安装的 libspng 和数学库</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    exe.root_module.linkSystemLibrary(<span class="st">"spng"</span>, .<span class="op">{}</span>);</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    exe.root_module.linkSystemLibrary(<span class="st">"m"</span>, .<span class="op">{}</span>);</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    b.installArtifact(exe);</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在终端执行如下命令即可完成项目构建：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>运行编译出的可执行程序后，当前工作目录下就会生成处理完毕的黑白灰度图像（如 <a href="#fig-pascal-gray" class="quarto-xref">Figure&nbsp;<span>15.2</span></a> 所示）。</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-wiki_grayscale" class="csl-entry" role="listitem">
+Wikipedia. 2024. <em>Grayscale</em>. Wikipedia. <a href="https://en.wikipedia.org/wiki/Grayscale">https://en.wikipedia.org/wiki/Grayscale</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
@@ -1359,8 +1408,8 @@ document.addEventListener('DOMContentLoaded', function() {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Chapters/14-threads.html" class="pagination-link" aria-label="Zig 多线程与并发并行计算">
-        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Chapters/14-threads.html" class="pagination-link" aria-label="Zig 多线程与并行计算">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

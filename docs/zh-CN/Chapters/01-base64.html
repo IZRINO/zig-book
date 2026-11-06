@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -469,7 +488,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -487,7 +506,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -520,15 +539,14 @@ window.Quarto = {
   <li><a href="#sec-base64-decoder-algo" id="toc-sec-base64-decoder-algo" class="nav-link" data-scroll-target="#sec-base64-decoder-algo"><span class="header-section-number">4.1.4</span> 解码器工作原理：逆向反推</a></li>
   </ul></li>
   <li><a href="#sec-encode-vs-decode" id="toc-sec-encode-vs-decode" class="nav-link" data-scroll-target="#sec-encode-vs-decode"><span class="header-section-number">4.2</span> 编码（Encode）与解码（Decode）的区分</a></li>
-  <li><a href="#sec-base64-length-out" id="toc-sec-base64-length-out" class="nav-link" data-scroll-target="#sec-base64-length-out"><span class="header-section-number">4.3</span> 预判输出缓冲区大小</a>
-  <ul class="collapse">
-  <li><a href="#编码输出长度计算" id="toc-编码输出长度计算" class="nav-link" data-scroll-target="#编码输出长度计算"><span class="header-section-number">4.3.1</span> 编码输出长度计算</a></li>
-  <li><a href="#解码输出长度计算" id="toc-解码输出长度计算" class="nav-link" data-scroll-target="#解码输出长度计算"><span class="header-section-number">4.3.2</span> 解码输出长度计算</a></li>
-  </ul></li>
+  <li><a href="#sec-base64-length-out" id="toc-sec-base64-length-out" class="nav-link" data-scroll-target="#sec-base64-length-out"><span class="header-section-number">4.3</span> 预判输出缓冲区大小</a></li>
   <li><a href="#sec-encoder-logic" id="toc-sec-encoder-logic" class="nav-link" data-scroll-target="#sec-encoder-logic"><span class="header-section-number">4.4</span> 核心位运算与编码实现</a>
   <ul class="collapse">
   <li><a href="#sec-6bit-transf" id="toc-sec-6bit-transf" class="nav-link" data-scroll-target="#sec-6bit-transf"><span class="header-section-number">4.4.1</span> 6 位转换的位运算拆解</a></li>
-  <li><a href="#编写-encode-编码方法" id="toc-编写-encode-编码方法" class="nav-link" data-scroll-target="#编写-encode-编码方法"><span class="header-section-number">4.4.2</span> 编写 <code>encode()</code> 编码方法</a></li>
+  <li><a href="#zig-中的位移运算bit-shifting-in-zig" id="toc-zig-中的位移运算bit-shifting-in-zig" class="nav-link" data-scroll-target="#zig-中的位移运算bit-shifting-in-zig"><span class="header-section-number">4.4.2</span> Zig 中的位移运算（Bit-shifting in Zig）</a></li>
+  <li><a href="#使用按位与运算符-筛选特定比特位selecting-specific-bits-with-the-operator" id="toc-使用按位与运算符-筛选特定比特位selecting-specific-bits-with-the-operator" class="nav-link" data-scroll-target="#使用按位与运算符-筛选特定比特位selecting-specific-bits-with-the-operator"><span class="header-section-number">4.4.3</span> 使用按位与运算符 &amp; 筛选特定比特位（Selecting specific bits with the &amp; operator）</a></li>
+  <li><a href="#为编码输出分配堆内存空间allocating-space-for-the-output" id="toc-为编码输出分配堆内存空间allocating-space-for-the-output" class="nav-link" data-scroll-target="#为编码输出分配堆内存空间allocating-space-for-the-output"><span class="header-section-number">4.4.4</span> 为编码输出分配堆内存空间（Allocating space for the output）</a></li>
+  <li><a href="#编写-encode-编码方法" id="toc-编写-encode-编码方法" class="nav-link" data-scroll-target="#编写-encode-编码方法"><span class="header-section-number">4.4.5</span> 编写 <code>encode()</code> 编码方法</a></li>
   </ul></li>
   <li><a href="#sec-decoder-logic" id="toc-sec-decoder-logic" class="nav-link" data-scroll-target="#sec-decoder-logic"><span class="header-section-number">4.5</span> 构建解码器逻辑</a>
   <ul class="collapse">
@@ -536,7 +554,7 @@ window.Quarto = {
   <li><a href="#解码逆向位移还原" id="toc-解码逆向位移还原" class="nav-link" data-scroll-target="#解码逆向位移还原"><span class="header-section-number">4.5.2</span> 解码逆向位移还原</a></li>
   <li><a href="#编写完整的-decode-方法" id="toc-编写完整的-decode-方法" class="nav-link" data-scroll-target="#编写完整的-decode-方法"><span class="header-section-number">4.5.3</span> 编写完整的 <code>decode()</code> 方法</a></li>
   </ul></li>
-  <li><a href="#大功告成端到端跑通测试" id="toc-大功告成端到端跑通测试" class="nav-link" data-scroll-target="#大功告成端到端跑通测试"><span class="header-section-number">4.6</span> 大功告成：端到端跑通测试！</a></li>
+  <li><a href="#最终运行效果the-end-result" id="toc-最终运行效果the-end-result" class="nav-link" data-scroll-target="#最终运行效果the-end-result"><span class="header-section-number">4.6</span> 最终运行效果（The end result）</a></li>
   </ul>
 </nav>
     </div>
@@ -563,8 +581,7 @@ window.Quarto = {
 </header>
 
 
-<p>``</p>
-<p>作为全书的第一个上手实战小项目，我想带你从零手写一个属于自己的 Base64 编解码器。 Base64 是一种极其经典的编码方案，核心用途是把任意二进制字节流转换为纯文本 ASCII 字符。 现代互联网的很多角落都在重度依赖它，专门用来向那些“只能安全传输文本”的老旧系统投递二进制数据。</p>
+<p>作为全书的第一个上手实战小项目，我想带你从零手写一个属于自己的 Base64 编解码器。 Base64 是一种极其经典的编码方案，核心用途是把任意二进制字节流转换为纯文本 ASCII 字符。 互联网上很多地方都在用它，把二进制数据传给那些只能读取文本数据的系统。</p>
 <p>最直观的例子就是电子邮件（GMail、Outlook 等）。底层邮件传输走的是经典的简单邮件传输协议（SMTP），而 SMTP 天生只认纯文本。如果你想在邮件里夹带 PDF、Excel 或者图片这类二进制附件，邮件客户端就会先在后台把它们统统转成 Base64 字符串，然后再塞进邮件报文里发走。</p>
 <p>平时大家可能习惯了直接调内置函数（比如浏览器里的 <code>btoa</code> / <code>atob</code> 或各语言的标准库），今天咱们就把轮子彻底拆开，用纯正的 Zig 把它亲手造出来！</p>
 <section id="base64-算法底层究竟是怎么跑的" class="level2" data-number="4.1">
@@ -589,29 +606,29 @@ window.Quarto = {
 <h3 data-number="4.1.2" class="anchored" data-anchor-id="sec-base64-table"><span class="header-section-number">4.1.2</span> 用查找表（Lookup Table）换取极致性能</h3>
 <p>在计算机科学中，表示这种映射关系最高效的手段就是<strong>查找表（Lookup Table）</strong>——用极小的空间换取无敌的运行速度。 与其每次遇到一个数字都耗费 CPU 跑一堆 <code>if-else</code> 分支去算它是哪个字母，不如预先在内存里摆一个 64 字节的固定静态数组。需要哪个字符，直接拿下标做一次内存寻址 <code>O(1)</code> 秒拿，性能起飞！</p>
 <p>咱们用一个 <code>Base64</code> 结构体来承载整套逻辑。定义内部字段 <code>_table</code> 指向这 64 个字符组成的表，再配一个 <code>init()</code> 构造函数和一个用索引查字符的 <code>_char_at()</code> 辅助方法：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> Base64 <span class="op">=</span> <span class="kw">struct</span> {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    _table<span class="op">:</span> <span class="op">*</span><span class="at">const</span> [<span class="dv">64</span>]<span class="dt">u8</span><span class="op">,</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> Base64 = <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    _table: *<span class="kw">const</span> [<span class="dv">64</span>]<span class="dt">u8</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init() Base64 {</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> upper <span class="op">=</span> <span class="st">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> lower <span class="op">=</span> <span class="st">"abcdefghijklmnopqrstuvwxyz"</span>;</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> numbers_symb <span class="op">=</span> <span class="st">"0123456789+/"</span>;</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> Base64{</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>_table <span class="op">=</span> upper <span class="op">++</span> lower <span class="op">++</span> numbers_symb<span class="op">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        };</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> init() Base64 <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> upper = <span class="st">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> lower = <span class="st">"abcdefghijklmnopqrstuvwxyz"</span>;</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> numbers_symb = <span class="st">"0123456789+/"</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Base64<span class="op">{</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            ._table = upper ++ lower ++ numbers_symb,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> _char_at(<span class="va">self</span><span class="op">:</span> Base64<span class="op">,</span> index<span class="op">:</span> <span class="dt">usize</span>) <span class="dt">u8</span> {</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span><span class="op">.</span>_table[index];</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> _char_at(self: Base64, index: <span class="dt">usize</span>) <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> self._table[index];</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>注意在 <code>init()</code> 里我们优雅地使用了之前学过的数组编译期拼接操作符 <code>++</code>。 这样一来，查 28 号位的字符，直接调 <code>_char_at(28)</code> 就能精准拿到字母 ‘c’：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> base64 <span class="op">=</span> Base64<span class="op">.</span>init();</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Character at index 28: {c}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>{base64<span class="op">.</span>_char_at(<span class="dv">28</span>)}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> base64 = Base64.init();</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Character at index 28: {c}</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .<span class="op">{</span>base64._char_at(<span class="dv">28</span>)<span class="op">}</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Character at index 28: c</code></pre>
 </section>
 <section id="sec-base64-encoder-algo" class="level3" data-number="4.1.3">
@@ -631,12 +648,12 @@ Figure&nbsp;4.1: Base64 编码器执行逻辑流程图
 </figure>
 </div>
 <p>拆开看： “Hi” 只有 2 字节（16 bit），距离凑齐 24 bit 还差 8 bit。 在切分成 6 位块时： - 前 12 位切成前两个完整的 6 位块； - 剩下的 4 位不够 6 位，算法会在末尾<strong>强制补 2 个零（补齐到 6 位）</strong>，构成第 3 个字符； - 第 4 个 6 位块彻底空空如也，直接打上等号 <code>=</code> 充当占位符（Padding）！</p>
-<p>同理，如果只有一个字节（8 bit），比如输入单字符 “0”（ASCII 码二进制为 <code>00110000</code>），编码后会变成 “MA==”：第 1 块 6 位正常映射，第 2 块由剩余的 2 位补 4 个零凑齐，最后两块由于彻底缺失，直接补上双等号 <code>==</code>。</p>
+<p>同理，如果只有一个字节（8 bit），比如输入单字符 <code>"0"</code>（其二进制序列为 <code>00110000</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>），编码后会变成 <code>"MA=="</code>：第 1 块 6 位（<code>001100</code>）正常映射，第 2 块由剩余的 2 位补 4 个零（<code>000000</code>）凑齐，最后两块由于彻底缺失，直接补上双等号 <code>==</code>。</p>
 </section>
 <section id="sec-base64-decoder-algo" class="level3" data-number="4.1.4">
 <h3 data-number="4.1.4" class="anchored" data-anchor-id="sec-base64-decoder-algo"><span class="header-section-number">4.1.4</span> 解码器工作原理：逆向反推</h3>
 <p>解码器就是编码器的镜像反向操作。 它的处理窗口变成了 <strong>4 个字符</strong>：每次吃进 4 个 Base64 字符，将它们重新还原融合成原始的 <strong>3 个字节</strong>。</p>
-<p>在解码输出里，每个还原出来的原始字节，通常是由输入的两个相邻 Base64 字符各出一部份比特拼装而成的。整体流程如 <a href="#fig-base64-algo2" class="quarto-xref">Figure&nbsp;<span>4.2</span></a> 所示：</p>
+<p>在解码输出里，每个还原出来的原始字节，通常是由输入的两个相邻 Base64 字符各出一部分比特拼装而成的。整体流程如 <a href="#fig-base64-algo2" class="quarto-xref">Figure&nbsp;<span>4.2</span></a> 所示：</p>
 <div id="fig-base64-algo2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-base64-algo2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -653,51 +670,45 @@ Figure&nbsp;4.2: Base64 解码器执行逻辑流程图
 <section id="sec-encode-vs-decode" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-encode-vs-decode"><span class="header-section-number">4.2</span> 编码（Encode）与解码（Decode）的区分</h2>
 <p>做个通俗的定义梳理： - <strong>编码（Encode）</strong>：把原始的二进制字节切片，翻译成人类可读的 Base64 文本切片； - <strong>解码（Decode）</strong>：把 Base64 文本切片，精准还原回最初的原始二进制字节切片。</p>
-<p>一个工业级的 Base64 库，核心 API 就包含这对互为逆运算的方法。</p>
+<p>任何一个 Base64 库通常都由这两部分组成：编码器和解码器，两者互为逆运算。</p>
 </section>
 <section id="sec-base64-length-out" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="sec-base64-length-out"><span class="header-section-number">4.3</span> 预判输出缓冲区大小</h2>
-<p>在底层系统编程中，动态申请内存必须算得分毫不差。 无论编码还是解码，我们在向堆申请空间之前，都必须提前精确算出输出到底需要多少字节。</p>
-<section id="编码输出长度计算" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="编码输出长度计算"><span class="header-section-number">4.3.1</span> 编码输出长度计算</h3>
-<p>对于编码器：每 3 字节输入产生 4 字节输出。如果除不尽，向上取整（Ceil）补齐到 3 的倍数。 所以算法是：<code>ceil(输入长度 / 3) * 4</code>。</p>
-<p>如果输入不到 3 字节（1 或 2 字节），输出固定占满 4 字节（带补位等号）。 在 Zig 标准库中，我们直接调用 <code>std.math.divCeil()</code> 向上取整：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_encode_length(input<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span><span class="dt">usize</span> {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="op">.</span>len <span class="op">&lt;</span> <span class="dv">3</span>) {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">4</span>;</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n_groups<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="cf">try</span> std<span class="op">.</span>math<span class="op">.</span>divCeil(</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">usize</span><span class="op">,</span> input<span class="op">.</span>len<span class="op">,</span> <span class="dv">3</span></span>
+<p>我们需要算出编码器和解码器的输出各需要预留多少空间。这只是简单的算术，在 Zig 里也很容易做到，因为每个数组都能通过 <code>.len</code> 属性直接取得长度（元素个数）。</p>
+<p>先看<strong>编码器输出长度计算</strong>：正如在 <a href="#sec-base64-encoder-algo" class="quarto-xref"><span>Section 4.1.3</span></a> 中所述，编码器每接收 3 字节输入就会生成 4 字节输出。因此，我们将输入字节数除以 3，若除不尽则向上取整（Ceiling），最后乘以 4 即可。如果输入不足 3 字节（1 或 2 字节），输出固定占满 4 字节（含填充符）。 所以算法是：<code>ceil(输入长度 / 3) * 4</code>。</p>
+<p>在 Zig 标准库中，我们直接调用 <code>std.math.divCeil()</code> 向上取整：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_encode_length(input: []<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len &lt; <span class="dv">3</span>) <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">4</span>;</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_groups: <span class="dt">usize</span> = <span class="kw">try</span> std.math.divCeil(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">usize</span>, input.len, <span class="dv">3</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n_groups <span class="op">*</span> <span class="dv">4</span>;</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="解码输出长度计算" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="解码输出长度计算"><span class="header-section-number">4.3.2</span> 解码输出长度计算</h3>
-<p>解码器刚好相反：每 4 字节输入还原成 3 字节。我们用 <code>divFloor()</code> 向下取整乘 3，同时从尾部开始扫描，发现几个 <code>=</code> 填充符就相应减去几个字节：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_decode_length(input<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span><span class="dt">usize</span> {</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="op">.</span>len <span class="op">&lt;</span> <span class="dv">4</span>) {</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">3</span>;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n_groups * <span class="dv">4</span>;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>再看<strong>解码器输出长度计算</strong>：正如在 <a href="#sec-base64-decoder-algo" class="quarto-xref"><span>Section 4.1.4</span></a> 与 <a href="#fig-base64-algo2" class="quarto-xref">Figure&nbsp;<span>4.2</span></a> 中所述，解码器做的是逆过程——每 4 字节输入还原为 3 字节输出，且末尾的 <code>'='</code> 填充字符在解码时会被忽略。因此，我们用 <code>divFloor()</code> 将输入长度除以 4 向下取整再乘以 3，同时从尾部扫描并扣除 <code>'='</code> 填充符的数量：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _calc_decode_length(input: []<span class="kw">const</span> <span class="dt">u8</span>) !<span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len &lt; <span class="dv">4</span>) <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3</span>;</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n_groups<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> <span class="cf">try</span> std<span class="op">.</span>math<span class="op">.</span>divFloor(</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">usize</span><span class="op">,</span> input<span class="op">.</span>len<span class="op">,</span> <span class="dv">4</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_groups: <span class="dt">usize</span> = <span class="kw">try</span> std.math.divFloor(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">usize</span>, input.len, <span class="dv">4</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> multiple_groups<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> n_groups <span class="op">*</span> <span class="dv">3</span>;</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> i<span class="op">:</span> <span class="dt">usize</span> <span class="op">=</span> input<span class="op">.</span>len <span class="op">-</span> <span class="dv">1</span>;</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (i <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">:</span> (i <span class="op">-=</span> <span class="dv">1</span>) {</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (input[i] <span class="op">==</span> <span class="ch">'='</span>) {</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            multiple_groups <span class="op">-=</span> <span class="dv">1</span>;</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span>;</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> multiple_groups: <span class="dt">usize</span> = n_groups * <span class="dv">3</span>;</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> i: <span class="dt">usize</span> = input.len - <span class="dv">1</span>;</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (i &gt; <span class="dv">0</span>) : (i -= <span class="dv">1</span>) <span class="op">{</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (input[i] == <span class="ch">'='</span>) <span class="op">{</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            multiple_groups -= <span class="dv">1</span>;</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            <span class="kw">break</span>;</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> multiple_groups;</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> multiple_groups;</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-encoder-logic" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="sec-encoder-logic"><span class="header-section-number">4.4</span> 核心位运算与编码实现</h2>
@@ -809,96 +820,140 @@ Table&nbsp;4.1: 各种窗口边界下的 6-bit 转换代码对照表
 </figure>
 </div>
 </section>
-<section id="编写-encode-编码方法" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="编写-encode-编码方法"><span class="header-section-number">4.4.2</span> 编写 <code>encode()</code> 编码方法</h3>
-<p>现在把上面的位运算逻辑组装成工业级方法。 注意方法的签名设计：因为输出长度只有在运行时才知道，我们必须传入 <code>allocator: std.mem.Allocator</code>，在堆上申请返回切片。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> encode(<span class="va">self</span><span class="op">:</span> Base64<span class="op">,</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>              allocator<span class="op">:</span> std<span class="op">.</span>mem<span class="op">.</span>Allocator<span class="op">,</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>              input<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span>[]<span class="dt">u8</span> {</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="op">.</span>len <span class="op">==</span> <span class="dv">0</span>) {</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span>;</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n_out <span class="op">=</span> <span class="cf">try</span> _calc_encode_length(input);</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> out <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> n_out);</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> buf <span class="op">=</span> [<span class="dv">3</span>]<span class="dt">u8</span>{ <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span> };</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> count<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> iout<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (input<span class="op">,</span> <span class="dv">0</span><span class="op">..</span>) <span class="op">|</span>_<span class="op">,</span> i<span class="op">|</span> {</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        buf[count] <span class="op">=</span> input[i];</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        count <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (count <span class="op">==</span> <span class="dv">3</span>) {</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            out[iout] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(buf[<span class="dv">0</span>] <span class="op">&gt;&gt;</span> <span class="dv">2</span>);</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            out[iout <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                ((buf[<span class="dv">0</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x03</span>) <span class="op">&lt;&lt;</span> <span class="dv">4</span>) <span class="op">+</span> (buf[<span class="dv">1</span>] <span class="op">&gt;&gt;</span> <span class="dv">4</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            );</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>            out[iout <span class="op">+</span> <span class="dv">2</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>                ((buf[<span class="dv">1</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x0f</span>) <span class="op">&lt;&lt;</span> <span class="dv">2</span>) <span class="op">+</span> (buf[<span class="dv">2</span>] <span class="op">&gt;&gt;</span> <span class="dv">6</span>)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>            );</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>            out[iout <span class="op">+</span> <span class="dv">3</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(buf[<span class="dv">2</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x3f</span>);</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            iout <span class="op">+=</span> <span class="dv">4</span>;</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>            count <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (count <span class="op">==</span> <span class="dv">1</span>) {</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        out[iout] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(buf[<span class="dv">0</span>] <span class="op">&gt;&gt;</span> <span class="dv">2</span>);</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>            (buf[<span class="dv">0</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x03</span>) <span class="op">&lt;&lt;</span> <span class="dv">4</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">2</span>] <span class="op">=</span> <span class="ch">'='</span>;</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">3</span>] <span class="op">=</span> <span class="ch">'='</span>;</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (count <span class="op">==</span> <span class="dv">2</span>) {</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        out[iout] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(buf[<span class="dv">0</span>] <span class="op">&gt;&gt;</span> <span class="dv">2</span>);</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>            ((buf[<span class="dv">0</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x03</span>) <span class="op">&lt;&lt;</span> <span class="dv">4</span>) <span class="op">+</span> (buf[<span class="dv">1</span>] <span class="op">&gt;&gt;</span> <span class="dv">4</span>)</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">2</span>] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_at(</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>            (buf[<span class="dv">1</span>] <span class="op">&amp;</span> <span class="dv">0</span><span class="er">x0f</span>) <span class="op">&lt;&lt;</span> <span class="dv">2</span></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>        );</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        out[iout <span class="op">+</span> <span class="dv">3</span>] <span class="op">=</span> <span class="ch">'='</span>;</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>        iout <span class="op">+=</span> <span class="dv">4</span>;</span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out;</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="zig-中的位移运算bit-shifting-in-zig" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="zig-中的位移运算bit-shifting-in-zig"><span class="header-section-number">4.4.2</span> Zig 中的位移运算（Bit-shifting in Zig）</h3>
+<p>Zig 中的位移运算与 C 语言非常类似。C 语言中存在的全部按位运算符在 Zig 中均完整支持。在 Base64 算法中，这些位运算符是生成预期目标的核心利器。</p>
+<p>位运算符直接作用于数值的二进制比特位层面。这意味着它们会直接操纵构成数值的 0 和 1 比特流，进而改变数值的二进制表现形态。</p>
+<p>以 Base64 输出的第 1 个字节为例：它是 4 个字节中最容易生成的，因为我们只需要使用<strong>右移运算符（<code>&gt;&gt;</code>）</strong>将输入首字节的比特位向右平移 2 位即可。</p>
+<p>仍以 <a href="#fig-base64-algo1" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> 中的字符串 <code>"Hi"</code> 为例，其第一个字符是 <code>"H"</code>，其二进制序列为 <code>01001000</code>。 若将该字节的比特位整体右移 2 位，便得到二进制序列 <code>00010010</code>。该序列在十进制下代表数值 18，在十六进制下代表 <code>0x12</code>。注意 <code>"H"</code> 原本最高位的 6 个比特被平移到了字节末尾，构成了输出序列的第一个 6 位索引：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_writer = std.Io.File.stdout().writer(init.io, &amp;stdout_buffer);</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdout = &amp;stdout_writer.interface;</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> input = <span class="st">"Hi"</span>;</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>input[<span class="dv">0</span>] &gt;&gt; <span class="dv">2</span><span class="op">}</span>);</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>18</code></pre>
+<p>回看 <a href="#fig-base64-algo1" class="quarto-xref">Figure&nbsp;<span>4.1</span></a>，输出中首个字节对应的 6 位组为 <code>010010</code>。虽然视觉上一个表现为 6 位、另一个表现为 8 位 <code>00010010</code>，但它们在数值语义上是完全等价的，均代表十进制的 18。在计算机内部，只要其数值含义一致，我们无需强求物理上存在单独的“6 位类型”。</p>
+</section>
+<section id="使用按位与运算符-筛选特定比特位selecting-specific-bits-with-the-operator" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="使用按位与运算符-筛选特定比特位selecting-specific-bits-with-the-operator"><span class="header-section-number">4.4.3</span> 使用按位与运算符 &amp; 筛选特定比特位（Selecting specific bits with the &amp; operator）</h3>
+<p>回到 <a href="#sec-6bit-transf" class="quarto-xref"><span>Section 4.4.1</span></a>，为了拼装出输出的第 2 和第 3 个字节，我们需要从输入的第 1 和第 2 个字节中精准截取特定的比特位。这是如何做到的？答案正是<strong>按位与运算符（<code>&amp;</code>）</strong>。</p>
+<p>按位与运算符对参与运算的两个操作数执行逻辑与（Logical Conjunction）运算：它逐位比对两个操作数对应的二进制比特。<strong>只有当两个对应的比特位均为 1 时，结果位才为 1；否则结果位一律置为 0</strong> <span class="citation" data-cites="microsoftbitwiseand">(<a href="references.html#ref-microsoftbitwiseand" role="doc-biblioref">Microsoft 2021</a>)</span>。</p>
+<p>例如将 <code>&amp;</code> 施加于二进制序列 <code>1000100</code> 与 <code>00001101</code> 时，运算结果为 <code>00000100</code>——因为只有在第 6 个位置上，两个序列的比特位同时为 1。（译注：原文的第一个序列 <code>1000100</code> 只有 7 位，补齐 8 位应为 <code>01000100</code>；这里的“第 6 个位置”是按 8 位从左往右数的。）</p>
+<p>假设我们有一个二进制序列 <code>10010111</code>（即十进制的 151），如果希望从中仅提取出第 3 位和第 4 位的比特值，我们只需用 <code>&amp;</code> 将其与掩码 <code>00110000</code>（十六进制 <code>0x30</code>）相与：掩码中只有第 3 和第 4 位是 1，其余全为 0。运算后其他位置全部被安全置零屏蔽，仅保留目标位上的结果 <code>00010000</code>（十进制 16）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_buffer: [<span class="dv">1024</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> stdout_writer = std.Io.File.stdout().writer(init.io, &amp;stdout_buffer);</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stdout = &amp;stdout_writer.interface;</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bits = <span class="bn">0b10010111</span>;</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"{d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>bits &amp; <span class="bn">0b00110000</span><span class="op">}</span>);</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>16</code></pre>
+</section>
+<section id="为编码输出分配堆内存空间allocating-space-for-the-output" class="level3" data-number="4.4.4">
+<h3 data-number="4.4.4" class="anchored" data-anchor-id="为编码输出分配堆内存空间allocating-space-for-the-output"><span class="header-section-number">4.4.4</span> 为编码输出分配堆内存空间（Allocating space for the output）</h3>
+<p>正如在 <a href="01-memory.html#sec-stack" class="quarto-xref"><span>Section 3.1.4</span></a> 中所述，若要将对象存储在栈上，该对象必须在编译期具备固定已知的尺寸。而在 Base64 编解码场景中，输出缓冲区的大小直接取决于输入文本的实际长度。</p>
+<p>这意味着我们在编译期无法预判输出切片的确切大小，因此绝不能将输出直接安放在栈上，必须借助内存分配器将其开辟在<strong>堆内存（Heap）</strong>中。 正如我们在 <a href="01-memory.html#sec-heap" class="quarto-xref"><span>Section 3.1.5</span></a> 所强调的，在 Zig 中向堆申请内存必须显式借助分配器。因此，无论是 <code>encode()</code> 还是 <code>decode()</code> 函数，都必须接收一个类型为 <code>std.mem.Allocator</code> 的 <code>allocator</code> 参数，由其全权管理输出缓冲区的动态开辟。</p>
+</section>
+<section id="编写-encode-编码方法" class="level3" data-number="4.4.5">
+<h3 data-number="4.4.5" class="anchored" data-anchor-id="编写-encode-编码方法"><span class="header-section-number">4.4.5</span> 编写 <code>encode()</code> 编码方法</h3>
+<p>现在，我们可以把 <a href="#fig-base64-algo1" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> 和 <a href="#tbl-transf-6bit" class="quarto-xref">Table&nbsp;<span>4.1</span></a> 中描述的位运算逻辑封装进 <code>encode()</code> 方法，并将其添加到我们在 <a href="#sec-base64-table" class="quarto-xref"><span>Section 4.1.2</span></a> 中定义的 <code>Base64</code> 结构体中。 注意方法的签名设计：除了代表结构体自身的 <code>self: Base64</code> 和待编码切片 <code>input: []const u8</code> 外，我们还传入了 <code>allocator: std.mem.Allocator</code>（关于分配器的详细说明见 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a>），用于在堆上分配存放编码结果的切片：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> encode(self: Base64,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              allocator: std.mem.Allocator,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              input: []<span class="kw">const</span> <span class="dt">u8</span>) ![]<span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len == <span class="dv">0</span>) <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">""</span>;</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_out = <span class="kw">try</span> _calc_encode_length(input);</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> out = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, n_out);</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> buf = [<span class="dv">3</span>]<span class="dt">u8</span><span class="op">{</span> <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span> <span class="op">}</span>;</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> count: <span class="dt">u8</span> = <span class="dv">0</span>;</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> iout: <span class="dt">u64</span> = <span class="dv">0</span>;</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> (input, <span class="dv">0</span>..) |_, i| <span class="op">{</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        buf[count] = input[i];</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        count += <span class="dv">1</span>;</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (count == <span class="dv">3</span>) <span class="op">{</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>            out[iout] = self._char_at(buf[<span class="dv">0</span>] &gt;&gt; <span class="dv">2</span>);</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>            out[iout + <span class="dv">1</span>] = self._char_at(</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                ((buf[<span class="dv">0</span>] &amp; <span class="bn">0x03</span>) &lt;&lt; <span class="dv">4</span>) + (buf[<span class="dv">1</span>] &gt;&gt; <span class="dv">4</span>)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>            );</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>            out[iout + <span class="dv">2</span>] = self._char_at(</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>                ((buf[<span class="dv">1</span>] &amp; <span class="bn">0x0f</span>) &lt;&lt; <span class="dv">2</span>) + (buf[<span class="dv">2</span>] &gt;&gt; <span class="dv">6</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>            );</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>            out[iout + <span class="dv">3</span>] = self._char_at(buf[<span class="dv">2</span>] &amp; <span class="bn">0x3f</span>);</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>            iout += <span class="dv">4</span>;</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>            count = <span class="dv">0</span>;</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (count == <span class="dv">1</span>) <span class="op">{</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>        out[iout] = self._char_at(buf[<span class="dv">0</span>] &gt;&gt; <span class="dv">2</span>);</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">1</span>] = self._char_at(</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>            (buf[<span class="dv">0</span>] &amp; <span class="bn">0x03</span>) &lt;&lt; <span class="dv">4</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>        );</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">2</span>] = <span class="ch">'='</span>;</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">3</span>] = <span class="ch">'='</span>;</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (count == <span class="dv">2</span>) <span class="op">{</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>        out[iout] = self._char_at(buf[<span class="dv">0</span>] &gt;&gt; <span class="dv">2</span>);</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">1</span>] = self._char_at(</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>            ((buf[<span class="dv">0</span>] &amp; <span class="bn">0x03</span>) &lt;&lt; <span class="dv">4</span>) + (buf[<span class="dv">1</span>] &gt;&gt; <span class="dv">4</span>)</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>        );</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">2</span>] = self._char_at(</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>            (buf[<span class="dv">1</span>] &amp; <span class="bn">0x0f</span>) &lt;&lt; <span class="dv">2</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>        );</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>        out[iout + <span class="dv">3</span>] = <span class="ch">'='</span>;</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>        iout += <span class="dv">4</span>;</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> out;</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="sec-decoder-logic" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="sec-decoder-logic"><span class="header-section-number">4.5</span> 构建解码器逻辑</h2>
-<p>搞定编码器后，解码器的逻辑就顺理成章了。</p>
+<p>现在我们来编写 Base64 解码器逻辑。回顾 <a href="#fig-base64-algo2" class="quarto-xref">Figure&nbsp;<span>4.2</span></a>，Base64 解码器执行的是编码器的逆过程，因此我们的目标是编写一个 <code>decode()</code> 方法，逆向还原我们在 <a href="#sec-encoder-logic" class="quarto-xref"><span>Section 4.4</span></a> 中实现的编码过程。</p>
 <section id="sec-map-base64-index" class="level3" data-number="4.5.1">
 <h3 data-number="4.5.1" class="anchored" data-anchor-id="sec-map-base64-index"><span class="header-section-number">4.5.1</span> 字符反查索引：<code>_char_index()</code></h3>
-<p>收到一个 Base64 字符（比如 <code>'k'</code>），我们得反查出它在 64 码表里的数值是多少。 这里写个朴素实用的扫描查找方法，如果是 <code>=</code> 则返回 64（越界哨兵）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _char_index(<span class="va">self</span><span class="op">:</span> Base64<span class="op">,</span> char<span class="op">:</span> <span class="dt">u8</span>) <span class="dt">u8</span> {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (char <span class="op">==</span> <span class="ch">'='</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">64</span>;</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> i<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> output_index<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (i <span class="op">&lt;</span> <span class="dv">64</span>) <span class="op">:</span> (i <span class="op">+=</span> <span class="dv">1</span>) {</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="va">self</span><span class="op">.</span>_char_at(i) <span class="op">==</span> char)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span>;</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        output_index <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output_index;</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在解码 Base64 消息时，我们需要先计算输入序列中每个 Base64 字符在 64 字符标尺表中的索引值。这里我们编写一个简单的 <code>_char_index()</code> 方法，用“暴力”的办法遍历查找表，把拿到的字符和标尺表里的字符逐个比较，匹配上就返回它的索引。计算索引很可能有更好、更快的做法（比如“分而治之”一类的策略），但目前用这种简单的策略就够了。如果遇到特殊填充字符 <code>'='</code>（正如在 <a href="#sec-base64-scale" class="quarto-xref"><span>Section 4.1.1</span></a> 中所述，<code>'='</code> 并不属于 64 字符标尺表本身），则返回超出常规索引范围的 <code>64</code> 作为标记：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> _char_index(self: Base64, char: <span class="dt">u8</span>) <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (char == <span class="ch">'='</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">64</span>;</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> i: <span class="dt">u8</span> = <span class="dv">0</span>;</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> output_index: <span class="dt">u8</span> = <span class="dv">0</span>;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> (i &lt; <span class="dv">64</span>) : (i += <span class="dv">1</span>) <span class="op">{</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (self._char_at(i) == char)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">break</span>;</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        output_index += <span class="dv">1</span>;</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> output_index;</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="解码逆向位移还原" class="level3" data-number="4.5.2">
 <h3 data-number="4.5.2" class="anchored" data-anchor-id="解码逆向位移还原"><span class="header-section-number">4.5.2</span> 解码逆向位移还原</h3>
-<p>每次吃进 4 个字符查得的索引 <code>buf[0..4]</code>，通过逆向位移拼成原始 3 字节：</p>
+<p>在正式进行 6 位逆向转换之前，我们需要先调用 <code>_char_index()</code> 将输入的 Base64 字符序列转换为对应的索引序列并存入临时缓冲区 <code>buf</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> (<span class="dv">0</span>..input.len) |i| <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    buf[i] = self._char_index(input[i]);</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>与编码器“每 3 字节生成 4 字符”相反，解码器针对每 4 个输入字符的索引 <code>buf[0..4]</code>，通过逆向位移拼合还原出原始的 3 个字节：</p>
 <ol type="1">
 <li><code>output[0] = (buf[0] &lt;&lt; 2) + (buf[1] &gt;&gt; 4);</code></li>
 <li><code>output[1] = (buf[1] &lt;&lt; 4) + (buf[2] &gt;&gt; 2);</code></li>
 <li><code>output[2] = (buf[2] &lt;&lt; 6) + buf[3];</code></li>
 </ol>
-<p><a href="#fig-decoder-bitshift" class="quarto-xref">Figure&nbsp;<span>4.4</span></a> 直观展现了如何把前两个 6 位数值拼回原始的 8 位字节：</p>
+<p>不妨结合我们在 <a href="#sec-encoder-logic" class="quarto-xref"><span>Section 4.4</span></a> 中介绍的编码转换过程来直观理解：假设编码器输入的第 1 个字节比特序列为 <code>ABCDEFGH</code>、第 2 个字节为 <code>IJKLMNOP</code>，那么编码器输出的前两个字节分别为 <code>00ABCDEF</code> 和 <code>00GHIJKL</code>（如 <a href="#fig-encoder-bitshift" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> 所示）。当这两个字节进入解码器时，<a href="#fig-decoder-bitshift" class="quarto-xref">Figure&nbsp;<span>4.4</span></a> 直观展示了它们是如何通过位移合并还原出原始首字节 <code>ABCDEFGH</code> 的，<a href="#tbl-6bit-decode" class="quarto-xref">Table&nbsp;<span>4.2</span></a> 则汇总了完整的 3 字节还原公式：</p>
 <div id="fig-decoder-bitshift" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-decoder-bitshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -943,76 +998,84 @@ Table&nbsp;4.2: 解码过程中的 6 位逆向还原代码
 </section>
 <section id="编写完整的-decode-方法" class="level3" data-number="4.5.3">
 <h3 data-number="4.5.3" class="anchored" data-anchor-id="编写完整的-decode-方法"><span class="header-section-number">4.5.3</span> 编写完整的 <code>decode()</code> 方法</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> decode(<span class="va">self</span><span class="op">:</span> Base64<span class="op">,</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          allocator<span class="op">:</span> std<span class="op">.</span>mem<span class="op">.</span>Allocator<span class="op">,</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          input<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span>) <span class="op">!</span>[]<span class="dt">u8</span> {</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="op">.</span>len <span class="op">==</span> <span class="dv">0</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span>;</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> n_output <span class="op">=</span> <span class="cf">try</span> _calc_decode_length(input);</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> tmp_buffer <span class="op">=</span> [<span class="dv">4</span>]<span class="dt">u8</span>{ <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span> };</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> count<span class="op">:</span> <span class="dt">u8</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> output_index<span class="op">:</span> <span class="dt">u64</span> <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">var</span> output <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>alloc(<span class="dt">u8</span><span class="op">,</span> n_output);</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(output[<span class="dv">0</span><span class="op">..</span>]<span class="op">,</span> <span class="dv">0</span>);</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="dv">0</span><span class="op">..</span>input<span class="op">.</span>len) <span class="op">|</span>i<span class="op">|</span> {</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        tmp_buffer[count] <span class="op">=</span> <span class="va">self</span><span class="op">.</span>_char_index(input[i]);</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        count <span class="op">+=</span> <span class="dv">1</span>;</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (count <span class="op">==</span> <span class="dv">4</span>) {</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            output[output_index] <span class="op">=</span> (tmp_buffer[<span class="dv">0</span>] <span class="op">&lt;&lt;</span> <span class="dv">2</span>) <span class="op">+</span> (tmp_buffer[<span class="dv">1</span>] <span class="op">&gt;&gt;</span> <span class="dv">4</span>);</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (tmp_buffer[<span class="dv">2</span>] <span class="op">!=</span> <span class="dv">64</span>) {</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                output[output_index <span class="op">+</span> <span class="dv">1</span>] <span class="op">=</span> (tmp_buffer[<span class="dv">1</span>] <span class="op">&lt;&lt;</span> <span class="dv">4</span>) <span class="op">+</span> (tmp_buffer[<span class="dv">2</span>] <span class="op">&gt;&gt;</span> <span class="dv">2</span>);</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            }</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (tmp_buffer[<span class="dv">3</span>] <span class="op">!=</span> <span class="dv">64</span>) {</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                output[output_index <span class="op">+</span> <span class="dv">2</span>] <span class="op">=</span> (tmp_buffer[<span class="dv">2</span>] <span class="op">&lt;&lt;</span> <span class="dv">6</span>) <span class="op">+</span> tmp_buffer[<span class="dv">3</span>];</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            }</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            output_index <span class="op">+=</span> <span class="dv">3</span>;</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            count <span class="op">=</span> <span class="dv">0</span>;</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output;</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>下面的 <code>decode()</code> 方法封装了完整的解码流程。我们先通过 <code>_calc_decode_length()</code> 计算输出长度并分配内存，随后按 4 字节窗口填充 <code>tmp_buffer</code> 并执行逆向位运算。注意，我们会检查 <code>tmp_buffer[2]</code> 和 <code>tmp_buffer[3]</code> 是否等于 <code>64</code>（即我们在 <a href="#sec-map-base64-index" class="quarto-xref"><span>Section 4.5.1</span></a> 中针对 <code>'='</code> 填充符返回的特殊索引）：如果等于 <code>64</code>，说明遇到了末尾填充符，直接忽略即可：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> decode(self: Base64,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>          allocator: std.mem.Allocator,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          input: []<span class="kw">const</span> <span class="dt">u8</span>) ![]<span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (input.len == <span class="dv">0</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">""</span>;</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> n_output = <span class="kw">try</span> _calc_decode_length(input);</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> tmp_buffer = [<span class="dv">4</span>]<span class="dt">u8</span><span class="op">{</span> <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span> <span class="op">}</span>;</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> count: <span class="dt">u8</span> = <span class="dv">0</span>;</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> output_index: <span class="dt">u64</span> = <span class="dv">0</span>;</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> output = <span class="kw">try</span> allocator.alloc(<span class="dt">u8</span>, n_output);</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">@memset</span>(output[<span class="dv">0</span>..], <span class="dv">0</span>);</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> (<span class="dv">0</span>..input.len) |i| <span class="op">{</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        tmp_buffer[count] = self._char_index(input[i]);</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        count += <span class="dv">1</span>;</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> (count == <span class="dv">4</span>) <span class="op">{</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>            output[output_index] = (tmp_buffer[<span class="dv">0</span>] &lt;&lt; <span class="dv">2</span>) + (tmp_buffer[<span class="dv">1</span>] &gt;&gt; <span class="dv">4</span>);</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> (tmp_buffer[<span class="dv">2</span>] != <span class="dv">64</span>) <span class="op">{</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                output[output_index + <span class="dv">1</span>] = (tmp_buffer[<span class="dv">1</span>] &lt;&lt; <span class="dv">4</span>) + (tmp_buffer[<span class="dv">2</span>] &gt;&gt; <span class="dv">2</span>);</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> (tmp_buffer[<span class="dv">3</span>] != <span class="dv">64</span>) <span class="op">{</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>                output[output_index + <span class="dv">2</span>] = (tmp_buffer[<span class="dv">2</span>] &lt;&lt; <span class="dv">6</span>) + tmp_buffer[<span class="dv">3</span>];</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>            output_index += <span class="dv">3</span>;</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>            count = <span class="dv">0</span>;</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> output;</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="大功告成端到端跑通测试" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="大功告成端到端跑通测试"><span class="header-section-number">4.6</span> 大功告成：端到端跑通测试！</h2>
-<p>至此，编解码全套链路全部搞定！ 咱们写个小测试跑一圈：用 <code>FixedBufferAllocator</code> 搞一块 1000 字节的定长缓冲区充当分配器，对字符串做一次完整的“编码再解码”往返操作：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> memory_buffer<span class="op">:</span> [<span class="dv">1000</span>]<span class="dt">u8</span> <span class="op">=</span> <span class="cn">undefined</span>;</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> fba <span class="op">=</span> std<span class="op">.</span>heap<span class="op">.</span>FixedBufferAllocator<span class="op">.</span>init(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span>memory_buffer</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> allocator <span class="op">=</span> fba<span class="op">.</span>allocator();</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> text <span class="op">=</span> <span class="st">"Testing some more stuff"</span>;</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> etext <span class="op">=</span> <span class="st">"VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY="</span>;</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> base64 <span class="op">=</span> Base64<span class="op">.</span>init();</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> encoded_text <span class="op">=</span> <span class="cf">try</span> base64<span class="op">.</span>encode(</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    allocator<span class="op">,</span> text</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> decoded_text <span class="op">=</span> <span class="cf">try</span> base64<span class="op">.</span>decode(</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    allocator<span class="op">,</span> etext</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Encoded text: {s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{encoded_text}</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>print(</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Decoded text: {s}</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> <span class="op">.</span>{decoded_text}</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>);</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> stdout<span class="op">.</span>flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="最终运行效果the-end-result" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="最终运行效果the-end-result"><span class="header-section-number">4.6</span> 最终运行效果（The end result）</h2>
+<p>至此，<code>encode()</code> 和 <code>decode()</code> 均已实现完毕，我们拥有了一个功能完备的 Zig 版 Base64 编解码器。下面是一个完整的使用示例，使用 <code>FixedBufferAllocator</code> 在 1000 字节缓冲区上对字符串执行编码与解码操作：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> memory_buffer: [<span class="dv">1000</span>]<span class="dt">u8</span> = <span class="cn">undefined</span>;</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> fba = std.heap.FixedBufferAllocator.init(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    &amp;memory_buffer</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = fba.allocator();</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> text = <span class="st">"Testing some more stuff"</span>;</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> etext = <span class="st">"VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY="</span>;</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> base64 = Base64.init();</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> encoded_text = <span class="kw">try</span> base64.encode(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    allocator, text</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> decoded_text = <span class="kw">try</span> base64.decode(</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    allocator, etext</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Encoded text: {s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>encoded_text<span class="op">}</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Decoded text: {s}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>decoded_text<span class="op">}</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>控制台输出完美对齐：</p>
 <pre><code>Encoded text: VGVzdGluZyBzb21lIG1vcmUgc3R1ZmY=
 Decoded text: Testing some more stuff</code></pre>
-<p>完整的整合源码可以在本书官方仓库的 <code>ZigExamples/base64/base64_basic.zig</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 查阅。 从内存分配到极致位运算，咱们不仅把 Base64 的底层逻辑彻底玩明白了，而且写出了一套完全合规、内存安全的工业级 Zig 代码！</p>
+<p>你也可以访问本书的官方代码仓库<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>，在 <code>ZigExamples</code> 目录下的 <code>base64_basic.zig</code><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> 中查看完整的源码实现。</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-microsoftbitwiseand" class="csl-entry" role="listitem">
+Microsoft. 2021. <em>Bitwise AND Operator: &amp;</em>. Microsoft Learn. <a href="https://learn.microsoft.com/en-us/cpp/cpp/bitwise-and-operator-amp?view=msvc-170">https://learn.microsoft.com/en-us/cpp/cpp/bitwise-and-operator-amp?view=msvc-170</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p><a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig" class="uri">https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>请注意，字符 <code>"0"</code> 与数值 <code>0</code> 不同：数值 <code>0</code> 在二进制下全为 0，而 ASCII 字符 <code>"0"</code> 的二进制表示为 <code>00110000</code>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://github.com/pedropark99/zig-book" class="uri">https://github.com/pedropark99/zig-book</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig" class="uri">https://github.com/pedropark99/zig-book/blob/main/ZigExamples/base64/base64_basic.zig</a>。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

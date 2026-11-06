@@ -488,7 +488,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -506,7 +506,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -535,18 +535,18 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#从函数中返回错误感叹号-与错误联合" id="toc-从函数中返回错误感叹号-与错误联合" class="nav-link" data-scroll-target="#从函数中返回错误感叹号-与错误联合"><span class="header-section-number">10.1.1</span> 从函数中返回错误：感叹号 <code>!</code> 与错误联合</a></li>
   <li><a href="#错误集error-sets" id="toc-错误集error-sets" class="nav-link" data-scroll-target="#错误集error-sets"><span class="header-section-number">10.1.2</span> 错误集（Error Sets）</a></li>
-  <li><a href="#错误值的自动类型收敛子集到超集" id="toc-错误值的自动类型收敛子集到超集" class="nav-link" data-scroll-target="#错误值的自动类型收敛子集到超集"><span class="header-section-number">10.1.3</span> 错误值的自动类型收敛（子集到超集）</a></li>
+  <li><a href="#错误值的类型转换从子集到超集" id="toc-错误值的类型转换从子集到超集" class="nav-link" data-scroll-target="#错误值的类型转换从子集到超集"><span class="header-section-number">10.1.3</span> 错误值的类型转换（从子集到超集）</a></li>
   </ul></li>
   <li><a href="#优雅处理错误的四大姿势" id="toc-优雅处理错误的四大姿势" class="nav-link" data-scroll-target="#优雅处理错误的四大姿势"><span class="header-section-number">10.2</span> 优雅处理错误的四大姿势</a>
   <ul class="collapse">
-  <li><a href="#姿势一try-快速向上传播甩锅给上游" id="toc-姿势一try-快速向上传播甩锅给上游" class="nav-link" data-scroll-target="#姿势一try-快速向上传播甩锅给上游"><span class="header-section-number">10.2.1</span> 姿势一：<code>try</code> 快速向上传播（甩锅给上游）</a></li>
-  <li><a href="#姿势二catch-就地兜底与消费" id="toc-姿势二catch-就地兜底与消费" class="nav-link" data-scroll-target="#姿势二catch-就地兜底与消费"><span class="header-section-number">10.2.2</span> 姿势二：<code>catch</code> 就地兜底与消费</a></li>
-  <li><a href="#姿势三if-分支模式匹配解包" id="toc-姿势三if-分支模式匹配解包" class="nav-link" data-scroll-target="#姿势三if-分支模式匹配解包"><span class="header-section-number">10.2.3</span> 姿势三：<code>if</code> 分支模式匹配解包</a></li>
-  <li><a href="#sec-errdefer2" id="toc-sec-errdefer2" class="nav-link" data-scroll-target="#sec-errdefer2"><span class="header-section-number">10.2.4</span> 姿势四：<code>errdefer</code> 异常回滚清理</a></li>
+  <li><a href="#try-的真正含义向上传播错误" id="toc-try-的真正含义向上传播错误" class="nav-link" data-scroll-target="#try-的真正含义向上传播错误"><span class="header-section-number">10.2.1</span> <code>try</code> 的真正含义：向上传播错误</a></li>
+  <li><a href="#catch-关键字就地捕获与兜底" id="toc-catch-关键字就地捕获与兜底" class="nav-link" data-scroll-target="#catch-关键字就地捕获与兜底"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字：就地捕获与兜底</a></li>
+  <li><a href="#使用-if-语句处理错误" id="toc-使用-if-语句处理错误" class="nav-link" data-scroll-target="#使用-if-语句处理错误"><span class="header-section-number">10.2.3</span> 使用 <code>if</code> 语句处理错误</a></li>
+  <li><a href="#sec-errdefer2" id="toc-sec-errdefer2" class="nav-link" data-scroll-target="#sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字：错误回滚清理</a></li>
   </ul></li>
   <li><a href="#sec-unions" id="toc-sec-unions" class="nav-link" data-scroll-target="#sec-unions"><span class="header-section-number">10.3</span> 联合体（Unions）与带标签联合体（Tagged Unions）</a>
   <ul class="collapse">
-  <li><a href="#现代模式匹配天花板带标签联合体tagged-unions" id="toc-现代模式匹配天花板带标签联合体tagged-unions" class="nav-link" data-scroll-target="#现代模式匹配天花板带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 现代模式匹配天花板：带标签联合体（Tagged Unions）</a></li>
+  <li><a href="#带标签联合体tagged-unions" id="toc-带标签联合体tagged-unions" class="nav-link" data-scroll-target="#带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 带标签联合体（Tagged Unions）</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -574,203 +574,226 @@ window.Quarto = {
 </header>
 
 
-<p>``</p>
-<p>在这章中，咱们来把 Zig 的<strong>错误处理（Error Handling）体系</strong>以及<strong>联合体（Unions）</strong>彻底聊透。 在前面的 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 里，大家已经见识过 <code>try</code> 关键字的威力。但 Zig 的错误处理工具箱远不止这些，<code>catch</code>、错误集（Error sets）、<code>errdefer</code> 以及带标签联合体（Tagged Unions），才是构建坚不可摧的大型底层系统的核心利刃。</p>
+<p>在本章中，我想讨论 Zig 中的错误处理是怎么做的。我们已经简单了解过 Zig 中处理错误的一种策略，也就是 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中介绍的 <code>try</code> 关键字，但还没有学习其他方法，比如 <code>catch</code> 关键字。我还想在本章中讨论如何在 Zig 中创建联合体类型。</p>
 <section id="核心认知错误是一等公民的值errors-as-values" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="核心认知错误是一等公民的值errors-as-values"><span class="header-section-number">10.1</span> 核心认知：错误是一等公民的值（Errors as Values）</h2>
-<p>在搞懂具体语法前，首先必须建立起对 Zig 错误哲学的认知：<strong>在 Zig 里，错误本质上是一个实在的具体数值（Value）！</strong> <span class="citation" data-cites="zigoverview">(<a href="references.html#ref-zigoverview" role="doc-biblioref">Zig Software Foundation 2024</a>)</span> 它既不是隐秘抛出、不知在何处被接住的运行时异常（Exception），也不是深不见底的黑盒。 错误值可以像普通整数一样在函数间传递、可以存入变量、可以进行集合转换。</p>
+<p>在搞懂具体语法前，首先必须建立起对 Zig 错误哲学的认知：<strong>在 Zig 里，错误本质上是一个实在的具体数值（Value）！</strong> <span class="citation" data-cites="zigoverview">(<a href="references.html#ref-zigoverview" role="doc-biblioref">Zig Software Foundation 2024a</a>)</span> 它既不是隐秘抛出、不知在何处被接住的运行时异常（Exception），也不是深不见底的黑盒。 错误值可以像普通整数一样在函数间传递、可以存入变量、可以进行集合转换。</p>
 <p>写惯了 Python 或 C++ 的同学可能习惯了抛异常（<code>throw</code>）。但在那些语言里，调用方很容易因遗漏 <code>try-catch</code> 而导致未捕获异常一路击穿整个调用栈。 <strong>而在 Zig 里，所有可能发生的错误都必须显式处理，编译器绝不允许你视而不见！</strong> 你甚至不能像对待普通变量那样，用下划线 <code>_</code> 随手把一个错误联合结果丢弃掉：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> cwd <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Dir<span class="op">.</span>cwd();</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> cwd = std.Io.Dir.cwd();</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 试图对可能报错的操作用下划线蒙混过关</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> cwd<span class="op">.</span>openFile(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    init<span class="op">.</span>io<span class="op">,</span> <span class="st">"doesnt_exist.txt"</span><span class="op">,</span> <span class="op">.</span>{ <span class="op">.</span>mode <span class="op">=</span> <span class="op">.</span>write_only }</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>_ = cwd.openFile(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{</span> .mode = .write_only <span class="op">}</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>编译器一眼识破并当场报错：</p>
 <pre><code>t.zig:8:17: error: error set is discarded
 t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
-<p>编译器会直接提醒你：“这里返回的是错误集，麻烦老老实实用 <code>try</code>、<code>catch</code> 或者 <code>if</code> 处理干净！”</p>
+<p>编译器会提醒你：这里返回的是可能包含错误的错误联合类型，需要用 <code>try</code>、<code>catch</code> 或 <code>if</code> 处理。</p>
 <section id="从函数中返回错误感叹号-与错误联合" class="level3" data-number="10.1.1">
 <h3 data-number="10.1.1" class="anchored" data-anchor-id="从函数中返回错误感叹号-与错误联合"><span class="header-section-number">10.1.1</span> 从函数中返回错误：感叹号 <code>!</code> 与错误联合</h3>
 <p>如果一个函数在执行过程中可能会报错，那它的返回值类型签名里就必须带上感叹号 <code>!</code>（表示错误联合 Error Union）：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_name(stdout<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Io<span class="op">.</span>Writer) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>print(<span class="st">"My name is Pedro!"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> stdout<span class="op">.</span>flush();</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在上面的 <code>!void</code> 中，感叹号左侧没有显式指定错误类型，这叫<strong>推导错误联合（Inferred Error Set）</strong>，由编译器自动分析函数体推导可能抛出的错误集合。</p>
-<p>而在正规库开发中，为了保证严谨性和自解释文档能力，我们通常会在感叹号左边显式列出具体的错误集类型：</p>
-<pre><code>&lt;错误类型&gt;!&lt;成功时的返回值类型&gt;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_name(stdout: *std.Io.Writer) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"My name is Pedro!"</span>, .<span class="op">{}</span>);</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在上面的 <code>!void</code> 中，感叹号左侧没有显式指定错误类型，这叫<strong>推导错误集（inferred error set）</strong>，由编译器分析函数体，推导出函数可能返回的错误集合。</p>
+<p>如果你愿意，也可以在感叹号左边显式指定函数可能返回的错误集。这样一来，编译器就能检查函数中是否产生了返回类型里没有声明的错误：</p>
+<pre><code>&lt;error-value&gt;!&lt;valid-value&gt;</code></pre>
+<p>（即：<code>&lt;错误值&gt;!&lt;正常返回值&gt;</code>。）</p>
 <p>例如 Zig 标准库 HTTP 客户端模块里的 <code>fill()</code> 函数：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> fill(conn<span class="op">:</span> <span class="op">*</span>Connection) ReadError<span class="op">!</span><span class="dt">void</span> {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> fill(conn: *Connection) ReadError!<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>这清楚地告诉所有调用者：该函数要么成功返回 <code>void</code>，要么只会返回属于 <code>ReadError</code> 范围内的具体错误！</p>
 </section>
 <section id="错误集error-sets" class="level3" data-number="10.1.2">
 <h3 data-number="10.1.2" class="anchored" data-anchor-id="错误集error-sets"><span class="header-section-number">10.1.2</span> 错误集（Error Sets）</h3>
-<p>当一个函数可能抛出多种不同原因的错误时，我们可以用 <code>error{ ... }</code> 定义一个<strong>错误集（Error Set）</strong>：</p>
+<p>当一个函数可能返回多种不同类型的错误时，我们可以用 <code>error{ ... }</code> 定义一个<strong>错误集（Error Set）</strong>。错误集本质上是一种特殊的联合体类型（Union，我们将在 <a href="#sec-unions" class="quarto-xref"><span>Section 10.3</span></a> 中深入探讨联合体）：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> resolvePath(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    ally<span class="op">:</span> mem<span class="op">.</span>Allocator<span class="op">,</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    p<span class="op">:</span> []<span class="at">const</span> <span class="dt">u8</span><span class="op">,</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>) <span class="kw">error</span>{</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    OutOfMemory<span class="op">,</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    CurrentWorkingDirectoryUnlinked<span class="op">,</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    Unexpected<span class="op">,</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>}<span class="op">!</span>[]<span class="dt">u8</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    ally: mem.Allocator,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    p: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>) <span class="kw">error</span><span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    OutOfMemory,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    CurrentWorkingDirectoryUnlinked,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    Unexpected,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>![]<span class="dt">u8</span> <span class="op">{</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>在真实工程里，通常会给这组错误起一个清晰的大写类型名复用：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="at">const</span> ReadError <span class="op">=</span> <span class="kw">error</span>{</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    TlsFailure<span class="op">,</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    TlsAlert<span class="op">,</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    ConnectionTimedOut<span class="op">,</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    ConnectionResetByPeer<span class="op">,</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    UnexpectedReadFailure<span class="op">,</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    EndOfStream<span class="op">,</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>};</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> ReadError = <span class="kw">error</span><span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    TlsFailure,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    TlsAlert,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    ConnectionTimedOut,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    ConnectionResetByPeer,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    UnexpectedReadFailure,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    EndOfStream,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> readvDirect(</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        conn<span class="op">:</span> <span class="op">*</span>Connection<span class="op">,</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        buffers<span class="op">:</span> []std<span class="op">.</span>posix<span class="op">.</span>iovec</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    ) ReadError<span class="op">!</span><span class="dt">usize</span> {</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        conn: *Connection,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        buffers: []std.posix.iovec</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    ) ReadError!<span class="dt">usize</span> <span class="op">{</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="错误值的自动类型收敛子集到超集" class="level3" data-number="10.1.3">
-<h3 data-number="10.1.3" class="anchored" data-anchor-id="错误值的自动类型收敛子集到超集"><span class="header-section-number">10.1.3</span> 错误值的自动类型收敛（子集到超集）</h3>
+<section id="错误值的类型转换从子集到超集" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="错误值的类型转换从子集到超集"><span class="header-section-number">10.1.3</span> 错误值的类型转换（从子集到超集）</h3>
 <p>如果错误集 <code>A</code> 包含了错误集 <code>B</code> 里的所有成员（即 <span class="math inline">\(A \supset B\)</span>），那么在 Zig 中，<code>B</code> 集合里的错误值可以隐式自动转换为 <code>A</code> 集合类型：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> A <span class="op">=</span> <span class="kw">error</span>{</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    ConnectionTimeoutError<span class="op">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    DatabaseNotFound<span class="op">,</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    OutOfMemory<span class="op">,</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    InvalidToken<span class="op">,</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> B <span class="op">=</span> <span class="kw">error</span> {</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    OutOfMemory<span class="op">,</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>};</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> A = <span class="kw">error</span><span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    ConnectionTimeoutError,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    DatabaseNotFound,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    OutOfMemory,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    InvalidToken,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> B = <span class="kw">error</span> <span class="op">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    OutOfMemory,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> cast(err<span class="op">:</span> B) A {</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> err; <span class="co">// 隐式自动向上收敛</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> cast(err: B) A <span class="op">{</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> err; <span class="co">// 隐式转换为超集类型</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"coerce error value"</span> {</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> error_value <span class="op">=</span> cast(B<span class="op">.</span>OutOfMemory);</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> std<span class="op">.</span>testing<span class="op">.</span>expect(</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        error_value <span class="op">==</span> A<span class="op">.</span>OutOfMemory</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"coerce error value"</span> <span class="op">{</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> error_value = cast(B.OutOfMemory);</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> std.testing.expect(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        error_value == A.OutOfMemory</span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    );</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>1/1 file6de04e52901.test.coerce error value...OK
+All 1 tests passed.</code></pre>
 </section>
 </section>
 <section id="优雅处理错误的四大姿势" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="优雅处理错误的四大姿势"><span class="header-section-number">10.2</span> 优雅处理错误的四大姿势</h2>
-<p>在 Zig 中，处理错误主要有以下四种地道姿势：</p>
-<section id="姿势一try-快速向上传播甩锅给上游" class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="姿势一try-快速向上传播甩锅给上游"><span class="header-section-number">10.2.1</span> 姿势一：<code>try</code> 快速向上传播（甩锅给上游）</h3>
-<p><code>try expr</code> 的语义是： 如果表达式顺利执行成功，把成功值拆包放行； 如果表达式返回了错误，<strong>立刻提前 return 该错误，交由上一级调用者去头疼！</strong></p>
-<p>当你身处底层辅助函数、本身无法决定怎么处理这个错误时，直接 <code>try</code> 是最干脆利落的甩锅姿势。</p>
+<p>在 Zig 中，处理错误主要有以下四种常用策略：</p>
+<ul>
+<li><code>try</code> 关键字；</li>
+<li><code>catch</code> 关键字；</li>
+<li><code>if</code> 语句；</li>
+<li><code>errdefer</code> 关键字。</li>
+</ul>
+<section id="try-的真正含义向上传播错误" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="try-的真正含义向上传播错误"><span class="header-section-number">10.2.1</span> <code>try</code> 的真正含义：向上传播错误</h3>
+<p>正如我们在 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中初次见到的，当一个表达式的返回类型为 <code>!T</code> 时，使用 <code>try expr</code> 的语义是： 请执行该表达式；如果它返回了合法的正常值，则解包并返回该值继续往下走；但如果它返回了错误值，则<strong>立即将该错误从当前函数中 <code>return</code> 返回出去，并终止当前函数的继续执行</strong>。</p>
+<p>换言之，当你认为遇到错误时最合理的策略就是立即中止当前流程并将错误向上传播时，就使用 <code>try</code>。</p>
 </section>
-<section id="姿势二catch-就地兜底与消费" class="level3" data-number="10.2.2">
-<h3 data-number="10.2.2" class="anchored" data-anchor-id="姿势二catch-就地兜底与消费"><span class="header-section-number">10.2.2</span> 姿势二：<code>catch</code> 就地兜底与消费</h3>
-<p>请敲黑板重点注意：<strong>在 Zig 里，<code>try</code> 和 <code>catch</code> 是两套完全互斥独立的机制，绝不能像传统语言那样连在一起写成 <code>try ... catch</code>！</strong></p>
+<section id="catch-关键字就地捕获与兜底" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="catch-关键字就地捕获与兜底"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字：就地捕获与兜底</h3>
+<p>需要特别注意的是：<strong>在 Zig 中，你可以使用 <code>try</code> 或 <code>catch</code> 来处理错误，但绝不能将 <code>try</code> 和 <code>catch</code> 连在一起同时使用！</strong>在 Zig 里，<code>try</code> 和 <code>catch</code> 是两套完全独立的错误处理策略。</p>
 <p><code>catch</code> 放在可能报错的表达式后面，负责拦截错误并就地解决：</p>
-<section id="提供默认兜底值最地道" class="level4" data-number="10.2.2.1">
-<h4 data-number="10.2.2.1" class="anchored" data-anchor-id="提供默认兜底值最地道"><span class="header-section-number">10.2.2.1</span> 1. 提供默认兜底值（最地道！）</h4>
+<section id="提供默认值" class="level4" data-number="10.2.2.1">
+<h4 data-number="10.2.2.1" class="anchored" data-anchor-id="提供默认值"><span class="header-section-number">10.2.2.1</span> 1. 提供默认值</h4>
 <p>如果报错，就自动回落到默认值，极具表现力：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 解析失败时自动兜底为数字 13</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> number <span class="op">=</span> parseU64(str<span class="op">,</span> <span class="dv">10</span>) <span class="cf">catch</span> <span class="dv">13</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 解析失败时自动兜底为数字 13</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number = parseU64(str, <span class="dv">10</span>) <span class="kw">catch</span> <span class="dv">13</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="接错误处理逻辑块" class="level4" data-number="10.2.2.2">
 <h4 data-number="10.2.2.2" class="anchored" data-anchor-id="接错误处理逻辑块"><span class="header-section-number">10.2.2.2</span> 2. 接错误处理逻辑块</h4>
 <p>通过 <code>catch |err| { ... }</code> 捕获具体错误对象并写日志或做后置处理：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init<span class="op">:</span> std<span class="op">.</span>process<span class="op">.</span>Init) <span class="op">!</span><span class="dt">void</span> {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> cwd <span class="op">=</span> std<span class="op">.</span>Io<span class="op">.</span>Dir<span class="op">.</span>cwd();</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> file <span class="op">=</span> cwd<span class="op">.</span>openFile(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        init<span class="op">.</span>io<span class="op">,</span> <span class="st">"doesnt_exist.txt"</span><span class="op">,</span> <span class="op">.</span>{}</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="cf">catch</span> <span class="op">|</span>err<span class="op">|</span> {</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        logger<span class="op">.</span>record_context();</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        logger<span class="op">.</span>log_error(err);</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> err; <span class="co">// 记录完日志后再次抛出</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    };</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cwd = std.Io.Dir.cwd();</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> file = cwd.openFile(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{}</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">catch</span> |err| <span class="op">{</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        logger.record_context();</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        logger.log_error(err);</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> err; <span class="co">// 记录完日志后再次抛出</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="姿势三if-分支模式匹配解包" class="level3" data-number="10.2.3">
-<h3 data-number="10.2.3" class="anchored" data-anchor-id="姿势三if-分支模式匹配解包"><span class="header-section-number">10.2.3</span> 姿势三：<code>if</code> 分支模式匹配解包</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (parseU64(str<span class="op">,</span> <span class="dv">10</span>)) <span class="op">|</span>number<span class="op">|</span> {</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 成功分支，拿到纯净的 number</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="op">|</span>err<span class="op">|</span> {</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 失败分支，拿到具体的 err</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>若要针对不同类型的具体错误做差异化响应，配合 <code>switch</code> 堪称绝配：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (add_tasks_to_queue(<span class="op">&amp;</span>queue<span class="op">,</span> tasks)) <span class="op">|</span>_<span class="op">|</span> {</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    distribute_tasks(<span class="op">&amp;</span>queue);</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="op">|</span>err<span class="op">|</span> <span class="cf">switch</span> (err) {</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span><span class="op">.</span>InvalidTaskName <span class="op">=&gt;</span> {</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理无效任务名</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span><span class="op">.</span>TimeoutTooBig <span class="op">=&gt;</span> {</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理超时超限</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span><span class="op">.</span>QueueNotFound <span class="op">=&gt;</span> {</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理队列未找到</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="使用-if-语句处理错误" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="使用-if-语句处理错误"><span class="header-section-number">10.2.3</span> 使用 <code>if</code> 语句处理错误</h3>
+<p>你也可以使用 <code>if</code> 语句来处理 Zig 中的错误：如果表达式返回正常值，则将其解包到 <code>|number|</code> 中执行 <code>if</code> 分支；如果返回错误，则在 <code>else |err|</code> 分支中捕获并处理该错误：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (parseU64(str, <span class="dv">10</span>)) |number| <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 成功分支，拿到纯净的 number</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="kw">else</span> |err| <span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 失败分支，拿到具体的 err</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>如果表达式可能返回多种不同类型的错误，且你希望针对每种具体错误采取不同的处理逻辑，Zig 官方文档建议将 <code>if</code> 语句与 <code>switch</code> 语句结合使用 <span class="citation" data-cites="zigdocs">(<a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024b</a>)</span>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (add_tasks_to_queue(&amp;queue, tasks)) |_| <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    distribute_tasks(&amp;queue);</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="kw">else</span> |err| <span class="kw">switch</span> (err) <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.InvalidTaskName =&gt; <span class="op">{</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理无效任务名</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.TimeoutTooBig =&gt; <span class="op">{</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理超时超限</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.QueueNotFound =&gt; <span class="op">{</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理队列未找到</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-errdefer2" class="level3" data-number="10.2.4">
-<h3 data-number="10.2.4" class="anchored" data-anchor-id="sec-errdefer2"><span class="header-section-number">10.2.4</span> 姿势四：<code>errdefer</code> 异常回滚清理</h3>
-<p>还记得前文讲过的 <code>errdefer</code> 吗？ <strong><code>errdefer</code> 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！</strong></p>
-<p>思考一个典型场景：函数在堆上申请了一个新对象并要插入数据库，最后把这个对象作为返回值交出去：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> create_user(db<span class="op">:</span> Database<span class="op">,</span> allocator<span class="op">:</span> Allocator) <span class="op">!</span>User {</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> user <span class="op">=</span> <span class="cf">try</span> allocator<span class="op">.</span>create(User);</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">errdefer</span> allocator<span class="op">.</span>destroy(user); <span class="co">// 挂上防漏油阀门！</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果向数据库插入时报错提前退出了：</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> <span class="cf">try</span> db<span class="op">.</span>register_user(user);</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果一切顺利，user 成功交出，errdefer 不会触发，调用方负责接管其生命周期</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> user;</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>如果在入库那一行（<code>db.register_user</code>）报错了，函数中断退出，普通的 <code>defer</code> 此时帮不上忙（因为正常返回时不能销毁它）；而 <code>errdefer</code> 则精准介入，在带着错误闪崩退出的前一刻，把刚刚申请的 <code>user</code> 干净释放，彻底杜绝内存泄漏！</p>
+<h3 data-number="10.2.4" class="anchored" data-anchor-id="sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字：错误回滚清理</h3>
+<p>回顾我们在 <a href="03-structs.html#sec-defer" class="quarto-xref"><span>Section 2.1.3</span></a> 和 <a href="03-structs.html#sec-errdefer1" class="quarto-xref"><span>Section 2.1.4</span></a> 中介绍过的 <code>defer</code> 与 <code>errdefer</code>：无条件的 <code>defer</code> 总是在当前作用域结束时执行，而 <strong><code>errdefer</code> 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！</strong></p>
+<p>思考一个典型场景：函数使用我们在 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 中介绍的分配器在堆上创建了一个新的 <code>User</code> 对象，将其注册到数据库中，最后把该 <code>user</code> 对象作为返回值交出去：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> create_user(db: Database, allocator: Allocator) !User <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> user = <span class="kw">try</span> allocator.create(User);</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">errdefer</span> allocator.destroy(user); <span class="co">// 挂上防漏油阀门！</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果向数据库插入时报错提前退出了：</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> db.register_user(user);</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果一切顺利，user 成功交出，errdefer 不会触发，调用方负责接管其生命周期</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> user;</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>如果在入库那一行（<code>db.register_user</code>）报错了，函数中断退出，普通的 <code>defer</code> 此时帮不上忙（因为正常返回时不能销毁它）；而 <code>errdefer</code> 则精准介入，在函数带着错误返回之前，释放刚刚申请的 <code>user</code>，保证这块内存在出错时也会被释放。</p>
 </section>
 </section>
 <section id="sec-unions" class="level2" data-number="10.3">
 <h2 data-number="10.3" class="anchored" data-anchor-id="sec-unions"><span class="header-section-number">10.3</span> 联合体（Unions）与带标签联合体（Tagged Unions）</h2>
-<p>联合体（Union）定义了一个变量<strong>在某一瞬间只能是多种可能类型中的某一种</strong>。 它类似于 Python 的 <code>typing.Union</code> 或 C 语言里的 <code>union</code>。</p>
+<p>联合体（Union）定义了一个变量<strong>在某一瞬间只能是多种可能类型中的某一种</strong>。 它与 C 语言中的 <code>union</code> 作用相同，效果上也类似于在 Python 中使用 <a href="https://docs.python.org/3/library/typing.html#typing.Union"><code>typing.Union</code></a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
 <p>举个跨多云存储的实际例子：数据既可能传往 AWS S3、也可能发给 Azure Blob 或 Google Cloud：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> LakeTarget <span class="op">=</span> <span class="kw">union</span> {</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    azure<span class="op">:</span> AzureBlob<span class="op">,</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    amazon<span class="op">:</span> AmazonS3<span class="op">,</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    google<span class="op">:</span> GoogleGCP<span class="op">,</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在普通 union 中，<strong>同一时间只有一个字段能够处于激活状态</strong>。如果你尝试访问没有激活的字段，运行时直接触发 panic：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">var</span> target <span class="op">=</span> LakeTarget {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>azure <span class="op">=</span> AzureBlob<span class="op">.</span>init()</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 此时 target 内部激活的是 azure 字段，直接写 google 字段会直接 panic</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span>google <span class="op">=</span> GoogleGCP<span class="op">.</span>init();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>想要切换字段，必须整体重新赋值：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> LakeTarget {</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>google <span class="op">=</span> GoogleGCP<span class="op">.</span>init()</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="现代模式匹配天花板带标签联合体tagged-unions" class="level3" data-number="10.3.1">
-<h3 data-number="10.3.1" class="anchored" data-anchor-id="现代模式匹配天花板带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 现代模式匹配天花板：带标签联合体（Tagged Unions）</h3>
-<p>普通 union 最大的痛点是无法直接用 <code>switch</code> 匹配分支。 而只要给它加上 <code>(enum)</code> 标签——<strong><code>union(enum)</code></strong>，它就升级为了现代编程语言里大名鼎鼎的<strong>带标签联合体（Tagged Union / 代数数据类型 ADT）</strong>！</p>
-<p>看 Zig 官方编译器源码 <a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig"><code>grammar.zig</code></a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 里的写法：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="at">const</span> Registry <span class="op">=</span> <span class="kw">union</span>(<span class="kw">enum</span>) {</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    core<span class="op">:</span> CoreRegistry<span class="op">,</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    extension<span class="op">:</span> ExtensionRegistry<span class="op">,</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>一旦变成 <code>union(enum)</code>，在 <code>switch</code> 里做模式匹配解构就跟呼吸一样顺畅自然：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> (reg) {</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>core <span class="op">=&gt;</span> <span class="op">|</span>c<span class="op">|</span> c<span class="op">.</span>doSomething()<span class="op">,</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>extension <span class="op">=&gt;</span> <span class="op">|</span>e<span class="op">|</span> e<span class="op">.</span>doSomethingElse()<span class="op">,</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>错误处理清晰透明，联合体类型严丝合缝，这正是 Zig 能写出顶级高可靠软件的底气所在！</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> LakeTarget = <span class="kw">union</span> <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    azure: AzureBlob,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    amazon: AmazonS3,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    google: GoogleGCP,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> send_event(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    event: Event,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    lake_target: LakeTarget</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>) <span class="dt">bool</span> <span class="op">{</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>下面的例子演示了这一逻辑。注意，我们先用 <code>azure</code> 数据成员实例化这个联合体对象，所以这个 <code>target</code> 对象中只包含 <code>azure</code> 数据成员，只有这个数据成员处于激活状态。这就是为什么这个代码示例的最后一行是无效的：我们试图实例化当前对这个 <code>target</code> 对象来说处于非激活状态的数据成员 <code>google</code>，结果程序进入 panic 模式，用一条醒目的错误信息警告我们犯了这个错误。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> target = LakeTarget <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    .azure = AzureBlob.init()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Only the `azure` data member exist inside</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">// the `target` object, and, as a result, this</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">// line below is invalid:</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>target.google = GoogleGCP.init();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>thread 2177312 panic: access of union field 'google' while
+    field 'azure' is active:
+    target.google = GoogleGCP.init();
+          ^</code></pre>
+<p>所以，在实例化一个联合体对象时，必须从联合体类型列出的数据类型（即数据成员）中选择一个。在上面的例子中，我选择使用 <code>azure</code> 数据成员，结果其他所有数据成员都自动处于非激活状态，实例化对象之后就不能再使用它们了。</p>
+<p>你可以通过完全重新定义整个联合体对象来激活另一个数据成员。在下面的例子中，我一开始使用 <code>azure</code> 数据成员，然后把 <code>target</code> 对象重新定义为一个使用 <code>google</code> 数据成员的新 <code>LakeTarget</code> 对象。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> target = LakeTarget <span class="op">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    .azure = AzureBlob.init()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>target = LakeTarget <span class="op">{</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    .google = GoogleGCP.init()</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="带标签联合体tagged-unions" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 带标签联合体（Tagged Unions）</h3>
+<p>普通 <code>union</code> 的一个局限是无法直接作为我们在 <a href="03-structs.html#sec-switch" class="quarto-xref"><span>Section 2.1.2</span></a> 中介绍的 <code>switch</code> 语句的输入。 如果需要在 <code>switch</code> 语句中对联合体对象进行分支匹配，只需在 <code>union</code> 声明后加上 <code>(enum)</code>，将其定义为<strong>带标签联合体（Tagged Union）</strong>！</p>
+<p>看 Zig 仓库中的 <a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig"><code>grammar.zig</code></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 里的写法：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Registry = <span class="kw">union</span>(<span class="kw">enum</span>) <span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    core: CoreRegistry,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    extension: ExtensionRegistry,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-zigoverview" class="csl-entry" role="listitem">
-Zig Software Foundation. 2024. <em>In-Depth Overview</em>. Zig Software Foundation. <a href="https://ziglang.org/learn/overview/">https://ziglang.org/learn/overview/</a>.
+Zig Software Foundation. 2024a. <em>In-Depth Overview</em>. Zig Software Foundation. <a href="https://ziglang.org/learn/overview/">https://ziglang.org/learn/overview/</a>.
+</div>
+<div id="ref-zigdocs" class="csl-entry" role="listitem">
+Zig Software Foundation. 2024b. <em>Language Reference</em>. Zig Software Foundation. <a href="https://ziglang.org/documentation/master/">https://ziglang.org/documentation/master/</a>.
 </div>
 </div>
 </section>
@@ -778,7 +801,8 @@ Zig Software Foundation. 2024. <em>In-Depth Overview</em>. Zig Software Foundati
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p><a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig" class="uri">https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://docs.python.org/3/library/typing.html#typing.Union" class="uri">https://docs.python.org/3/library/typing.html#typing.Union</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig" class="uri">https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

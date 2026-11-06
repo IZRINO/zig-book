@@ -1,9 +1,6 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
-
-``
-
 
 ::::: {.content-visible when-format="html"}
 

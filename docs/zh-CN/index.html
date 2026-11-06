@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Pedro Duarte Faria">
-<meta name="dcterms.date" content="2026-11-04">
+<meta name="dcterms.date" content="2026-11-06">
 
 <title>Zig 语言入门</title>
 <style>
@@ -406,7 +406,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -424,7 +424,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -492,7 +492,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 4, 2026</p>
+      <p class="date">November 6, 2026</p>
     </div>
   </div>
   
@@ -507,7 +507,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 
 <section id="欢迎阅读" class="level1 unnumbered">
 <h1 class="unnumbered">欢迎阅读</h1><p><img src="../Cover/cover-artv3.png" title="Zig 语言入门" class="quarto-cover-image nolightbox img-fluid"></p>
-<p>欢迎！这里是《Zig 语言入门：基于项目的实操指南》（Introduction to Zig: a project-based book）开源网页版的起始页。本书原作者为 <a href="https://pedro-faria.netlify.app/">Pedro Duarte Faria</a>。 这是一本开源的技术入门书，带你探索 <a href="https://ziglang.org/">Zig 编程语言</a>——一门现代化、通用且专注于构建高性能、健壮底层软件的新一代系统级编程语言。</p>
+<p>欢迎！这里是《Zig 语言入门：基于项目的实操指南》（Introduction to Zig: a project-based book）“开放获取”（Open Access）HTML 版的起始页。本书原作者为 <a href="https://pedro-faria.netlify.app/">Pedro Duarte Faria</a>。 这是一本开源的技术入门书，带你探索 <a href="https://ziglang.org/">Zig 编程语言</a>——一门现代化、通用且专注于构建高性能、健壮底层软件的新一代系统级编程语言。</p>
 <section id="支持原项目" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="支持原项目">支持原项目！</h2>
 <p>如果你喜欢这个项目并希望支持原作者，可以在 Amazon 或 Leanpub 上购买本书的 PDF、电子书或纸质实体版：</p>
@@ -598,16 +598,16 @@ BIC/SWIFT Code: REVOSGS2
 <h2 class="unnumbered anchored" data-anchor-id="关于本书">关于本书</h2>
 <p>这是一本面向 <a href="https://ziglang.org/">Zig 编程语言</a> 的开源、偏实战的技术入门读物。作为一门现代化通用底层语言，Zig 的设计初衷就是为了写出运行极致优化、运行状态稳定可靠的高质量软件。</p>
 <p>本书英文原版官方仓库：<a href="https://github.com/pedropark99/zig-book" class="uri">https://github.com/pedropark99/zig-book</a>。</p>
-<p>无论是新手小白还是资深老手，读这本书都会有所收获。本书最大的特点是拒绝枯燥的语法死记硬背，而是像经典的《Python 编程：从入门到实践》（Eric Matthes 著）一样，<strong>手把手通过写真实小项目带大家玩转 Zig</strong>。 书中实战涵盖了：从零实现 Base64 编解码器、手写轻量 HTTP 服务器、开发图像滤镜等一系列趣味与硬核兼备的项目。</p>
-<p>跟着整本书敲下来，你会掌握：</p>
+<p>本书兼顾初学者与有经验的开发者。全书围绕一系列实用且富有趣味的小型项目展开——包括从零实现 Base64 编解码器、构建 HTTP 服务器以及编写图像滤镜等，编排风格借鉴了 Eric Matthes 所著的经典入门书《Python 编程：从入门到实践》（<em>Python Crash Course</em>）。</p>
+<p>通过阅读本书，你将掌握：</p>
 <ul>
 <li>Zig 语法全貌，以及它与 C、C++、Rust 的设计哲学对比。</li>
 <li>常用数据结构、底层内存分配器（Allocator）、文件系统与 I/O 操作。</li>
-<li>可选类型（Optionals）——告别空指针异常的现代化空值处理新范式。</li>
+<li>可选类型（Optionals）——处理可空性的新范式。</li>
 <li>如何编写测试用例与在实际开发中高效调试 Zig 程序。</li>
-<li>作为一等公民的值类型错误体系（Errors as values）及其优雅处理姿势。</li>
+<li>将错误作为值（Errors as values）的设计理念及其处理方式。</li>
 <li>使用 Zig 语言内置的原生构建系统（Build System）编译 C 与 Zig 项目。</li>
-<li>Zig 与 C 语言的丝滑互操作（C Interop）。</li>
+<li>Zig 与 C 语言的互操作（C Interoperability）。</li>
 <li>线程并发与 SIMD 向量化并行加速。</li>
 <li>以及更多底层系统开发的实战技巧。</li>
 </ul>
@@ -630,7 +630,11 @@ BIC/SWIFT Code: REVOSGS2
 <section id="书籍编译元数据" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="书籍编译元数据">书籍编译元数据</h2>
 <p>本书英文原版使用以下版本的 <a href="https://ziglang.org">Zig</a> 和 <a href="https://quarto.org">Quarto</a> 编译构建：</p>
-<p>Zig 0.17.0 与 Quarto 1.11.9</p>
+<ul>
+<li>系统版本：Windows, 10 x64, NA, x86-64</li>
+<li>Zig 版本：0.17.0</li>
+<li>Quarto 版本：1.9.37</li>
+</ul>
 </section>
 <section id="引用本书" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="引用本书">引用本书</h2>

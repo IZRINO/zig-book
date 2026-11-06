@@ -2,10 +2,10 @@
 
 <a href="https://izrino.github.io/zig-book/zh-CN/"><img src="Cover/cover-artv3.png" width="220" height="320" class="cover" align="right" alt="Zig 语言入门书籍封面"/></a>
 
-> 本项目是 Pedro Duarte Faria 所著经典开源技术读物 **《Introduction to Zig: a project-based book》** 的**官方精校中文全译本**。  
+> 本项目是 Pedro Duarte Faria 所著经典开源技术读物 **《Introduction to Zig: a project-based book》** 的**中文全译本**。  
 > 遵循知识共享署名许可协议（[CC BY 4.0](LICENSE)）开源共享，完整保留原书版权与英文原文。
 
-[![Zig](https://img.shields.io/badge/Zig-0.13%2B%20%7C%200.14-F7A41D?style=flat&logo=zig&logoColor=black)](https://ziglang.org/)
+[![Zig](https://img.shields.io/badge/Zig-0.17-F7A41D?style=flat&logo=zig&logoColor=black)](https://ziglang.org/)
 [![Quarto](https://img.shields.io/badge/Built%20with-Quarto-4D5891?style=flat&logo=quarto&logoColor=white)](https://quarto.org/)
 [![GitHub Pages](https://img.shields.io/badge/Online%20Reading-GitHub%20Pages-success?style=flat&logo=githubpages&logoColor=white)](https://izrino.github.io/zig-book/zh-CN/)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)

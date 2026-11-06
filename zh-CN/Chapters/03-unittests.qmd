@@ -1,25 +1,17 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
-
-
 # 单元测试（Unit Tests） {#sec-unittests}
 
-在这一章中，咱们来聊聊 Zig 里的**单元测试（Unit Tests）**。
-看看在 Zig 中日常单测的工作流是怎样的，以及如何用 `zig test` 命令把测试用例跑得又快又准。
+在本章中，我们将深入探讨 Zig 中的**单元测试（Unit Tests）**工作流，以及如何使用 `zig` 编译器的 `test` 命令运行测试。
 
 
 ## 认识原生 `test` 代码块
 
-在很多语言里写单测，往往需要先挑选并引入一套第三方测试框架（比如 Python 的 `pytest`、C++ 的 `Catch2` 或 `GTest`）。
-但在 Zig 里，**单测是语言的一等公民，直接原生内置在语法中**！
+在 Zig 中，单元测试编写在 `test` 声明块（或简称 `test` 代码块）内部。每个 `test` 块都以关键字 `test` 开头，后面可以可选地跟一个字符串字面量作为标签，用来标识该测试块所测试的具体功能。
 
-编写单测极其简单，直接使用 `test "测试用例描述"` 声明一个测试块即可。
-在测试块内部，你可以书写任何普通的 Zig 业务代码，并使用 `std.testing` 模块提供的各种断言工具来验证结果。
-
-看下面这个最朴素的测试用例：
+在下面的示例中，我们测试两个对象（`a` 和 `b`）之和是否等于 4。Zig 标准库提供的 `expect()` 函数接收一个布尔逻辑表达式作为输入：如果表达式求值为 `true`，测试通过；如果为 `false`，测试失败。你可以在 `test` 块中编写任意合法的 Zig 代码来初始化测试环境或待测对象：
 
 ```zig
 const std = @import("std");
@@ -31,13 +23,18 @@ test "testing simple sum" {
 }
 ```
 
+```
+1/1 t.test.testing simple sum... OK
+All 1 tests passed.
+```
+
 在同一个 `.zig` 源码文件里，你可以一口气写任意多个 `test` 块。
 而且最棒的是：**`test` 块可以直接与业务代码混写在同一个文件里**！
-平时执行 `zig build`、`build-exe` 或 `build-lib` 编译发布版本时，编译器会完全把这些 `test` 块当作空气自动忽略，绝对不会给最终的二进制体积增加一丁点负担。
+当你执行我们在 @sec-compile-code 中介绍过的 `build`、`build-exe`、`build-obj` 或 `build-lib` 命令构建常规目标时，`zig` 编译器会自动忽略这些 `test` 块（默认仅检查语法，只有当你明确要求运行测试时才会编译并执行它们）。
 
-去翻翻 Zig 官方标准库的源码（比如 [`std.ArrayList`](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig)[^zig-array]），你会发现官方核心团队全部推崇这种“代码写在哪，单测就紧贴在它屁股底下”的写法，极其方便随手回归。
+如果你翻阅 Zig 标准库的源码[^zig-std-lib]（例如 [`array_list` 模块](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig)[^zig-array]），就会看到官方代码普遍将 `test` 块与被测功能的源码写在同一个文件中。
 
-当然，如果你有强迫症、喜欢把单测集中在专门的 `tests/` 目录里独立管理，也完全支持，全凭个人工程习惯。
+当然，每位开发者的工程偏好不同。如果你更习惯将单元测试与业务源码分开存放，也可以在项目中单独创建一个 `tests` 目录，专门编写只包含单元测试的 Zig 模块（就像在 Python 项目中使用 `pytest` 一样）。
 
 [^zig-std-lib]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std>。
 [^zig-array]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/array_list.zig>。
@@ -60,18 +57,13 @@ All 1 tests passed.
 ```
 
 
-## 杀手锏：自动检测内存泄漏（Testing Allocator）
+## 核心利器：自动检测内存泄漏（Testing Allocator）
 
-写底层 C/C++ 代码最让人头大的就是**内存泄漏（Memory Leak）**和**双重释放（Double Free）**，排查起来往往需要动用 Valgrind 等外挂工具，繁琐得要命。
+Zig 的一大优势在于提供了强大的工具来帮助程序员避免并主动检测内存泄漏（Memory Leak）和双重释放（Double Free）等内存问题。除了 `defer` 关键字外，Zig 标准库还专门提供了一个能自动检测内存问题的特殊分配器对象：`std.testing.allocator`。
 
-**而在 Zig 里，官方直接把内存排雷雷达做进了单测体系中——这就是神级工具：`std.testing.allocator`！**
+正如我们在 @sec-heap 中所述，在堆上分配内存需要借助分配器对象，且由哪个分配器申请的内存就必须由同一个分配器释放。因此，如果你希望测试函数内部的内存分配逻辑是否安全，只需在单元测试中将 `std.testing.allocator` 作为参数传给待测函数即可。
 
-在前面的 @sec-heap 和 @sec-allocators 中我们强调过：在 Zig 里，凡是需要在堆上申请内存的函数，都要求显式传入一个分配器。
-所以只要在写单测时，**把 `std.testing.allocator` 喂给待测函数**，这个分配器就会在底层紧盯每一次内存申请与释放。
-
-如果你的函数中途忘了释放某块内存，单测不仅会立刻判挂，还会把**导致泄漏的那行代码的行号和完整堆栈调用轨迹（Stack Trace）当场甩出来**！
-
-看下面这个故意泄漏内存的反面例子：
+看下面这个存在明显内存泄漏的示例：函数分配了内存却在返回前未将其释放。当我们在 `test` 块中传入 `std.testing.allocator` 执行该函数时，测试分配器捕获到了内存泄漏，并打印出 `"memory leaked"` 错误信息以及泄漏点的精确调用栈轨迹（Stack Trace）：
 
 ```zig
 const std = @import("std");
@@ -102,15 +94,17 @@ Test [1/1] leak_memory.test.memory leak...
 ... more stack trace
 ```
 
-有了这套机制，只要单测跑绿，你就敢 100% 拍胸脯保证：代码绝对没有内存泄漏！
 
+## 测试预期错误（Testing errors）
 
-## 测试预期错误（Error Assertions）
+另一类常见的单元测试是验证函数在特定条件下是否会返回预期的错误。在 C++ 中，你通常会使用 [`Catch2` 测试框架](https://github.com/catchorg/Catch2/tree/devel)[^catch2]中的 `REQUIRE_THROWS()` 或 `CHECK_THROWS()`；在 Python 项目中，通常会使用 [`pytest` 的 `raises()` 函数](https://docs.pytest.org/en/7.1.x/reference/reference.html#pytest-raises)[^pytest]；而在 Rust 中则会配合使用 `assert_eq!()` 与 `Err()`。
 
-很多时候我们需要专门测试异常分支：验证某函数在接收到非法输入时，是否如期抛出了指定的错误（比如 Python 里的 `pytest.raises`）。
+[^pytest]: <https://docs.pytest.org/en/7.1.x/reference/reference.html#pytest-raises>
+[^catch2]: <https://github.com/catchorg/Catch2/tree/devel>
 
-在 Zig 中，用标准库的 `std.testing.expectError`：
-第一个入参是预期的具体错误类型（如 `error.OutOfMemory`），第二个入参是预期会抛错的函数调用：
+在 Zig 中，我们使用 `std.testing` 模块下的 `expectError()` 函数：第一个参数传入预期返回的错误值（如 `error.OutOfMemory`），第二个参数传入预期会失败的函数调用表达式。
+
+在下面的代码示例中，`alloc_error()` 函数试图为 `ibuffer` 分配 100 字节的内存，但在 `test` 块中我们传入的 `FixedBufferAllocator()` 底层缓冲区只有 10 字节空间，因此调用 `alloc_error()` 会触发 `OutOfMemory` 错误：
 
 ```zig
 const std = @import("std");
@@ -130,16 +124,19 @@ test "testing error" {
 }
 ```
 
-上面这段测试中，我们用一个仅有 10 字节的固定缓冲区分配器去申请 100 字节，`alloc_error` 如期抛出了 `error.OutOfMemory`，单测顺利通过。如果抛出其他类型错误或没有抛错，单测就会失败。
+```
+1/1 t.test.testing error... OK
+All 1 tests passed.
+```
+
+如果 `alloc_error()` 返回了其他类型的错误或者没有报错，`expectError()` 就会判定该单元测试失败。
 
 
-## 常用断言方法族速查
+## 测试相等性（Testing simple equalities）
 
-除了最基础的 `expect(expr == true)`，标准库还提供了一系列表达力拉满的对比断言：
+在 Zig 中，除了使用 `expect()` 配合 `==` 运算符测试相等性外，`std.testing` 还提供了几个非常实用的相等断言辅助函数：`expectEqual()`、`expectEqualSlices()` 和 `expectEqualStrings()`。
 
-### 标量对比：`expectEqual()`
-
-对比两个基本值（注意第一个是期望值，第二个是实际值）：
+- **`expectEqual()`**：接收两个对象作为输入（第一个参数为期望值，第二个参数为实际结果），测试两个对象存储的值是否相等。在下例中，由于 `v1` 和 `v2` 的值不同，测试失败并打印出期望值与实际值的差异：
 
 ```zig
 const std = @import("std");
@@ -150,17 +147,17 @@ test "values are equal?" {
 }
 ```
 
-失败时会给出清晰的数值比对信息：
-
 ```
 1/1 ve.test.values are equal?...
     expected 15, found 18
     FAIL (TestExpectedEqual)
+ve.zig:5:5: test.values are equal? (test)
+    try std.testing.expectEqual(v1, v2);
+    ^
+0 passed; 0 skipped; 1 failed.
 ```
 
-### 数组与切片比对：`expectEqualSlices()`
-
-对比两个数组或切片里的元素是否完全一致，需先传入元素类型：
+- **`expectEqualSlices()`**：`expectEqual()` 不能直接用于比较数组；若要测试两个数组或切片是否相等，应使用 `expectEqualSlices()`。它接收三个参数：第一个参数是数组元素的数据类型，第二和第三个参数是要比较的两个数组/切片对象：
 
 ```zig
 const std = @import("std");
@@ -173,9 +170,14 @@ test "arrays are equal?" {
 }
 ```
 
-### 字符串精准比对：`expectEqualStrings()`
+```
+1/1 t.test.arrays are equal?... OK
+All 1 tests passed.
+```
 
-对比两个字符串文本。如果不一致，它会像 `git diff` 一样在控制台高亮指出从哪一行的哪个字符开始出现分歧：
+（译注：在 Zig 0.17.1 中，`expectEqual()` 其实可以比较两个数组，它会逐个比较元素。但如果传入的是切片，它只比较两个切片的指针和长度，不比较内容。所以要比较切片的内容，还是应该用 `expectEqualSlices()`。）
+
+- **`expectEqualStrings()`**：专门用于测试两个字符串对象是否相等。如果发现两段字符串存在差异，它会报错并直观地打印出两者的首个差异位置：
 
 ```zig
 const std = @import("std");
@@ -203,5 +205,3 @@ found:
 Hello, world!
 ^ ('\x48')
 ```
-
-把单元测试融入日常开发习惯，配合 `std.testing.allocator` 的自动化内存体检，写起 Zig 代码那叫一个踏实！

@@ -1,41 +1,33 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
 
-``
-
-
-
 # 调试 Zig 应用程序
 
-无论是哪门编程语言，想要写出靠谱的严肃工程，**调试（Debugging）能力**绝对是开发者的立身之本。
-在这章里，我们将深入盘点在 Zig 开发中行之有效的调试策略和常用调试工具链。
+无论使用哪门编程语言，调试（Debugging）能力都是编写严肃工程软件的基本功。在本章中，我们将探讨调试 Zig 应用程序的常用策略与工具链。
 
 
-## 朴素而强大的“Print 调试大法”
+## 打印调试（Print debugging）
 
-咱先从最经典、久经沙场的“打日志/打印输出（Print Debugging）”讲起。
-排查 Bug 的核心诉求就是**可见性（Visibility）**——只要能亲眼看到变量在每一步到底算出了啥值，真相往往立刻大白。
+我们先从最经典、历经实战检验的**打印调试（Print debugging）**策略讲起。
+调试能为你带来的核心优势是**可见性（Visibility）**。借助打印语句，你可以直观地看到程序在运行过程中生成了哪些结果和对象，从而清晰掌握程序的实际运行状态。
 
-在日常编码中，大家最常用的就是 Zig 标准库的 `stdout.print()` 或 `std.debug.print()`。
-在底层，你可以把调试信息吐到系统的标准输出流（`stdout`）或者标准错误流（`stderr`）里。
+许多开发者常借助 Zig 中的打印函数（例如 `stdout.print()` 或 `std.debug.print()`）来观察程序的行为。在 Zig 中，你可以将调试信息输出到系统的标准输出流（`stdout`）或标准错误流（`stderr`）。
 
-### 标准输出流 stdout
+我们先看 `stdout`。要想向 `stdout` 打印内容，首先需要获取一个指向 `stdout` 的写入器（Writer）对象：先调用 Zig 标准库 `std.Io.File` 模块的 `stdout()` 方法获取描述标准输出的文件描述符对象，再调用该对象的 `writer()` 方法传入缓冲区以获取写入器接口。
 
-往 `stdout` 打印，我们需要先拿到对应的 Writer 写入器：
-1. 调用 `std.Io.File.stdout()` 获取标准输出的文件描述符；
-2. 调用它的 `.writer()` 方法挂上缓冲区并生成 Writer；
-3. 随后调 `.print()` 格式化输出。
+该写入器对象的 `print()` 方法是一个格式化打印函数，其工作方式与 C 语言的 `printf()` 或 Rust 的 `println!()` 非常相似：第一个参数指定模板字符串，第二个参数提供要填入模板的数值或对象列表。
 
-这个 `print()` 的用法跟 C 的 `printf()`、Rust 的 `println!()` 几乎一模一样。第一个入参是模板字符串，第二个入参是用大括号包起来的匿名结构体参数列表。
+模板字符串中通常包含若干个用花括号括起来的格式化说明符（Format Specifier），每个说明符按顺序对应第二个参数列表中的一个对象（例如传入 5 个对象，模板中就应当有 5 个格式说明符）。常用的格式化说明符包括：
 
-模板中的格式化占位符非常直观：
-- `{d}`：打印十进制数字（整型或浮点）；
-- `{c}`：打印 ASCII 字符；
-- `{s}`：打印字符串或字节切片；
-- `{p}`：打印指针内存地址；
-- `{x}` 或 `{X}`：打印十六进制数值；
-- `{any}`：通用自适应格式化（让编译器帮你自动挑选最合适的打印格式）。
+- `d`：打印整数与浮点数。
+- `c`：打印字符。
+- `s`：打印字符串。
+- `p`：打印内存地址。
+- `x`：打印十六进制数值。
+- `any`：自动选择任意兼容的格式说明符进行打印。
+
+下面的代码示例演示了如何使用 `print()` 方法配合 `d` 格式说明符打印计算结果：
 
 ```zig
 const std = @import("std");
@@ -53,10 +45,11 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-### 调试专属的 stderr：`std.debug.print`
+```
+Result: 50
+```
 
-如果不想每次写一堆样板代码去初始化 `stdout`，只是临时在控制台打个桩，更推荐直接用 `std.debug.print()`！
-它默认直接往标准错误流（`stderr`）输出，不仅开箱即用，而且**永远不会抛出需要 `try` 捕获的错误**，用完随手就能删，是本地临时排查 Bug 的神器：
+需要强调的是，`stdout.print()` 会将格式化后的文本输出到系统的 `stdout` 流中。如果你更希望将其输出到标准错误流（`stderr`），只需将 `stdout.print()` 替换为 `std.debug.print()` 即可：
 
 ```zig
 const std = @import("std");
@@ -70,25 +63,45 @@ pub fn main() !void {
 }
 ```
 
+```
+Result: 50
+```
 
-## 专业调试器（Debugger）实战
+当然，你也可以通过获取 `stderr` 的文件描述符对象、创建对应的 `stderr` 写入器并调用其 `print()` 方法来实现完全相同的效果：
 
-虽然打 Log 简单粗暴，但真要排查复杂崩溃、多线程死锁或内存踩踏，专业的调试器才是正规军。
-作为底层系统语言，Zig 编译出的二进制完全兼容工业级调试工具，无论 GDB（GNU Debugger）还是 LLDB（LLVM Debugger）都能开箱即用。
-在这里，我们以当今开发环境极具人气的 LLDB 为例做演示。
+```zig
+const std = @import("std");
+pub fn main(init: std.process.Init) !void {
+    var stderr_buffer: [1024]u8 = undefined;
+    var stderr_writer = std.Io.File.stderr().writer(init.io, &stderr_buffer);
+    const stderr = &stderr_writer.interface;
+    // 其余业务逻辑...
+    try stderr.print("Result: {d}", .{result});
+}
+```
 
 
-### 必须以 Debug 模式编译 {#sec-compile-debug-mode}
+## 使用调试器进行调试（Debugging through debuggers）
 
-想要调试器能精准定位到源码行号并看清局部变量，编译时**必须保持在 Debug 模式**！
-如果开了 `ReleaseFast` 或 `ReleaseSmall`，编译器会为了极限性能把调试符号（DWARF/PDB）大卸八块，各种函数还会被深度内联，调试器直接抓瞎。
+尽管打印调试简单实用，但许多开发者更倾向于使用专门的调试器（Debugger）来排查问题。由于 Zig 是一门底层系统语言，你可以直接使用 GDB（GNU Debugger）或 LLDB（LLVM Project Debugger）来调试 Zig 程序。
 
-默认情况下，`zig build-exe` 默认就是按 Debug 模式编译的，无需额外加优化参数。
+这两款调试器都能很好地支持 Zig 代码，具体选用哪一款完全取决于个人习惯。在本书的示例中，我将使用 LLDB 进行演示。
 
 
-### 手把手上手 LLDB 调试
+### 以 Debug 模式编译源码 {#sec-compile-debug-mode}
 
-我们拿下面这个简单的小程序来实操走一圈：
+要想通过调试器跟踪程序，你必须以 `Debug` 模式编译源码。如果使用其他编译模式（例如 `Release` 模式），编译器通常会剥离供调试器读取和追踪程序所必需的调试符号信息（例如 PDB 程序数据库文件或 DWARF 调试信息）。
+
+以 `Debug` 模式编译能确保调试器在可执行文件中找到所需的全部调试元数据。默认情况下，`zig` 编译器在编译代码时采用的就是 `Debug` 模式。因此，当你使用 @sec-compile-code 中介绍的 `build-exe` 命令编译程序时，只要没有通过 `-O` 命令行参数[^oargument]显式指定其他优化模式，编译器就会自动以 `Debug` 模式编译代码。
+
+（译注：在 Zig 0.17.1 中，并不是所有 Release 模式都会去掉调试信息。译者在 Windows 上实测，`ReleaseSafe` 和 `ReleaseFast` 默认仍会生成 PDB 文件，只有 `ReleaseSmall` 默认不生成。也可以用 `-fstrip` 或 `-fno-strip` 参数明确指定去掉还是保留调试信息。不过 Release 模式会做优化，变量可能被优化掉，代码行的对应关系也可能被打乱，所以调试时仍建议使用 `Debug` 模式。）
+
+[^oargument]: 参见 <https://ziglang.org/documentation/master/#Debug>。
+
+
+### 动手调试一个程序
+
+作为示例，我们使用 LLDB 来单步浏览并探查下面这段 Zig 代码：
 
 ```zig
 const std = @import("std");
@@ -109,22 +122,24 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-先编译出可执行文件：
+```
+Result: 13!
+```
+
+这段程序本身没有任何错误，非常适合作为调试演示的起点。首先，我们需要使用 `zig build-exe` 命令将上述代码编译为名为 `add_program` 的二进制可执行文件：
 
 ```bash
 zig build-exe add_program.zig
 ```
 
-接着启动 LLDB 挂载程序：
+接着，我们使用 `add_program` 启动 LLDB：
 
 ```bash
 lldb add_program
 ```
 
-在终端看到 `(lldb)` 提示符后，调试指令随时待命：
-
-1. **打断点**：敲 `b main`，在主函数入口打下断点；
-2. **跑起来**：敲 `run`，程序启动并在第一行命中断点暂停：
+此时 LLDB 已经启动，凡是带有 `(lldb)` 前缀的行都代表我们在 LLDB 中执行的调试命令。
+第一步，我们通过执行 `b main` 在 `main()` 函数入口处设置一个断点，随后执行 `run` 启动程序。从下方的输出中可以看到，程序如期在 `main()` 函数的第一行语句处暂停了下来：
 
 ```bash
 (lldb) b main
@@ -145,8 +160,15 @@ Process 8654 stopped
    14  	}
 ```
 
-3. **单步步过（Step Over）**：敲 `n`，执行当前行并来到第 12 行；
-4. **查看变量值**：敲 `p n`，直接打印出变量 `n` 的当前数值：
+现在我们就可以在代码中逐步导航，并检查生成的各个对象了。如果你还不熟悉 LLDB 的可用命令，建议查阅 LLDB 项目的官方文档[^lldb]，或者参考社区整理好的速查表（Cheat Sheet）来快速了解常用指令[^lldb-quick-list]。
+
+[^lldb]: <https://lldb.llvm.org/>
+[^lldb-quick-list]: <https://gist.github.com/ryanchang/a2f738f0c3cc6fbd71fa>。
+
+当前我们停留在 `main()` 函数的第一行业务代码处，该行通过调用 `add_and_increment()` 函数来创建 `n` 对象。要想执行当前行并推进到下一行，可以运行 LLDB 的 `n`（next）命令。
+执行完该行后，我们可以使用 LLDB 的 `p`（print）命令查看 `n` 对象内部存储的值（语法为 `p <对象名>`）。
+
+观察下方 `p n` 的输出可以看到，它存储着十六进制值 `\x06`（即十进制的 6），且调试器显示其类型为 `unsigned char`（无符号 8 位整数）。我们在 @sec-zig-strings 中已经介绍过，Zig 中的 `u8` 整数在底层等价于 C 语言的数据类型 `unsigned char`：
 
 ```bash
 (lldb) n
@@ -164,10 +186,10 @@ Process 4798 stopped
 (unsigned char) $1 = '\x06'
 ```
 
-看输出：`$1 = '\x06'`，对应十进制就是 6（2 + 3 + 1），完全正确！
+接下来，下一行代码再次调用了 `add_and_increment()` 函数。不妨使用 LLDB 的 `s`（step into）命令步入该函数内部一探究竟！
+从下方输出中可以看到，执行 `s` 命令后，我们进入了 `add_and_increment()` 函数的上下文。随后我又在函数体内连续执行了两次 `n` 命令推进了两行，接着执行 `frame variable` 命令，一次性查看当前作用域内所有局部变量的存储值。
 
-5. **单步步入（Step Into）**：敲 `s`，钻进 `add_and_increment` 函数体内部；
-6. **透视当前栈帧所有局部变量**：连续 `n` 走两步后，敲 `frame variable`，该栈帧里的所有局部状态尽收眼底：
+可以看到，对象 `sum` 存储的值显示为 `'\f'`，代表 ASCII 表中的换页符（Form Feed），对应十六进制值 `0x0C`，即十进制数 12。这说明第 5 行执行的表达式 `a + b`（6 + 6）计算出的结果正是 12：
 
 ```bash
 (lldb) s
@@ -189,15 +211,12 @@ Process 4798 stopped
 (unsigned char) incremented = '\x06'
 ```
 
-在这里，`sum` 显示为 `'\f'`，在 ASCII 表中正好对应十六进制 `0x0C`，也就是十进制的 12（6 + 6）。
-熟练掌握这几个基本指令，绝大多数底层 Bug 都能在几分钟内定位根因。
 
+## 如何探查对象的数据类型
 
-## 运行时透视类型：`@TypeOf()`
+由于 Zig 是一门强类型语言，与对象关联的数据类型对程序至关重要。因此，在排查程序错误与 Bug 时，确认对象的实际数据类型往往是关键一环。
 
-在强类型语言里，很多编译报错本质上是“类型不匹配”引起的。
-除了靠调试器，Zig 在语言层面提供了一个非常贴心的内置函数：`@TypeOf()`。
-它就像 Python 里的 `type()` 或者 JS 里的 `typeof`，能直接返回目标变量的真实类型：
+在使用调试器单步调试时，你可以直接用 LLDB 的 `p` 命令将对象打印到控制台以查看其类型。除此之外，Zig 语言自身也内置了直接获取对象数据类型的机制——内置函数 `@TypeOf()`。只需将该函数作用于目标对象，即可获取其对应的数据类型：
 
 ```zig
 const std = @import("std");
@@ -213,4 +232,8 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
-在写泛型代码或复杂的类型转换时，善用 `@TypeOf()` 打印类型，能帮你省去大量瞎猜的时间。
+```
+i32
+```
+
+这个函数的作用类似于 Python 中的内置函数 `type()` 或 JavaScript 中的 `typeof` 运算符。

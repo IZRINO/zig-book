@@ -1,9 +1,6 @@
-﻿---
+---
 syntax-definition: "../../Assets/zig.xml"
 ---
-
-``
-
 
 # 控制流、结构体、模块与类型系统
 
@@ -21,7 +18,7 @@ syntax-definition: "../../Assets/zig.xml"
 写程序本质上就是做逻辑决断：要么满足某种条件就走这段逻辑，要么对一批数据做循环迭代。
 在计算机科学中，“控制流”指的就是程序指令的执行顺序。而能够改变执行顺序的语法骨架，我们就叫它控制流语句。
 
-大家最熟悉的控制流包括 `if/else`、`switch`、各种 `loop` 循环，以及随时用来跳出或继续的 `break` 和 `continue`。
+大家最熟悉的控制流包括 `if/else`、`switch`、`for`/`while` 循环，以及随时用来跳出或继续的 `break` 和 `continue`。
 
 
 ### if / else 条件分支
@@ -39,6 +36,10 @@ if (x > 10) {
     try stdout.print("x <= 10!\n", .{});
 }
 try stdout.flush();
+```
+
+```
+x <= 10!
 ```
 
 
@@ -80,6 +81,10 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
+```
+Platform
+```
+
 
 #### switch 必须穷尽所有可能（Exhaustive）
 
@@ -93,7 +98,7 @@ pub fn main(init: std.process.Init) !void {
 
 如果取值范围太大（比如整数或字符），不可能手动把每一个值都列出来，这时候就可以祭出 `else` 兜底分支。
 
-看看 Zig 标准库 [`debug.zig` 模块](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig)[^debug-mod] 中的这个真实切片：
+看看 Zig 标准库 [`debug.zig` 模块](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig)[^debug-mod] 中的这个代码片段：
 
 [^debug-mod]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/debug.zig>。
 
@@ -109,7 +114,7 @@ pub fn dump_hex_fallible(bytes: []const u8) !void {
 }
 ```
 
-在实际业务中，`else` 分支也常被用来处理“不支持的非法状态”，直接抛错或者触发 `@panic()` 熔断：
+在实际业务中，`else` 分支也常被用来处理“不支持的非法状态”，直接返回错误，或者调用 `@panic()` 终止程序：
 
 另外请注意：**Zig 的 `switch` 是一个表达式（Expression）**！这意味着分支执行的结果可以直接赋给一个新对象：
 
@@ -152,12 +157,16 @@ try stdout.print("{s}\n", .{category});
 try stdout.flush();
 ```
 
+```
+beginner
+```
+
 字符匹配也同样好使，比如 `'a'...'z'` 就能瞬间匹配所有小写英文字母。
 
 
-#### 带标签的 switch（类似 C 语言 goto）
+#### 带标签的 switch 语句（Labeled switch）
 
-从 Zig 0.14.0 开始，`switch` 语句也支持打标签了！结合 `continue :label value;`，你可以实现类似状态机或高级跳转的流转逻辑：
+在 @sec-blocks 中我们介绍过如何为代码块添加标签并配合 `break` 使用。从 Zig 0.14.0 开始，你也可以为 `switch` 语句显式指定一个标签（Labeled switch）。结合 `continue :label value;`，你可以让执行流回到 `switch` 语句的开头，跳转到匹配的另一个分支继续执行，这样几乎可以实现类似 C 语言 `goto` 的模式。在下面的例子中，执行流两次回到 `switch` 语句的开头，最后停在 `3` 这个分支：
 
 ```zig
 xsw: switch (@as(u8, 1)) {
@@ -177,12 +186,17 @@ xsw: switch (@as(u8, 1)) {
 }
 ```
 
+```
+First branch
+```
 
-### 资源清理神器：`defer` {#sec-defer}
+
+### 延迟执行：`defer` 关键字 {#sec-defer}
 
 在 Zig 的控制流与内存管理中，`defer` 拥有举足轻重的地位。
 简单一句话概括：**`defer` 允许你登记一条表达式，让它在退出当前作用域时自动执行。**
 
+回顾我们在 @sec-blocks 中所讨论的内容，Zig 中凡是用一对花括号（`{}`）界定的结构（函数体、`for`/`while` 循环、`if/else` 语句等）都拥有各自独立的作用域。
 Go 语言开发者可能马上会想到 Go 里的 `defer`。
 但请务必注意区别：**Go 的 `defer` 是在当前“函数退出”时执行，而 Zig 的 `defer` 是在当前“作用域退出”时执行！**
 一个函数内部可以有循环、`if` 块等很多子作用域，一旦跳出该大括号，挂在里面的 `defer` 就会立刻触发，心智模型更紧凑、资源回收也更及时。
@@ -209,7 +223,7 @@ Exiting function ...
 ```
 
 需要指出的是：`defer` 属于**无条件延迟（Unconditional defer）**。
-不管你是正常 return 退出、遇到报错提前甩锅退出、还是被 break 跳出，只要出了这个花括号作用域，`defer` 登记的动作就必定执行，雷打不动。
+不管你是正常 `return` 退出、遇到报错提前退出、还是被 `break` 跳出，只要出了这个花括号作用域，`defer` 登记的动作就必定执行，雷打不动。
 
 
 ### 报错才触发的容错清理：`errdefer` {#sec-errdefer1}
@@ -218,7 +232,7 @@ Exiting function ...
 `errdefer` 是**有条件的延迟执行（Conditional defer）**：**它登记的表达式，只有在当前作用域因发生错误而提前退出时才会执行！**
 如果整个流程顺顺当当跑完退出，`errdefer` 里的内容就像空气一样，完全不会被调用。
 
-这在系统底层开发中简直是神技！比如你向系统连续申请了 3 块内存或打开了 3 个资源句柄，当第 3 个操作报错失败时，你必须把前面已经申请成功的 2 个半成品资源及时释放掉。用 `errdefer` 就能写出极其清爽的异常回滚逻辑（我们会在 @sec-errdefer2 做更多实战演示）。
+这在系统底层开发中简直是神技！比如你向系统连续申请了 3 块内存或打开了 3 个资源句柄，当第 3 个操作报错失败时，你必须把前面已经申请成功的 2 个半成品资源及时释放掉。用 `errdefer` 就能写出清晰的出错清理逻辑（我们会在 @sec-errdefer2 做更多实战演示）。
 
 另外还要记住一个关键执行顺序规则：**多个 `defer` / `errdefer` 是按后进先出（LIFO）的倒序执行的！**（即写在后面的先执行，写在前面的后执行）。
 
@@ -287,6 +301,10 @@ for (name) |char| {
 try stdout.flush();
 ```
 
+```
+80 | 101 | 100 | 114 | 111 | 
+```
+
 如果遍历时既想要元素值，又想要当前下标索引怎么办？
 非常优雅！Zig 允许在 `for` 括号里传入第二个范围序列 `0..`，并在竖线里同时捕获值与下标：
 
@@ -302,7 +320,7 @@ try stdout.flush();
 0 | 1 | 2 | 3 | 4 |
 ```
 
-注意上面我们用 `_` 显式丢弃了字符值，只留下了自增索引 `i`，避免触发闲置变量编译报错。
+注意上面我们用 `_` 显式丢弃了字符值，只保留了索引计数器 `i`，因为正如我们在 @sec-assignments 中强调的，Zig 中声明的每一个对象都必须被使用。
 
 
 ### while 循环与自增表达式
@@ -318,6 +336,10 @@ while (i < 5) {
 try stdout.flush();
 ```
 
+```
+1 | 2 | 3 | 4 | 
+```
+
 Zig 还支持在 `while` 头部通过冒号 `: (expr)` 绑定自增步进逻辑，写起来非常紧凑：
 
 ```zig
@@ -326,6 +348,10 @@ while (i < 5) : (i += 1) {
     try stdout.print("{d} | ", .{i});
 }
 try stdout.flush();
+```
+
+```
+1 | 2 | 3 | 4 | 
 ```
 
 ### 掌控节奏：`break` 与 `continue`
@@ -347,6 +373,10 @@ try stdout.print("Everything worked!", .{});
 try stdout.flush();
 ```
 
+```
+Everything worked!
+```
+
 以及用 `continue` 过滤偶数、只打印奇数的经典用法：
 
 ```zig
@@ -360,12 +390,16 @@ for (ns) |i| {
 try stdout.flush();
 ```
 
+```
+1 | 3 | 5 | 
+```
+
 
 ## 函数入参是不可变的！ {#sec-fun-pars}
 
 这里必须郑重强调 Zig 的另一条铁律：**在 Zig 里，函数的所有形参默认全都是不可变常量（Immutable）！**
 
-看看下面这桩反面教材：在 `add2` 函数里试图对传进来的参数 `x` 做直接修改，编译器当场教做人：
+看看下面这个反例：在 `add2` 函数里试图对传进来的参数 `x` 做直接修改，编译器会立即报错：
 
 ```zig
 const std = @import("std");
@@ -386,13 +420,13 @@ t.zig:3:5: error: cannot assign to constant
     ^
 ```
 
-### 白嫖的编译器极致优化
+### 免费的编译器底层优化
 
 Zig 为什么要对函数参数做如此苛刻的不可变约束？
 因为这样给编译器开辟了巨大的性能优化空间！
 
-如果是传基础小数据（如 `u32`、`bool`），编译器直接按值传递（拷贝到栈帧）；
-但如果传入的是结构体、大数组等重型复合数据，由于函数内部绝对承诺不会擅自篡改入参，**编译器就会智能决定到底是用按值传递还是按引用指针传递，怎么快怎么来！** 这项零成本性能福利全靠参数不可变保证。
+如果函数参数属于我们在 @sec-primitive-data-types 中列举的基础数据类型（如 `u32`、`bool`），这个对象总是按值传给函数，也就是说，它会被拷贝到函数的栈帧中。
+但如果输入对象的数据类型更复杂，比如结构体实例、数组或联合体值等，`zig` 编译器就会替你决定哪种策略最好：要么按值传递，要么按引用传递。编译器总会选择对你来说更快的策略。之所以能免费获得这种优化，正是因为 Zig 中的函数参数是不可变的。
 
 
 ### 确实想改入参？传指针！
@@ -420,12 +454,12 @@ Result: 6
 
 ## 结构体与面向对象（Structs and OOP） {#sec-structs-and-oop}
 
-Zig 更偏向于 C 风格的过程式语言，而不是 C++ 或 Java 那套重型面向对象。所以 Zig 里面没有复杂的 class 类、继承树和多态虚表。
+Zig 更偏向于 C 风格的过程式语言，而不是 C++ 或 Java 那套重型面向对象。所以 Zig 中没有类、接口或类继承这类高级面向对象编程模式。不过，在 Zig 中仍然可以通过结构体定义实现面向对象编程。
 但别慌！**在 Zig 里，我们完全可以通过结构体（Struct）写出非常纯粹地道的面向对象代码。**
 
 你可以用 `struct` 定义新类型，不仅可以包含字段成员（Data members），还可以在里面挂载函数（Methods）。这样属于该类型的所有实例就能直接调用这些方法。
 
-在命名规范上，Zig 社区统一约定：
+在命名上，有一个贯穿整个 Zig 标准库的惯例：
 - **`init()`**：充当构造函数，用于创建和初始化实例；
 - **`deinit()`**：充当析构函数，负责释放该实例占用的底层资源。
 
@@ -464,33 +498,93 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
+```
+pedro
+```
+
 注意细节：结构体内部每个字段定义末尾必须以**逗号（`,`）**结尾，而不是分号。
 
 
 ### 跨模块可见性：`pub` 关键字 {#sec-pub-keyword}
 
-正如之前强调的，Zig 所有成员默认都是私有的。
-如果你的 `User` 结构体写在 `user.zig` 模块里，想要在另一个 `register.zig` 里使用它，就必须给结构体本身以及它的方法显式打上 `pub` 标记：
+`pub` 关键字是“public（公开）”的缩写，用来将模块内的结构体、函数或对象暴露给外部模块使用。如果某个声明没有加 `pub`，它就只能在定义它的当前模块内部被访问。
+
+以刚才的 `User` 结构体为例：假设它声明在 `user.zig` 模块中且未加 `pub`，而在另一个 `register.zig` 模块中导入并使用 `user.User`，编译器会报错提示 `'User' is not marked 'pub'`：
+
+```zig
+// register.zig
+const user = @import("user.zig");
+pub fn main() !void {
+    const u: user.User = undefined;
+    _ = u;
+}
+```
+
+```
+register.zig:3:18: error: 'User' is not marked 'pub'
+    const u: user.User = undefined;
+             ~~~~^~~~~
+user.zig:3:1: note: declared here
+const User = struct {
+^~~~~
+```
+
+回到 `user.zig` 给 `User` 加上 `pub` 后，类型本身就可以跨模块引用了：
 
 ```zig
 // user.zig
+// Added the `pub` keyword to `User`
 pub const User = struct {
-    id: u64,
-    name: []const u8,
-    email: []const u8,
-
-    pub fn init(id: u64, name: []const u8, email: []const u8) User {
-        return User{ .id = id, .name = name, .email = email };
-    }
-
-    pub fn print_name(self: User) !void {
-        // ...
-    }
-};
+// ...
 ```
 
 ```zig
 // register.zig
+// This works fine now!
+const user = @import("user.zig");
+pub fn main() !void {
+    const u: user.User = undefined;
+    _ = u;
+}
+```
+
+但请注意：**给结构体本身加 `pub`，并不会自动把结构体内部的方法也变成公开的！**
+如果此时在 `register.zig` 中调用 `user.User.init(...)`，编译器依然会报错提示 `'init' is not marked 'pub'`：
+
+```zig
+const user = @import("user.zig");
+pub fn main() !void {
+    const u: user.User = user.User.init(
+        1, "pedro", "email@gmail.com"
+    );
+    _ = u;
+}
+```
+
+```
+register.zig:3:35: error: 'init' is not marked 'pub'
+    const u: user.User = user.User.init(
+                         ~~~~~~~~~^~~~~
+user.zig:8:5: note: declared here
+    fn init(id: u64,
+    ^~~~~~~
+```
+
+因此，只有把 `User` 结构体本身以及需要跨模块调用的 `init()`、`print_name()` 方法都加上 `pub` 标记，外部模块才能完整调用：
+
+```zig
+// user.zig
+// Added the `pub` keyword to `User.init`
+    pub fn init(
+// ...
+// Added the `pub` keyword to `User.print_name`
+    pub fn print_name(self: User) !void {
+// ...
+```
+
+```zig
+// register.zig
+// This works fine now!
 const user = @import("user.zig");
 pub fn main() !void {
     const u: user.User = user.User.init(
@@ -504,11 +598,21 @@ pub fn main() !void {
 ### 匿名结构体字面量（Anonymous Struct Literals） {#sec-anonymous-struct-literals}
 
 正常声明结构体字面量时，一般会在大括号前带上类型名 `User { ... }`。
+
+```zig
+const eu = User {
+    .id = 1,
+    .name = "Pedro",
+    .email = "someemail@gmail.com"
+};
+_ = eu;
+```
+
 但在 Zig 中，你可以直接省掉类型名，用 `.{}` 这种**匿名结构体字面量**语法！
 
 前面的小圆点 `.` 会告诉编译器：“这里有个结构体，麻烦结合上下文帮我自动推导它的类型！”
 
-我们在 `stdout.print()` 里传参数时见到的 `.{ "world" }`，就是典型的匿名结构体字面量。编译器会根据格式化字符串的需求自动构建这个包裹类型，用起来极其清爽：
+我们在 `stdout.print()` 里传参数时见到的 `.{ "world" }`，就是典型的匿名结构体字面量。这里通常使用匿名结构体字面量，让 `zig` 编译器替你确定这个匿名结构体的类型：
 
 ```zig
 const std = @import("std");
@@ -521,11 +625,14 @@ pub fn main(init: std.process.Init) !void {
 }
 ```
 
+```
+Hello, world!
+```
+
 
 ### 结构体类型必须是常量（const）
 
-在 Zig 里，所有的类型（Types）在编译期都是一等公民，它们必须是 `const` 或 `comptime`。
-你绝不能用 `var` 去声明一个结构体类型，必须一律使用 `const`：
+在 Zig 中，声明新的结构体类型时必须使用 `const` 关键字。换言之，所有类型声明在编译期都必须是常量（`const`）或编译期已知（`comptime`，详见 @sec-comptime）。你不能使用 `var` 关键字去声明一个结构体类型。在下面的 `Vec3` 例子中，这个声明是允许的，因为我用 `const` 关键字声明了这个新的数据类型：
 
 ```zig
 const Vec3 = struct {
@@ -582,7 +689,7 @@ Distance: 3.3970575502926055
 
 ### 结构体内部状态变更：`*Self` vs `Self`
 
-如果一个方法只读取数据、不改动任何字段（如上面的 `distance`），形参写 `self: Vec3` 就够了。
+正如在 @sec-self-arg 中所述，结构体方法中的 `self` 参数代表调用该方法的结构体实例本身。如果一个方法只读取数据、不改动任何字段（如上面的 `distance()`），形参写 `self: Vec3` 就够了。
 
 但如果你的方法需要**修改结构体自身的字段**（例如给坐标翻倍），该怎么写？
 
@@ -627,8 +734,21 @@ std.debug.print("Doubled: {d}\n", .{v3.x});
 Doubled: 8.4
 ```
 
+反过来，如果把 `twice()` 的参数签名写成按值接收 `self: Vec3`，由于 Zig 中所有函数形参默认都是不可变常量（见 @sec-fun-pars），尝试修改 `self.x` 就会触发如下编译错误：
+
+```zig
+// 如果将函数签名改为按值接收：
+    pub fn twice(self: Vec3) void {
+```
+
+```
+t.zig:16:13: error: cannot assign to constant
+        self.x = self.x * 2.0;
+        ~~~~^~
+```
+
 ::: {.callout-note}
-**开发避坑诀窍**：只要结构体的方法需要修改自身任何一个字段的值，函数签名里的 `self` 务必写成指针类型 `*T`，而不是普通值 `T`。
+**注意事项**：只要结构体的方法需要修改自身任何一个字段的值，函数签名里的 `self` 务必写成指针类型 `*T`，而不是普通值 `T`。
 :::
 
 
@@ -637,31 +757,42 @@ Doubled: 8.4
 虽然 Zig 是严格的强类型语言，但它并不死板。很多时候我们不需要把冗长的类型名反反复复手敲一遍。
 在 Zig 中，触发类型推断的魔术符号就是**小圆点（`.`）**。
 
-每当你看到以 `.` 开头的字面量或枚举项时，就代表我们在对编译器说：“请结合上下文，自动推断出这里应该是什么类型吧！”这有点类似于 C++ 的 `auto`，但用在字面量上更加灵巧。
+每当你看到以 `.` 开头的字面量或枚举项时，就代表我们在请编译器结合上下文自动推断该表达式的类型。我们在 @sec-anonymous-struct-literals 中介绍匿名结构体字面量，以及在 @sec-switch 中介绍 `switch` 分支匹配枚举值时，都已经见过这种类型推断的用法。
 
-看 Zig 标准库原子操作模块 [`atomic.zig`](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig)[^fence-fn] 里的真实代码：
+再看一个例子：下面这个 `fence()` 函数摘自 Zig 标准库的 [`atomic.zig` 模块](https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig)[^fence-fn]（译注：在 Zig 0.17.1 的标准库中，`atomic.zig` 已不再包含这个函数，这里仅作为类型推断的示例）。函数里有很多我们还没讲到的东西，比如 `comptime`、`inline`、`extern` 是什么意思。先忽略它们，只关注函数内部的 `switch` 语句。
 
 [^fence-fn]: <https://codeberg.org/ziglang/zig/src/branch/master/lib/std/atomic.zig>。
 
 ```zig
 pub inline fn fence(self: *Self, comptime order: AtomicOrder) void {
-    // 省略部分上下文...
-    return switch (order) {
-        .unordered, .monotonic => @compileError(
-            @tagName(order)
-            ++ " only applies to atomic loads and stores"
-        ),
-        .acquire => tsan.__tsan_acquire(addr),
-        .release => tsan.__tsan_release(addr),
-        .acq_rel, .seq_cst => {
-            tsan.__tsan_acquire(addr);
-            tsan.__tsan_release(addr);
-        },
-    };
+    // many lines of code ...
+    if (builtin.sanitize_thread) {
+        const tsan = struct {
+            extern "c" fn __tsan_acquire(addr: *anyopaque) void;
+            extern "c" fn __tsan_release(addr: *anyopaque) void;
+        };
+
+        const addr: *anyopaque = self;
+        return switch (order) {
+            .unordered, .monotonic => @compileError(
+                @tagName(order)
+                ++ " only applies to atomic loads and stores"
+            ),
+            .acquire => tsan.__tsan_acquire(addr),
+            .release => tsan.__tsan_release(addr),
+            .acq_rel, .seq_cst => {
+                tsan.__tsan_acquire(addr);
+                tsan.__tsan_release(addr);
+            },
+        };
+    }
+    return @fence(order);
 }
 ```
 
-因为传入的入参类型是 `AtomicOrder` 枚举，所以在分支里写 `.acquire`，编译器就能立刻心神领会它等价于 `AtomicOrder.acquire`，无需开发者做机械重复的输入。
+这个 `switch` 语句以 `order` 对象作为输入。从类型注解可以看出，`order` 是 `fence()` 的参数之一，类型为 `AtomicOrder`。`switch` 里有一批以点号开头的值，比如 `.release` 和 `.acquire`。由于这些值前面带点号，我们是在请 `zig` 编译器推断它们的类型：编译器会查看 `switch` 的输入对象 `order` 的类型，即 `AtomicOrder`，从而推断出这些值是 `AtomicOrder` 的成员。
+
+如果不用点号，就必须显式写出每个值的类型，比如把 `.release` 写成 `AtomicOrder.release`，而且 `switch` 里的每个值都得这样写，工作量很大。这就是 Zig 在 `switch` 语句中普遍使用类型推断的原因。
 
 
 ## 类型转换（Type Casting） {#sec-type-cast}
@@ -669,9 +800,7 @@ pub inline fn fence(self: *Self, comptime order: AtomicOrder) void {
 在底层开发中，不同位宽整型、浮点型或指针之间的类型互转是高频操作。
 在 C 语言里常用 `(int)x` 强制转换，容易隐蔽地截断数据；而 Zig 提供了非常严谨的类型转换内置函数族。
 
-### 显式安全强转：`@as()`
-
-当类型转换是**明确且安全**的时候，首选用 `@as(TargetType, value)`：
+当类型转换明确、无歧义且安全时，首选使用内置函数 `@as(TargetType, value)`（第一个参数为目标类型，第二个参数为待转换的对象）：
 
 ```zig
 const std = @import("std");
@@ -683,9 +812,12 @@ test {
 }
 ```
 
-### 整型与浮点互转：`@floatFromInt` 与 `@intFromFloat`
+```
+1/1 file6f2840a7682.test_0...OK
+All 1 tests passed.
+```
 
-整型和浮点之间的转换存在舍入或精度变化，Zig 要求使用明确表意的内置函数：
+如果需要在不同类别的数据类型之间转换（例如将整数转换为浮点数，或将浮点数转换为整数），由于涉及数值表示方式的改变，Zig 要求使用表意明确的专用内置函数（如 `@floatFromInt()` 与 `@intFromFloat()`）：
 
 ```zig
 const std = @import("std");
@@ -697,9 +829,12 @@ test {
 }
 ```
 
-### 指针强转：`@ptrCast`
+```
+1/1 file6f286a8a661b.test_0...OK
+All 1 tests passed.
+```
 
-在底层做内存重解释或兼容 C ABI 时，指针强转很常见。Zig 专门用 `@ptrCast()` 来负责指针层面的类型变换（详见 @sec-pointer）：
+而对于指针对象（详见 @sec-pointer），由于其存储的是内存地址，指针类型之间的转换需要使用专门的内置函数 `@ptrCast()`：
 
 ```zig
 const std = @import("std");
@@ -711,6 +846,11 @@ test {
     const u32_ptr: *const u32 = @ptrCast(&bytes);
     try expect(@TypeOf(u32_ptr) == *const u32);
 }
+```
+
+```
+1/1 file6f28631928f9.test_0...OK
+All 1 tests passed.
 ```
 
 
@@ -743,4 +883,4 @@ const pool = ThreadPool.init(
 );
 ```
 
-这种高度统一的“模块即结构体”模型，大幅降低了语言的概念复杂度。在 Zig 里，你学懂了结构体，就相当于顺带学懂了模块系统！
+这个模块就像是一个大结构体：模块中所有的顶层函数都是这个结构体的方法，所有的顶层对象和结构体声明都是这个结构体的数据成员。模块本身就是这个结构体。

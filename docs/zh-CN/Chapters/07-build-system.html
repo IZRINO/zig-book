@@ -440,7 +440,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/12-file-op.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入输出（I/O）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">文件系统与输入/输出（I/O）</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -458,7 +458,7 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并发并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -487,21 +487,24 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
   <li><a href="#sec-build-fun" id="toc-sec-build-fun" class="nav-link" data-scroll-target="#sec-build-fun"><span class="header-section-number">9.2</span> 认识唯一的构建主入口：<code>build()</code> 函数</a></li>
   <li><a href="#sec-targets" id="toc-sec-targets" class="nav-link" data-scroll-target="#sec-targets"><span class="header-section-number">9.3</span> 核心构建目标对象（Target Objects）</a>
   <ul class="collapse">
-  <li><a href="#智能依赖树自动解析" id="toc-智能依赖树自动解析" class="nav-link" data-scroll-target="#智能依赖树自动解析"><span class="header-section-number">9.3.1</span> 智能依赖树自动解析</a></li>
-  <li><a href="#极其关键的临门一脚b.installartifact" id="toc-极其关键的临门一脚b.installartifact" class="nav-link" data-scroll-target="#极其关键的临门一脚b.installartifact"><span class="header-section-number">9.3.2</span> 极其关键的临门一脚：<code>b.installArtifact()</code></a></li>
+  <li><a href="#自动发现项目中的-zig-模块" id="toc-自动发现项目中的-zig-模块" class="nav-link" data-scroll-target="#自动发现项目中的-zig-模块"><span class="header-section-number">9.3.1</span> 自动发现项目中的 Zig 模块</a></li>
+  <li><a href="#安装构建产物b.installartifact" id="toc-安装构建产物b.installartifact" class="nav-link" data-scroll-target="#安装构建产物b.installartifact"><span class="header-section-number">9.3.2</span> 安装构建产物：<code>b.installArtifact()</code></a></li>
   </ul></li>
-  <li><a href="#掌控四大编译优化模式" id="toc-掌控四大编译优化模式" class="nav-link" data-scroll-target="#掌控四大编译优化模式"><span class="header-section-number">9.4</span> 掌控四大编译优化模式</a></li>
+  <li><a href="#设置构建模式" id="toc-设置构建模式" class="nav-link" data-scroll-target="#设置构建模式"><span class="header-section-number">9.4</span> 设置构建模式</a></li>
   <li><a href="#声明构建版本号语义化版本" id="toc-声明构建版本号语义化版本" class="nav-link" data-scroll-target="#声明构建版本号语义化版本"><span class="header-section-number">9.5</span> 声明构建版本号（语义化版本）</a></li>
   <li><a href="#sec-detect-os" id="toc-sec-detect-os" class="nav-link" data-scroll-target="#sec-detect-os"><span class="header-section-number">9.6</span> 在构建脚本中探测操作系统</a></li>
   <li><a href="#为构建系统添加一键运行步骤run-step" id="toc-为构建系统添加一键运行步骤run-step" class="nav-link" data-scroll-target="#为构建系统添加一键运行步骤run-step"><span class="header-section-number">9.7</span> 为构建系统添加“一键运行”步骤（Run Step）</a></li>
   <li><a href="#集成单测构建步骤zig-build-tests" id="toc-集成单测构建步骤zig-build-tests" class="nav-link" data-scroll-target="#集成单测构建步骤zig-build-tests"><span class="header-section-number">9.8</span> 集成单测构建步骤：<code>zig build tests</code></a></li>
   <li><a href="#接收命令行自定义参数user-provided-options" id="toc-接收命令行自定义参数user-provided-options" class="nav-link" data-scroll-target="#接收命令行自定义参数user-provided-options"><span class="header-section-number">9.9</span> 接收命令行自定义参数（User-provided Options）</a></li>
-  <li><a href="#链接外部库系统动态库与本地子模块" id="toc-链接外部库系统动态库与本地子模块" class="nav-link" data-scroll-target="#链接外部库系统动态库与本地子模块"><span class="header-section-number">9.10</span> 链接外部库（系统动态库与本地子模块）</a>
+  <li><a href="#链接外部库" id="toc-链接外部库" class="nav-link" data-scroll-target="#链接外部库"><span class="header-section-number">9.10</span> 链接外部库</a></li>
+  <li><a href="#sec-building-c-code" id="toc-sec-building-c-code" class="nav-link" data-scroll-target="#sec-building-c-code"><span class="header-section-number">9.11</span> 编译 C 语言代码</a>
   <ul class="collapse">
-  <li><a href="#链接系统全局安装的库linksystemlibrary" id="toc-链接系统全局安装的库linksystemlibrary" class="nav-link" data-scroll-target="#链接系统全局安装的库linksystemlibrary"><span class="header-section-number">9.10.1</span> 链接系统全局安装的库：<code>linkSystemLibrary</code></a></li>
-  <li><a href="#链接项目内自带的本地源码库linklibrary" id="toc-链接项目内自带的本地源码库linklibrary" class="nav-link" data-scroll-target="#链接项目内自带的本地源码库linklibrary"><span class="header-section-number">9.10.2</span> 链接项目内自带的本地源码库：<code>linkLibrary</code></a></li>
+  <li><a href="#配置-c-编译器标志compiler-flags" id="toc-配置-c-编译器标志compiler-flags" class="nav-link" data-scroll-target="#配置-c-编译器标志compiler-flags"><span class="header-section-number">9.11.1</span> 配置 C 编译器标志（Compiler Flags）</a></li>
+  <li><a href="#列出待编译的-c-源文件列表" id="toc-列出待编译的-c-源文件列表" class="nav-link" data-scroll-target="#列出待编译的-c-源文件列表"><span class="header-section-number">9.11.2</span> 列出待编译的 C 源文件列表</a></li>
+  <li><a href="#定义-c-语言预处理宏c-macros" id="toc-定义-c-语言预处理宏c-macros" class="nav-link" data-scroll-target="#定义-c-语言预处理宏c-macros"><span class="header-section-number">9.11.3</span> 定义 C 语言预处理宏（C Macros）</a></li>
+  <li><a href="#sec-library-paths" id="toc-sec-library-paths" class="nav-link" data-scroll-target="#sec-library-paths"><span class="header-section-number">9.11.4</span> 添加库文件搜索路径（Library Paths）</a></li>
+  <li><a href="#sec-include-paths" id="toc-sec-include-paths" class="nav-link" data-scroll-target="#sec-include-paths"><span class="header-section-number">9.11.5</span> 添加头文件包含路径（Include Paths）</a></li>
   </ul></li>
-  <li><a href="#sec-building-c-code" id="toc-sec-building-c-code" class="nav-link" data-scroll-target="#sec-building-c-code"><span class="header-section-number">9.11</span> 降维打击：直接拿 Zig 构建纯 C 语言项目！</a></li>
   </ul>
 </nav>
     </div>
@@ -528,21 +531,20 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </header>
 
 
-<p>``</p>
-<p>在这一章中，咱们来聊聊 Zig 最让人直呼“真香”的王牌杀器——<strong>原生构建系统（Build System）</strong>，看看一个真正的中大型工程在 Zig 里是如何被构建出来的。</p>
-<p>以往在 C/C++ 领域，配一套跨平台构建环境有多折磨，老程序员们都深有体会：GNU Make、Autotools、CMake、Ninja… 各家工具层层嵌套，光是写 CMakeLists.txt 就能把人劝退。 而 Zig 带来了一场革命：<strong>它直接把构建系统做成了语言原生的一部分！</strong> 你不需要去学什么晦涩的 DSL 配置语法，直接用纯正的 Zig 语言本身来写构建脚本（<code>build.zig</code>），享受全套的编译期类型检查和 IDE 智能补全！</p>
-<p>想深入了解构建系统的朋友，还可以翻阅 Zig 官网的<a href="https://ziglang.org/learn/build-system/#user-provided-options">《构建系统专题指南》</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>以及社区开发者 Felix 撰写的神级系列文章<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
-<p>此外，<strong>跨平台交叉编译（Cross-compilation）</strong>绝对是 Zig 的招牌绝活。以往在 C/C++ 甚至 Rust 里想在 Windows 上一键打出 Linux 或 macOS 的二进制，通常要配复杂的虚拟机或 Docker 交叉工具链；而在 Zig 里，仅凭单机一个干净的 <code>zig</code> 编译器，就能丝滑交叉编译到上百种目标操作系统和 CPU 架构！</p>
+<p>在本章中，我们将探讨 Zig 的<strong>构建系统（Build System）</strong>，以及如何在 Zig 中构建完整的工程项目。 Zig 的一大核心优势在于它将构建系统直接内嵌到了语言自身之中。这意味着你无需依赖独立于编译器的外部第三方工具，仅用纯正的 Zig 语言就能编写构建脚本（<code>build.zig</code>）并构建项目。</p>
+<p>想深入了解构建系统的读者，还可以翻阅 Zig 官网的<a href="https://ziglang.org/learn/build-system/#user-provided-options">《构建系统专题指南》</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>以及社区开发者 Felix 撰写的系列文章<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>构建代码是 Zig 最擅长的事情之一。在 C/C++ 甚至 Rust 里，把源码<strong>交叉编译（Cross-compilation）</strong>到多个目标（比如多种计算机架构和操作系统）是一件特别困难的事，而 <code>zig</code> 编译器被公认为完成这项任务最好的现有软件之一。</p>
 <section id="源码是如何被构建出来的" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="源码是如何被构建出来的"><span class="header-section-number">9.1</span> 源码是如何被构建出来的？</h2>
-<p>在底层编译型语言中，构建本质上就是让编译器将我们写的源码翻译为 CPU 机器指令。 在 Zig 中，一个典型的编译构建流程包含这几个核心输入：</p>
+<p>我们在 <a href="01-zig-weird.html#sec-project-files" class="quarto-xref"><span>Section 1.2.1</span></a> 中已经讨论过底层语言在构建源码时面临的挑战。在底层编译型语言中，构建本质上就是让编译器将我们写的源码翻译为 CPU 机器指令。 在 Zig 中，一个典型的编译构建流程包含这几个核心输入：</p>
 <ul>
 <li>包含源码的 Zig 模块（Modules）；</li>
 <li>外部依赖库文件（动态库 <code>.so</code>/<code>.dll</code> 或静态库 <code>.a</code>/<code>.lib</code>）；</li>
 <li>决定优化等级与平台目标的编译选项/参数。</li>
 </ul>
 <p>所有的构建调度规则，统一编写在项目根目录下的 <strong><code>build.zig</code></strong> 脚本里。</p>
-<p>这个构建脚本的核心是围绕<strong>构建目标（Targets）</strong>展开的。所谓 Target，就是你希望编译器最终交付给你的构建产物：</p>
+<p>这个构建脚本的核心是围绕<strong>构建目标对象（Target Objects）</strong>展开的。所谓 Target（目标），就是你希望 <code>zig</code> 编译器最终为你构建出来的产物——这一概念在大多数主流构建系统（尤其是 CMake<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>）中都普遍存在。</p>
+<p>在 Zig 中，你可以构建以下四种类型的目标对象（我们将在 <a href="#sec-targets" class="quarto-xref"><span>Section 9.3</span></a> 中详细展开）：</p>
 <ol type="1">
 <li><strong>独立可执行程序（Executable）</strong>（Windows 上的 <code>.exe</code>，Linux 上的 ELF 二进制）；</li>
 <li><strong>动态共享库（Shared Library）</strong>（Linux 上的 <code>.so</code>，Windows 上的 <code>.dll</code>）；</li>
@@ -552,25 +554,25 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 </section>
 <section id="sec-build-fun" class="level2" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="sec-build-fun"><span class="header-section-number">9.2</span> 认识唯一的构建主入口：<code>build()</code> 函数</h2>
-<p>每一个合法的 <code>build.zig</code> 脚本都必须且只能对外暴露一个顶层的公开函数：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Build) <span class="dt">void</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>它就像主程序里的 <code>pub fn main()</code> 一样，是整个工程构建生命周期的唯一指挥官！ 它接收一个指向 <code>std.Build</code> 对象的指针 <code>b</code>，我们通过调用 <code>b</code> 上的各种方法来组装构建流程图（DAG）。</p>
+<p>Zig 中的构建脚本必须包含一个顶层的公开 <code>build()</code> 函数声明。它就像我们在 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中讨论的应用程序主入口 <code>main()</code> 函数一样，是整个构建流程的入口点。</p>
+<p>该 <code>build()</code> 函数接收一个指向 <code>std.Build</code> 结构体的指针 <code>b: *std.Build</code> 作为输入，返回值类型固定为 <code>void</code>。我们通过调用 <code>b</code> 上的各种方法来完成构建步骤的编排。</p>
 <p>看一个最基础的最小构建脚本：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Build) <span class="dt">void</span> {</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"hello.zig"</span>)<span class="op">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    });</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>installArtifact(exe);</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b: *std.Build) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        .name = <span class="st">"hello"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            .root_source_file = b.path(<span class="st">"hello.zig"</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            .target = b.graph.host</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>);</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    b.installArtifact(exe);</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-targets" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="sec-targets"><span class="header-section-number">9.3</span> 核心构建目标对象（Target Objects）</h2>
-<p>通过 <code>std.Build</code> 指针 <code>b</code>，我们可以声明各种类型的产物：</p>
+<p>正如前文所述，构建脚本是围绕目标对象（Target Objects）组织的。你可以在一个构建脚本中定义多个目标对象，甚至针对不同的操作系统（Windows、Linux 等）分别定义目标对象，从而让 <code>zig</code> 编译器一次性交叉编译出多平台二进制产物（Zig 官方构建系统文档提供了<a href="https://ziglang.org/learn/build-system/#handy-examples">演示这一跨平台构建策略的优秀代码示例</a><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>）。</p>
+<p>通过我们在 <a href="#sec-build-fun" class="quarto-xref"><span>Section 9.2</span></a> 中介绍的 <code>std.Build</code> 指针 <code>b</code>，可以调用以下方法创建目标对象：</p>
 <ul>
 <li><code>b.addExecutable(...)</code>：声明生成一个可执行文件；</li>
 <li><code>b.addSharedLibrary(...)</code>：声明生成一个动态链接库；</li>
@@ -578,224 +580,322 @@ gtag('config', 'G-6CHJXK4CEV', { 'anonymize_ip': true});
 <li><code>b.addTest(...)</code>：声明生成单测运行二进制。</li>
 </ul>
 <p>在参数配置中，有两个最关键的必填项： - <strong><code>name</code></strong>：生成产物的名称（通常设为你的工程名）； - <strong><code>root_module</code></strong>：定义模块配置。其中 <code>root_source_file</code> 指定该模块的入口文件（比如 <code>b.path("src/main.zig")</code>）。</p>
-<section id="智能依赖树自动解析" class="level3" data-number="9.3.1">
-<h3 data-number="9.3.1" class="anchored" data-anchor-id="智能依赖树自动解析"><span class="header-section-number">9.3.1</span> 智能依赖树自动解析</h3>
-<p>跟 CMake 必须手动把每一个 <code>.c</code>/<code>.cpp</code> 文件一个个苦哈哈地列在名单里不同，<strong>Zig 拥有全自动依赖发现能力</strong>！ 只要你给出了 <code>root_source_file</code> 入口，<code>zig</code> 编译器就会顺藤摸瓜，通过文件内部的所有 <code>@import</code> 语句自动把整个项目引用的全部模块一次性解析出完整的依赖拓扑图，既省心又绝不漏文件。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"hello"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"hello.zig"</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="自动发现项目中的-zig-模块" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="自动发现项目中的-zig-模块"><span class="header-section-number">9.3.1</span> 自动发现项目中的 Zig 模块</h3>
+<p><code>root_source_file</code> 指定的是项目的根 Zig 模块，也就是包含程序入口（<code>main()</code> 函数）或者库的主要 API 的那个模块。这也意味着，组成项目的所有 Zig 模块，都会通过这个“根源文件”里的 import 语句被自动发现。<code>zig</code> 编译器能通过 import 语句看出哪个 Zig 模块依赖哪个，从而找出项目用到的全部 Zig 模块。</p>
+<p>这很方便，也和其他构建系统的做法不同。比如在 CMake 里，你必须显式列出所有要参与构建的源文件的路径。这大概是 C 和 C++ 编译器“缺少条件编译”的一种表现：因为缺少这个功能，你必须明确选出哪些源文件要交给 C/C++ 编译器，毕竟不是每段 C/C++ 代码都能移植、都能在每个操作系统上编译，否则 C/C++ 编译器就会报编译错误。</p>
+<p>（译注：这里的自动发现只针对 Zig 模块。C/C++ 源文件仍然要像 <a href="#sec-building-c-code" class="quarto-xref"><span>Section 9.11</span></a> 中那样，用 <code>addCSourceFiles()</code> 显式列出。）</p>
 </section>
-<section id="极其关键的临门一脚b.installartifact" class="level3" data-number="9.3.2">
-<h3 data-number="9.3.2" class="anchored" data-anchor-id="极其关键的临门一脚b.installartifact"><span class="header-section-number">9.3.2</span> 极其关键的临门一脚：<code>b.installArtifact()</code></h3>
-<p>无数新手常犯的一个错误是：在脚本里调完 <code>b.addExecutable</code> 就以为万事大吉，结果执行 <code>zig build</code> 发现根目录下啥也没生成！</p>
-<p>请敲黑板牢记：<strong>声明了产物之后，必须显式调用 <code>b.installArtifact(exe)</code>！</strong> 构建系统在编译完成后，默认会把中间产物放在临时缓存区；只有被 <code>installArtifact</code> 标记的最终产物，才会被拷贝并安装到根目录的 <strong><code>zig-out/</code></strong> 输出目录中！</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"hello.zig"</span>)<span class="op">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>});</span>
+<section id="安装构建产物b.installartifact" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="安装构建产物b.installartifact"><span class="header-section-number">9.3.2</span> 安装构建产物：<code>b.installArtifact()</code></h3>
+<p>关于构建过程有一个非常重要的细节：<strong>你必须使用 <code>Build</code> 结构体的 <code>installArtifact()</code> 方法，显式安装你在构建脚本中创建的目标对象</strong>。</p>
+<p>每次调用 <code>zig build</code> 时，项目根目录下都会创建一个 <code>zig-out</code> 目录用于存放构建输出。 构建系统在编译完成后，默认会把中间产物放在临时缓存区；只有被 <code>installArtifact</code> 标记的最终产物，才会被拷贝并安装到根目录的 <strong><code>zig-out/</code></strong> 输出目录中！</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"hello"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"hello.zig"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(exe); <span class="co">// 必须有这句！</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>b.installArtifact(exe); <span class="co">// 必须有这句！</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
-<section id="掌控四大编译优化模式" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="掌控四大编译优化模式"><span class="header-section-number">9.4</span> 掌控四大编译优化模式</h2>
-<p>Zig 的构建模式不仅仅是区分“开发”和“上线”，而是围绕“极致性能”与“运行时安全”两个维度做出了非常考究的平衡，共有四大模式：</p>
-<ol type="1">
-<li><strong><code>Debug</code>（默认）</strong>： 编译速度极快，保留全部调试符号，开启全部运行时安全检查（越界、溢出自动 panic），单测与日常开发标配；</li>
-<li><strong><code>ReleaseSafe</code></strong>： 开启编译优化让代码跑得飞快，<strong>但依然保留全部运行时边界安全检查</strong>！金融、高安全、核心后台服务首选；</li>
-<li><strong><code>ReleaseFast</code></strong>： 榨干硬件性能的极限模式！关闭部分运行时检查，全力压榨 CPU 指令集优化，游戏引擎、高频交易首选；</li>
-<li><strong><code>ReleaseSmall</code></strong>： 追求最小二进制体积，极端裁剪符号表，嵌入式开发与物联网固件首选。</li>
-</ol>
-<p>在 <code>build.zig</code> 中配置构建模式：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"hello.zig"</span>)<span class="op">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host<span class="op">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>optimize <span class="op">=</span> <span class="op">.</span>ReleaseSafe</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="设置构建模式" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="设置构建模式"><span class="header-section-number">9.4</span> 设置构建模式</h2>
+<p>前面介绍了创建目标对象时要设置的三个基本选项。此外还有第四个选项 <code>optimize</code>，用来设置目标对象的构建模式。这个选项之所以叫 optimize（优化），是因为 Zig 把构建模式更多地看作“优化与安全如何取舍”的问题，所以优化在这里很重要。</p>
+<p>Zig 有下面四种构建模式，各有各的特点。正如我们在 <a href="02-debugging.html#sec-compile-debug-mode" class="quarto-xref"><span>Section 5.2.1</span></a> 中所述，如果不显式选择构建模式，<code>zig</code> 编译器默认使用 <code>Debug</code> 模式。</p>
+<ul>
+<li><code>Debug</code>：在构建产物（也就是目标对象定义的二进制文件）中生成并包含调试信息；</li>
+<li><code>ReleaseSmall</code>：尽量生成体积小的二进制文件；</li>
+<li><code>ReleaseFast</code>：尽量优化代码，让生成的二进制文件跑得尽可能快；</li>
+<li><code>ReleaseSafe</code>：尽可能加入安全保护，让代码尽量安全。</li>
+</ul>
+<p>所以在构建项目时，你可以把目标对象的构建模式设为 <code>ReleaseFast</code>，让 <code>zig</code> 编译器对代码做重要的优化。这样生成的二进制文件包含优化程度更高的代码，在大多数情况下跑得更快。但代价通常是失去一些安全特性：最终的二进制文件里去掉了部分安全检查，代码跑得更快，但没那么安全了。</p>
+<p>（译注：按 Zig 0.17.1 <code>zig build-exe --help</code> 中的说明，<code>ReleaseFast</code> 和 <code>ReleaseSmall</code> 会关闭全部运行时安全检查，不只是去掉一部分；<code>ReleaseSafe</code> 则同时开启安全检查和机器码优化。<code>Debug</code> 模式同样开启安全检查，而且编译最快。）</p>
+<p>怎么选取决于你当前优先考虑什么。如果你在开发密码学或银行系统，可能更看重安全，会选择 <code>ReleaseSafe</code> 模式：它运行起来稍慢一些，但安全得多，因为构建出的二进制文件里包含了所有可能的运行时安全检查。反过来，如果你在写游戏，可能更看重性能而不是安全，会选择 <code>ReleaseFast</code> 模式，让玩家得到更高的帧率。</p>
+<p>在下面的例子中，我们创建的还是前面用过的那个目标对象，但这次把它的构建模式设为 <code>ReleaseSafe</code>：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"hello"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"hello.zig"</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        .optimize = .ReleaseSafe</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>b.installArtifact(exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="声明构建版本号语义化版本" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="声明构建版本号语义化版本"><span class="header-section-number">9.5</span> 声明构建版本号（语义化版本）</h2>
-<p>可以通过 <code>version</code> 字段为产物打上标准的 SemVer 语义化版本号：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"hello.zig"</span>)<span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>version <span class="op">=</span> <span class="op">.</span>{</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>major <span class="op">=</span> <span class="dv">2</span><span class="op">,</span> <span class="op">.</span>minor <span class="op">=</span> <span class="dv">9</span><span class="op">,</span> <span class="op">.</span>patch <span class="op">=</span> <span class="dv">7</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>每次在构建脚本中定义目标对象时，你都可以遵循语义化版本规范（Semantic Versioning，详见 <a href="https://semver.org/">语义化版本官网</a><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>）通过 <code>version</code> 选项为其指定一个 <code>SemanticVersion</code> 版本号结构体：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"hello"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"hello.zig"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    .version = .<span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        .major = <span class="dv">2</span>, .minor = <span class="dv">9</span>, .patch = <span class="dv">7</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>b.installArtifact(exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-detect-os" class="level2" data-number="9.6">
 <h2 data-number="9.6" class="anchored" data-anchor-id="sec-detect-os"><span class="header-section-number">9.6</span> 在构建脚本中探测操作系统</h2>
 <p>根据不同操作系统走不同构建逻辑是日常刚需。在构建脚本里引入 <code>@import("builtin")</code>，就能随时探测当前的目标平台：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> builtin <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"builtin"</span>);</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (builtin<span class="op">.</span>target<span class="op">.</span>os<span class="op">.</span>tag <span class="op">==</span> <span class="op">.</span>windows) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> builtin = <span class="bu">@import</span>(<span class="st">"builtin"</span>);</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (builtin.target.os.tag == .windows) <span class="op">{</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 只在目标是 Windows 时执行的特定构建逻辑</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="为构建系统添加一键运行步骤run-step" class="level2" data-number="9.7">
 <h2 data-number="9.7" class="anchored" data-anchor-id="为构建系统添加一键运行步骤run-step"><span class="header-section-number">9.7</span> 为构建系统添加“一键运行”步骤（Run Step）</h2>
-<p>Rust 开发者最喜欢 <code>cargo run</code> 那种“编译完立刻顺手跑起来”的体验。在 Zig 的构建脚本里，我们也只需要两三行代码就能配出一个 <code>zig build run</code> 指令！</p>
-<p>步骤： 1. 用 <code>b.addRunArtifact(exe)</code> 为可执行产物创建一个“运行工件”； 2. 用 <code>b.step("run", "Run the project")</code> 注册一个对外暴露的构建子命令名称； 3. 声明依赖关系：<code>run_step.dependOn(&amp;run_arti.step)</code>。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/hello.zig"</span>)<span class="op">,</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(exe);</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> run_arti <span class="op">=</span> b<span class="op">.</span>addRunArtifact(exe);</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> run_step <span class="op">=</span> b<span class="op">.</span>step(<span class="st">"run"</span><span class="op">,</span> <span class="st">"Run the project"</span>);</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>run_step<span class="op">.</span>dependOn(<span class="op">&amp;</span>run_arti<span class="op">.</span>step);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在 Rust 中，开发者可以通过 <code>cargo run</code> 一条命令同时完成编译与运行；我们在 <a href="01-zig-weird.html#sec-compile-run-code" class="quarto-xref"><span>Section 1.2.6</span></a> 中也介绍过如何使用 <code>zig run</code> 命令直接编译并运行单个 Zig 源码文件。那么在 <code>build.zig</code> 构建脚本中，如何同时构建并运行目标对象所生成的可执行文件呢？</p>
+<p>答案是在构建脚本中引入一个“运行工件（Run Artifact）”并为其绑定构建步骤（Step）：</p>
+<ol type="1">
+<li>首先，调用 <code>b.addRunArtifact(exe)</code> 为目标可执行对象创建一个运行工件：</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"hello"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"src/hello.zig"</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>b.installArtifact(exe);</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> run_arti = b.addRunArtifact(exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>接着，调用 <code>b.step()</code> 在构建脚本中声明一个名为 <code>"run"</code> 的构建步骤（Step）：</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> run_step = b.step(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"run"</span>, <span class="st">"Run the project"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="3" type="1">
+<li>最后，调用 <code>run_step.dependOn()</code> 建立该构建步骤与运行工件之间的依赖关系（完整源码参见本书官方仓库中的 <a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_and_run.zig"><code>build_and_run.zig</code> 模块</a><a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>）：</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>run_step.dependOn(&amp;run_arti.step);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>敲下 <code>zig build --help</code>，你就能看到刚才注册的自定义指令：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Steps:
   ...
   run   Run the project
   ...</code></pre>
 <p>随后在终端敲一行：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build run</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build run</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>编译、链接、自动拉起运行一气呵成！</p>
 </section>
 <section id="集成单测构建步骤zig-build-tests" class="level2" data-number="9.8">
 <h2 data-number="9.8" class="anchored" data-anchor-id="集成单测构建步骤zig-build-tests"><span class="header-section-number">9.8</span> 集成单测构建步骤：<code>zig build tests</code></h2>
-<p>同样的套路，我们还可以把整个项目的单测打包成一条统一的 <code>zig build tests</code> 指令：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> test_exe <span class="op">=</span> b<span class="op">.</span>addTest(<span class="op">.</span>{</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"unit_tests"</span><span class="op">,</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/main.zig"</span>)<span class="op">,</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> run_test <span class="op">=</span> b<span class="op">.</span>addRunArtifact(test_exe);</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> test_step <span class="op">=</span> b<span class="op">.</span>step(<span class="st">"tests"</span><span class="op">,</span> <span class="st">"Run unit tests"</span>);</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>test_step<span class="op">.</span>dependOn(<span class="op">&amp;</span>run_test<span class="op">.</span>step);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>团队成员拉下代码，直接敲 <code>zig build tests</code>，全工程所有模块的测试用例就会被批量扫过并执行。</p>
+<p>我们在 <a href="03-unittests.html" class="quarto-xref"><span>Chapter 8</span></a> 中详细讨论过如何编写单元测试并用 <code>zig test</code> 运行它们。同样地，我们可以在构建脚本中使用 <a href="#sec-targets" class="quarto-xref"><span>Section 9.3</span></a> 介绍过的 <code>b.addTest()</code> 方法创建一个“单元测试目标对象”，它会收集项目中所有的 <code>test</code> 代码块并将其编译为专门的测试可执行文件：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> test_exe = b.addTest(.<span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"unit_tests"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"src/main.zig"</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>b.installArtifact(test_exe);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>接着，结合上一节学到的 Run Step 机制，我们可以注册一个名为 <code>"tests"</code> 的构建步骤来一键运行这些单元测试（完整脚本见官方仓库的 <a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_tests.zig"><code>build_tests.zig</code> 模块</a><a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>）：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> run_arti = b.addRunArtifact(test_exe);</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> run_step = b.step(<span class="st">"tests"</span>, <span class="st">"Run unit tests"</span>);</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>run_step.dependOn(&amp;run_arti.step);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>现在只需在终端运行以下命令即可一键编译并执行项目单元测试：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build tests</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="接收命令行自定义参数user-provided-options" class="level2" data-number="9.9">
 <h2 data-number="9.9" class="anchored" data-anchor-id="接收命令行自定义参数user-provided-options"><span class="header-section-number">9.9</span> 接收命令行自定义参数（User-provided Options）</h2>
 <p>很多时候我们希望构建过程可以通过命令行参数动态定制（例如是否启用某套特性）： 使用 <code>b.option(Type, name, description)</code> 即可！</p>
 <p>定义好的选项会自动成为 <code>zig build</code> 的 <code>-D&lt;name&gt;</code> 命令行参数：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Build) <span class="dt">void</span> {</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> use_zlib <span class="op">=</span> b<span class="op">.</span>option(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">bool</span><span class="op">,</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"use_zlib"</span><span class="op">,</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Should link to zlib?"</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">orelse</span> <span class="cn">false</span>;</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>name <span class="op">=</span> <span class="st">"hello"</span><span class="op">,</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"example.zig"</span>)<span class="op">,</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    });</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (use_zlib) {</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        exe<span class="op">.</span>root_module<span class="op">.</span>linkSystemLibrary(<span class="st">"zlib"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>installArtifact(exe);</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>命令行调用姿势：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build <span class="at">-Duse_zlib</span><span class="op">=</span>true</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b: *std.Build) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> use_zlib = b.option(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">bool</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"use_zlib"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Should link to zlib?"</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">orelse</span> <span class="cn">false</span>;</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        .name = <span class="st">"hello"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            .root_source_file = b.path(<span class="st">"example.zig"</span>),</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>            .target = b.graph.host</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>);</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> (use_zlib) <span class="op">{</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        exe.root_module.linkSystemLibrary(<span class="st">"zlib"</span>, .<span class="op">{}</span>);</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    b.installArtifact(exe);</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>命令行调用方式：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">zig</span> build <span class="at">-Duse_zlib</span><span class="op">=</span>false</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="链接外部库系统动态库与本地子模块" class="level2" data-number="9.10">
-<h2 data-number="9.10" class="anchored" data-anchor-id="链接外部库系统动态库与本地子模块"><span class="header-section-number">9.10</span> 链接外部库（系统动态库与本地子模块）</h2>
-<section id="链接系统全局安装的库linksystemlibrary" class="level3" data-number="9.10.1">
-<h3 data-number="9.10.1" class="anchored" data-anchor-id="链接系统全局安装的库linksystemlibrary"><span class="header-section-number">9.10.1</span> 链接系统全局安装的库：<code>linkSystemLibrary</code></h3>
-<p>如果目标机器的系统里已经预装了某些 C/C++ 共享库（比如 <code>libpng</code>、<code>openssl</code>），直接用 <code>linkSystemLibrary</code>，Zig 底层会自动借助系统的 <code>pkg-config</code> 精准寻路：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> std <span class="op">=</span> <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b<span class="op">:</span> <span class="op">*</span>std<span class="op">.</span>Build) <span class="dt">void</span> {</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>name <span class="op">=</span> <span class="st">"image_filter"</span><span class="op">,</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/main.zig"</span>)<span class="op">,</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host<span class="op">,</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>link_libc <span class="op">=</span> <span class="cn">true</span><span class="op">,</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    });</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    exe<span class="op">.</span>root_module<span class="op">.</span>linkSystemLibrary(<span class="st">"png"</span><span class="op">,</span> <span class="op">.</span>{});</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    b<span class="op">.</span>installArtifact(exe);</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="链接项目内自带的本地源码库linklibrary" class="level3" data-number="9.10.2">
-<h3 data-number="9.10.2" class="anchored" data-anchor-id="链接项目内自带的本地源码库linklibrary"><span class="header-section-number">9.10.2</span> 链接项目内自带的本地源码库：<code>linkLibrary</code></h3>
-<p>如果是项目自研的或者放在子模块里的代码，我们可以用 <code>addStaticLibrary</code> 或 <code>addSharedLibrary</code> 声明子库，然后直接调 <code>exe.root_module.linkLibrary(sub_lib)</code> 将它们合体：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> dynamic_lib <span class="op">=</span> b<span class="op">.</span>addSharedLibrary(<span class="op">.</span>{</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"c_api"</span><span class="op">,</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/c_api.zig"</span>)<span class="op">,</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(dynamic_lib);</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> app_exe <span class="op">=</span> b<span class="op">.</span>addExecutable(<span class="op">.</span>{</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"my_app"</span><span class="op">,</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>root_source_file <span class="op">=</span> b<span class="op">.</span>path(<span class="st">"src/main.zig"</span>)<span class="op">,</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>app_exe<span class="op">.</span>root_module<span class="op">.</span>linkLibrary(dynamic_lib);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
+<section id="链接外部库" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="链接外部库"><span class="header-section-number">9.10</span> 链接外部库</h2>
+<p>链接阶段是每个构建过程中都不可或缺的一部分。这个阶段负责把代表你代码的多个目标文件合并成一个可执行文件。如果你的代码用到了外部库，链接阶段还会把这个可执行文件与这些外部库链接起来。</p>
+<p>在 Zig 中，“库”有两种概念：1）系统库；2）本地库。系统库就是已经安装在你系统中的库；本地库则属于当前项目，它位于项目目录中，并且和项目源码一起构建。</p>
+<p>两者的基本区别在于，系统库（按理说）已经构建好并安装在你的系统中，你只需要把源码与这个库链接起来就能开始使用它。我们通过 <code>Compile.root_module</code> 对象的 <code>linkSystemLibrary()</code> 方法来做到这一点。这个方法接收一个字符串形式的库名作为输入。还记得 <a href="#sec-targets" class="quarto-xref"><span>Section 9.3</span></a> 中讲过，<code>Compile</code> 对象就是你在构建脚本中声明的目标对象。</p>
+<p>当你把某个目标对象与系统库链接时，<code>zig</code> 编译器会使用 <code>pkg-config</code> 在你的系统中查找这个库的二进制文件和头文件。找到这些文件后，<code>zig</code> 编译器中的链接器会把你的目标文件与这个库的文件链接起来，为你生成一个单独的二进制文件。</p>
+<p>在下面的例子中，我们创建了一个名为 <code>image_filter</code> 的可执行文件，并通过把 <code>link_libc</code> 选项设为 <code>true</code>，将它与 C 标准库链接。同时，我们还把这个可执行文件与我系统中当前已安装的 C 库 <code>libpng</code> 链接起来。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> build(b: *std.Build) <span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> exe = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        .name = <span class="st">"image_filter"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            .root_source_file = b.path(<span class="st">"src/main.zig"</span>),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>            .target = b.graph.host,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            .link_libc = <span class="cn">true</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>);</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    exe.root_module.linkSystemLibrary(<span class="st">"png"</span>, .<span class="op">{}</span>);</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    b.installArtifact(exe);</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：英文原文中 <code>.target = b.graph.host</code> 之后缺少逗号，无法通过编译，译文已补上。）</p>
+<p>如果你的项目要链接某个 C 库，通常最好也把代码与 C 标准库链接起来，因为这个 C 库很可能在某处用到了 C 标准库的功能。C++ 库也是同理：如果要链接 C++ 库，最好把 <code>link_libcpp</code> 选项设为 <code>true</code>，将项目与 C++ 标准库链接。</p>
+<p>另一方面，当你想链接一个本地库时，应该使用 <code>Compile.root_module</code> 对象的 <code>linkLibrary()</code> 方法。这个方法需要接收另一个 <code>Compile</code> 对象作为输入，也就是你在构建脚本中用 <code>addStaticLibrary()</code> 或 <code>addSharedLibrary()</code> 方法定义的另一个目标对象，它定义了一个要构建的库。</p>
+<p>正如前面所讨论的，本地库是属于你项目本身、并与项目一起构建的库。因此，你需要在构建脚本中创建一个目标对象来构建这个本地库，然后把项目中相关的目标对象与标识这个本地库的目标对象链接起来。</p>
+<p>看看下面这个摘自 <a href="https://github.com/mitchellh/libxev/tree/main"><code>libxev</code> 库</a><a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a>构建脚本的例子。可以看到，这段代码先用 <code>c_api.zig</code> 模块声明了一个共享库文件；然后在构建脚本的后面，又声明了一个名为 <code>"dynamic-binding-test"</code> 的可执行文件，它链接到前面定义的这个共享库。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> dynamic_lib = b.addSharedLibrary(.<span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    .name = dynamic_lib_name,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"src/c_api.zig"</span>),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>b.installArtifact(dynamic_lib);</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">// ... more lines in the script</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> dynamic_binding_test = b.addExecutable(.<span class="op">{</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"dynamic-binding-test"</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        .root_source_file = b.path(<span class="st">"src/test.zig"</span>),</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>dynamic_binding_test.root_module.linkLibrary(</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    dynamic_lib</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：在 Zig 0.17.1 中，<code>std.Build</code> 已经没有 <code>addSharedLibrary()</code> 和 <code>addStaticLibrary()</code> 方法，统一改为 <code>addLibrary()</code>，并通过 <code>.linkage</code> 字段指定静态或动态链接。本章沿用原文的写法。）</p>
 </section>
 <section id="sec-building-c-code" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="sec-building-c-code"><span class="header-section-number">9.11</span> 降维打击：直接拿 Zig 构建纯 C 语言项目！</h2>
-<p>Zig 最让 C 语言圈惊艳的一大能力在于：<strong><code>zig</code> 编译器体内直接内置了一个顶级的 Clang/C 编译器！</strong> 这意味着，你可以用 <code>build.zig</code> 把历史悠久、复杂的 C 语言大项目打包得服服帖帖！</p>
-<p>以世界上著名的纯 C 字体引擎 <strong>FreeType</strong> 为例，我们在 Zig 脚本里可以这样写：</p>
-<ol type="1">
-<li><strong>声明静态库产物并开启 Libc 链接</strong>：</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> lib <span class="op">=</span> b<span class="op">.</span>addStaticLibrary(<span class="op">.</span>{</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>name <span class="op">=</span> <span class="st">"freetype"</span><span class="op">,</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>root_module <span class="op">=</span> b<span class="op">.</span>createModule(<span class="op">.</span>{</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>target <span class="op">=</span> b<span class="op">.</span>graph<span class="op">.</span>host<span class="op">,</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>link_libc <span class="op">=</span> <span class="cn">true</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>});</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li><strong>配置 C 编译器参数与宏定义（Macros）</strong>：</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> c_flags <span class="op">=</span> [_][]<span class="at">const</span> <span class="dt">u8</span>{</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Wall"</span><span class="op">,</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Wextra"</span><span class="op">,</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Werror"</span><span class="op">,</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>};</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>lib<span class="op">.</span>root_module<span class="op">.</span>addCMacro(<span class="st">"FT_DISABLE_ZLIB"</span><span class="op">,</span> <span class="st">"TRUE"</span>);</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>lib<span class="op">.</span>root_module<span class="op">.</span>addCMacro(<span class="st">"FT_DISABLE_PNG"</span><span class="op">,</span> <span class="st">"TRUE"</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li><strong>添加 C 源文件列表并挂载头文件包含路径</strong>：</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lib<span class="op">.</span>root_module<span class="op">.</span>addCSourceFiles({</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>files <span class="op">=</span> <span class="op">&amp;</span>[_][]<span class="at">const</span> <span class="dt">u8</span>{</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"src/autofit/autofit.c"</span><span class="op">,</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"src/base/ftbase.c"</span><span class="op">,</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>flags <span class="op">=</span> <span class="op">&amp;</span>c_flags</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>});</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>lib<span class="op">.</span>root_module<span class="op">.</span>addIncludePath(<span class="op">.</span>{ <span class="op">.</span>path <span class="op">=</span> <span class="st">"./include"</span> });</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>b<span class="op">.</span>installArtifact(lib);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>不需要装 GCC，不需要装 Clang，不需要伺候 Autotools。一个几兆大小的 <code>zig</code> 二进制，就能把 C 语言工程打包得整整齐齐。</p>
+<h2 data-number="9.11" class="anchored" data-anchor-id="sec-building-c-code"><span class="header-section-number">9.11</span> 编译 C 语言代码</h2>
+<p><code>zig</code> 编译器内嵌了一个 C 编译器。换句话说，你可以用 <code>zig</code> 编译器来构建 C 项目。这个 C 编译器可以通过 <code>zig</code> 编译器的 <code>cc</code> 命令使用。</p>
+<p>举个例子，我们以著名的 <a href="https://freetype.org/">FreeType 库</a><a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a>为例。FreeType 是世界上使用最广泛的软件之一。它是一个用于生成高质量字体的 C 库，同时也在业界被大量用于在计算机屏幕上原生渲染文本和字体。</p>
+<p>在本节中，我们将一步一步地编写一个能够从源码构建 FreeType 项目的构建脚本。你可以在 GitHub 上的 <a href="https://github.com/pedropark99/freetype-zig/tree/main"><code>freetype-zig</code> 仓库</a><a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a>中找到这个构建脚本的源码。</p>
+<p>从官网下载 FreeType 的源码<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a>之后，就可以开始编写 <code>build.zig</code> 模块了。我们首先定义目标对象，它描述了我们要编译的二进制文件。</p>
+<p>作为示例，我会使用 <code>addStaticLibrary()</code> 方法创建目标对象，把项目构建为一个静态库文件。另外，由于 FreeType 是一个 C 库，我还会通过 <code>link_libc</code> 选项把这个库与 <code>libc</code> 链接，以确保编译过程中对 C 标准库的任何使用都能得到满足。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> lib = b.addStaticLibrary(.<span class="op">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    .name = <span class="st">"freetype"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .root_module = b.createModule(.<span class="op">{</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        .target = b.graph.host,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        .link_libc = <span class="cn">true</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="配置-c-编译器标志compiler-flags" class="level3" data-number="9.11.1">
+<h3 data-number="9.11.1" class="anchored" data-anchor-id="配置-c-编译器标志compiler-flags"><span class="header-section-number">9.11.1</span> 配置 C 编译器标志（Compiler Flags）</h3>
+<p>编译器标志在业内也被很多开发者称作“编译器选项（Compiler options）”，或者 GCC 官方文档中的“命令选项（Command options）”。本质上，它们就是传递给 C 编译器的命令行开关参数。通常我们利用编译器标志来开启或关闭特定语言特性、设定告警级别，或者针对具体项目调整编译行为。</p>
+<p>在用 Zig 编写的构建脚本中，我们通常将传递给 C 编译器的选项统一定义在一个简单的字符串切片数组中：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c_flags = [_][]<span class="kw">const</span> <span class="dt">u8</span><span class="op">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Wall"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Wextra"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"-Werror"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>从技术上讲，你当然也可以在这个数组里通过 <code>-I</code> 传递头文件包含路径、通过 <code>-L</code> 传递库搜索路径。但 Zig 提供了更加严谨规范的原生 API 来专门处理这类路径（分别在后文 <a href="#sec-include-paths" class="quarto-xref"><span>Section 9.11.5</span></a> 与 <a href="#sec-library-paths" class="quarto-xref"><span>Section 9.11.4</span></a> 中剖析）。</p>
+<p>在 Zig 中，我们通常借助 <code>addCSourceFile()</code> 或 <code>addCSourceFiles()</code> 方法，将编译标志与待编译的 C 源文件一并打包加入构建流程中。在上面的代码中，我们只是先声明了希望使用的编译标志数组。</p>
+</section>
+<section id="列出待编译的-c-源文件列表" class="level3" data-number="9.11.2">
+<h3 data-number="9.11.2" class="anchored" data-anchor-id="列出待编译的-c-源文件列表"><span class="header-section-number">9.11.2</span> 列出待编译的 C 源文件列表</h3>
+<p>在跨平台 C 项目中，通常有一部分 C 源码是与具体操作系统平台无关的“全平台通用代码”。在 FreeType 中，这部分被所有支持平台默认引入的通用 C 文件被归拢在 <code>c_source_files</code> 数组中。由于 FreeType 的源文件数量极其庞大，为了节省篇幅，下面的代码仅列出其中几个代表性文件：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c_source_files = [_][]<span class="kw">const</span> <span class="dt">u8</span><span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"src/autofit/autofit.c"</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"src/base/ftbase.c"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... 以及其他众多通用 C 源文件</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>除了通用代码，FreeType 内部还包含部分平台专用的 C 文件——这些源码只能在特定操作系统下成功编译。针对 Windows 和 Linux，我们分别列出它们对应的专属源文件：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> windows_c_source_files = [_][]<span class="kw">const</span> <span class="dt">u8</span><span class="op">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"builds/windows/ftdebug.c"</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"builds/windows/ftsystem.c"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> linux_c_source_files = [_][]<span class="kw">const</span> <span class="dt">u8</span><span class="op">{</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"src/base/ftsystem.c"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"src/base/ftdebug.c"</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>声明好源文件列表与编译器标志后，我们便可以调用 <code>addCSourceFiles()</code> 方法将它们挂载到代表 FreeType 库的目标对象上。 <code>addCSourceFiles()</code> 支持一次性批量注册多个 C 文件；若需针对某一个特殊文件单独定制编译参数，也可以使用单文件版本的 <code>addCSourceFile()</code>。</p>
+<p>注意在下面的代码中，我们巧妙结合了在 <a href="#sec-detect-os" class="quarto-xref"><span>Section 9.6</span></a> 中学到的 <code>target.os.tag</code> 平台探测技巧，根据编译目标操作系统有针对性地注入平台专用 C 文件：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> builtin = <span class="bu">@import</span>(<span class="st">"builtin"</span>);</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCSourceFiles(.<span class="op">{</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    .files = &amp;c_source_files,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    .flags = &amp;c_flags</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>);</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="kw">switch</span> (builtin.target.os.tag) <span class="op">{</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    .windows =&gt; <span class="op">{</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        lib.root_module.addCSourceFiles(.<span class="op">{</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>            .files = &amp;windows_c_source_files,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>            .flags = &amp;c_flags</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>);</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    .linux =&gt; <span class="op">{</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        lib.root_module.addCSourceFiles(.<span class="op">{</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>            .files = &amp;linux_c_source_files,</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>            .flags = &amp;c_flags</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>);</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span> =&gt; <span class="op">{}</span>,</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：英文原文里写的是 <code>addCSourceFiles({ ... })</code>，少了结构体字面量前面的 <code>.</code>，无法通过编译，译文已改为 <code>addCSourceFiles(.{ ... })</code>。）</p>
+</section>
+<section id="定义-c-语言预处理宏c-macros" class="level3" data-number="9.11.3">
+<h3 data-number="9.11.3" class="anchored" data-anchor-id="定义-c-语言预处理宏c-macros"><span class="header-section-number">9.11.3</span> 定义 C 语言预处理宏（C Macros）</h3>
+<p>C 语言宏定义是 C 工程构建中不可或缺的组成部分，传统上通常通过 C 编译器的 <code>-D</code> 参数传递。 在 Zig 中，我们可以直接调用目标对象根模块的 <code>addCMacro()</code> 方法来便捷定义 C 宏。</p>
+<p>在下面的示例中，我们用前几节定义的 <code>lib</code> 对象，为 FreeType 的编译过程定义了一些 C 宏。这些宏用来指定 FreeType 是否要引入各个外部库的功能：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT_DISABLE_ZLIB"</span>, <span class="st">"TRUE"</span>);</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT_DISABLE_PNG"</span>, <span class="st">"TRUE"</span>);</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT_DISABLE_HARFBUZZ"</span>, <span class="st">"TRUE"</span>);</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT_DISABLE_BZIP2"</span>, <span class="st">"TRUE"</span>);</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT_DISABLE_BROTLI"</span>, <span class="st">"TRUE"</span>);</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>lib.root_module.addCMacro(<span class="st">"FT2_BUILD_LIBRARY"</span>, <span class="st">"TRUE"</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="sec-library-paths" class="level3" data-number="9.11.4">
+<h3 data-number="9.11.4" class="anchored" data-anchor-id="sec-library-paths"><span class="header-section-number">9.11.4</span> 添加库文件搜索路径（Library Paths）</h3>
+<p>所谓库搜索路径（Library Paths），是指操作系统中 C 编译器寻找待链接二进制库文件（<code>.so</code>/<code>.a</code>/<code>.lib</code>）所在的目录集合。 默认情况下，编译器会预置扫描一些系统标准路径（如 <code>/usr/lib</code> 或 Windows SDK 目录）；但如果你的依赖库安装在一个非标准或自定义路径下，就必须显式将该目录加入搜索范围。</p>
+<p>在 Zig 中，我们可以通过 <code>root_module.addLibraryPath()</code> 方法将自定义路径加入扫描清单。该方法接收一个 <code>std.Build.LazyPath</code> 对象作为参数：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> lib_path: std.Build.LazyPath = .<span class="op">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    .cwd_relative = <span class="st">"/usr/local/lib/"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>lib.root_module.addLibraryPath(lib_path);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="sec-include-paths" class="level3" data-number="9.11.5">
+<h3 data-number="9.11.5" class="anchored" data-anchor-id="sec-include-paths"><span class="header-section-number">9.11.5</span> 添加头文件包含路径（Include Paths）</h3>
+<p>与库路径类似，预处理器头文件搜索路径（通常简称为“Include 路径”）指代 C 编译器在处理源码中的 <code>#include &lt;...&gt;</code> 语句时所扫描的目录范围。在传统 C 编译中，通常通过 <code>-I</code> 参数配置。</p>
+<p>在 Zig 中，可以调用目标对象 <code>root_module</code> 的 <code>addIncludePath()</code> 方法，往这组路径里添加新的路径。这个方法同样接收一个 <code>LazyPath</code> 对象：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> inc_path: std.Build.LazyPath = .<span class="op">{</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    .path = <span class="st">"./include"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>lib.root_module.addIncludePath(inc_path);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
+</section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn1"><p><a href="https://ziglang.org/learn/build-system/#user-provided-options" class="uri">https://ziglang.org/learn/build-system/#user-provided-options</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p><a href="https://zig.news/xq/zig-build-explained-part-1-59lf" class="uri">https://zig.news/xq/zig-build-explained-part-1-59lf</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html" class="uri">https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a href="https://ziglang.org/learn/build-system/#handy-examples" class="uri">https://ziglang.org/learn/build-system/#handy-examples</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="https://semver.org/" class="uri">https://semver.org/</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_and_run.zig" class="uri">https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_and_run.zig</a><a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p><a href="https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_tests.zig" class="uri">https://github.com/pedropark99/zig-book/blob/main/ZigExamples/build_system/build_tests.zig</a><a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p><a href="https://github.com/mitchellh/libxev/tree/main" class="uri">https://github.com/mitchellh/libxev/tree/main</a><a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p><a href="https://freetype.org/" class="uri">https://freetype.org/</a>。<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p><a href="https://github.com/pedropark99/freetype-zig/tree/main" class="uri">https://github.com/pedropark99/freetype-zig/tree/main</a>。<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn11"><p><a href="https://freetype.org/" class="uri">https://freetype.org/</a>。<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
