@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>17&nbsp; 向量类型与 SIMD 硬件级并行加速 – Zig 语言入门</title>
+<title>17&nbsp; Zig 中的向量与 SIMD 简介 – Zig 语言入门</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -373,7 +373,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/15-vectors.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/15-vectors.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Zig 中的向量与 SIMD 简介</span></a></li></ol></nav>
         <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -433,7 +433,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/04-http-server.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">实战项目 2：从零手写 HTTP 服务器</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">项目 2：从零构建一个 HTTP 服务器</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -451,13 +451,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-error-handling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-data-structures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -481,19 +481,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/13-image-filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">项目 4：开发一个图像滤镜</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 中的线程与并行简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/15-vectors.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Zig 中的向量与 SIMD 简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -512,12 +512,12 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#到底什么是-simd" id="toc-到底什么是-simd" class="nav-link active" data-scroll-target="#到底什么是-simd"><span class="header-section-number">17.1</span> 到底什么是 SIMD？</a></li>
-  <li><a href="#sec-what-vectors" id="toc-sec-what-vectors" class="nav-link" data-scroll-target="#sec-what-vectors"><span class="header-section-number">17.2</span> 向量（Vectors）</a>
+  <li><a href="#什么是-simd" id="toc-什么是-simd" class="nav-link active" data-scroll-target="#什么是-simd"><span class="header-section-number">17.1</span> 什么是 SIMD？</a></li>
+  <li><a href="#sec-what-vectors" id="toc-sec-what-vectors" class="nav-link" data-scroll-target="#sec-what-vectors"><span class="header-section-number">17.2</span> 向量</a>
   <ul class="collapse">
-  <li><a href="#将普通数组转换为向量" id="toc-将普通数组转换为向量" class="nav-link" data-scroll-target="#将普通数组转换为向量"><span class="header-section-number">17.2.1</span> 将普通数组转换为向量</a></li>
-  <li><a href="#标量广播填充splat" id="toc-标量广播填充splat" class="nav-link" data-scroll-target="#标量广播填充splat"><span class="header-section-number">17.2.2</span> 标量广播填充：<code>@splat()</code></a></li>
-  <li><a href="#注意事项切勿创建过大的超宽向量" id="toc-注意事项切勿创建过大的超宽向量" class="nav-link" data-scroll-target="#注意事项切勿创建过大的超宽向量"><span class="header-section-number">17.2.3</span> 注意事项：切勿创建过大的超宽向量！</a></li>
+  <li><a href="#把数组转换成向量" id="toc-把数组转换成向量" class="nav-link" data-scroll-target="#把数组转换成向量"><span class="header-section-number">17.2.1</span> 把数组转换成向量</a></li>
+  <li><a href="#splat-函数" id="toc-splat-函数" class="nav-link" data-scroll-target="#splat-函数"><span class="header-section-number">17.2.2</span> <code>@splat()</code> 函数</a></li>
+  <li><a href="#小心太大的向量" id="toc-小心太大的向量" class="nav-link" data-scroll-target="#小心太大的向量"><span class="header-section-number">17.2.3</span> 小心太大的向量</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -528,7 +528,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-vectors-simd" class="quarto-section-identifier"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></h1>
+<h1 class="title"><span id="sec-vectors-simd" class="quarto-section-identifier"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Zig 中的向量与 SIMD 简介</span></span></h1>
 </div>
 
 
@@ -545,59 +545,65 @@ window.Quarto = {
 </header>
 
 
-<p>在这章中，咱们来聊聊 Zig 里的<strong>向量类型（Vectors）</strong>与 <strong>SIMD（单指令多数据流）</strong>加速。</p>
-<p>首先必须给 C++ 同学打一剂预防针：<strong>在 Zig 里，<code>@Vector</code> 绝不是 C++ 里充当动态数组的 <code>std::vector</code>！</strong> Zig 里的动态数组叫 <code>std.ArrayList</code>（详见 <a href="09-data-structures.html#sec-dynamic-array" class="quarto-xref"><span>Section 11.1</span></a>）。这里的 <code>@Vector</code> 和 SIMD 运算有关，是 Zig 对 SIMD 向量对象的表示。</p>
-<section id="到底什么是-simd" class="level2" data-number="17.1">
-<h2 data-number="17.1" class="anchored" data-anchor-id="到底什么是-simd"><span class="header-section-number">17.1</span> 到底什么是 SIMD？</h2>
-<p>SIMD 是 <strong>Single Instruction, Multiple Data（单指令多数据流）</strong>的英文缩写。 在音视频编辑和图形应用里，到处都有它的身影。SIMD 不是新技术，但在普通台式机上大量使用是比较近的事，早年它只用在“超级计算机”上。如今大多数 CPU（AMD、Intel 等，不论台式机还是笔记本）都支持 SIMD；如果你的 CPU 很老，就有可能不支持。</p>
-<p>普通计算是<strong>标量（Scalar）模式</strong>：如果要给 4 组数字做加法，CPU 必须老老实实执行 4 次独立的加法指令（<code>ADD</code>），一条接一条跑； 而 SIMD 则是<strong>向量化并行模式</strong>：现代 CPU（Intel/AMD 的 AVX2/AVX-512、Apple/ARM 的 NEON）体内拥有专门的大位宽寄存器（128 位、256 位甚至 512 位）。<strong>一条 SIMD 机器指令，就能同时并排完成 4 个（甚至 16 个）数字的加法计算！</strong></p>
-<p>如果说前一章的多线程是“找多个工人同时干活”，那 SIMD 就是“一个工人手里拿了一把能同时切 4 根胡萝卜的特制排刀”！</p>
-<p>在 Zig 中，当你在向量类型上使用下面这些操作符时，计算会使用 SIMD 完成，所以这些操作符默认都是逐元素、并行地执行：</p>
+<p>这一章我想讲讲 Zig 里的向量。它们和 SIMD 运算有关（也就是说，它们和 C++ 的 <code>std::vector</code> 类没有关系）。</p>
+<p>（译注：Zig 里的动态数组是 <code>std.ArrayList</code>，见 <a href="09-data-structures.html#sec-dynamic-array" class="quarto-xref"><span>Section 11.1</span></a>。）</p>
+<section id="什么是-simd" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="什么是-simd"><span class="header-section-number">17.1</span> 什么是 SIMD？</h2>
+<p>SIMD（<em>Single Instruction/Multiple Data</em>，单指令多数据）是一组运算，在视频、音频编辑程序里，以及图形应用里用得很广。SIMD 不是新技术，但在普通台式机上大量使用是比较近的事。早年 SIMD 只用在「超级计算机」上。</p>
+<p>如今大多数现代 CPU（AMD、Intel 等，不论是台式机还是笔记本）都支持 SIMD 运算。所以，如果你电脑里装的是非常老的 CPU，就有可能根本不支持 SIMD 运算。</p>
+<p>人们为什么开始在软件里使用 SIMD？答案是性能。可 SIMD 究竟做了什么才得到更好的性能？本质上，SIMD 运算是在程序里获得并行计算的另一种策略，因此能让计算更快。</p>
+<p>SIMD 背后的基本想法，是用一条指令同时对多份数据进行操作。你做普通的标量运算时，比如四条加法指令，每一次加法都是单独做的，一个接一个。有了 SIMD，这四条加法指令会被翻译成一条指令，于是这四次加法并行地、同时完成。</p>
+<p>目前，<code>zig</code> 编译器允许你把下面这组运算符用在向量对象上。当你把这些运算符之一用到向量对象上时，计算会使用 SIMD，因此这些运算符默认是逐元素、并且并行地施加的。</p>
 <ul>
-<li><strong>算术运算</strong>：<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>、<code>@divFloor()</code>、<code>@sqrt()</code>、<code>@ceil()</code>、<code>@log()</code> 等；</li>
-<li><strong>位运算</strong>：<code>&gt;&gt;</code>、<code>&lt;&lt;</code>、<code>&amp;</code>、<code>|</code>、<code>~</code> 等；</li>
-<li><strong>比较运算</strong>：<code>&lt;</code>、<code>&gt;</code>、<code>==</code> 等。</li>
+<li>算术运算（<code>+</code>、<code>-</code>、<code>/</code>、<code>*</code>、<code>@divFloor()</code>、<code>@sqrt()</code>、<code>@ceil()</code>、<code>@log()</code> 等）。</li>
+<li>位运算符（<code>&gt;&gt;</code>、<code>&lt;&lt;</code>、<code>&amp;</code>、<code>|</code>、<code>~</code> 等）。</li>
+<li>比较运算符（<code>&lt;</code>、<code>&gt;</code>、<code>==</code> 等）。</li>
 </ul>
+<p>（译注：Zig 0.17.1 的语言参考里，向量还支持布尔非 <code>!</code>。同一次算术运算里不能把标量和向量混在一起，后面的 <code>@splat()</code> 就是用来把标量铺成等长向量的。）</p>
 </section>
 <section id="sec-what-vectors" class="level2" data-number="17.2">
-<h2 data-number="17.2" class="anchored" data-anchor-id="sec-what-vectors"><span class="header-section-number">17.2</span> 向量（Vectors）</h2>
-<p>SIMD 运算通常通过 <em>SIMD 内建函数</em>（SIMD intrinsic）来完成，这只是“执行 SIMD 运算的函数”的一个好听的叫法。这些函数总是作用在一种特殊的对象上，就是“向量”。所以要用 SIMD，就得先创建一个“向量对象”。</p>
-<p>向量对象通常是一块固定大小的 128 位（16 字节）空间。所以常见的向量本质上就是一个数组，里面放 2 个 8 字节的值，或者 4 个 4 字节的值，或者 8 个 2 字节的值，等等。不过不同型号的 CPU 可能有不同的 SIMD 扩展（或者说“实现”），提供更大的向量对象（256 位或 512 位），一个向量里就能放更多数据。</p>
-<p>在 Zig 里声明向量，使用内置函数 <strong><code>@Vector(len, PrimitiveType)</code></strong>： 第一个入参是向量包含的元素数量，第二个入参是元素的数据类型。向量里只支持基本数据类型（如 <code>u32</code>、<code>f32</code>）。</p>
-<p>看下面这个例子：两个向量直接用普通的加号 <code>+</code> 相加。向量上的数学运算默认是逐元素进行的，因为同一个运算（这里是加法）会被转换成一条指令，并行地作用在向量的所有元素上：</p>
+<h2 data-number="17.2" class="anchored" data-anchor-id="sec-what-vectors"><span class="header-section-number">17.2</span> 向量</h2>
+<p>SIMD 运算通常通过一个 <em>SIMD 内建函数</em>（SIMD intrinsic）来做，这只是「执行 SIMD 运算的函数」的一个好听的叫法。这些 SIMD 内建函数（或者说「SIMD 函数」）总是作用在一种特殊的对象上，这种对象叫作「向量」。所以要用 SIMD，你得创建一个「向量对象」。</p>
+<p>向量对象通常是一块固定大小的 128 位（16 字节）。因此，你在实际中碰到的大多数向量，本质上就是数组：里面放 2 个各 8 字节的值，或者 4 个各 4 字节的值，或者 8 个各 2 字节的值，等等。不过，不同型号的 CPU 可能有不同的 SIMD 扩展（或者说「实现」），这些扩展可能提供更大的向量对象（256 位或 512 位），以便在一个向量对象里放下更多数据。</p>
+<p>在 Zig 里，用内置函数 <code>@Vector()</code> 创建新的向量对象。在这个函数里，你指定向量长度（向量里的元素个数），以及向量元素的数据类型。这些向量对象只支持基本数据类型。在下面的例子里，我创建了两个向量对象（<code>v1</code> 和 <code>v2</code>），各有 4 个 <code>u32</code> 类型的元素。</p>
+<p>（译注：0.17.1 的语言参考把向量定义成一组布尔值、整数、浮点数或指针，用 SIMD 指令并行操作，能用 SIMD 时才用。指针也算在内，并不只是整数和浮点数。向量长度由你在编译期指定，也并不固定成 128 位；放不进硬件寄存器时，编译器会把大向量拆开。）</p>
+<p>同样注意，下面的例子里，第三个向量对象（<code>v3</code>）是由前两个向量对象相加得到的（<code>v1</code> 加 <code>v2</code>）。因此，向量对象上的数学运算默认是逐元素进行的，因为同一个运算（这里是加法）被转换成一条指令，并在向量的所有元素上并行地重复执行。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1 = <span class="bu">@Vector</span>(<span class="dv">4</span>, <span class="dt">u32</span>)<span class="op">{</span><span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">37</span>, <span class="dv">9</span><span class="op">}</span>;</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v2 = <span class="bu">@Vector</span>(<span class="dv">4</span>, <span class="dt">u32</span>)<span class="op">{</span><span class="dv">10</span>, <span class="dv">22</span>, <span class="dv">5</span>, <span class="dv">12</span><span class="op">}</span>;</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v3 = v1 + v2; <span class="co">// 逐元素相加</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v3 = v1 + v2;</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>v3<span class="op">}</span>);</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>{ 14, 34, 42, 21 }</code></pre>
-<p>这就是 SIMD 提升性能的方式：不用写 <code>for</code> 循环一个个元素地累加，SIMD 会同时并行完成这 4 次加法。</p>
-<p>所以，<code>@Vector</code> 本质上就是 SIMD 向量对象在 Zig 里的表示。但只有当前 CPU 支持 SIMD 运算时，向量里的元素才会被并行处理。如果 CPU 不支持 SIMD，<code>@Vector</code> 的性能很可能和用 <code>for</code> 循环写的版本差不多。</p>
-<section id="将普通数组转换为向量" class="level3" data-number="17.2.1">
-<h3 data-number="17.2.1" class="anchored" data-anchor-id="将普通数组转换为向量"><span class="header-section-number">17.2.1</span> 将普通数组转换为向量</h3>
-<p>如果手头已经有一段常规的静态数组，可以通过隐式赋值或切片解引用将其一键升级为硬件向量：</p>
+<p>这就是 SIMD 给你的程序带来更多性能的方式。不必用 for 循环去遍历 <code>v1</code> 和 <code>v2</code> 的元素、一次加一个，我们享受 SIMD 的好处：4 次加法全部并行地、同时完成。</p>
+<p>因此，<code>@Vector</code> 这个结构本质上就是 SIMD 向量对象在 Zig 里的表示。这些向量对象里的元素会被并行处理，当且仅当你当前的 CPU 支持 SIMD 运算。如果你的 CPU 不支持 SIMD，那么 <code>@Vector</code> 的性能很可能和一个「用 for 循环写的方案」差不多。</p>
+<section id="把数组转换成向量" class="level3" data-number="17.2.1">
+<h3 data-number="17.2.1" class="anchored" data-anchor-id="把数组转换成向量"><span class="header-section-number">17.2.1</span> 把数组转换成向量</h3>
+<p>把一个普通数组转换成向量对象有不同的办法。你可以用隐式转换（也就是直接把数组赋给一个向量对象），也可以用切片从一个普通数组创建向量对象。</p>
+<p>在下面的例子里，我们把数组 <code>a1</code> 隐式转换成一个长度为 4 的向量对象（<code>v1</code>）。我们先显式标出向量对象的数据类型，然后把数组对象赋给这个向量对象。</p>
+<p>同样注意，下面的例子里还创建了第二个向量对象（<code>v2</code>）：先取数组对象（<code>a1</code>）的一个切片，再把指向这个切片的指针（<code>.*</code>）存进这个向量对象。</p>
+<p>（译注：<code>.*</code> 是解引用，不是把指针存进向量。<code>a1[1..3]</code> 在长度编译期已知时是指向数组的指针，<code>.*</code> 取出那两个 <code>u32</code>，再转换成向量。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> a1 = [<span class="dv">4</span>]<span class="dt">u32</span><span class="op">{</span><span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">37</span>, <span class="dv">9</span><span class="op">}</span>;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1: <span class="bu">@Vector</span>(<span class="dv">4</span>, <span class="dt">u32</span>) = a1;          <span class="co">// 整体转换</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v2: <span class="bu">@Vector</span>(<span class="dv">2</span>, <span class="dt">u32</span>) = a1[<span class="dv">1</span>..<span class="dv">3</span>].*; <span class="co">// 截取切片转为 2 元素向量</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1: <span class="bu">@Vector</span>(<span class="dv">4</span>, <span class="dt">u32</span>) = a1;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v2: <span class="bu">@Vector</span>(<span class="dv">2</span>, <span class="dt">u32</span>) = a1[<span class="dv">1</span>..<span class="dv">3</span>].*;</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>_ = v1; _ = v2;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><em>注意：只有长度在编译期已知（compile-time known）的数组或切片，才能被转换为向量。向量一般只支持编译期已知的大小，所以如果数组的大小要到运行时才知道，就得先把它复制到一个大小在编译期已知的数组里，再转换成向量。</em></p>
+<p>值得强调的是，只有大小在编译期已知的数组和切片才能转换成向量。向量一般来说是只和编译期已知的大小打交道的结构。因此，如果你有一个大小要到运行时才知道的数组，就得先把它复制到一个大小在编译期已知的数组里，然后再转换成向量。</p>
 </section>
-<section id="标量广播填充splat" class="level3" data-number="17.2.2">
-<h3 data-number="17.2.2" class="anchored" data-anchor-id="标量广播填充splat"><span class="header-section-number">17.2.2</span> 标量广播填充：<code>@splat()</code></h3>
-<p>如果你想创建一个所有元素数值都相同的向量，不需要手动敲一长串重复数字，直接调用内置的 <strong><code>@splat()</code></strong> 进行标量广播：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 一键生成填满 10 个 16 的向量</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1: <span class="bu">@Vector</span>(<span class="dv">10</span>, <span class="dt">u32</span>) = <span class="bu">@splat</span>(<span class="dv">16</span>);</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>v1<span class="op">}</span>);</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="splat-函数" class="level3" data-number="17.2.2">
+<h3 data-number="17.2.2" class="anchored" data-anchor-id="splat-函数"><span class="header-section-number">17.2.2</span> <code>@splat()</code> 函数</h3>
+<p>你可以用内置函数 <code>@splat()</code> 创建一个向量对象，它的所有元素都填着同一个值。这个函数是为了提供一种又快又简单的办法，把一个标量值（也就是单个值，比如单个字符，或者单个整数，等等）直接转换成一个向量对象。</p>
+<p>因此，我们可以用 <code>@splat()</code> 把单个值，比如整数 <code>16</code>，转换成一个长度为 1 的向量对象。但我们也可以用这个函数把同一个整数 <code>16</code> 转换成一个长度为 10 的向量对象，里面填着 10 个 <code>16</code>。下面的例子演示的就是这个想法。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1: <span class="bu">@Vector</span>(<span class="dv">10</span>, <span class="dt">u32</span>) = <span class="bu">@splat</span>(<span class="dv">16</span>);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.print(<span class="st">"{any}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>v1<span class="op">}</span>);</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>{ 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 }</code></pre>
 </section>
-<section id="注意事项切勿创建过大的超宽向量" class="level3" data-number="17.2.3">
-<h3 data-number="17.2.3" class="anchored" data-anchor-id="注意事项切勿创建过大的超宽向量"><span class="header-section-number">17.2.3</span> 注意事项：切勿创建过大的超宽向量！</h3>
-<p>正如我们在 <a href="#sec-what-vectors" class="quarto-xref"><span>Section 17.2</span></a> 中所述，每个向量对象通常是一块 128、256 或 512 位的小空间。 也就是说，向量对象一般都很小。反过来，如果你创建一个非常大的向量（比如大小接近 <span class="math inline">\(2^{20}\)</span>），编译器往往会崩溃或报错。例如编译下面这个程序，很可能会在构建过程中遇到段错误或 LLVM 报错：</p>
+<section id="小心太大的向量" class="level3" data-number="17.2.3">
+<h3 data-number="17.2.3" class="anchored" data-anchor-id="小心太大的向量"><span class="header-section-number">17.2.3</span> 小心太大的向量</h3>
+<p>正如我在 <a href="#sec-what-vectors" class="quarto-xref"><span>Section 17.2</span></a> 里说的，每个向量对象通常是一块 128、256 或 512 位的小空间。这意味着向量对象通常很小。当你反着来，创建一个非常大的向量对象（也就是大小接近 <span class="math inline">\(2^{20}\)</span>）时，通常会得到崩溃，以及编译器发出的响亮报错。</p>
+<p>例如，如果你试着编译下面的程序，构建过程中很可能会碰到段错误，或者 LLVM 报错。只要小心不要创建太大的向量对象就好。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> v1: <span class="bu">@Vector</span>(<span class="dv">1000000</span>, <span class="dt">u32</span>) = <span class="bu">@splat</span>(<span class="dv">16</span>);</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>_ = v1;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>Segmentation fault (core dumped)</code></pre>
-<p>所以要小心，不要创建太大的向量对象。</p>
 
 
 </section>
@@ -1154,8 +1160,8 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 <nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
-      <a href="../Chapters/14-threads.html" class="pagination-link" aria-label="Zig 多线程与并行计算">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span>
+      <a href="../Chapters/14-threads.html" class="pagination-link" aria-label="Zig 中的线程与并行简介">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 中的线程与并行简介</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

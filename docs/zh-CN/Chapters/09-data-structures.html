@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; 常用数据结构（Data Structures） – Zig 语言入门</title>
+<title>11&nbsp; 数据结构 – Zig 语言入门</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -392,7 +392,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/09-data-structures.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/09-data-structures.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></a></li></ol></nav>
         <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -452,7 +452,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/04-http-server.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">实战项目 2：从零手写 HTTP 服务器</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">项目 2：从零构建一个 HTTP 服务器</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -470,13 +470,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-error-handling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-data-structures.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -500,19 +500,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/13-image-filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">项目 4：开发一个图像滤镜</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 中的线程与并行简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/15-vectors.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Zig 中的向量与 SIMD 简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -531,19 +531,19 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-dynamic-array" id="toc-sec-dynamic-array" class="nav-link active" data-scroll-target="#sec-dynamic-array"><span class="header-section-number">11.1</span> 动态数组：<code>std.ArrayList</code></a>
+  <li><a href="#sec-dynamic-array" id="toc-sec-dynamic-array" class="nav-link active" data-scroll-target="#sec-dynamic-array"><span class="header-section-number">11.1</span> 动态数组</a>
   <ul class="collapse">
-  <li><a href="#容量capacity与长度length的区别" id="toc-容量capacity与长度length的区别" class="nav-link" data-scroll-target="#容量capacity与长度length的区别"><span class="header-section-number">11.1.1</span> 容量（Capacity）与长度（Length）的区别</a></li>
-  <li><a href="#创建与初始化-arraylist" id="toc-创建与初始化-arraylist" class="nav-link" data-scroll-target="#创建与初始化-arraylist"><span class="header-section-number">11.1.2</span> 创建与初始化 <code>ArrayList</code></a></li>
+  <li><a href="#容量与长度" id="toc-容量与长度" class="nav-link" data-scroll-target="#容量与长度"><span class="header-section-number">11.1.1</span> 容量与长度</a></li>
+  <li><a href="#创建-arraylist-对象" id="toc-创建-arraylist-对象" class="nav-link" data-scroll-target="#创建-arraylist-对象"><span class="header-section-number">11.1.2</span> 创建 <code>ArrayList</code> 对象</a></li>
   <li><a href="#向数组添加新元素" id="toc-向数组添加新元素" class="nav-link" data-scroll-target="#向数组添加新元素"><span class="header-section-number">11.1.3</span> 向数组添加新元素</a></li>
-  <li><a href="#sec-dynamic-array-remove" id="toc-sec-dynamic-array-remove" class="nav-link" data-scroll-target="#sec-dynamic-array-remove"><span class="header-section-number">11.1.4</span> 删除元素：<code>pop()</code>、<code>orderedRemove()</code> 与 <code>swapRemove()</code></a></li>
-  <li><a href="#指定位置插入insert-与-insertslice" id="toc-指定位置插入insert-与-insertslice" class="nav-link" data-scroll-target="#指定位置插入insert-与-insertslice"><span class="header-section-number">11.1.5</span> 指定位置插入：<code>insert()</code> 与 <code>insertSlice()</code></a></li>
-  <li><a href="#本节延伸" id="toc-本节延伸" class="nav-link" data-scroll-target="#本节延伸"><span class="header-section-number">11.1.6</span> 本节延伸</a></li>
+  <li><a href="#sec-dynamic-array-remove" id="toc-sec-dynamic-array-remove" class="nav-link" data-scroll-target="#sec-dynamic-array-remove"><span class="header-section-number">11.1.4</span> 从数组中删除元素</a></li>
+  <li><a href="#在指定索引处插入元素" id="toc-在指定索引处插入元素" class="nav-link" data-scroll-target="#在指定索引处插入元素"><span class="header-section-number">11.1.5</span> 在指定索引处插入元素</a></li>
+  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结"><span class="header-section-number">11.1.6</span> 小结</a></li>
   </ul></li>
-  <li><a href="#sec-maps-hashtables" id="toc-sec-maps-hashtables" class="nav-link" data-scroll-target="#sec-maps-hashtables"><span class="header-section-number">11.2</span> 哈希表家族（Maps / HashTables）</a>
+  <li><a href="#sec-maps-hashtables" id="toc-sec-maps-hashtables" class="nav-link" data-scroll-target="#sec-maps-hashtables"><span class="header-section-number">11.2</span> 映射与哈希表</a>
   <ul class="collapse">
   <li><a href="#什么是哈希表" id="toc-什么是哈希表" class="nav-link" data-scroll-target="#什么是哈希表"><span class="header-section-number">11.2.1</span> 什么是哈希表？</a></li>
-  <li><a href="#sec-hashmap" id="toc-sec-hashmap" class="nav-link" data-scroll-target="#sec-hashmap"><span class="header-section-number">11.2.2</span> Zig 标准哈希表：<code>AutoHashMap</code></a></li>
+  <li><a href="#sec-hashmap" id="toc-sec-hashmap" class="nav-link" data-scroll-target="#sec-hashmap"><span class="header-section-number">11.2.2</span> Zig 中的哈希表</a></li>
   <li><a href="#遍历哈希表" id="toc-遍历哈希表" class="nav-link" data-scroll-target="#遍历哈希表"><span class="header-section-number">11.2.3</span> 遍历哈希表</a></li>
   <li><a href="#sec-array-map" id="toc-sec-array-map" class="nav-link" data-scroll-target="#sec-array-map"><span class="header-section-number">11.2.4</span> <code>ArrayHashMap</code> 哈希表</a></li>
   <li><a href="#sec-string-hash-map" id="toc-sec-string-hash-map" class="nav-link" data-scroll-target="#sec-string-hash-map"><span class="header-section-number">11.2.5</span> <code>StringHashMap</code> 哈希表</a></li>
@@ -567,7 +567,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-data-structures" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></h1>
+<h1 class="title"><span id="sec-data-structures" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></span></h1>
 </div>
 
 
@@ -584,19 +584,19 @@ window.Quarto = {
 </header>
 
 
-<p>在本章中，我们将系统介绍 Zig 标准库中内置的最核心、最常用的泛型数据结构，尤其是动态数组 <code>ArrayList</code> 以及哈希表 <code>HashMap</code> 家族。它们是日常工程中用于纳管、检索和操作应用程序核心业务数据的基石。</p>
+<p>这一章我想介绍 Zig 标准库里最常用的几种数据结构，尤其是 <code>ArrayList</code> 和 <code>HashMap</code>。它们都是泛型数据结构，你的程序产生的任何类型的数据，都可以用它们来存储和管理。</p>
 <section id="sec-dynamic-array" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="sec-dynamic-array"><span class="header-section-number">11.1</span> 动态数组：<code>std.ArrayList</code></h2>
-<p>在各类高级编程语言中，数组通常天生就是动态可扩容的。它们能随着数据的不断塞入自动长大，开发者完全不需要为其背后的内存重分配操心。 但在底层系统级语言中，数组默认通常是静态的，C、C++、Rust 和 Zig 都是如此。我们在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中已经见识过了 Zig 的静态数组，而本节我们将聚焦于 Zig 中的<strong>动态数组（Dynamic Arrays）</strong>。</p>
-<p>所谓动态数组，简而言之就是在程序运行时能够根据需要动态扩充容量的数组容器。各大主流系统级语言的标准库中都有其经典实现：C++ 中有 <code>std::vector</code>，Rust 中有 <code>Vec</code>，而在 Zig 中，对应的核心武器就是 <code>std.ArrayList</code>。</p>
-<p><code>std.ArrayList</code> 为我们提供了一个在底层内存中连续分布且可按需自动扩容的数组容器。它的工作机制与业界通用的动态数组完全一致： 它在堆上申请一块连续的内存空间；当这块空间被占满时，<code>ArrayList</code> 会自动向分配器申请一块容量更大的全新连续内存块，将旧内存里的全部元素完整拷贝迁移过去，随后把之前那块旧内存安全释放销毁。</p>
-<section id="容量capacity与长度length的区别" class="level3" data-number="11.1.1">
-<h3 data-number="11.1.1" class="anchored" data-anchor-id="容量capacity与长度length的区别"><span class="header-section-number">11.1.1</span> 容量（Capacity）与长度（Length）的区别</h3>
-<p>谈到动态数组，有两个核心概念贯穿始终，它们是理解动态数组底层运作规律的关键：<strong>容量（Capacity）</strong>与<strong>长度（Length）</strong>。在部分语境下（尤其是在 C++ 中），长度通常也被称作<strong>大小（Size）</strong>。</p>
-<p>虽然字面意思很接近，但它们在动态数组中指代完全不同的物理含义： - <strong>容量（Capacity）</strong>：指当前动态数组所持有的底层内存块中，<strong>最多能够容纳的元素总个数</strong>（在无需触发下一次重新分配内存的前提下）； - <strong>长度（Length）</strong>：指当前动态数组中<strong>实际已经存入并占用的有效元素个数</strong>。</p>
-<p>每一个动态数组本质上都维护着一块底层内存，代表着可容纳 <span class="math inline">\(n\)</span> 个元素的总容量。但在绝大多数时间里，只有前一部分位置真正存有数据，这部分被占用的元素数量就是数组的长度。因此，每当你向动态数组中追加一个新元素时，其实质是将数组的长度递增了 1。</p>
-<p>这也意味着动态数组的内部通常保留着一定的安全冗余空间——这部分空间当前虽处于空闲状态，但已经分配就绪、随时可以接收新数据。这块“多出来的空间”恰好就是<strong>容量与长度的差值</strong>。</p>
-<p>在 <a href="#fig-capacity-length" class="quarto-xref">Figure&nbsp;<span>11.1</span></a> 中形象展示了这一机制：起初，数组的容量明显大于长度，存在着若干等待被写入的空闲槽位。</p>
+<h2 data-number="11.1" class="anchored" data-anchor-id="sec-dynamic-array"><span class="header-section-number">11.1</span> 动态数组</h2>
+<p>在高级语言里，数组通常是动态的：需要时它会自己变大，你不用操心。 相比之下，底层语言里的数组默认通常是静态的，C、C++、Rust 和 Zig 都是这样。静态数组我们在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中已经介绍过了，这一节来讲 Zig 里的动态数组。</p>
+<p>动态数组就是在程序运行期间可以变大的数组。大多数底层语言的标准库里都有某种动态数组的实现：C++ 有 <code>std::vector</code>，Rust 有 <code>Vec</code>，Zig 则有 <code>std.ArrayList</code>。</p>
+<p><code>std.ArrayList</code> 结构体为你提供一个连续存储、可以增长的数组。它和其他动态数组的工作方式一样：先分配一块连续的内存，等这块内存没有空位了，<code>ArrayList</code> 就再分配一块更大的连续内存，把元素复制到新位置，然后擦除（也就是释放）之前那块内存。</p>
+<section id="容量与长度" class="level3" data-number="11.1.1">
+<h3 data-number="11.1.1" class="anchored" data-anchor-id="容量与长度"><span class="header-section-number">11.1.1</span> 容量与长度</h3>
+<p>讲到动态数组，通常会碰到两个相近的概念，它们对动态数组的底层工作方式非常关键：<em>容量</em>（capacity）和<em>长度</em>（length）。在有些语境下，尤其是在 C++ 里，<em>长度</em>也叫作<em>大小</em>（size）。</p>
+<p>这两个概念看着相近，在动态数组里指的却是不同的东西。<em>容量</em>是动态数组在不分配更多内存的前提下，当前能容纳的元素个数。</p>
+<p>而<em>长度</em>指的是数组里当前有多少个元素正在被使用，换句话说，就是你已经给这个数组里的多少个元素赋了值。每个动态数组都围绕一块已分配的内存工作，这块内存相当于一个总容量为 <span class="math inline">\(n\)</span> 个元素的数组。但大多数时候，这 <span class="math inline">\(n\)</span> 个元素中只有一部分在被使用，这一部分就是数组的<em>长度</em>。所以每向数组追加一个新值，数组的<em>长度</em>就加一。</p>
+<p>这意味着动态数组通常带着一段余量，也就是一段当前为空、但已经准备好随时使用的额外空间。这段”额外空间”本质上就是<em>容量</em>与<em>长度</em>之差。<em>容量</em>表示数组在不重新分配、不扩展的前提下总共能容纳的元素个数，<em>长度</em>则表示这些容量中当前有多少被用来存放值。</p>
+<p><a href="#fig-capacity-length" class="quarto-xref">Figure&nbsp;<span>11.1</span></a> 直观地展示了这个概念。注意一开始数组的容量大于长度，所以动态数组有一段当前为空、但随时可以存值的额外空间。</p>
 <div id="fig-capacity-length" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-capacity-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -607,31 +607,31 @@ Figure&nbsp;11.1: 动态数组中容量与长度的区别
 </figcaption>
 </figure>
 </div>
-<p>从 <a href="#fig-capacity-length" class="quarto-xref">Figure&nbsp;<span>11.1</span></a> 中还可以清晰看出：一旦<strong>长度追平了容量</strong>，就意味着当前预留的空间已经彻底告罄。数组触碰到了现有容量的上限，若想继续塞入新数据，就必须进行扩容操作。</p>
-<p>动态数组正是在长度等于容量的那一刻触发自动扩容的：它向分配器申请一块更大的连续内存，将现有全部数据整体迁移至新家，然后将旧内存释放。扩容完成后，底层数组拥有了更充裕的容量上限，长度再次小于容量，容器重新具备了接收后续数据的能力。</p>
-<p>这就是动态数组的生命周期循环。显而易见，在整个循环过程中，<strong>容量始终大于或等于长度</strong>。 若你手头有一个 <code>ArrayList</code> 实例（假设变量名为 <code>buffer</code>），你可以通过访问其 <code>capacity</code> 属性随时查看当前容量上限；而当前实际包含的元素长度则可以通过 <code>items.len</code> 属性读取：</p>
+<p>从 <a href="#fig-capacity-length" class="quarto-xref">Figure&nbsp;<span>11.1</span></a> 还可以看到，当<em>长度</em>和<em>容量</em>相等时，说明数组已经没有空位了。容量到了上限，所以要想在这个数组里存更多的值，就得扩展它，换一块比现在更大、能容纳更多值的空间。</p>
+<p>每当数组的<em>长度</em>等于<em>容量</em>，动态数组就会扩展底层数组。基本做法是：分配一块比之前更大的连续内存，把当前存着的所有值复制到这个新位置（也就是这块新内存），然后释放之前那块内存。这个过程结束后，新的底层数组有了更大的<em>容量</em>，于是<em>长度</em>又一次小于数组的<em>容量</em>。</p>
+<p>这就是动态数组的循环。注意在整个循环中，<em>容量</em>始终大于或等于数组的<em>长度</em>。如果你有一个 <code>ArrayList</code> 对象（假设你给它起名叫 <code>buffer</code>），可以通过它的 <code>capacity</code> 属性查看数组当前的容量，当前的<em>长度</em>则在 <code>items.len</code> 属性里。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 查询当前容量</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>buffer.capacity;</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 查询当前实际元素长度</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>buffer.items.len;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="创建与初始化-arraylist" class="level3" data-number="11.1.2">
-<h3 data-number="11.1.2" class="anchored" data-anchor-id="创建与初始化-arraylist"><span class="header-section-number">11.1.2</span> 创建与初始化 <code>ArrayList</code></h3>
-<p>要在 Zig 中使用 <code>ArrayList</code>，你必须显式为其注入一个内存分配器（Allocator）。 Zig 没有默认的内存分配器。正如我们在 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 强调的，所有内存分配都必须交由开发者显式掌控的分配器来执行。在下面的示例中，我们选用通用的调试分配器（General-purpose allocator, GPA），当然在实际工程中你完全可以换成任何满足场景的自定义分配器。</p>
-<p>在实例化 <code>ArrayList</code> 时，必须传入该数组所承载的元素数据类型。这决定了该容器在内存中按何种布局来存储对象。 如果你传入 <code>u8</code>，得到的就是一个字节动态数组；如果你传入在 <a href="03-structs.html#sec-structs-and-oop" class="quarto-xref"><span>Section 2.3</span></a> 中定义的 <code>User</code> 结构体，得到的就是存储 <code>User</code> 实例的动态数组。在下面的代码中，<code>ArrayList(u8)</code> 创建的就是字节级动态数组。</p>
-<p>确定好数组元素的数据类型之后，可以用 <code>init()</code> 或 <code>initCapacity()</code> 方法初始化一个 <code>ArrayList</code> 对象。前者只接收分配器对象作为输入，后者同时接收分配器对象和一个容量数值。使用后者时，不仅会初始化这个结构体，还会设置所分配数组的初始容量。（译注：在 Zig 0.17.1 中，<code>std.ArrayList(T)</code> 已经没有 <code>init()</code> 方法。要得到一个空的动态数组，应写作 <code>var buffer: std.ArrayList(u8) = .empty;</code>，它在首次追加元素时才分配内存；<code>initCapacity()</code> 仍然可用。）</p>
-<p>使用 <code>initCapacity()</code> 方法是初始化动态数组的首选方式。因为重新分配内存，也就是扩充数组容量的过程，始终是一项开销很高的操作。你应该抓住一切机会避免数组重新分配内存。如果你一开始就知道数组需要占用多少空间，就应该始终用 <code>initCapacity()</code> 来创建动态数组：</p>
+<section id="创建-arraylist-对象" class="level3" data-number="11.1.2">
+<h3 data-number="11.1.2" class="anchored" data-anchor-id="创建-arraylist-对象"><span class="header-section-number">11.1.2</span> 创建 <code>ArrayList</code> 对象</h3>
+<p>使用 <code>ArrayList</code> 时，必须给它提供一个分配器对象。 别忘了，Zig 没有默认的内存分配器。正如我在 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 中讲过的，所有内存分配都必须由你自己定义、由你掌控的分配器对象来完成。这里的例子我会用一个通用分配器（general purpose allocator），你也可以换成你喜欢的其他分配器。（译注：Zig 0.14 起，原来的 <code>std.heap.GeneralPurposeAllocator</code> 改名为 <code>std.heap.DebugAllocator</code>，下面代码里用的就是它。）</p>
+<p>初始化 <code>ArrayList</code> 对象时，必须提供数组元素的数据类型。换句话说，这决定了这个数组（或者说容器）要存放什么类型的数据。所以如果我给它 <code>u8</code> 类型，得到的就是一个由 <code>u8</code> 值组成的动态数组；如果换成我自己定义的结构体，比如 <a href="03-structs.html#sec-structs-and-oop" class="quarto-xref"><span>Section 2.3</span></a> 里的 <code>User</code> 结构体，得到的就是一个由 <code>User</code> 值组成的动态数组。下面的例子里，表达式 <code>ArrayList(u8)</code> 创建的是一个由 <code>u8</code> 值组成的动态数组。</p>
+<p>提供了数组元素的数据类型之后，就可以用 <code>init()</code> 或 <code>initCapacity()</code> 方法初始化 <code>ArrayList</code> 对象。前者只接收分配器对象作为输入，后者同时接收分配器对象和一个容量数值。用后者时，你不仅初始化了这个结构体，还设定了所分配数组的初始容量。（译注：在 Zig 0.17.1 中，<code>std.ArrayList(T)</code> 已经没有 <code>init()</code> 方法。要得到一个空的动态数组，应写作 <code>var buffer: std.ArrayList(u8) = .empty;</code>，它在首次追加元素时才分配内存；<code>initCapacity()</code> 仍然可用。）</p>
+<p>用 <code>initCapacity()</code> 方法是初始化动态数组的首选方式。因为重新分配，也就是扩展数组容量的过程，始终是开销很高的操作。你应该抓住一切机会避免数组重新分配。如果一开始就知道数组需要占多少空间，就应该始终用 <code>initCapacity()</code> 来创建动态数组。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .initCapacity(allocator, <span class="dv">100</span>);</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> buffer.deinit(allocator);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在上面的代码中，<code>buffer</code> 容器一出生就具备容纳 100 个元素的充足容量。若在程序运行期间元素数量最终突破了 100，<code>ArrayList</code> 内部也会自动妥善接管后续的再扩容动作。 此外请留心末尾的 <code>deinit()</code> 调用：在作用域退出时，它会向分配器归还该动态数组占用的全部堆内存，做到零内存泄漏。</p>
+<p>在上面的例子中，<code>buffer</code> 对象一开始就是一个容纳 100 个元素的数组。如果程序运行期间这个 <code>buffer</code> 对象需要更多空间来容纳更多元素，<code>ArrayList</code> 的内部实现会自动替你完成必要的操作。 另外注意 <code>deinit()</code> 方法：它在当前作用域结束时销毁 <code>buffer</code> 对象，释放为这个 <code>buffer</code> 对象里的动态数组分配的全部内存。</p>
 </section>
 <section id="向数组添加新元素" class="level3" data-number="11.1.3">
 <h3 data-number="11.1.3" class="anchored" data-anchor-id="向数组添加新元素"><span class="header-section-number">11.1.3</span> 向数组添加新元素</h3>
-<p>创建好动态数组之后，就可以开始使用它了。你可以用 <code>append()</code> 方法向数组追加（即”添加”）新值。这个方法的用法与 Python 列表的 <code>append()</code> 方法，或 C++ 中 <code>std::vector</code> 的 <code>emplace_back()</code> 方法相同：传给它一个值，它就把这个值追加到数组末尾。</p>
-<p>你还可以使用 <code>appendSlice()</code> 方法一次追加多个值：传给它一个切片（切片已在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中介绍过），它就会把这个切片中的所有值添加到你的动态数组中。</p>
+<p>动态数组创建好了，就可以开始用了。你可以用 <code>append()</code> 方法向数组追加（也就是”添加”）新值。这个方法的用法和 Python 列表的 <code>append()</code> 方法，或者 C++ <code>std::vector</code> 的 <code>emplace_back()</code> 方法一样：你给它一个值，它就把这个值追加到数组末尾。</p>
+<p>你还可以用 <code>appendSlice()</code> 方法一次追加多个值：给它一个切片（切片在 <a href="01-zig-weird.html#sec-arrays" class="quarto-xref"><span>Section 1.6</span></a> 中讲过），它就把这个切片里的所有值都添加到你的动态数组中。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(allocator, <span class="ch">'H'</span>);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(allocator, <span class="ch">'e'</span>);</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.append(allocator, <span class="ch">'l'</span>);</span>
@@ -640,11 +640,13 @@ Figure&nbsp;11.1: 动态数组中容量与长度的区别
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> buffer.appendSlice(allocator, <span class="st">" World!"</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-dynamic-array-remove" class="level3" data-number="11.1.4">
-<h3 data-number="11.1.4" class="anchored" data-anchor-id="sec-dynamic-array-remove"><span class="header-section-number">11.1.4</span> 删除元素：<code>pop()</code>、<code>orderedRemove()</code> 与 <code>swapRemove()</code></h3>
-<p>从动态数组末尾弹出并移除最后一个元素，可以使用 <code>pop()</code> 方法。 需要说明的是：<code>pop()</code> 并不会缩减底层数组的物理容量，它只是抹掉并递减了逻辑长度计数。 同时，<code>pop()</code> 会将刚刚被移除的末位元素作为返回值回传给你。它是一个经典的“取出并移除（Get and remove）”方法：</p>
+<h3 data-number="11.1.4" class="anchored" data-anchor-id="sec-dynamic-array-remove"><span class="header-section-number">11.1.4</span> 从数组中删除元素</h3>
+<p>你可以用 <code>pop()</code> 方法”弹出”，也就是删除数组的最后一个元素。值得注意的是，这个方法不会改变数组的容量，它只是删除（或者说擦除）数组里存着的最后一个值。</p>
+<p>另外，这个方法会把被删除的值作为结果返回。也就是说，你可以用这个方法既拿到数组的最后一个值，又把它从数组中删掉。这是一个”取值并删除”类型的方法。（译注：在 Zig 0.17.1 中，<code>pop()</code> 的返回类型是可选类型 <code>?T</code>，数组为空时返回 <code>null</code>，所以下面的 <code>exclamation_mark</code> 拿到的是一个可选值。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> exclamation_mark = buffer.pop();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>如果你需要精准删除数组内部指定索引位置上的某个元素，可以使用 <code>orderedRemove()</code> 方法。 向该方法传入目标元素的下标索引，它就会精确剔除该槽位上的数据，同时使得数组长度减 1。</p>
-<p>在下面的代码中，我们先构造了一个填有数字的动态数组，随后连续两次调用 <code>orderedRemove(3)</code> 剔除索引为 3 的数据。与 <code>pop()</code> 类似，<code>orderedRemove()</code> 也会返回被删除的元素值，若不需要可以直接用下划线 <code>_</code> 显式丢弃：</p>
+<p>如果你想删除数组中特定位置上的特定元素，可以用 <code>ArrayList</code> 对象的 <code>orderedRemove()</code> 方法。给这个方法一个索引作为输入，它就会删除数组中这个索引上的值。每执行一次 <code>orderedRemove()</code>，数组的<em>长度</em>实际上就减少一。</p>
+<p>在下面的例子中，我们先创建一个 <code>ArrayList</code> 对象，往里面填入一些数字，然后用 <code>orderedRemove()</code> 连续两次删除数组中索引 3 上的值。</p>
+<p>还要注意，我们把 <code>orderedRemove()</code> 的结果赋给了下划线字符，也就是丢弃了这个方法的返回值。<code>orderedRemove()</code> 方法会返回被删除的值，这一点和 <code>pop()</code> 方法类似。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
@@ -667,12 +669,13 @@ Figure&nbsp;11.1: 动态数组中容量与长度的区别
 <pre><code>{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
 { 0, 1, 2, 5, 6, 7, 8, 9 }
 8</code></pre>
-<p><code>orderedRemove()</code> 最关键的特质是：<strong>它会严格保持数组中剩余元素的先后次序！</strong> 为了填补删除元素后留下的空洞，它会自动将该位置之后的所有元素依次向前平移一位。这种平移操作会带来 <span class="math inline">\(O(n)\)</span> 的内存移动开销。</p>
-<p>如果你在业务场景中<strong>完全不在乎元素的先后排列顺序</strong>（例如把动态数组当成一个无序集合使用），那么强烈推荐使用 <strong><code>swapRemove()</code></strong>！ <code>swapRemove()</code> 在执行删除时极其聪明：它直接把数组<strong>最后一个元素瞬间移过来覆盖掉待删除位置</strong>，然后将长度减 1。 由于它省略了后续所有元素的大规模集体平移，执行耗时恒定为 <span class="math inline">\(O(1)\)</span>，因此在不要求保序的高性能场景下，<code>swapRemove()</code> 相比 <code>orderedRemove()</code> 有着压倒性的速度优势。</p>
+<p><code>orderedRemove()</code> 的一个关键特点是它会保持数组中值的顺序。也就是说，它删除你要它删的值，同时保证数组中剩下的值的顺序和之前一样。</p>
+<p>如果你不在乎值的顺序，比如你想把动态数组当成一个值的集合来用，就像 C++ 的 <code>std::unordered_set</code> 结构那样，那可以改用 <code>swapRemove()</code> 方法。这个方法的用法和 <code>orderedRemove()</code> 类似：给它一个索引，它就删除数组中这个索引上的值。但它不保持数组中剩下的值原来的顺序。因此，<code>swapRemove()</code> 一般比 <code>orderedRemove()</code> 快。</p>
 </section>
-<section id="指定位置插入insert-与-insertslice" class="level3" data-number="11.1.5">
-<h3 data-number="11.1.5" class="anchored" data-anchor-id="指定位置插入insert-与-insertslice"><span class="header-section-number">11.1.5</span> 指定位置插入：<code>insert()</code> 与 <code>insertSlice()</code></h3>
-<p>当我们需要在数组的中间任意指定位置插入元素、而非仅仅追加到尾部时，就需要调用 <code>insert()</code> 或 <code>insertSlice()</code> 方法。 它们的作用完全对标 C++ <code>std::vector</code> 的 <code>insert()</code> 与 <code>insert_range()</code>：只需给出目标插入的下标索引，它们就会把单项元素或连续切片精准嵌入该位置，原位置及其后的元素会自动顺延后移：</p>
+<section id="在指定索引处插入元素" class="level3" data-number="11.1.5">
+<h3 data-number="11.1.5" class="anchored" data-anchor-id="在指定索引处插入元素"><span class="header-section-number">11.1.5</span> 在指定索引处插入元素</h3>
+<p>如果要把值插到数组中间，而不只是追加到数组末尾，就得用 <code>insert()</code> 和 <code>insertSlice()</code> 方法，而不是 <code>append()</code> 和 <code>appendSlice()</code> 方法。</p>
+<p>这两个方法的用法和 C++ <code>std::vector</code> 类的 <code>insert()</code> 与 <code>insert_range()</code> 很像：你给它们一个索引，它们就把你提供的值插到数组的这个索引处。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> gpa = std.heap.DebugAllocator(.<span class="op">{}</span>)<span class="op">{}</span>;</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> allocator = gpa.allocator();</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer = <span class="kw">try</span> std.ArrayList(<span class="dt">u8</span>)</span>
@@ -688,38 +691,43 @@ Figure&nbsp;11.1: 动态数组中容量与长度的区别
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> stdout.flush();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>My name P3edro</code></pre>
 </section>
-<section id="本节延伸" class="level3" data-number="11.1.6">
-<h3 data-number="11.1.6" class="anchored" data-anchor-id="本节延伸"><span class="header-section-number">11.1.6</span> 本节延伸</h3>
-<p>如果想了解动态数组支持的更多进阶方法，建议参阅 Zig 官方文档中关于 <a href="https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned"><code>ArrayListAligned</code></a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 结构体的详尽说明。 那里涵盖了诸如内存对齐、容量收缩、就地替换等更加丰富的 API，非常值得按需深入研读。</p>
+<section id="小结" class="level3" data-number="11.1.6">
+<h3 data-number="11.1.6" class="anchored" data-anchor-id="小结"><span class="header-section-number">11.1.6</span> 小结</h3>
+<p>如果你觉得还缺了什么方法，建议去读一读 <a href="https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned"><code>ArrayListAligned</code> 的官方文档</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>，<code>ArrayList</code> 对象提供的大部分方法都在里面有说明。</p>
+<p>你会发现这个页面上还有很多我在这里没有讲到的方法，建议你去探索一下这些方法，弄明白它们是怎么工作的。（译注：在 Zig 0.17.1 中，这个结构体在标准库里叫 <code>std.array_list.Aligned</code>，<code>std.ArrayList(T)</code> 就是 <code>array_list.Aligned(T, null)</code>；<code>std.ArrayListAligned</code> 只是一个已弃用的别名。）</p>
 </section>
 </section>
 <section id="sec-maps-hashtables" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="sec-maps-hashtables"><span class="header-section-number">11.2</span> 哈希表家族（Maps / HashTables）</h2>
-<p>在计算机科学与日常工程中，这类数据结构有许多不同的叫法：例如“字典（Dictionary）”、“映射表（Map）”、“关联数组（Associative array）”等，但最经典、最通用的术语莫过于<strong>哈希表（HashTable）</strong>。 几乎所有主流编程语言都在其标准库中深度集成了哈希表：Python 有 <code>dict</code>，C++ 有 <code>std::map</code> 与 <code>std::unordered_map</code>，Rust 有 <code>HashMap</code>，JavaScript 有 <code>Map</code> 与常规对象等。</p>
+<h2 data-number="11.2" class="anchored" data-anchor-id="sec-maps-hashtables"><span class="header-section-number">11.2</span> 映射与哈希表</h2>
+<p>有些开发者用别的名字称呼这类数据结构，比如”映射”（map）、“哈希映射”（hashmap）或者”关联数组”（associative array），但最常用的说法是<em>哈希表</em>（hashtable）。 几乎每种编程语言的标准库里都有某种哈希表的实现：Python 有 <code>dict()</code>，C++ 有 <code>std::map</code> 和 <code>std::unordered_map</code>，Rust 有 <code>HashMap</code>，JavaScript 有 <code>Object()</code> 和 <code>Map()</code>，等等。（译注：C++ 的 <code>std::map</code> 是基于平衡二叉搜索树（通常是红黑树）的有序映射，并不是哈希表；C++ 里真正的哈希表是 <code>std::unordered_map</code>。）</p>
 <section id="什么是哈希表" class="level3" data-number="11.2.1">
 <h3 data-number="11.2.1" class="anchored" data-anchor-id="什么是哈希表"><span class="header-section-number">11.2.1</span> 什么是哈希表？</h3>
-<p>哈希表是一种基于<strong>键值对（Key-Value pairs）</strong>的高效数据组织结构。 你向其输入一个键（Key）和一个值（Value），哈希表会根据这个键计算出一个位置，并把值存放在该位置上。 哈希表的底层运转离不开两大核心支柱：<strong>底层存储数组</strong>与<strong>哈希函数（Hash function）</strong>。</p>
-<p>在内部底层，哈希表维护着一个专门用于安放数据的数组。这个数组里的每一个存储单元通常被称为一个<strong>桶（Bucket）</strong>。所有传入哈希表的数据最终都会落入这些桶中，每个桶都对应着底层数组的一个具体下标。</p>
-<p>当你向哈希表提交一个键时，哈希表会立即将该键传递给哈希函数。哈希函数利用特定的哈希散列算法，将无论多复杂的键对象运算转化为一个规整的无符号整数下标。这个下标直接指向底层桶数组的物理位置。 键与具体物理槽位之间的映射纽带就此建立。</p>
-<p>在 <a href="#fig-hashtable" class="quarto-xref">Figure&nbsp;<span>11.2</span></a> 中直观展示了哈希表的数据映射流程：</p>
+<p>哈希表是一种基于键值对的数据结构。 你向这个结构提供一个键和一个值，哈希表就把输入的值存放在一个可以由你提供的键来确定的位置上。 它靠的是一个底层数组和一个哈希函数，这两个组成部分对哈希表的工作方式至关重要。</p>
+<p>在底层，哈希表包含一个数组。这个数组就是存放值的地方，数组的元素通常叫作<em>桶</em>（bucket）。 所以你提供给哈希表的值都存放在桶里，每个桶都用一个索引来访问。</p>
+<p>当你向哈希表提供一个键时，哈希表会把这个键交给哈希函数。哈希函数用某种哈希算法把这个键变换成一个索引。这个索引其实就是数组索引，也就是哈希表底层数组中的一个位置。 键就是这样确定哈希表结构内部的一个具体位置的。</p>
+<p>所以，你向哈希表提供一个键，这个键确定了哈希表内部的一个具体位置，然后哈希表把你提供的输入值存放到这个键所确定的位置上。 可以说，键映射到了存放在哈希表里的值。要找到这个值，就用确定其存放位置的那个键。 <a href="#fig-hashtable" class="quarto-xref">Figure&nbsp;<span>11.2</span></a> 直观地展示了这个过程。</p>
 <div id="fig-hashtable" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hashtable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="./../../Figures/hashtable.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hashtable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11.2: 哈希表运行原理示意图（来源：Wikipedia）
+Figure&nbsp;11.2: 哈希表示意图。来源：维基百科（Wikipedia, the free encyclopedia）。
 </figcaption>
 </figure>
 </div>
-<p>向哈希表写入数据的过程被称为<strong>插入（Insertion）</strong>。除了插入，哈希表最常用的操作还有<strong>检索（Lookup）</strong>与<strong>删除（Delete）</strong>： - <strong>检索</strong>：凭键查值。哈希表利用相同的哈希函数瞬时算出该键对应的桶下标，进而取出其中保存的数据，平均时间复杂度为 <span class="math inline">\(O(1)\)</span>。 - <strong>删除</strong>：根据键定位到对应的物理槽位，并将该槽位标记为空闲或移除。</p>
-<p>有时，底层数组并不直接存放原始数据本身，而是存放指向实际对象的指针，或者挂载一条单向链表。 这种设计常见于支持处理<strong>哈希冲突（Collisions）</strong>的哈希表实现中。 所谓哈希冲突，是指两个完全不同的键经过哈希函数计算后，不幸产生了完全相同的数组下标。哈希表需要配备冲突消解机制（例如开链法、开放寻址法等），以确保在碰撞发生时数据依然能被正确隔离与索引。关于冲突消解的更多经典算法，可以参考维基百科关于哈希表的专业综述 <span class="citation" data-cites="wikipedia_hashtables">(<a href="references.html#ref-wikipedia_hashtables" role="doc-biblioref">Wikipedia 2024</a>)</span>。</p>
+<p>上一段描述的操作一般叫作<em>插入</em>（insertion）操作，因为你是在向哈希表里插入新值。 哈希表还有其他类型的操作，比如<em>删除</em>（delete）和<em>查找</em>（lookup）。 删除顾名思义，就是从哈希表中删除（或者说移除）一个值。 查找则是用确定某个值存放位置的那个键，去查看哈希表里存着的这个值。</p>
+<p>有时哈希表的底层数组并不直接存放值，而可能是一个指针数组，也就是数组的桶里存放着指向值的指针；也可能是一个链表数组。 这些情况常见于允许重复键的哈希表，或者说，常见于能够切实处理哈希函数可能产生的”冲突”（collision）的哈希表。</p>
+<p>我说的重复键，或者说这个”冲突”，指的是两个不同的键指向哈希表底层数组中的同一个位置（也就是同一个索引）。这种情况会不会发生，取决于哈希表所用哈希函数的特性。有些哈希表实现会主动处理冲突，也就是用某种方式应对这种情况。比如哈希表可能会把所有桶都变成链表，因为链表可以在一个桶里存放多个值。（译注：原文把”重复键”和”冲突”当成了一回事，其实二者不同。冲突是指不同的键落到了同一个位置，任何哈希表都得处理；允许同一个键对应多个值则是另一种设计（类似 C++ 的 <code>std::unordered_multimap</code>）。Zig 标准库的哈希表不允许重复键，对已有的键调用 <code>put()</code> 会覆盖旧值。）</p>
+<p>处理哈希表冲突的技术有好几种，本书不打算介绍，因为这不是我们这里的重点。不过维基百科的哈希表页面对其中几种最常见的技术有很好的介绍 <span class="citation" data-cites="wikipedia_hashtables">(<a href="references.html#ref-wikipedia_hashtables" role="doc-biblioref">Wikipedia 2024</a>)</span>。</p>
 </section>
 <section id="sec-hashmap" class="level3" data-number="11.2.2">
-<h3 data-number="11.2.2" class="anchored" data-anchor-id="sec-hashmap"><span class="header-section-number">11.2.2</span> Zig 标准哈希表：<code>AutoHashMap</code></h3>
-<p>Zig 标准库的 <code>std.hash_map</code> 模块为我们提供了多种兼顾不同性能倾向的哈希表实现。 其中，<code>HashMap</code> 是一个高度通用且极度优化的泛型哈希表结构。它在增删改查上有着极致的响应速度，同时保持着极高的数据装载因子（Load factor），以此将无谓的内存开销压制在最低。</p>
-<p>高级开发者可以通过自定义上下文对象（Context object）来精准调优 <code>HashMap</code> 的内部行为（例如注入自己专用的哈希散列算法）。但对于绝大多数普通业务场景，我们完全可以直接使用官方预置好的开箱即用函数：<strong><code>AutoHashMap()</code></strong>。</p>
-<p><code>AutoHashMap(K, V)</code> 会结合你指定的键类型 <code>K</code> 与值类型 <code>V</code>，自动在编译期为你挑选并配置最合理的上下文与默认哈希算法。 在下面的示例中，我们传入 <code>u32</code> 作为键类型、<code>u16</code> 作为值类型，构造出一个标准的键值映射表：</p>
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="sec-hashmap"><span class="header-section-number">11.2.2</span> Zig 中的哈希表</h3>
+<p>Zig 标准库提供了几种不同的哈希表实现。每种实现都有各自的优缺点，我们后面会讨论，它们都可以通过 <code>std.hash_map</code> 模块使用。（译注：在 Zig 0.17.1 中，<code>HashMap</code> 系列在 <code>std.hash_map</code> 模块里，后文介绍的 <code>ArrayHashMap</code> 系列则在单独的 <code>std.array_hash_map</code> 模块里。）</p>
+<p><code>HashMap</code> 结构体是一个通用的哈希表，它的各项操作（查找、插入、删除）都很快，而且负载因子相当高，内存占用低。你可以创建一个上下文（context）对象，提供给 <code>HashMap</code> 的构造函数。这个上下文对象可以让你定制哈希表本身的行为，因为你可以通过它提供一个哈希函数实现，供哈希表使用。</p>
+<p>不过现在先不用管这个上下文对象，它是给”哈希表领域的专家”用的。我们多半不是这方面的专家，所以就走一条简单的路来创建哈希表，也就是用 <code>AutoHashMap()</code> 函数。</p>
+<p><code>AutoHashMap()</code> 函数本质上就是一个”用默认设置创建哈希表对象”的函数。它会自动替你选择一个上下文对象，从而也选好了哈希函数的实现。这个函数接收两个数据类型作为输入：第一个是这个哈希表要用的键的数据类型，第二个是要存放在哈希表里的数据的类型，也就是要存的值的数据类型。</p>
+<p>在下面的例子中，我们给这个函数的第一个参数传入 <code>u32</code> 数据类型，第二个参数传入 <code>u16</code>。这表示这个哈希表用 <code>u32</code> 值作键，存放的实际值则是 <code>u16</code> 值。 这个过程结束后，<code>hash_table</code> 对象里就是一个使用默认设置和默认上下文的 <code>HashMap</code> 对象。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AutoHashMap = std.hash_map.AutoHashMap;</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -756,13 +764,17 @@ Figure&nbsp;11.2: 哈希表运行原理示意图（来源：Wikipedia）
 Value at key 50050: 55
 Value at key 57709 successfully removed!
 N of values stored: 2</code></pre>
-<p>梳理一下哈希表的核心常用 API： - <strong><code>put(key, value)</code></strong>：插入或更新键值对。若键已存在则覆盖旧值； - <strong><code>count()</code></strong>：统计当前哈希表中有效键值对的实际总数； - <strong><code>get(key)</code></strong>：检索指定键对应的值。请特别注意：<strong>该方法返回的是一个可选值（Optional value, <code>?V</code>）</strong>！若键存在则返回其值，若键不存在则返回 <code>null</code>。在确定键必然存在时，可以通过 <code>.?</code> 直接解包；在不确定时则应使用 <code>if (map.get(key)) |val| ...</code> 安全处理； - <strong><code>remove(key)</code></strong>：删除指定键的值。该方法返回一个布尔值：若成功找到并删除了对应项则返回 <code>true</code>，若传入的键压根不存在则返回 <code>false</code>。</p>
+<p>可以用 <code>put()</code> 方法往哈希表里添加（或者说放入）新值。第一个参数是要用的键，第二个参数是你想存进哈希表的实际值。在上面的例子中，我们先用键 54321 添加值 89，接着用键 50050 添加值 55，以此类推。</p>
+<p>注意我们用 <code>count()</code> 方法查看了哈希表里当前存了多少个值。之后又用 <code>get()</code> 方法访问（或者说查看）键 50050 所确定的位置上存放的值。<code>get()</code> 方法的返回值是一个可选值，所以我们在末尾用 <code>.?</code> 来取出实际的值。</p>
+<p>还要注意，可以用 <code>remove()</code> 方法从哈希表中删除（或者说移除）值。你提供确定要删除的那个值的键，这个方法就会删除这个值，并返回 <code>true</code>。这个 <code>true</code> 值的意思就是方法成功删除了这个值。</p>
+<p>但删除操作不一定总能成功。比如你可能给这个方法传错了键，我的意思是，你可能（有意或无意地）提供了一个指向空桶的键，也就是一个还没有存放值的桶。 这种情况下，<code>remove()</code> 方法会返回 <code>false</code>。</p>
 </section>
 <section id="遍历哈希表" class="level3" data-number="11.2.3">
 <h3 data-number="11.2.3" class="anchored" data-anchor-id="遍历哈希表"><span class="header-section-number">11.2.3</span> 遍历哈希表</h3>
-<p>以我们在 <a href="#sec-hashmap" class="quarto-xref"><span>Section 11.2.2</span></a> 中介绍的 <code>AutoHashMap()</code> 为例， 在业务逻辑中，遍历哈希表中的全部条目是一项极其高频的需求。在 Zig 中，我们可以通过迭代器（Iterator）轻松实现对哈希表的高效遍历。</p>
-<p>调用哈希表对象的 <code>iterator()</code> 方法即可获取一个专属迭代器。该迭代器提供了标准的 <code>next()</code> 方法，非常适合与 <code>while</code> 循环协同工作。 每次调用 <code>next()</code> 都会返回一个可选的条目包装对象 <code>Entry</code>。当迭代器遍历至哈希表尽头时，<code>next()</code> 便会返回 <code>null</code> 并干净利落地终止循环。</p>
-<p>在解包拿到的 <code>Entry</code> 结构体中，键与值分别被封装在 <code>key_ptr</code> 与 <code>value_ptr</code> 这两个指针成员中。通过解引用它们（即使用 <code>.*</code> 语法），我们即可读取键和值，也可以修改值（不要通过 <code>key_ptr</code> 修改键，否则会破坏哈希表的内部结构）：</p>
+<p>遍历哈希表里当前存放的键和值，是一个很常见的需求。 在 Zig 中，可以用一个能遍历哈希表对象中各个元素的迭代器对象来做到这一点。</p>
+<p>这个迭代器对象和你在 C++、Rust 等语言里见到的迭代器对象一样，本质上是一个指针对象，指向容器里的某个值，并且有一个 <code>next()</code> 方法，可以用来在容器的值之间移动（或者说遍历）。</p>
+<p>可以用哈希表对象的 <code>iterator()</code> 方法创建这样一个迭代器对象。这个方法返回一个迭代器对象，你可以把它的 <code>next()</code> 方法和 <code>while</code> 循环配合起来，遍历哈希表的元素。<code>next()</code> 方法返回一个可选的 <code>Entry</code> 值，所以你必须先解包这个可选值，拿到实际的 <code>Entry</code> 值，然后才能从中访问键以及这个键所确定的值。</p>
+<p>有了这个 <code>Entry</code> 值，就可以通过 <code>key_ptr</code> 属性访问当前条目的键，方法是解引用其中的指针；这个键所确定的值则通过 <code>value_ptr</code> 属性访问，它同样是一个需要解引用的指针。 下面的代码示例演示了这些元素的用法：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AutoHashMap = std.hash_map.AutoHashMap;</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -787,7 +799,8 @@ N of values stored: 2</code></pre>
 <pre><code>Key: 54321 | Value: 89
 Key: 50050 | Value: 55
 Key: 57709 | Value: 41</code></pre>
-<p>如果你只关心键或者只关心值，标准库还提供了只遍历键或只遍历值的迭代器： - <code>keyIterator()</code>：获取纯键迭代器； - <code>valueIterator()</code>：获取纯值迭代器。</p>
+<p>如果你只想遍历哈希表的值或者键，可以创建一个键迭代器或值迭代器对象。它们也是迭代器对象，有同样的 <code>next()</code> 方法，可以用来遍历哈希表。</p>
+<p>键迭代器用哈希表对象的 <code>keyIterator()</code> 方法创建，值迭代器则用 <code>valueIterator()</code> 方法创建。你只需要解包 <code>next()</code> 方法返回的值，再直接解引用，就能访问正在遍历的键或值。 下面的代码示例演示了键迭代器的用法，同样的逻辑也适用于值迭代器。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> kit = hash_table.keyIterator();</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> (kit.next()) |key| <span class="op">{</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    std.debug.print(<span class="st">"Key: {d}</span><span class="sc">\n</span><span class="st">"</span>, .<span class="op">{</span>key.*<span class="op">}</span>);</span>
@@ -811,13 +824,14 @@ Key: 57709</code></pre>
 <p>要从哈希表中删除值，需要使用 <code>ArrayList</code> 对象（即动态数组）中的同名方法，也就是我在 <a href="#sec-dynamic-array-remove" class="quarto-xref"><span>Section 11.1.4</span></a> 中介绍过的 <code>swapRemove()</code> 和 <code>orderedRemove()</code> 方法。这些方法在这里的含义，或者说效果，与它们在 <code>ArrayList</code> 对象中相同。</p>
 <p>这意味着，用 <code>swapRemove()</code> 可以从哈希表中删除值，但不会保留这些值插入结构时的顺序；而 <code>orderedRemove()</code> 则能保留这些值的插入顺序。</p>
 <p>不过，与我在 <a href="#sec-dynamic-array-remove" class="quarto-xref"><span>Section 11.1.4</span></a> 中描述的不同，<code>ArrayHashMap</code> 中的这两个方法接收的输入不是索引，而是键，就像 <code>HashMap</code> 对象的 <code>remove()</code> 方法那样。如果你想用索引而不是键作为输入，应该使用 <code>swapRemoveAt()</code> 和 <code>orderedRemoveAt()</code> 方法。</p>
+<p>（译注：Zig 0.17.1 的标准库里已经没有 <code>std.AutoArrayHashMap</code>，下面这段代码会编译报错。对应的类型是 <code>std.array_hash_map.Auto(K, V)</code>，它不在内部保存分配器，要写成 <code>var hash_table: std.array_hash_map.Auto(u32, u16) = .empty;</code>，并在 <code>put()</code>、<code>deinit()</code> 等需要分配内存的方法里传入分配器，例如 <code>try hash_table.put(allocator, 1, 2);</code>、<code>defer hash_table.deinit(allocator);</code>。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> hash_table = AutoArrayHashMap(<span class="dt">u32</span>, <span class="dt">u16</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    .init(allocator);</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">defer</span> hash_table.deinit();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-string-hash-map" class="level3" data-number="11.2.5">
 <h3 data-number="11.2.5" class="anchored" data-anchor-id="sec-string-hash-map"><span class="header-section-number">11.2.5</span> <code>StringHashMap</code> 哈希表</h3>
-<p>你会发现，前几节介绍的另外两种哈希表都不接受切片类型作为键。也就是说，在这两种哈希表中，你不能用切片值来表示键。（译注：在 Zig 0.17.1 中，如果把 <code>[]const u8</code> 用作 <code>AutoHashMap</code> 或 <code>AutoArrayHashMap</code> 的键类型，会直接得到编译错误，错误信息会提示改用 <code>std.StringHashMap</code>。）</p>
+<p>你会发现，前几节介绍的另外两种哈希表都不接受切片类型作为键。也就是说，在这两种哈希表中，你不能用切片值来表示键。（译注：在 Zig 0.17.1 中，如果把 <code>[]const u8</code> 用作 <code>AutoHashMap</code> 的键类型，会直接得到编译错误，错误信息会提示改用 <code>std.StringHashMap</code>；<code>std.array_hash_map.Auto</code> 用切片作键同样会编译报错。）</p>
 <p>这带来的最明显的后果是，你不能在这些哈希表中用字符串作为键。但用字符串作为哈希表的键是极为常见的做法。</p>
 <p>以下面这段非常简单的 JavaScript 代码为例。我们创建了一个名为 <code>people</code> 的简单哈希表对象，然后向它添加一个新条目，这个条目由字符串 <code>'Pedro'</code> 标识。在这里，这个字符串就是键，而包含年龄、身高、所在城市等个人信息的对象，则是要存储在哈希表中的值。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> people <span class="op">=</span> <span class="kw">new</span> <span class="bu">Object</span>()<span class="op">;</span></span>
@@ -857,6 +871,7 @@ Key: Matheus | Age: 21</code></pre>
 <p>你可以用 <a href="#sec-string-hash-map" class="quarto-xref"><span>Section 11.2.5</span></a> 中讨论过的同一个 <code>put()</code> 方法向这个哈希表插入新值，也可以用同一个 <code>get()</code> 方法从哈希表中取值。和它的兄弟 <code>ArrayHashMap</code> 一样，要从这种哈希表中删除值，我们同样使用 <code>orderedRemove()</code> 和 <code>swapRemove()</code> 方法，效果与我在 <a href="#sec-array-map" class="quarto-xref"><span>Section 11.2.4</span></a> 中描述的相同。</p>
 <p>如果拿 <a href="#sec-string-hash-map" class="quarto-xref"><span>Section 11.2.5</span></a> 中的代码示例来说，用 <code>StringArrayHashMap()</code> 也能得到完全相同的结果：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ages = std.StringArrayHashMap(<span class="dt">u8</span>).init(allocator);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>（译注：Zig 0.17.1 的标准库里也没有 <code>std.StringArrayHashMap</code>，对应的类型是 <code>std.array_hash_map.String(V)</code>，用法和上面的 <code>std.array_hash_map.Auto</code> 一样：<code>var ages: std.array_hash_map.String(u8) = .empty;</code>，调用 <code>put()</code>、<code>deinit()</code> 时传入分配器。）</p>
 </section>
 </section>
 <section id="链表linked-lists" class="level2" data-number="11.3">
@@ -1106,7 +1121,7 @@ Wikipedia. 2024. <em>Hash Tables</em>. Wikipedia. <a href="https://en.wikipedia.
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p><a href="https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned" class="uri">https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned</a>。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p><a href="https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned" class="uri">https://ziglang.org/documentation/master/std/#std.array_list.ArrayListAligned</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p><a href="https://ziglang.org/documentation/master/std/#" class="uri">https://ziglang.org/documentation/master/std/#</a>。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p><a href="https://ziglang.org/documentation/master/std/#std.bounded_array.BoundedArray" class="uri">https://ziglang.org/documentation/master/std/#std.bounded_array.BoundedArray</a>。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p><a href="https://ziglang.org/documentation/master/std/#std.priority_queue.PriorityQueue" class="uri">https://ziglang.org/documentation/master/std/#std.priority_queue.PriorityQueue</a>。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
@@ -1664,8 +1679,8 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 <nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
-      <a href="../Chapters/09-error-handling.html" class="pagination-link" aria-label="错误处理与联合体（Unions）">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span>
+      <a href="../Chapters/09-error-handling.html" class="pagination-link" aria-label="错误处理与联合体">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

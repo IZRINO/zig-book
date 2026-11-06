@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; 错误处理与联合体（Unions） – Zig 语言入门</title>
+<title>10&nbsp; 错误处理与联合体 – Zig 语言入门</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -392,7 +392,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/09-error-handling.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Chapters/09-error-handling.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></a></li></ol></nav>
         <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -452,7 +452,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/04-http-server.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">实战项目 2：从零手写 HTTP 服务器</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">项目 2：从零构建一个 HTTP 服务器</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -470,13 +470,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-error-handling.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/09-data-structures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -500,19 +500,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/13-image-filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">实战项目 4：开发图像灰度滤镜</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">项目 4：开发一个图像滤镜</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/14-threads.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 多线程与并行计算</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Zig 中的线程与并行简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Chapters/15-vectors.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">向量类型与 SIMD 硬件级并行加速</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Zig 中的向量与 SIMD 简介</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -531,23 +531,20 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#核心认知错误是一等公民的值errors-as-values" id="toc-核心认知错误是一等公民的值errors-as-values" class="nav-link active" data-scroll-target="#核心认知错误是一等公民的值errors-as-values"><span class="header-section-number">10.1</span> 核心认知：错误是一等公民的值（Errors as Values）</a>
+  <li><a href="#进一步认识-zig-里的错误" id="toc-进一步认识-zig-里的错误" class="nav-link active" data-scroll-target="#进一步认识-zig-里的错误"><span class="header-section-number">10.1</span> 进一步认识 Zig 里的错误</a>
   <ul class="collapse">
-  <li><a href="#从函数中返回错误感叹号-与错误联合" id="toc-从函数中返回错误感叹号-与错误联合" class="nav-link" data-scroll-target="#从函数中返回错误感叹号-与错误联合"><span class="header-section-number">10.1.1</span> 从函数中返回错误：感叹号 <code>!</code> 与错误联合</a></li>
-  <li><a href="#错误集error-sets" id="toc-错误集error-sets" class="nav-link" data-scroll-target="#错误集error-sets"><span class="header-section-number">10.1.2</span> 错误集（Error Sets）</a></li>
-  <li><a href="#错误值的类型转换从子集到超集" id="toc-错误值的类型转换从子集到超集" class="nav-link" data-scroll-target="#错误值的类型转换从子集到超集"><span class="header-section-number">10.1.3</span> 错误值的类型转换（从子集到超集）</a></li>
+  <li><a href="#从函数返回错误" id="toc-从函数返回错误" class="nav-link" data-scroll-target="#从函数返回错误"><span class="header-section-number">10.1.1</span> 从函数返回错误</a></li>
+  <li><a href="#错误集" id="toc-错误集" class="nav-link" data-scroll-target="#错误集"><span class="header-section-number">10.1.2</span> 错误集</a></li>
+  <li><a href="#转换错误值" id="toc-转换错误值" class="nav-link" data-scroll-target="#转换错误值"><span class="header-section-number">10.1.3</span> 转换错误值</a></li>
   </ul></li>
-  <li><a href="#优雅处理错误的四大姿势" id="toc-优雅处理错误的四大姿势" class="nav-link" data-scroll-target="#优雅处理错误的四大姿势"><span class="header-section-number">10.2</span> 优雅处理错误的四大姿势</a>
+  <li><a href="#怎样处理错误" id="toc-怎样处理错误" class="nav-link" data-scroll-target="#怎样处理错误"><span class="header-section-number">10.2</span> 怎样处理错误</a>
   <ul class="collapse">
-  <li><a href="#try-的真正含义向上传播错误" id="toc-try-的真正含义向上传播错误" class="nav-link" data-scroll-target="#try-的真正含义向上传播错误"><span class="header-section-number">10.2.1</span> <code>try</code> 的真正含义：向上传播错误</a></li>
-  <li><a href="#catch-关键字就地捕获与兜底" id="toc-catch-关键字就地捕获与兜底" class="nav-link" data-scroll-target="#catch-关键字就地捕获与兜底"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字：就地捕获与兜底</a></li>
-  <li><a href="#使用-if-语句处理错误" id="toc-使用-if-语句处理错误" class="nav-link" data-scroll-target="#使用-if-语句处理错误"><span class="header-section-number">10.2.3</span> 使用 <code>if</code> 语句处理错误</a></li>
-  <li><a href="#sec-errdefer2" id="toc-sec-errdefer2" class="nav-link" data-scroll-target="#sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字：错误回滚清理</a></li>
+  <li><a href="#try-是什么意思" id="toc-try-是什么意思" class="nav-link" data-scroll-target="#try-是什么意思"><span class="header-section-number">10.2.1</span> <code>try</code> 是什么意思？</a></li>
+  <li><a href="#catch-关键字" id="toc-catch-关键字" class="nav-link" data-scroll-target="#catch-关键字"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字</a></li>
+  <li><a href="#使用-if-语句" id="toc-使用-if-语句" class="nav-link" data-scroll-target="#使用-if-语句"><span class="header-section-number">10.2.3</span> 使用 if 语句</a></li>
+  <li><a href="#sec-errdefer2" id="toc-sec-errdefer2" class="nav-link" data-scroll-target="#sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字</a></li>
   </ul></li>
-  <li><a href="#sec-unions" id="toc-sec-unions" class="nav-link" data-scroll-target="#sec-unions"><span class="header-section-number">10.3</span> 联合体（Unions）与带标签联合体（Tagged Unions）</a>
-  <ul class="collapse">
-  <li><a href="#带标签联合体tagged-unions" id="toc-带标签联合体tagged-unions" class="nav-link" data-scroll-target="#带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 带标签联合体（Tagged Unions）</a></li>
-  </ul></li>
+  <li><a href="#sec-unions" id="toc-sec-unions" class="nav-link" data-scroll-target="#sec-unions"><span class="header-section-number">10.3</span> Zig 里的联合体类型</a></li>
   </ul>
 </nav>
     </div>
@@ -557,7 +554,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="sec-error-handling" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体（Unions）</span></span></h1>
+<h1 class="title"><span id="sec-error-handling" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">错误处理与联合体</span></span></h1>
 </div>
 
 
@@ -574,40 +571,44 @@ window.Quarto = {
 </header>
 
 
-<p>在本章中，我想讨论 Zig 中的错误处理是怎么做的。我们已经简单了解过 Zig 中处理错误的一种策略，也就是 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中介绍的 <code>try</code> 关键字，但还没有学习其他方法，比如 <code>catch</code> 关键字。我还想在本章中讨论如何在 Zig 中创建联合体类型。</p>
-<section id="核心认知错误是一等公民的值errors-as-values" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="核心认知错误是一等公民的值errors-as-values"><span class="header-section-number">10.1</span> 核心认知：错误是一等公民的值（Errors as Values）</h2>
-<p>在搞懂具体语法前，首先必须建立起对 Zig 错误哲学的认知：<strong>在 Zig 里，错误本质上是一个实在的具体数值（Value）！</strong> <span class="citation" data-cites="zigoverview">(<a href="references.html#ref-zigoverview" role="doc-biblioref">Zig Software Foundation 2024a</a>)</span> 它既不是隐秘抛出、不知在何处被接住的运行时异常（Exception），也不是深不见底的黑盒。 错误值可以像普通整数一样在函数间传递、可以存入变量、可以进行集合转换。</p>
-<p>写惯了 Python 或 C++ 的同学可能习惯了抛异常（<code>throw</code>）。但在那些语言里，调用方很容易因遗漏 <code>try-catch</code> 而导致未捕获异常一路击穿整个调用栈。 <strong>而在 Zig 里，所有可能发生的错误都必须显式处理，编译器绝不允许你视而不见！</strong> 你甚至不能像对待普通变量那样，用下划线 <code>_</code> 随手把一个错误联合结果丢弃掉：</p>
+<p>这一章我想讲讲 Zig 里怎样做错误处理。前面我们已经简单学过 Zig 里处理错误的一种办法，就是 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 里介绍的 <code>try</code> 关键字。但其他办法我们还没学，比如 <code>catch</code> 关键字。这一章我也想讲讲 Zig 里怎样创建联合体类型。</p>
+<section id="进一步认识-zig-里的错误" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="进一步认识-zig-里的错误"><span class="header-section-number">10.1</span> 进一步认识 Zig 里的错误</h2>
+<p>在讲错误处理怎么做之前，我们得先多了解一点：在 Zig 里，错误到底是什么。错误其实是一个值 <span class="citation" data-cites="zigoverview">(<a href="references.html#ref-zigoverview" role="doc-biblioref">Zig Software Foundation 2024a</a>)</span>。换句话说，你的 Zig 程序里发生错误，意味着代码库的某处正在生成一个错误值。错误值和你在 Zig 代码里创建的任何整数值是类似的。你可以把一个错误值作为输入传给函数，也可以把它转换（或者说强制转换）成另一种错误值。</p>
+<p>这和 C++、Python 里的异常有一些相似之处。因为在 C++ 和 Python 里，<code>try</code> 块里发生异常时，你可以用 <code>catch</code> 块（C++）或 <code>except</code> 块（Python）捕获 <code>try</code> 块里产生的异常，并把它作为输入传给函数。</p>
+<p>不过，Zig 里的错误值和异常的待遇很不一样。首先，你不能在 Zig 代码里忽略错误值。意思是，如果源代码的某处出现了一个错误值，这个错误值必须以某种方式被显式处理。这也意味着，你不能像对待普通值和对象那样，把错误值赋给下划线来丢掉它。</p>
+<p>下面的源代码就是一个例子。这里我们试图打开一个在我电脑上不存在的文件，结果 <code>openFile()</code> 函数返回了一个显而易见的错误值 <code>FileNotFound</code>。可因为我把这个函数的结果赋给了下划线，我最终是在试图丢掉一个错误值。</p>
+<p><code>zig</code> 编译器发现了这个错误，并给出一条编译错误，告诉我正在试图丢掉一个错误值。它还加了一条 note，建议用 <code>try</code>、<code>catch</code> 或 if 语句来显式处理这个错误值。这条 note 强调的是：在 Zig 里，每一个可能的错误值都必须被显式处理。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> cwd = std.Io.Dir.cwd();</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 试图对可能报错的操作用下划线蒙混过关</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>_ = cwd.openFile(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{</span> .mode = .write_only <span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>编译器一眼识破并当场报错：</p>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>_ = cwd.openFile(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{</span> .mode = .write_only <span class="op">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>t.zig:8:17: error: error set is discarded
 t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
-<p>编译器会提醒你：这里返回的是可能包含错误的错误联合类型，需要用 <code>try</code>、<code>catch</code> 或 <code>if</code> 处理。</p>
-<section id="从函数中返回错误感叹号-与错误联合" class="level3" data-number="10.1.1">
-<h3 data-number="10.1.1" class="anchored" data-anchor-id="从函数中返回错误感叹号-与错误联合"><span class="header-section-number">10.1.1</span> 从函数中返回错误：感叹号 <code>!</code> 与错误联合</h3>
-<p>如果一个函数在执行过程中可能会报错，那它的返回值类型签名里就必须带上感叹号 <code>!</code>（表示错误联合 Error Union）：</p>
+<section id="从函数返回错误" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="从函数返回错误"><span class="header-section-number">10.1.1</span> 从函数返回错误</h3>
+<p>正如我们在 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 里说过的，一个函数如果可能返回错误值，它的返回类型标注里通常会有一个感叹号（<code>!</code>）。这个感叹号表示这个函数的结果可能是一个错误值，而 <code>zig</code> 编译器会强迫你始终显式处理「这个函数返回了错误值」的情况。</p>
+<p>看看下面的 <code>print_name()</code> 函数。这个函数可能在调用 <code>stdout.print()</code> 时返回错误，因此它的返回类型（<code>!void</code>）里带了一个感叹号。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_name(stdout: *std.Io.Writer) !<span class="dt">void</span> <span class="op">{</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.print(<span class="st">"My name is Pedro!"</span>, .<span class="op">{}</span>);</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> stdout.flush();</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在上面的 <code>!void</code> 中，感叹号左侧没有显式指定错误类型，这叫<strong>推导错误集（inferred error set）</strong>，由编译器分析函数体，推导出函数可能返回的错误集合。</p>
-<p>如果你愿意，也可以在感叹号左边显式指定函数可能返回的错误集。这样一来，编译器就能检查函数中是否产生了返回类型里没有声明的错误：</p>
+<p>在上面的例子里，我们用感叹号告诉 <code>zig</code> 编译器，这个函数可能返回某个错误。可究竟返回的是哪个错误？眼下我们没有指定一个具体的错误值。眼下我们只知道，可能会返回某个错误值（不管它是什么）。</p>
+<p>但事实上，如果你愿意，可以清清楚楚地指定这个函数可能返回哪些错误值。Zig 标准库里这样的例子很多。拿 <code>http.Client</code> 模块里的这个 <code>fill()</code> 函数为例。这个函数返回的要么是 <code>ReadError</code> 类型的错误值，要么是 <code>void</code>。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> fill(conn: *Connection) ReadError!<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The body of this function ...</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>把你预期会返回的错误值具体标出来，这个想法很有意思。因为它们会自动变成函数的某种文档，而且这还让 <code>zig</code> 编译器能对你的代码再做一些检查。编译器可以检查：函数内部是不是还生成了别的类型的错误值，而这些错误值并没有算进这个返回类型标注里。</p>
+<p>总之，你可以把可能从函数返回的错误类型列在感叹号的左边。合法的值则留在感叹号的右边。所以语法格式变成：</p>
 <pre><code>&lt;error-value&gt;!&lt;valid-value&gt;</code></pre>
-<p>（即：<code>&lt;错误值&gt;!&lt;正常返回值&gt;</code>。）</p>
-<p>例如 Zig 标准库 HTTP 客户端模块里的 <code>fill()</code> 函数：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> fill(conn: *Connection) ReadError!<span class="dt">void</span> <span class="op">{</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>这清楚地告诉所有调用者：该函数要么成功返回 <code>void</code>，要么只会返回属于 <code>ReadError</code> 范围内的具体错误！</p>
 </section>
-<section id="错误集error-sets" class="level3" data-number="10.1.2">
-<h3 data-number="10.1.2" class="anchored" data-anchor-id="错误集error-sets"><span class="header-section-number">10.1.2</span> 错误集（Error Sets）</h3>
-<p>当一个函数可能返回多种不同类型的错误时，我们可以用 <code>error{ ... }</code> 定义一个<strong>错误集（Error Set）</strong>。错误集本质上是一种特殊的联合体类型（Union，我们将在 <a href="#sec-unions" class="quarto-xref"><span>Section 10.3</span></a> 中深入探讨联合体）：</p>
+<section id="错误集" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="错误集"><span class="header-section-number">10.1.2</span> 错误集</h3>
+<p>可如果一个函数可能返回不同类型的错误呢？有这样的函数时，你可以把这个函数可能返回的所有这些不同类型的错误列出来，用的是 Zig 里我们称为<em>错误集</em>（error set）的一种结构。</p>
+<p>错误集是联合体类型的一种特殊情况。它是一个里面装着错误值的联合体。不是所有编程语言都有「联合体对象」这个概念。但简单说，联合体就是一组数据类型。联合体用来允许一个对象具有多种数据类型。例如，<code>x</code>、<code>y</code> 和 <code>z</code> 的一个联合体，意味着一个对象可以是 <code>x</code> 类型，或 <code>y</code> 类型，或 <code>z</code> 类型。</p>
+<p>联合体我们会在 <a href="#sec-unions" class="quarto-xref"><span>Section 10.3</span></a> 里讲得更深。不过你可以这样写一个错误集：在一对花括号前面写上关键字 <code>error</code>，然后在这对花括号里列出可以从函数返回的错误值。</p>
+<p>下面的 <code>resolvePath()</code> 函数就是一个例子，它来自 Zig 标准库的 <code>introspect.zig</code> 模块。从它的返回类型标注可以看出，这个函数返回的要么是：1）一个合法的 <code>u8</code> 值切片（<code>[]u8</code>）；要么是 2）错误集里列出的三种不同类型的错误值之一（<code>OutOfMemory</code>、<code>Unexpected</code> 等）。这是错误集的一个用法示例。</p>
+<p>（译注：在 Zig 0.17.1 里，这个函数在 <code>lib/std/zig.zig</code>，不在 <code>introspect.zig</code>。签名是 <code>resolvePath(gpa, cwd_resolved, paths) Allocator.Error![]u8</code>，和这里展示的参数、错误集都不一样。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> resolvePath(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    ally: mem.Allocator,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    p: []<span class="kw">const</span> <span class="dt">u8</span>,</span>
@@ -616,9 +617,11 @@ t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    CurrentWorkingDirectoryUnlinked,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    Unexpected,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>![]<span class="dt">u8</span> <span class="op">{</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The body of the function ...</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>在真实工程里，通常会给这组错误起一个清晰的大写类型名复用：</p>
+<p>这是标注 Zig 函数返回值的一种合法方式。不过，如果你去翻构成 Zig 标准库的那些模块，会注意到在大多数情况下，程序员更愿意给这个错误集起一个有描述性的名字，然后在返回类型标注里使用错误集的这个名字（或者说这个「标签」），而不是直接把错误集写在那里。</p>
+<p>前面 <code>fill()</code> 函数里的那个 <code>ReadError</code> 错误集就是这样，它定义在 <code>http.Client</code> 模块里。所以是的，我前面把 <code>ReadError</code> 讲得好像它只是一个普通的、单个的错误值，可事实上，它是 <code>http.Client</code> 模块里定义的一个错误集，因此它实际代表的是 <code>fill()</code> 函数内部可能发生的一组不同的错误值。</p>
+<p>看看下面复述的 <code>ReadError</code> 定义。注意，我们把这些不同的错误值归到一个对象里，然后把这个对象用在函数的返回类型标注中。像前面展示的 <code>fill()</code> 函数，或者同一个模块里的 <code>readvDirect()</code> 函数，下面也复述了它。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> ReadError = <span class="kw">error</span><span class="op">{</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    TlsFailure,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    TlsAlert,</span>
@@ -627,17 +630,21 @@ t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    UnexpectedReadFailure,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    EndOfStream,</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Some lines of code</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> readvDirect(</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        conn: *Connection,</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        buffers: []std.posix.iovec</span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    ) ReadError!<span class="dt">usize</span> <span class="op">{</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The body of the function ...</span></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>所以，错误集只是一种方便的办法，把一组可能的错误值归到一个对象里，或者说归成一种错误值类型。</p>
+<p>（译注：Zig 0.17.1 的 <code>std.http.Client</code> 里仍然有 <code>ReadError</code>，但它是 <code>std.crypto.tls.Client.ReadError || Io.net.Stream.Reader.Error</code>，不是上面那个手写的错误集。这一版的 <code>Client</code> 里也没有 <code>fill()</code> 和 <code>readvDirect()</code>。）</p>
 </section>
-<section id="错误值的类型转换从子集到超集" class="level3" data-number="10.1.3">
-<h3 data-number="10.1.3" class="anchored" data-anchor-id="错误值的类型转换从子集到超集"><span class="header-section-number">10.1.3</span> 错误值的类型转换（从子集到超集）</h3>
-<p>如果错误集 <code>A</code> 包含了错误集 <code>B</code> 里的所有成员（即 <span class="math inline">\(A \supset B\)</span>），那么在 Zig 中，<code>B</code> 集合里的错误值可以隐式自动转换为 <code>A</code> 集合类型：</p>
+<section id="转换错误值" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="转换错误值"><span class="header-section-number">10.1.3</span> 转换错误值</h3>
+<p>假设你有两个不同的错误集，名叫 <code>A</code> 和 <code>B</code>。如果错误集 <code>A</code> 是错误集 <code>B</code> 的超集，那你就可以把 <code>B</code> 的错误值转换（或者说强制转换）成 <code>A</code> 的错误值。</p>
+<p>错误集只是一组错误值。所以，如果错误集 <code>A</code> 包含错误集 <code>B</code> 的全部错误值，那么 <code>A</code> 就是 <code>B</code> 的超集。你也可以说，错误集 <code>B</code> 是错误集 <code>A</code> 的子集。</p>
+<p>下面的例子演示的就是这个想法。因为 <code>A</code> 包含 <code>B</code> 的全部值，所以 <code>A</code> 是 <code>B</code> 的超集。用数学记号，我们会说 <span class="math inline">\(A \supset B\)</span>。因此，我们可以把一个来自 <code>B</code> 的错误值作为输入传给 <code>cast()</code> 函数，并把这个输入隐式转换成同一个错误值，只不过属于 <code>A</code> 这个集合。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> std = <span class="bu">@import</span>(<span class="st">"std"</span>);</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> A = <span class="kw">error</span><span class="op">{</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    ConnectionTimeoutError,</span>
@@ -650,7 +657,7 @@ t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> cast(err: B) A <span class="op">{</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> err; <span class="co">// 隐式转换为超集类型</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> err;</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">test</span> <span class="st">"coerce error value"</span> <span class="op">{</span></span>
@@ -659,93 +666,113 @@ t.zig:8:17: note: consider using 'try', 'catch', or 'if'</code></pre>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        error_value == A.OutOfMemory</span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    );</span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>1/1 file6de04e52901.test.coerce error value...OK
-All 1 tests passed.</code></pre>
+<pre><code>1/1 file6de04e52901.test.coerce error value...OKAl
+  ll 1 tests passed.</code></pre>
 </section>
 </section>
-<section id="优雅处理错误的四大姿势" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="优雅处理错误的四大姿势"><span class="header-section-number">10.2</span> 优雅处理错误的四大姿势</h2>
-<p>在 Zig 中，处理错误主要有以下四种常用策略：</p>
+<section id="怎样处理错误" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="怎样处理错误"><span class="header-section-number">10.2</span> 怎样处理错误</h2>
+<p>现在我们多了解了一些 Zig 里的错误是什么，来讨论处理这些错误的现成办法。它们是：</p>
 <ul>
 <li><code>try</code> 关键字；</li>
 <li><code>catch</code> 关键字；</li>
-<li><code>if</code> 语句；</li>
+<li>if 语句；</li>
 <li><code>errdefer</code> 关键字。</li>
 </ul>
-<section id="try-的真正含义向上传播错误" class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="try-的真正含义向上传播错误"><span class="header-section-number">10.2.1</span> <code>try</code> 的真正含义：向上传播错误</h3>
-<p>正如我们在 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 中初次见到的，当一个表达式的返回类型为 <code>!T</code> 时，使用 <code>try expr</code> 的语义是： 请执行该表达式；如果它返回了合法的正常值，则解包并返回该值继续往下走；但如果它返回了错误值，则<strong>立即将该错误从当前函数中 <code>return</code> 返回出去，并终止当前函数的继续执行</strong>。</p>
-<p>换言之，当你认为遇到错误时最合理的策略就是立即中止当前流程并将错误向上传播时，就使用 <code>try</code>。</p>
+<section id="try-是什么意思" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="try-是什么意思"><span class="header-section-number">10.2.1</span> <code>try</code> 是什么意思？</h3>
+<p>正如我在前面几节说过的，当我们说一个表达式可能返回错误时，我们基本上指的是一个返回类型格式为 <code>!T</code> 的表达式。<code>!</code> 表示这个表达式返回的要么是一个错误值，要么是一个 <code>T</code> 类型的值。</p>
+<p>在 <a href="01-zig-weird.html#sec-main-file" class="quarto-xref"><span>Section 1.2.3</span></a> 里，我介绍了 <code>try</code> 关键字以及在哪里用它。但我没有讲这个关键字究竟对你的代码做了什么，换句话说，我还没有解释 <code>try</code> 在你的代码里是什么意思。</p>
+<p>本质上，当你在一个表达式上使用 <code>try</code> 关键字时，你是在告诉 <code>zig</code> 编译器下面这些话：「嘿！帮我执行这个表达式。如果这个表达式返回错误，请把这个错误返回给我，并停住我的程序的执行。如果这个表达式返回的是合法值，那就返回这个值，然后继续。」</p>
+<p>换句话说，<code>try</code> 关键字本质上是一种进入 panic 模式的策略：一旦发生错误，就停住程序的执行。用 <code>try</code> 关键字，你是在告诉 <code>zig</code> 编译器，如果那个特定的表达式发生了错误，停住程序的执行是最合理的策略。</p>
+<p>（译注：这里把 <code>try</code> 说成会让程序进入 panic、停住整个程序，说得过了。<code>try</code> 的实际效果是：表达式返回错误时，把这个错误从当前函数返回给调用者。只有这个错误一直没有被处理、最终从没有人接住的地方冒出去，程序才会因为未处理的错误而终止。）</p>
 </section>
-<section id="catch-关键字就地捕获与兜底" class="level3" data-number="10.2.2">
-<h3 data-number="10.2.2" class="anchored" data-anchor-id="catch-关键字就地捕获与兜底"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字：就地捕获与兜底</h3>
-<p>需要特别注意的是：<strong>在 Zig 中，你可以使用 <code>try</code> 或 <code>catch</code> 来处理错误，但绝不能将 <code>try</code> 和 <code>catch</code> 连在一起同时使用！</strong>在 Zig 里，<code>try</code> 和 <code>catch</code> 是两套完全独立的错误处理策略。</p>
-<p><code>catch</code> 放在可能报错的表达式后面，负责拦截错误并就地解决：</p>
-<section id="提供默认值" class="level4" data-number="10.2.2.1">
-<h4 data-number="10.2.2.1" class="anchored" data-anchor-id="提供默认值"><span class="header-section-number">10.2.2.1</span> 1. 提供默认值</h4>
-<p>如果报错，就自动回落到默认值，极具表现力：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 解析失败时自动兜底为数字 13</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number = parseU64(str, <span class="dv">10</span>) <span class="kw">catch</span> <span class="dv">13</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="catch-关键字" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="catch-关键字"><span class="header-section-number">10.2.2</span> <code>catch</code> 关键字</h3>
+<p>好，现在我们搞清楚了 <code>try</code> 是什么意思，来讲 <code>catch</code>。这里有一个重要的细节：你可以用 <code>try</code> 或 <code>catch</code> 来处理错误，但你<strong>不能把 <code>try</code> 和 <code>catch</code> 一起用</strong>。换句话说，在 Zig 语言里，<code>try</code> 和 <code>catch</code> 是不同的、完全分开的两种策略。</p>
+<p>这不太常见，也和其他语言不一样。大多数采用 <em>try catch</em> 模式的编程语言（比如 C++、R、Python、JavaScript 等），通常把这两个关键字一起用，凑成正确处理错误的完整逻辑。总之，Zig 在 <em>try catch</em> 模式上试的是另一种做法。</p>
+<p>所以，我们已经知道 <code>try</code> 是什么意思，也知道 <code>try</code> 和 <code>catch</code> 都应该单独使用、彼此分开。可 <code>catch</code> 在 Zig 里究竟做什么？用 <code>catch</code>，我们可以构造一块逻辑，在当前表达式发生错误值时去处理它。</p>
+<p>看看下面的代码示例。我们再次回到前面那个例子：试图打开一个在我电脑上不存在的文件。但这一次，我用 <code>catch</code> 真正实现一段处理错误的逻辑，而不是立刻停住执行。</p>
+<p>更具体地说，在这个例子里，我在返回错误、停住程序执行之前，用一个 logger 对象往系统里记一些日志。例如，这可能是一个我并不能完全掌控的复杂系统的某部分代码，我想在程序崩溃之前把这些日志记下来，以便以后调试（比如，也许我没法编译整个程序，也没法用调试器好好调试它。于是这些日志可能是绕过这道障碍的一种可行办法）。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cwd = std.Io.Dir.cwd();</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> file = cwd.openFile(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">catch</span> |err| <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        logger.record_context();</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        logger.log_error(err);</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> err;</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>因此，我们用 <code>catch</code> 来创建一块用来处理错误的表达式。我可以像上面的例子那样，从这块表达式里返回错误值，这会让程序进入 panic 模式，并停住执行。但我也可以从这块代码里返回一个合法值，这个值会被存进 <code>file</code> 对象。</p>
+<p>注意，和 <code>try</code> 不同，我们不是把关键字写在可能返回错误的表达式前面，而是把 <code>catch</code> 写在表达式后面。我们可以打开一对竖线（<code>|</code>），它捕获表达式返回的错误值，并让这个错误值在 <code>catch</code> 块的作用域里以名为 <code>err</code> 的对象可用。换句话说，因为我在代码里写了 <code>|err|</code>，我就可以通过 <code>err</code> 这个对象访问表达式返回的错误值。</p>
+<p>虽然这是 <code>catch</code> 最常见的用法，你也可以用这个关键字以「默认值」的风格来处理错误。也就是说，如果表达式返回错误，我们就改用默认值。否则，我们就用表达式返回的合法值。</p>
+<p>Zig 的官方语言参考给这种「默认值」策略提供了一个很好的例子，用的就是 <code>catch</code>。这个例子复述如下。注意，我们试图从一个名为 <code>str</code> 的字符串对象解析某个无符号整数。换句话说，这个函数试图把一个 <code>[]const u8</code> 类型的对象（也就是一个字符数组、一个字符串，等等）变成一个 <code>u64</code> 类型的对象。</p>
+<p>但 <code>parseU64()</code> 函数做的这个解析过程可能失败，导致一个运行时错误。这个例子里的 <code>catch</code> 关键字提供了一个备用值（13），在 <code>parseU64()</code> 函数引发错误时使用。所以，下面这个表达式本质上的意思是：「嘿！请帮我把这个字符串解析成 <code>u64</code>，并把结果存进对象 <code>number</code>。不过，如果发生错误，那就改用值 <code>13</code>。」</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> number = parseU64(str, <span class="dv">10</span>) <span class="kw">catch</span> <span class="dv">13</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>所以，这个过程结束时，对象 <code>number</code> 里装的要么是从输入字符串 <code>str</code> 成功解析出来的一个 <code>u64</code> 整数，要么，如果解析过程中发生了错误，装的就是 <code>catch</code> 关键字作为「默认」或者说「备用」值提供的那个 <code>u64</code> 值 <code>13</code>。</p>
 </section>
-<section id="接错误处理逻辑块" class="level4" data-number="10.2.2.2">
-<h4 data-number="10.2.2.2" class="anchored" data-anchor-id="接错误处理逻辑块"><span class="header-section-number">10.2.2.2</span> 2. 接错误处理逻辑块</h4>
-<p>通过 <code>catch |err| { ... }</code> 捕获具体错误对象并写日志或做后置处理：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> main(init: std.process.Init) !<span class="dt">void</span> <span class="op">{</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cwd = std.Io.Dir.cwd();</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> file = cwd.openFile(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        init.io, <span class="st">"doesnt_exist.txt"</span>, .<span class="op">{}</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">catch</span> |err| <span class="op">{</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        logger.record_context();</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        logger.log_error(err);</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> err; <span class="co">// 记录完日志后再次抛出</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>;</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="使用-if-语句处理错误" class="level3" data-number="10.2.3">
-<h3 data-number="10.2.3" class="anchored" data-anchor-id="使用-if-语句处理错误"><span class="header-section-number">10.2.3</span> 使用 <code>if</code> 语句处理错误</h3>
-<p>你也可以使用 <code>if</code> 语句来处理 Zig 中的错误：如果表达式返回正常值，则将其解包到 <code>|number|</code> 中执行 <code>if</code> 分支；如果返回错误，则在 <code>else |err|</code> 分支中捕获并处理该错误：</p>
+<section id="使用-if-语句" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="使用-if-语句"><span class="header-section-number">10.2.3</span> 使用 if 语句</h3>
+<p>现在，你也可以用 if 语句来处理 Zig 代码里的错误。在下面的例子里，我复述前一个例子：用一个名为 <code>parseU64()</code> 的函数，试图从输入字符串解析出一个整数值。</p>
+<p>我们在「if」里面执行这个表达式。如果这个表达式返回的是错误值，if 语句的「if 分支」（或者说「真分支」）不会执行。如果这个表达式返回的是合法值，这个值就会被解包到 <code>number</code> 对象里。</p>
+<p>这意味着，如果 <code>parseU64()</code> 表达式返回了一个合法值，这个值就可以在这个「if 分支」（也就是「真分支」）的作用域里使用，用的是我们列在一对竖线字符（<code>|</code>）里的那个对象，也就是对象 <code>number</code>。</p>
+<p>如果发生了错误，我们可以用 if 语句的「else 分支」（或者说「假分支」）来处理错误。在下面的例子里，我们用 if 语句里的 <code>else</code> 把错误值（由 <code>parseU64()</code> 返回的那个）解包到 <code>err</code> 对象里，并处理这个错误。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (parseU64(str, <span class="dv">10</span>)) |number| <span class="op">{</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 成功分支，拿到纯净的 number</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// do something with `number` here</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="kw">else</span> |err| <span class="op">{</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 失败分支，拿到具体的 err</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// handle the error value.</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>如果表达式可能返回多种不同类型的错误，且你希望针对每种具体错误采取不同的处理逻辑，Zig 官方文档建议将 <code>if</code> 语句与 <code>switch</code> 语句结合使用 <span class="citation" data-cites="zigdocs">(<a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024b</a>)</span>：</p>
+<p>现在，如果你正在执行的表达式会返回不同类型的错误值，而你想对每一种错误值采取不同的动作，那么 <code>try</code> 和 <code>catch</code> 关键字，以及 if 语句这套办法，就变得有限了。</p>
+<p>对这种情况，语言的官方文档建议把 switch 语句和 if 语句一起用 <span class="citation" data-cites="zigdocs">(<a href="references.html#ref-zigdocs" role="doc-biblioref">Zig Software Foundation 2024b</a>)</span>。基本想法是：用 if 语句执行表达式，用「else 分支」把错误值传给一个 switch 语句，你在那里为表达式可能返回的每一种错误值定义一个不同的动作。</p>
+<p>下面的例子演示的就是这个想法。我们先试图把一组任务加进（或者说登记进）一个队列。如果这个「登记过程」顺利，我们就接着试图把这些任务分发给系统里的 worker。如果这个「登记过程」返回了一个错误值，我们就在「else 分支」里用 switch 语句处理每一种可能的错误值。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> (add_tasks_to_queue(&amp;queue, tasks)) |_| <span class="op">{</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    distribute_tasks(&amp;queue);</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="kw">else</span> |err| <span class="kw">switch</span> (err) <span class="op">{</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.InvalidTaskName =&gt; <span class="op">{</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理无效任务名</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// do something</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.TimeoutTooBig =&gt; <span class="op">{</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理超时超限</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// do something</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">error</span>.QueueNotFound =&gt; <span class="op">{</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理队列未找到</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// do something</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span>,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// and all the other error options ...</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sec-errdefer2" class="level3" data-number="10.2.4">
-<h3 data-number="10.2.4" class="anchored" data-anchor-id="sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字：错误回滚清理</h3>
-<p>回顾我们在 <a href="03-structs.html#sec-defer" class="quarto-xref"><span>Section 2.1.3</span></a> 和 <a href="03-structs.html#sec-errdefer1" class="quarto-xref"><span>Section 2.1.4</span></a> 中介绍过的 <code>defer</code> 与 <code>errdefer</code>：无条件的 <code>defer</code> 总是在当前作用域结束时执行，而 <strong><code>errdefer</code> 登记的动作，只有在退出当前作用域且伴随着错误发生时才会执行！</strong></p>
-<p>思考一个典型场景：函数使用我们在 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 中介绍的分配器在堆上创建了一个新的 <code>User</code> 对象，将其注册到数据库中，最后把该 <code>user</code> 对象作为返回值交出去：</p>
+<h3 data-number="10.2.4" class="anchored" data-anchor-id="sec-errdefer2"><span class="header-section-number">10.2.4</span> <code>errdefer</code> 关键字</h3>
+<p>C 程序里一个常见的模式，是在程序执行期间发生错误时清理资源。换句话说，处理错误的一种常见方式，是在退出程序之前做「清理动作」。这保证运行时错误不会让程序泄漏系统的资源。</p>
+<p><code>errdefer</code> 关键字就是在这种不利局面下做这类「清理动作」的工具。这个关键字常用来在程序的执行因为生成了一个错误值而停住之前，清理（或者说释放）已分配的资源。</p>
+<p>基本想法是给 <code>errdefer</code> 关键字提供一个表达式。然后，当且仅当当前作用域的执行期间发生了错误，<code>errdefer</code> 才会执行这个表达式。在下面的例子里，我们用一个分配器对象（我们在 <a href="01-memory.html#sec-allocators" class="quarto-xref"><span>Section 3.3</span></a> 里介绍过）来创建一个新的 <code>User</code> 对象。如果我们成功创建并登记了这个新用户，这个 <code>create_user()</code> 函数就会把这个新的 <code>User</code> 对象作为返回值返回。</p>
+<p>可如果出于某种原因，<code>errdefer</code> 那一行之后的某个表达式生成了错误值，例如在 <code>db.add(user)</code> 这个表达式里，那么在错误值从函数返回之前，在程序进入 panic 模式并停住当前执行之前，<code>errdefer</code> 登记的那个表达式会先执行。</p>
+<p>（译注：正文写的是 <code>db.add(user)</code>，下面代码里调用的是 <code>db.register_user(user)</code>。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> create_user(db: Database, allocator: Allocator) !User <span class="op">{</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> user = <span class="kw">try</span> allocator.create(User);</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">errdefer</span> allocator.destroy(user); <span class="co">// 挂上防漏油阀门！</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">errdefer</span> allocator.destroy(user);</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果向数据库插入时报错提前退出了：</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Register new user in the Database.</span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    _ = <span class="kw">try</span> db.register_user(user);</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 如果一切顺利，user 成功交出，errdefer 不会触发，调用方负责接管其生命周期</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> user;</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>如果在入库那一行（<code>db.register_user</code>）报错了，函数中断退出，普通的 <code>defer</code> 此时帮不上忙（因为正常返回时不能销毁它）；而 <code>errdefer</code> 则精准介入，在函数带着错误返回之前，释放刚刚申请的 <code>user</code>，保证这块内存在出错时也会被释放。</p>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> user;</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>用 <code>errdefer</code> 销毁我们刚刚创建的 <code>user</code> 对象，我们就能保证：在程序的执行停住之前，为这个 <code>user</code> 对象分配的内存会被释放。因为如果表达式 <code>try db.add(user)</code> 返回了一个错误值，程序的执行就会停住，我们会失去对为 <code>user</code> 对象分配的那块内存的全部引用和控制。结果就是，如果在程序停住之前不释放与 <code>user</code> 对象关联的内存，我们就再也释放不了这块内存了。我们干脆失去了做正确事情的机会。这就是为什么在这种情况下 <code>errdefer</code> 是必不可少的。</p>
+<p>为了把 <code>defer</code> 和 <code>errdefer</code> 的差别说清楚（我在 <a href="03-structs.html#sec-defer" class="quarto-xref"><span>Section 2.1.3</span></a> 和 <a href="03-structs.html#sec-errdefer1" class="quarto-xref"><span>Section 2.1.4</span></a> 里描述过），也许值得再把这个题目往下谈一点。你脑子里可能还留着这个问题：「既然可以用 <code>defer</code>，为什么还要用 <code>errdefer</code>？」</p>
+<p>虽然二者相似，<code>errdefer</code> 和 <code>defer</code> 关键字的关键差别在于，提供的那个表达式会在什么时候执行。<code>defer</code> 关键字总是在当前作用域结束时执行提供的表达式，不管你的代码是怎样退出这个作用域的。与此相对，<code>errdefer</code> 只在当前作用域发生错误时才执行提供的表达式。</p>
+<p>如果当前作用域里分配的某项资源要到后面、在另一个作用域里才释放，这一点就变得重要了。<code>create_user()</code> 函数就是这样的例子。如果你仔细想这个函数，会注意到这个函数把 <code>user</code> 对象作为结果返回。</p>
+<p>换句话说，如果 <code>create_user()</code> 函数成功返回，为 <code>user</code> 对象分配的内存并不会在这个函数内部被释放。所以，如果这个函数内部没有发生错误，<code>user</code> 对象会从函数返回，而跑在这个 <code>create_user()</code> 函数之后的代码，大概会负责释放 <code>user</code> 对象的内存。</p>
+<p>可如果错误发生在 <code>create_user()</code> 函数内部呢？那又会怎样？这意味着你的代码会在这个 <code>create_user()</code> 函数里停住，因此跑在这个 <code>create_user()</code> 函数之后的代码根本不会跑，结果就是，在程序停住之前，<code>user</code> 对象的内存不会被释放。</p>
+<p>这正是 <code>errdefer</code> 的理想场合。我们用这个关键字来保证：即使 <code>create_user()</code> 函数内部发生了错误，程序也会释放为 <code>user</code> 对象分配的内存。</p>
+<p>如果你在同一个作用域里既分配又释放某个对象的内存，那就用 <code>defer</code>，然后就好了。也就是说，在这种情况下 <code>errdefer</code> 对你没有用。但如果你在作用域 A 里分配了一些内存，却要到以后、比如在作用域 B 里才释放这块内存，那么 <code>errdefer</code> 就变得有用了，可以在不稳妥的局面下避免内存泄漏。</p>
 </section>
 </section>
 <section id="sec-unions" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="sec-unions"><span class="header-section-number">10.3</span> 联合体（Unions）与带标签联合体（Tagged Unions）</h2>
-<p>联合体（Union）定义了一个变量<strong>在某一瞬间只能是多种可能类型中的某一种</strong>。 它与 C 语言中的 <code>union</code> 作用相同，效果上也类似于在 Python 中使用 <a href="https://docs.python.org/3/library/typing.html#typing.Union"><code>typing.Union</code></a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
-<p>举个跨多云存储的实际例子：数据既可能传往 AWS S3、也可能发给 Azure Blob 或 Google Cloud：</p>
+<h2 data-number="10.3" class="anchored" data-anchor-id="sec-unions"><span class="header-section-number">10.3</span> Zig 里的联合体类型</h2>
+<p>联合体类型定义了一个对象可以是的一组类型。它像一份选项列表。每个选项都是对象可以呈现的一种类型。因此，Zig 里的联合体和 C 里的联合体意思相同，或者说角色相同。它们被用于同样的目的。你也可以说，Zig 里的联合体产生的效果，类似于<a href="https://docs.python.org/3/library/typing.html#typing.Union">在 Python 里使用 <code>typing.Union</code></a> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<p>例如，你可能在做一个 API，把数据送到托管在某套私有云基础设施上的数据湖。假设你在代码库里创建了不同的结构体，用来存放连接每种主流数据湖服务（Amazon S3、Azure Blob 等）所需要的信息。</p>
+<p>现在，假设你还有一个名为 <code>send_event()</code> 的函数，它接收一个事件作为输入，以及一个目标数据湖，并把输入的事件送到目标数据湖参数所指定的那个数据湖。但这个目标数据湖可能是三种主流数据湖服务（Amazon S3、Azure Blob 等）中的任何一种。联合体可以在这里帮上忙。</p>
+<p>下面定义的联合体 <code>LakeTarget</code> 允许 <code>send_event()</code> 的 <code>lake_target</code> 参数是 <code>AzureBlob</code> 类型的对象，或 <code>AmazonS3</code> 类型的对象，或 <code>GoogleGCP</code> 类型的对象。这个联合体允许 <code>send_event()</code> 函数在 <code>lake_target</code> 参数里接收这三种类型中任何一种的对象作为输入。</p>
+<p>记住，这三种类型（<code>AmazonS3</code>、<code>GoogleGCP</code> 和 <code>AzureBlob</code>）各自是我们在源代码里定义的结构体。所以乍一看，它们在源代码里是分开的数据类型。但正是 <code>union</code> 关键字把它们统一成了一个名为 <code>LakeTarget</code> 的数据类型。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> LakeTarget = <span class="kw">union</span> <span class="op">{</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    azure: AzureBlob,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    amazon: AmazonS3,</span>
@@ -756,9 +783,11 @@ All 1 tests passed.</code></pre>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    event: Event,</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    lake_target: LakeTarget</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>) <span class="dt">bool</span> <span class="op">{</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 函数体...</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// body of the function ...</span></span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>下面的例子演示了这一逻辑。注意，我们先用 <code>azure</code> 数据成员实例化这个联合体对象，所以这个 <code>target</code> 对象中只包含 <code>azure</code> 数据成员，只有这个数据成员处于激活状态。这就是为什么这个代码示例的最后一行是无效的：我们试图实例化当前对这个 <code>target</code> 对象来说处于非激活状态的数据成员 <code>google</code>，结果程序进入 panic 模式，用一条醒目的错误信息警告我们犯了这个错误。</p>
+<p>一个联合体定义由一份数据成员列表组成。每个数据成员都是某种特定的数据类型。在上面的例子里，<code>LakeTarget</code> 联合体有三个数据成员（<code>azure</code>、<code>amazon</code>、<code>google</code>）。当你实例化一个使用联合体类型的对象时，这次实例化里你只能使用它的一个数据成员。</p>
+<p>你也可以把这理解成：联合体类型的数据成员一次只能激活一个，其他数据成员保持未激活，并且不能访问。例如，如果你创建了一个使用 <code>azure</code> 数据成员的 <code>LakeTarget</code> 对象，你就不能再使用或访问数据成员 <code>google</code> 或 <code>amazon</code>。就好像这些其他数据成员在 <code>LakeTarget</code> 类型里根本不存在一样。</p>
+<p>你可以在下面的例子里看到这个逻辑。注意，我们先用 <code>azure</code> 数据成员来实例化这个联合体对象。结果就是，这个 <code>target</code> 对象里面只包含 <code>azure</code> 数据成员。这个对象里只有这个数据成员是激活的。这就是为什么这个代码示例的最后一行是非法的。因为我们试图实例化数据成员 <code>google</code>，而它对这个 <code>target</code> 对象来说当前是未激活的，结果程序进入 panic 模式，用一条响亮的错误信息警告我们这个错误。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> target = LakeTarget <span class="op">{</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    .azure = AzureBlob.init()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
@@ -770,18 +799,18 @@ All 1 tests passed.</code></pre>
     field 'azure' is active:
     target.google = GoogleGCP.init();
           ^</code></pre>
-<p>所以，在实例化一个联合体对象时，必须从联合体类型列出的数据类型（即数据成员）中选择一个。在上面的例子中，我选择使用 <code>azure</code> 数据成员，结果其他所有数据成员都自动处于非激活状态，实例化对象之后就不能再使用它们了。</p>
-<p>你可以通过完全重新定义整个联合体对象来激活另一个数据成员。在下面的例子中，我一开始使用 <code>azure</code> 数据成员，然后把 <code>target</code> 对象重新定义为一个使用 <code>google</code> 数据成员的新 <code>LakeTarget</code> 对象。</p>
+<p>所以，实例化一个联合体对象时，你必须选择联合体类型里列出的一种数据类型（或者说一个数据成员）。在上面的例子里，我选择使用 <code>azure</code> 数据成员，结果所有其他数据成员都被自动停用，实例化对象之后你就不能再使用它们了。</p>
+<p>你可以通过把整个枚举对象完全重新定义一遍，来激活另一个数据成员。在下面的例子里，我一开始使用 <code>azure</code> 数据成员。然后，我重新定义 <code>target</code> 对象，让它使用一个新的 <code>LakeTarget</code> 对象，这个对象使用的是 <code>google</code> 数据成员。</p>
+<p>（译注：这里原文写成「整个枚举对象」。重新赋值的是联合体对象，不是枚举。）</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> target = LakeTarget <span class="op">{</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    .azure = AzureBlob.init()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>target = LakeTarget <span class="op">{</span></span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    .google = GoogleGCP.init()</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="带标签联合体tagged-unions" class="level3" data-number="10.3.1">
-<h3 data-number="10.3.1" class="anchored" data-anchor-id="带标签联合体tagged-unions"><span class="header-section-number">10.3.1</span> 带标签联合体（Tagged Unions）</h3>
-<p>普通 <code>union</code> 的一个局限是无法直接作为我们在 <a href="03-structs.html#sec-switch" class="quarto-xref"><span>Section 2.1.2</span></a> 中介绍的 <code>switch</code> 语句的输入。 如果需要在 <code>switch</code> 语句中对联合体对象进行分支匹配，只需在 <code>union</code> 声明后加上 <code>(enum)</code>，将其定义为<strong>带标签联合体（Tagged Union）</strong>！</p>
-<p>看 Zig 仓库中的 <a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig"><code>grammar.zig</code></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> 里的写法：</p>
+<p>关于联合体类型，有一个挺特别的事实：一开始，你不能在 switch 语句里使用它们（switch 语句在 <a href="03-structs.html#sec-switch" class="quarto-xref"><span>Section 2.1.2</span></a> 里介绍过）。换句话说，如果你有一个例如 <code>LakeTarget</code> 类型的对象，你不能把这个对象作为输入交给 switch 语句。</p>
+<p>可如果你真的需要这样做呢？如果你实际上需要把一个「联合体对象」提供给 switch 语句呢？这个问题的答案依赖 Zig 里另一种特殊类型，也就是<em>带标签联合体</em>（tagged unions）。要创建带标签联合体，你要做的就是在联合体声明里加上一个枚举类型。</p>
+<p>作为 Zig 里带标签联合体的例子，看看下面的 <code>Registry</code> 类型。这个类型来自 Zig 仓库里的 <a href="https://codeberg.org/ziglang/zig/src/branch/master/tools/spirv/grammar.zig"><code>grammar.zig</code> 模块</a> <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。这个联合体类型列出了不同类型的 registry。但注意这一次，<code>union</code> 关键字后面用了 <code>(enum)</code>。正是这一点使这个联合体类型成为带标签联合体。因为是带标签联合体，<code>Registry</code> 类型的对象就可以作为输入用在 switch 语句里。你要做的就是这些。只要在 <code>union</code> 声明里加上 <code>(enum)</code>，就可以在 switch 语句里使用它。</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode zig code-with-copy"><code class="sourceCode zig"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">const</span> Registry = <span class="kw">union</span>(<span class="kw">enum</span>) <span class="op">{</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    core: CoreRegistry,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    extension: ExtensionRegistry,</span>
@@ -796,7 +825,6 @@ Zig Software Foundation. 2024a. <em>In-Depth Overview</em>. Zig Software Foundat
 Zig Software Foundation. 2024b. <em>Language Reference</em>. Zig Software Foundation. <a href="https://ziglang.org/documentation/master/">https://ziglang.org/documentation/master/</a>.
 </div>
 </div>
-</section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
@@ -1362,8 +1390,8 @@ document.addEventListener('DOMContentLoaded', function() {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Chapters/09-data-structures.html" class="pagination-link" aria-label="常用数据结构（Data Structures）">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">常用数据结构（Data Structures）</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Chapters/09-data-structures.html" class="pagination-link" aria-label="数据结构">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">数据结构</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
